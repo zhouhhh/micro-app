@@ -35,5 +35,5 @@ export default defineConfig({
     outDir: 'vite',
   },
   clearScreen: false,
-  base: `${process.env.NODE_ENV === 'production' ? 'http://127.0.0.1:8080' : ''}/micro-app/vite/`,
+  base: `${process.env.NODE_ENV === 'production' ? 'https://cangdu.org' : ''}/micro-app/vite/`,
 })

@@ -25,7 +25,7 @@ function Vue2 () {
         showLoading && <Spin />
       }
       <micro-app-sub
-        name='vue2'
+        name='inline'
         url={`${config.vue2}micro-app/vue2/`}
         data={data}
         // onBeforemount={() => hideLoading(false)}

@@ -7,11 +7,11 @@ import "antd/dist/antd.css";
 import "./index.css";
 import Router from "./router";
 import { Modal, notification } from "antd";
-import microApp2 from '@micro-zoe/micro-app'
+import microApp from '@micro-zoe/micro-app'
 // import reportWebVitals from './reportWebVitals';
 
 // 循环内嵌
-microApp2.start({
+microApp.start({
   tagName: 'micro-app-sub'
 })
 
@@ -49,7 +49,7 @@ ReactDOM.render(
 
 // 监听卸载
 window.addEventListener("unmount", function () {
-  // microApp2.clearApps()
+  // microApp.clearApps()
   console.log("微应用react16卸载了");
   // 卸载前卸载全局数据监听
   window.microApp?.removeGlobalDataListener(handleGlobalData);
@@ -88,7 +88,7 @@ setTimeout(() => {
 }, 10000);
 
 document.addEventListener('click', function () {
-  console.log('子应用内部的document - click绑定')
+  console.log(`子应用${window.__MICRO_APP_NAME__}内部的document.addEventListener(click)绑定`)
 }, false)
 
 // var p1 = document.createElement("p");

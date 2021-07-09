@@ -14,7 +14,7 @@ function Vue3 () {
   }, [])
   return (
     <div>
-      <div className='btn-con'>
+      <div className='multiple-btn-con'>
         <Button
           type='primary'
           onClick={() => changeData({from: '来自基座的数据' + (+new Date())})}
@@ -22,7 +22,11 @@ function Vue3 () {
         >
           发送数据
         </Button>
-        <Button onClick={() => changename('react163')}>改变react16的name</Button>
+        <Button
+          onClick={() => changename('react163')}
+        >
+          改变react16的name
+        </Button>
       </div>
       <div className='multiple-con'>
         <micro-app
