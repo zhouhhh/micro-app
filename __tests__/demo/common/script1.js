@@ -1,0 +1,102 @@
+const root = document.querySelector('#root')
+root.innerHTML = `
+  <div class='container'>
+    <span class='test-color'>text1</span>
+    <span class='test-font'>text2</span>
+  </div>
+`
+
+const dynamicLink = document.createElement('link')
+dynamicLink.setAttribute('rel', 'stylesheet')
+dynamicLink.setAttribute('href', '/common/link2.css')
+document.head.appendChild(dynamicLink)
+
+const dynamicScript = document.createElement('script')
+dynamicScript.setAttribute('src', './script2.js')
+document.body.appendChild(dynamicScript)
+
+console.log('子应用打印的信息 - 1')
+testBindFunction()
+testBindFunction() // test bind_function cacheMap
+eval('console.log("在app1 eval中执行")')
+
+// document 事件相关
+;(() => {
+  // 卸载一个不存在的事件
+  document.removeEventListener('keydown', () => {})
+  // document click 事件
+  function onClickOfApp1 () {
+    console.warn('子应用app1的onclick')
+  }
+  document.onclick = onClickOfApp1
+
+  const clickEvent = new CustomEvent('click')
+  document.dispatchEvent(clickEvent)
+  expect(console.warn).toHaveBeenLastCalledWith('子应用app1的onclick')
+
+  expect(document.onclick).toBe(onClickOfApp1)
+
+  // 主动卸载的document click
+  function handleDocClick () {
+    console.log('document click1')
+  }
+  document.addEventListener('click', handleDocClick, false)
+  document.removeEventListener('click', handleDocClick)
+
+  // 不主动卸载的document click
+  function handleDocClick2 () {
+    console.log('document click2')
+  }
+  document.addEventListener('click', handleDocClick2, false)
+
+  // document click 其它事件
+  document.addEventListener('other', () => {}, false)
+
+  // 卸载一个不存在的事件，前后都卸载了一个不存在的事件，但处理逻辑是不同的
+  document.removeEventListener('keydown', () => {})
+})()
+
+// window 事件相关
+;(() => {
+  // 主动卸载的window scroll
+  function handleWinEvent () {
+    console.log('window scroll1')
+  }
+  window.addEventListener('scroll', handleWinEvent, false)
+  window.removeEventListener('scroll', handleWinEvent)
+
+  // 不主动卸载的window scroll
+  function handleWinEvent2 () {
+    console.log('window scroll2')
+  }
+  window.addEventListener('scroll', handleWinEvent2, false)
+  window.removeEventListener('keydown', () => {})
+})()
+
+// 定时器相关
+;(() => {
+  // 主动卸载的setTimeout
+  const time1 = setTimeout(() => {}, 1000)
+  clearTimeout(time1)
+
+  // 不主动卸载的setTimeout
+  setTimeout(() => {}, 100000)
+
+  // 主动卸载的setInterval
+  const time2 = setInterval(() => {}, 1000)
+  clearInterval(time2)
+
+  // 不主动卸载的setInterval
+  setInterval(() => {}, 100000)
+})()
+
+window.addEventListener('unmount', () => {
+  console.log('addEventListener--unmount: app1 卸载了')
+})
+
+// 发送事件，通知基座卸载自己 -- create-app测试独有
+window.dispatchEvent(new CustomEvent('unmount-me'))
+
+Promise.resolve().then(() => {
+  window.microApp?.dispatch({unmountMe: true})
+})

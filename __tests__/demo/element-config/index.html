@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style exclude id='app4-style-exclude'>
+    body {
+      background: #f5f5f5;
+    }
+  </style>
+  <link rel="stylesheet" href="./link1.css" id='app4-link-include'>
+  <link rel="stylesheet" href="./link1.css" exclude id='app4-link-exclude'>
+  <link rel="apple-touch-icon" />
+  <link rel="stylesheet" href="./link1.css" global>
+  <link rel="stylesheet" href="./link1.css" global>
+  <link rel="stylesheet" href="/common/link2.css">
+  <link rel="stylesheet" href="./link2.css">
+  <script src="/common/global.js"></script>
+  <title>element-config</title>
+</head>
+<body>
+  <div id="root"></div>
+  <script src="./script1.js" exclude id='app4-script-exclude'></script>
+  <script src="./script2.js" global></script>
+  <script src="./script2.js" global></script>
+</body>
+</html>
