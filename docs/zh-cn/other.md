@@ -49,7 +49,7 @@ microApp.start({
 ```
 
 ### 3、适配vite
-当子应用是vite应用时需要做特别的适配，适配vite的代价是巨大的，我们必须关闭沙箱功能，因为沙箱在`module script`下不支持，这导致大部分功能失效，包括：环境变量、样式隔离、元素隔离、数据通信、插件系统、资源地址补全、baseurl 等。
+当子应用是vite应用时需要做特别的适配，适配vite的代价是巨大的，我们必须关闭沙箱功能，因为沙箱在`module script`下不支持，这导致大部分功能失效，包括：环境变量、样式隔离、元素隔离、数据通信、资源地址补全、baseurl 等。
 
 在嵌入vite子应用时，`Micro App`的功能只负责渲染，其它的行为由应用自行决定，这包括如何防止样式、JS变量、元素的冲突。
 
@@ -111,28 +111,31 @@ vite环境下，当路由的baseName和vite.base值不相等，两者会进行�
 >
 ```
 
-##### 2、自定义fetch
-对开发环境的子应用进行处理，补全静态资源地址。
+##### 2、处理子应用静态资源
+写一个简易的插件，对开发环境的子应用进行处理，补全静态资源地址。
 
 ```js
 import microApp from '@micro-zoe/micro-app'
 
 microApp.start({
-  fetch (url, options, appName) {
-    return fetch(url, options).then((res) => {
-      return res.text()
-    }).then((text) => {
-      if (process.env.NODE_ENV === 'development' && appName === 'child-name') {
-        // /micro-app/vite/ 必须和子应用vite.config.js中base的配置保持一致
-        text = text.replace(/(from|import)(\s*['"])(\/micro-app\/vite\/)/g, (all) => {
-          return all.replace('/micro-app/vite/', '子应用域名/micro-app/vite/')
-        })
+  plugins: {
+    modules: {
+      // appName即应用的name值
+      appName: [{
+        loader(code) {
+          if (process.env.NODE_ENV === 'development') {
+            // 这里 /micro-app/vite/ 需要和子应用vite.config.js中base的配置保持一致
+            code = code.replace(/(from|import)(\s*['"])(\/micro-app\/vite\/)/g, all => {
+              return all.replace('/micro-app/vite/', '子应用域名/micro-app/vite/')
+            })
 
-        text = text.replace('customElements.define(overlayId, ErrorOverlay);', '')
-      }
+            code = code.replace('customElements.define(overlayId, ErrorOverlay);', '')
+          }
 
-      return text
-    })
+          return code
+        }
+      }]
+    }
   }
 })
 ```

@@ -124,15 +124,14 @@ function scopedRule (rules: CSSRule[], prefix: string): string {
  * 绑定css通用方法
  */
 function commonAction (
-  packStyle: HTMLStyleElement,
+  templateStyle: HTMLStyleElement,
   styleElement: HTMLStyleElement,
   originContent: string,
   prefix: string,
   baseURI: string,
   linkpath: string | undefined,
 ) {
-  packStyle.textContent = originContent
-  const rules: CSSRule[] = Array.from(packStyle.sheet?.cssRules ?? [])
+  const rules: CSSRule[] = Array.from(templateStyle.sheet?.cssRules ?? [])
   let result = scopedHost(
     scopedRule(rules, prefix),
     baseURI,
@@ -156,10 +155,9 @@ function commonAction (
     })
   }
   styleElement.textContent = result
-  packStyle.textContent = ''
 }
 
-let packStyle: HTMLStyleElement = rawDocument.body.querySelector('#micro-app-template-style')
+let templateStyle: HTMLStyleElement = rawDocument.body.querySelector('#micro-app-template-style')
 
 /**
  * 绑定css作用域
@@ -170,19 +168,21 @@ export default function scopedCSS (styleElement: HTMLStyleElement, appName: stri
   const app = appInstanceMap.get(appName)
   if (app?.scopecss) {
     const prefix = `${microApp.tagName}[name=${appName}]`
-    if (!packStyle) {
-      packStyle = pureCreateElement('style')
-      packStyle.setAttribute('id', 'micro-app-template-style')
-      rawDocument.body.appendChild(packStyle)
-      packStyle.sheet!.disabled = true
+    if (!templateStyle) {
+      templateStyle = pureCreateElement('style')
+      templateStyle.setAttribute('id', 'micro-app-template-style')
+      rawDocument.body.appendChild(templateStyle)
+      templateStyle.sheet!.disabled = true
     }
 
     if (styleElement.textContent) {
-      commonAction(packStyle, styleElement, styleElement.textContent, prefix, app.url, styleElement.linkpath)
+      templateStyle.textContent = styleElement.textContent
+      commonAction(templateStyle, styleElement, styleElement.textContent, prefix, app.url, styleElement.linkpath)
+      templateStyle.textContent = ''
     } else {
       const observer = new MutationObserver(function () {
-        commonAction(packStyle, styleElement, styleElement.textContent!, prefix, app.url, styleElement.linkpath)
         observer.disconnect()
+        commonAction(styleElement, styleElement, styleElement.textContent!, prefix, app.url, styleElement.linkpath)
       })
 
       observer.observe(styleElement, { childList: true })

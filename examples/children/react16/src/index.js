@@ -72,10 +72,6 @@ console.timeEnd("react16");
 // document.head.appendChild(slink)
 
 // setTimeout(() => {
-//   window.location = 'https://www.jd.com/'
-// }, 3000);
-
-// setTimeout(() => {
 //   const dom = document.createElement('script')
 //   dom.setAttribute('src', "http://localhost:8080/test.js")
 //   delete dom._MICRO_APP_NAME_

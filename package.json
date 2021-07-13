@@ -1,6 +1,6 @@
 {
   "name": "@micro-zoe/micro-app",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "一种用于构建微前端应用的极简方案",
   "main": "lib/index.min.js",
   "module": "lib/index.esm.js",
@@ -52,7 +52,8 @@
   },
   "keywords": [
     "webcomponents",
-    "微前端"
+    "micro-frontend",
+    "microapp"
   ],
   "files": [
     "es",

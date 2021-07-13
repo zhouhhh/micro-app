@@ -285,10 +285,10 @@ function bindScope (
   code: string,
   app: AppInterface,
 ): string {
+  if (typeof microApp.plugins === 'object') {
+    code = usePlugins(url, code, app.name, microApp.plugins)
+  }
   if (app.sandBox) {
-    if (typeof microApp.plugins === 'object') {
-      code = usePlugins(url, code, app.name, microApp.plugins)
-    }
     rawWindow.proxyWindow = app.sandBox.proxyWindow
     return `;(function(window, self){with(window){;${code}\n}}).call(window.proxyWindow, window.proxyWindow, window.proxyWindow);`
   }

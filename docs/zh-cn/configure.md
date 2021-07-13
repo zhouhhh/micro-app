@@ -90,11 +90,9 @@
 >
 > 4、静态资源地址补全功能失效
 >
-> 5、插件系统失效
+> 5、`__MICRO_APP_ENVIRONMENT__`、`__MICRO_APP_PUBLIC_PATH__`等全局变量失效
 >
-> 6、`__MICRO_APP_ENVIRONMENT__`、`__MICRO_APP_PUBLIC_PATH__`等全局变量失效
->
-> 7、baseurl失效
+> 6、baseurl失效
 
 ## macro
 - Desc: `以宏任务方式绑定元素作用域`

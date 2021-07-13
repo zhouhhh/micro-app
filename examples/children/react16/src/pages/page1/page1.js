@@ -1,7 +1,17 @@
 import React from 'react'
-import logo from '../../assets/logo.svg';
 import { Modal, Button, Space } from 'antd';
+import styled from 'styled-components'
+import logo from '../../assets/logo.svg';
 import './page1.css';
+
+const StyledButton = styled.button`
+  background: transparent;
+  border-radius: 3px;
+  border: 2px solid red;
+  color: red;
+  margin: 0 1em;
+  padding: 0.25em 1em;
+`
 
 function getDataFromBase () {
   Modal.info({
@@ -48,6 +58,10 @@ function Page1() {
             </div>
           )
         }
+      </div>
+      <div>
+        <p>styled-component👇</p>
+        <StyledButton>按钮</StyledButton>
       </div>
     </div>
   );

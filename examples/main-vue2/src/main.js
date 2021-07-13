@@ -55,6 +55,18 @@ microApp.start({
           return code
         }
       }],
+      vite: [{
+        loader(code) {
+          if (process.env.NODE_ENV === 'development') {
+            code = code.replace(/(from|import)(\s*['"])(\/micro-app\/vite\/)/g, (all) => {
+              return all.replace('/micro-app/vite/', 'http://localhost:7001/micro-app/vite/')
+            })
+
+            code = code.replace('customElements.define(overlayId, ErrorOverlay);', '')
+          }
+          return code
+        }
+      }]
     }
   },
   /**
@@ -64,19 +76,21 @@ microApp.start({
    * @returns Promise<string>
   */
    fetch (url, options, appName) {
-    return fetch(url, options).then((res) => {
-      return res.text()
-    }).then((text) => {
-      // 兼容vite
-      if (process.env.NODE_ENV === 'development' && appName === 'vite') {
-        text = text.replace(/(from|import)(\s*['"])(\/micro-app\/vite\/)/g, (all) => {
-          return all.replace('/micro-app/vite/', 'http://localhost:7001/micro-app/vite/')
-        })
+    if (url === 'http://localhost:3001/error.js') {
+      return Promise.resolve('')
+    }
 
-        text = text.replace('customElements.define(overlayId, ErrorOverlay);', '')
+    let config = null
+    if (url === 'http://localhost:3001/micro-app/react16/') {
+      config = {
+        headers: {
+          'custom-head': 'custom-head',
+        }
       }
+    }
 
-      return text
+    return fetch(url, Object.assign(options, config)).then((res) => {
+      return res.text()
     })
   }
 })

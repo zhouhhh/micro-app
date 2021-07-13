@@ -64,5 +64,6 @@ export default defineConfig({
         }
       })
     }
-  }
+  },
+  mfsu: {},
 });

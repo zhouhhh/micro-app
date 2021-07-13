@@ -23,31 +23,44 @@ devServer: {
 
 如果是线上环境，可以通过[配置nginx](https://segmentfault.com/a/1190000012550346)支持跨域。
 
-## 3、微应用无法渲染但没有报错
-请检查路由配置是否正确，详情查看[路由](/zh-cn/route)一章。
+## 3、兼容性如何
+Micro App依赖于CustomElements和Proxy两个较新的API。
 
-## 4、开发时每次保存文件时报错 (热更新导致报错)
-在一些场景下，热更新会导致保存时报错，请关闭热更新来解决这个问题，同时我们也在尝试更好的解决方案。
+对于不支持CustomElements的浏览器，可以通过引入polyfill进行兼容，详情可参考：[webcomponents/polyfills](https://github.com/webcomponents/polyfills/tree/master/packages/custom-elements)。
+
+但是Proxy暂时没有做兼容，所以对于不支持Proxy的浏览器无法运行Micro App。
+
+浏览器兼容性可以查看：[Can I Use](https://caniuse.com/?search=Proxy)
+
+总体如下：
+- PC端：除了IE浏览器，其它浏览器基本兼容。
+- 移动端：ios10+、android5+
+
+## 4、微应用无法渲染但没有报错
+请检查路由配置是否正确，详情查看[路由](/zh-cn/route)一章，或者[jsonpFunction是否冲突](/zh-cn/questions?id=_5、webpack-jsonpfunction-冲突导致渲染失败)
 
 ## 5、webpack jsonpFunction 冲突导致渲染失败
-  这种情况常见于基座应用和子应用都是通过create-react-app等类似脚手架创建的项目。
+这种情况常见于基座应用和子应用都是通过create-react-app等类似脚手架创建的项目。
 
-  如果基座应用和子应用在配置webapck时具有相同的jsonpFunction名称，会导致资源加载混乱。
+如果基座应用和子应用在配置webapck时具有相同的jsonpFunction名称，会导致资源加载混乱。
 
-  解决方式：这种方式通常可以通过修改基座应用或子应用的package.json中的name值解决。
-  
-  如果上述方法无法解决，需要手动修改webpack配置。
-  ```js
-  // webpack.config.js
-  module.exports = {
-    ...
-    output: {
-      jsonpFunction: `webpackJsonp_自定义名称`,
-    },
-  }
-  ```
+解决方式：这种方式通常可以通过修改基座应用或子应用的package.json中的name值解决。
 
-## 6、vue3的问题
+如果上述方法无法解决，需要手动修改webpack配置。
+```js
+// webpack.config.js
+module.exports = {
+  ...
+  output: {
+    jsonpFunction: `webpackJsonp_自定义名称`,
+  },
+}
+```
+
+## 6、开发时每次保存文件时报错 (热更新导致报错)
+在一些场景下，热更新会导致保存时报错，请关闭热更新来解决这个问题，同时我们也在尝试更好的解决方案。
+
+## 7、vue3的问题
 **1、样式失效**
 
 vue3中样式失效的问题可以尝试配置[macro](/zh-cn/configure?id=macro)解决，如果依然有问题，可以通过[关闭样式隔离](/zh-cn/configure?id=disablescopecss)解决。
@@ -57,7 +70,7 @@ vue3中样式失效的问题可以尝试配置[macro](/zh-cn/configure?id=macro)
 vue3中需要配置publicPath补全资源地址，详情请查看[public-path](/zh-cn/static-source?id=手动补全)
 
 
-## 7、开发环境中渲染angular子应用报错
+## 8、开发环境中渲染angular子应用报错
 目前需要关闭angular的热更新来解决这个问题，同时我们也在尝试更好的解决方案。
 ```bash
 "scripts": {
@@ -65,18 +78,13 @@ vue3中需要配置publicPath补全资源地址，详情请查看[public-path](/
 },
 ```
 
-## 8、Micro App 报错 an app named xx already exists
+## 9、Micro App 报错 an app named xx already exists
 这是`name`名称冲突导致的，请确保每个子应用的`name`值是唯一的。
 
-## 9、基座应用的样式影响到子应用
+## 10、基座应用的样式影响到子应用
 虽然我们将子应用的样式进行隔离，但基座应用的样式依然会影响到子应用，如果发生冲突，推荐通过约定前缀或CSS Modules方式解决。
 
 如果你使用的是`ant-design`等组件库，一般会提供添加前缀进行样式隔离的功能。
-
-## 10、兼容性如何
-`Micro App`是依赖于CustomElement和Proxy的，这意味着我们不再兼容IE。
-
-浏览器兼容性查看：[Can I Use](https://caniuse.com/?search=customElement)
 
 ## 11、支持vite吗
 支持，详情请查看[适配vite](/zh-cn/other?id=_3、适配vite)

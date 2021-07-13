@@ -75,6 +75,18 @@ microApp.start({
           return code
         }
       }],
+      vite: [{
+        loader(code) {
+          if (process.env.NODE_ENV === 'development') {
+            code = code.replace(/(from|import)(\s*['"])(\/micro-app\/vite\/)/g, (all) => {
+              return all.replace('/micro-app/vite/', 'http://localhost:7001/micro-app/vite/')
+            })
+
+            code = code.replace('customElements.define(overlayId, ErrorOverlay);', '')
+          }
+          return code
+        }
+      }]
     }
   },
   /**
@@ -99,17 +111,6 @@ microApp.start({
 
     return fetch(url, Object.assign(options, config)).then((res) => {
       return res.text()
-    }).then((text) => {
-      // 兼容vite
-      if (process.env.NODE_ENV === 'development' && appName === 'vite') {
-        text = text.replace(/(from|import)(\s*['"])(\/micro-app\/vite\/)/g, (all) => {
-          return all.replace('/micro-app/vite/', 'http://localhost:7001/micro-app/vite/')
-        })
-
-        text = text.replace('customElements.define(overlayId, ErrorOverlay);', '')
-      }
-
-      return text
     })
   }
 })
