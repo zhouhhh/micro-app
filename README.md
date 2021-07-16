@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://cangdu.org/micro-app/">
-    <img src="https://cangdu.org/micro-app/_media/logo.png" alt="logo" width="200" />
+    <img src="https://cangdu.org/micro-app/_media/logo.png" alt="logo" width="180" />
   </a>
 </p>
 
