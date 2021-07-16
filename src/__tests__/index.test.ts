@@ -1,8 +1,8 @@
 /* eslint-disable promise/param-names */
 import { commonStartEffect, releaseAllEffect, ports } from './common'
-import microApp, { preFetch, removeDomScope, version, pureCreateElement } from '../src'
-import { appInstanceMap } from '../src/create_app'
-import { getCurrentAppName, defer } from '../src/libs/utils'
+import microApp, { preFetch, removeDomScope, version, pureCreateElement } from '..'
+import { appInstanceMap } from '../create_app'
+import { getCurrentAppName, defer } from '../libs/utils'
 
 describe('main process', () => {
   // 根容器

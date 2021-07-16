@@ -1,4 +1,4 @@
-import microApp from '../src'
+import microApp from '..'
 
 const rawError = global.console.error
 

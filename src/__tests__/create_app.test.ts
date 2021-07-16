@@ -1,8 +1,8 @@
 /* eslint-disable promise/param-names */
 import { commonStartEffect, releaseAllEffect, ports } from './common'
-import { appInstanceMap } from '../src/create_app'
-import { appStatus } from '../src/constants'
-import microApp from '../src'
+import { appInstanceMap } from '../create_app'
+import { appStatus } from '../constants'
+import microApp from '..'
 
 describe('create_app', () => {
   let appCon: Element

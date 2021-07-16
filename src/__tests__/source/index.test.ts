@@ -1,7 +1,7 @@
 /* eslint-disable promise/param-names */
 import { commonStartEffect, releaseAllEffect, ports } from '../common'
-import { appInstanceMap } from '../../src/create_app'
-import microApp from '../../src'
+import { appInstanceMap } from '../../create_app'
+import microApp from '../..'
 
 declare global {
   interface HTMLElement {

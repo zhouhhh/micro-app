@@ -1,8 +1,8 @@
 /* eslint-disable promise/param-names */
 import { commonStartEffect, releaseAllEffect, ports } from '../common'
-import { appInstanceMap } from '../../src/create_app'
-import microApp from '../../src'
-import Sandbox from '../../src/sandbox'
+import { appInstanceMap } from '../../create_app'
+import microApp from '../..'
+import Sandbox from '../../sandbox'
 
 declare global {
   interface Window {

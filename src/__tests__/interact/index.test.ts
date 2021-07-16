@@ -1,9 +1,9 @@
 /* eslint-disable promise/param-names */
-import microApp from '../../src'
-import { EventCenterForBaseApp, EventCenterForMicroApp } from '../../src/interact'
-import { defer } from '../../src/libs/utils'
+import microApp from '../..'
+import { EventCenterForBaseApp, EventCenterForMicroApp } from '../../interact'
+import { defer } from '../../libs/utils'
 import { rewriteConsole, releaseConsole } from '../common'
-import CreateApp, { appInstanceMap } from '../../src/create_app'
+import CreateApp, { appInstanceMap } from '../../create_app'
 
 describe('data center', () => {
   const app1EventHandler = jest.fn()

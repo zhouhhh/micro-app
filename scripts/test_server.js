@@ -3,7 +3,7 @@ const path = require('path')
 
 const params = {
   port: 9000,
-  root: path.join(process.cwd(), '/__tests__/demo'),
+  root: path.join(process.cwd(), '/src/__tests__/demo'),
   open: false,
   file: 'index.html',
   wait: 1000,

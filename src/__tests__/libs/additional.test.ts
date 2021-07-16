@@ -1,5 +1,5 @@
-import { listenUmountAppInline, replaseUnmountAppInline } from '../../src/libs/additional'
-import CreateApp, { appInstanceMap } from '../../src/create_app'
+import { listenUmountAppInline, replaseUnmountAppInline } from '../../libs/additional'
+import CreateApp, { appInstanceMap } from '../../create_app'
 
 describe('test additional', () => {
   test('unmount app loop build-in', () => {

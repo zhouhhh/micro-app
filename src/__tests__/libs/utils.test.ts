@@ -1,5 +1,5 @@
 /* eslint-disable promise/param-names */
-import * as Utils from '../../src/libs/utils'
+import * as Utils from '../../libs/utils'
 import { rewriteConsole, releaseConsole } from '../common'
 
 beforeAll(() => {

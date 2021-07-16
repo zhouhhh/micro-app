@@ -35,7 +35,7 @@ module.exports = {
   },
   rootDir: __dirname,
   testMatch: [
-    '<rootDir>/__tests__/**/*.test.[jt]s?(x)'
+    '<rootDir>/src/__tests__/**/*.test.[jt]s?(x)'
   ],
   globals: {
     __DEV__: true,

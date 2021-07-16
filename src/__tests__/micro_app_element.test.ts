@@ -1,9 +1,9 @@
 /* eslint-disable promise/param-names */
 import { commonStartEffect, releaseAllEffect, ports } from './common'
-import { appInstanceMap } from '../src/create_app'
-import MicroAppElement from '../src/micro_app_element'
-import microApp from '../src'
-import { defer } from '../src/libs/utils'
+import { appInstanceMap } from '../create_app'
+import MicroAppElement from '../micro_app_element'
+import microApp from '..'
+import { defer } from '../libs/utils'
 
 describe('micro_app_element', () => {
   let appCon: Element

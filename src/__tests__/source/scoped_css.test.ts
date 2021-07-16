@@ -1,7 +1,7 @@
 /* eslint-disable promise/param-names, no-extend-native */
 import { commonStartEffect, releaseAllEffect, ports, setAppName } from '../common'
-import { defer } from '../../src/libs/utils'
-import microApp from '../../src'
+import { defer } from '../../libs/utils'
+import microApp from '../..'
 
 describe('source scoped_css', () => {
   let appCon: Element

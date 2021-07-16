@@ -1,7 +1,7 @@
 /* eslint-disable promise/param-names */
 import { rawDocumentCreateElement, rawSetAttribute } from './support_module'
 import { commonStartEffect, releaseAllEffect, ports, setAppName } from '../common'
-import microApp from '../../src'
+import microApp from '../..'
 
 describe('source scripts2', () => {
   let appCon: Element

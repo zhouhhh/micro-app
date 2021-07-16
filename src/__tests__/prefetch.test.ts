@@ -1,7 +1,7 @@
 /* eslint-disable promise/param-names */
 import './common'
-import microApp from '../src'
-import preFetch from '../src/prefetch'
+import microApp from '..'
+import preFetch from '../prefetch'
 
 global.console.warn = jest.fn()
 global.console.error = jest.fn()

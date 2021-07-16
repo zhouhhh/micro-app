@@ -1,6 +1,6 @@
 /* eslint-disable promise/param-names */
 import { commonStartEffect, releaseAllEffect, ports, setAppName } from '../common'
-import microApp from '../../src'
+import microApp from '../..'
 
 describe('source load_event', () => {
   let appCon: Element

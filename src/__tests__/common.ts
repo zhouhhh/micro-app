@@ -1,7 +1,7 @@
 /* eslint-disable promise/param-names */
 import '@webcomponents/webcomponentsjs/custom-elements-es5-adapter'
-import { setCurrentAppName, defer } from '../src/libs/utils'
-const liveServer = require('../scripts/test_server')
+import { setCurrentAppName, defer } from '../libs/utils'
+const liveServer = require('../../scripts/test_server')
 global.fetch = require('node-fetch')
 jest.useRealTimers()
 
