@@ -2,6 +2,7 @@
   <a href="https://cangdu.org/micro-app/">
     <img src="https://cangdu.org/micro-app/_media/logo.png" alt="logo" width="150" />
   </a>
+  <div align="center" style="font-size: 22px;font-weight:450">Micro App</div>
 </p>
 
 <p align="center">
@@ -94,6 +95,8 @@ export default function AppRoute () {
   )
 }
 ```
+以上即完成了微前端的渲染。
+
 **注意**: 子应用的静态资源需要支持跨域访问。
 
 ## 本地开发
