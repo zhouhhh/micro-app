@@ -29,7 +29,7 @@ Micro App 是由京东零售iPaaS前端研发团队推出的一款微前端框�
 
 `下述以react代码为例`
 
-#### 基座应用
+### 基座应用
 1、安装依赖
 ```bash
 yarn add @micro-zoe/micro-app
@@ -77,7 +77,7 @@ export function MyPage () {
 }
 ```
 
-#### 子应用
+### 子应用
 添加路由前缀
 
 ```js
