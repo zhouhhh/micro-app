@@ -182,6 +182,11 @@ export default function scopedCSS (styleElement: HTMLStyleElement, appName: stri
     } else {
       const observer = new MutationObserver(function () {
         observer.disconnect()
+        // styled-component 暂时不处理
+        if (
+          (!styleElement.textContent && styleElement.sheet?.cssRules?.length) ||
+          styleElement.hasAttribute('data-styled')
+        ) return
         commonAction(styleElement, styleElement, styleElement.textContent!, prefix, app.url, styleElement.linkpath)
       })
 

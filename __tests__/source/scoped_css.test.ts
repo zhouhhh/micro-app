@@ -165,7 +165,7 @@ describe('source scoped_css', () => {
     appCon.appendChild(microappElement5)
     appCon.removeChild(microappElement5)
 
-    // 模版样式sheet失效
+    // 模版样式sheet失效对动态添加的样式无影响
     const microappElement6 = document.createElement('micro-app')
     microappElement6.setAttribute('name', 'test-app6')
     microappElement6.setAttribute('url', `http://127.0.0.1:${ports.scoped_css}/common/`)
@@ -179,15 +179,60 @@ describe('source scoped_css', () => {
         // 动态创建style
         const dynamicStyle = document.createElement('style')
         document.head.appendChild(dynamicStyle)
-        dynamicStyle.textContent = 'div {color: red}'
         const templateStyle = document.body.querySelector('#micro-app-template-style')!
         document.body.removeChild(templateStyle)
+        dynamicStyle.textContent = 'div {color: red}'
 
         defer(() => {
           // 所有style都被清空内容
-          expect(dynamicStyle.textContent).toBe('')
+          expect(dynamicStyle.textContent).toBe('micro-app[name=test-app6] div {color: red;}')
           reslove(true)
         })
+      }, false)
+    })
+  })
+
+  // styled-component降级处理
+  test('temporary handle for styled component', async () => {
+    const microappElement7 = document.createElement('micro-app')
+    microappElement7.setAttribute('name', 'test-app7')
+    microappElement7.setAttribute('url', `http://127.0.0.1:${ports.scoped_css}/common/`)
+
+    appCon.appendChild(microappElement7)
+
+    await new Promise((reslove) => {
+      microappElement7.addEventListener('mounted', () => {
+        setAppName('test-app7')
+        // 模拟生产环境styled-component style标签
+        const dynamicStyle1 = document.createElement('style')
+        document.head.appendChild(dynamicStyle1)
+        dynamicStyle1.appendChild(document.createTextNode(''))
+        const sheet = dynamicStyle1.sheet!
+        sheet.insertRule('.imred {color: red;}', 0)
+        setTimeout(() => {
+          expect(dynamicStyle1.textContent).toBe('')
+        }, 10)
+
+        // 模拟开发环境styled-component style标签
+        const dynamicStyle2 = document.createElement('style')
+        dynamicStyle2.setAttribute('data-styled', 'active')
+        document.head.appendChild(dynamicStyle2)
+        dynamicStyle2.textContent = '.imred {color: red;}'
+        setTimeout(() => {
+          expect(dynamicStyle2.textContent).toBe('.imred {color: red;}')
+        }, 10)
+
+        // 正常的style
+        const dynamicStyle3 = document.createElement('style')
+        document.head.appendChild(dynamicStyle3)
+        document.head.removeChild(dynamicStyle3)
+
+        dynamicStyle3.appendChild(document.createTextNode(''))
+        setTimeout(() => {
+          expect(dynamicStyle3.textContent).toBe('')
+        }, 10)
+
+        reslove(true)
       }, false)
     })
   })

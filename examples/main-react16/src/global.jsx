@@ -115,10 +115,6 @@ microApp.start({
   }
 })
 
-setTimeout(() => {
-  log('ept_en_pc','item_addcard',650571384,'us',15.20,1)
-}, 10000);
-
 if (pwa) {
   // Notify user if offline now
   window.addEventListener('sw.offline', () => {

@@ -8,7 +8,6 @@ import "./index.css";
 import Router from "./router";
 import { Modal, notification } from "antd";
 import microApp from '@micro-zoe/micro-app'
-// import reportWebVitals from './reportWebVitals';
 
 // 循环内嵌
 microApp.start({
@@ -58,39 +57,7 @@ window.addEventListener("unmount", function () {
 })
 
 console.timeEnd("react16");
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-// reportWebVitals();
-
-// <link rel="stylesheet" href="http://localhost:8080/test.css">
-
-// const slink = document.createElement('link')
-// slink.setAttribute('rel', "stylesheet")
-// slink.setAttribute('href', "http://localhost:8080/test.css")
-
-// document.head.appendChild(slink)
-
-// setTimeout(() => {
-//   const dom = document.createElement('script')
-//   dom.setAttribute('src', "http://localhost:8080/test.js")
-//   delete dom._MICRO_APP_NAME_
-//   document.body.appendChild(dom)
-// }, 3000);
-
-setTimeout(() => {
-  // debugger
-  window.log?.("ept_en_pc", "item_addcard", 650571384, "us", 15.2, 1);
-}, 10000);
 
 document.addEventListener('click', function () {
   console.log(`子应用${window.__MICRO_APP_NAME__}内部的document.addEventListener(click)绑定`)
 }, false)
-
-// var p1 = document.createElement("p");
-// p1.innerText = 'p1p1p1'
-// document.querySelectorAll('head')[0].prepend("Some text", p1);
-
-// var p2 = document.createElement("p");
-// p2.innerText = '22222'
-// document.querySelectorAll('body')[0].append("11111", p2);

@@ -48,6 +48,14 @@ export function defer (fn: Func, ...args: any[]): void {
 }
 
 /**
+ * 添加地址协议
+ * @param url 地址
+ */
+export function addProtocol (url: string): string {
+  return url.startsWith('//') ? `${location.protocol}${url}` : url
+}
+
+/**
  * 格式化URL地址
  * @param url 地址
  */
@@ -55,9 +63,7 @@ export function formatURL (url: string | null): string {
   if (typeof url !== 'string' || !url) return ''
 
   try {
-    const { origin, pathname } = new URL(
-      url.startsWith('//') ? `${location.protocol}${url}` : url
-    )
+    const { origin, pathname } = new URL(addProtocol(url))
     // 如果以.html结尾，则不需要补全 /
     if (/\.html$/.test(pathname)) {
       return `${origin}${pathname}`
@@ -92,6 +98,8 @@ export function getEffectivePath (url: string): string {
 export function CompletionPath (path: string, baseURI: string): string {
   if (/^((((ht|f)tps?)|file):)?\/\//.test(path)) return path
 
+  baseURI = addProtocol(baseURI)
+
   return new URL(path, getEffectivePath(baseURI)).toString()
 }
 
@@ -102,7 +110,7 @@ export function CompletionPath (path: string, baseURI: string): string {
 export function getLinkFileDir (linkpath: string): string {
   const pathArr = linkpath.split('/')
   pathArr.pop()
-  return pathArr.join('/') + '/'
+  return addProtocol(pathArr.join('/') + '/')
 }
 
 /**

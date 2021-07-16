@@ -5,7 +5,6 @@
     "lib": ["esnext", "dom"],
     "declaration": true,
     "outDir": "lib",
-    "rootDir": "./src",
     "importHelpers": true,
     "downlevelIteration": true,
     "strict": true,
@@ -27,7 +26,8 @@
   },
   "include": [
     "src",
-    "typings"
+    "typings",
+    "__tests__"
   ],
   "exclude": [
     "node_modules",

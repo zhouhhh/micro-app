@@ -117,4 +117,20 @@ describe('source index', () => {
       }, false)
     })
   })
+
+  // 返回一个空的html
+  test('test empty html', async () => {
+    const microappElement7 = document.createElement('micro-app')
+    microappElement7.setAttribute('name', 'test-app7')
+    microappElement7.setAttribute('url', `http://127.0.0.1:${ports.source_index}/special-html/empty.html`)
+
+    appCon.appendChild(microappElement7)
+
+    await new Promise((reslove) => {
+      setTimeout(() => {
+        expect(console.error).toHaveBeenLastCalledWith('[micro-app] html is empty, please check in detail')
+        reslove(true)
+      }, 100)
+    })
+  })
 })
