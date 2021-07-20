@@ -8,9 +8,11 @@
   <a href="https://www.npmjs.com/package/@micro-zoe/micro-app"><img src="https://img.shields.io/npm/v/@micro-zoe/micro-app.svg?style=flat-square" alt="version" /></a>
   <a href="https://www.npmjs.com/package/@micro-zoe/micro-app"><img src="https://img.shields.io/npm/dt/@micro-zoe/micro-app.svg?style=flat-square" alt="downloads" /></a>
   <a href="https://www.npmjs.com/package/@micro-zoe/micro-app"><img src="https://img.shields.io/npm/l/@micro-zoe/micro-app.svg?style=flat-square" alt="license" /></a>
-  <a href="https://codecov.io/gh/micro-zoe/micro-app"><img src="https://img.shields.io/codecov/c/github/micro-zoe/micro-app.svg?style=flat-square" alt="test:coverage" /></a>
-  <a href="https://travis-ci.com/micro-zoe/micro-app"><img src="https://img.shields.io/travis/micro-zoe/micro-app.svg?style=flat-square" alt="travis" /></a>
-  <!-- https://img.shields.io/travis/micro-zoe/micro-app.svg?style=flat-square -->
+  <!-- <a href="https://codecov.io/gh/micro-zoe/micro-app"><img src="https://img.shields.io/codecov/c/github/micro-zoe/micro-app.svg?style=flat-square" alt="test:coverage" /></a>
+  <a href="https://travis-ci.com/micro-zoe/micro-app"><img src="https://img.shields.io/travis/micro-zoe/micro-app.svg?style=flat-square" alt="travis" /></a> -->
+  <a href="https://gitter.im/zoe-community/zoe-room">
+    <img src="https://badges.gitter.im/Join%20Chat.svg" alt="gitter">
+  </a>
 </p>
 
 # 简介
