@@ -14,7 +14,7 @@
 </p>
 
 # 简介
-Micro App 是由京东零售iPaaS前端研发团队推出的一款微前端框架，不同于目前流行的开源框架，它从组件化的思维实现微前端，旨在降低上手难度、提升工作效率。Micro App借鉴了WebComponent的思想，通过CustomElement结合自定义的ShadowDom，将所有功能都封装到一个类WebComponent组件中，从而实现在基座应用中嵌入一行代码即可渲染一个微前端应用，它是目前市面上接入成本最低的微前端框架。
+Micro App 不再以监听url的变化来渲染微前端，而是借鉴了WebComponent的思想，通过CustomElement结合自定义的ShadowDom，将所有功能都封装到一个类WebComponent组件中，从而实现微前端的组件化渲染，并且由于自定义ShadowDom的隔离特性，Micro App不需要子应用做过多的修改，是目前市面上接入成本最低的微前端框架。
 
 # 功能
 Micro App不仅使用简单，还提供了 JS沙箱、样式隔离、元素隔离、数据通信、预加载 等一系列完善的功能。
