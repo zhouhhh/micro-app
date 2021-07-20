@@ -7,7 +7,7 @@
 <p align="center">
   <a href="https://www.npmjs.com/package/@micro-zoe/micro-app"><img src="https://img.shields.io/npm/v/@micro-zoe/micro-app.svg?style=flat-square" alt="version" /></a>
   <a href="https://www.npmjs.com/package/@micro-zoe/micro-app"><img src="https://img.shields.io/npm/dt/@micro-zoe/micro-app.svg?style=flat-square" alt="downloads" /></a>
-  <a href="https://www.npmjs.com/package/@micro-zoe/micro-app"><img src="https://img.shields.io/npm/l/@micro-zoe/micro-app.svg?style=flat-square" alt="license" /></a>
+  <a href="https://github.com/micro-zoe/micro-app/blob/master/LICENSE"><img src="https://img.shields.io/npm/l/@micro-zoe/micro-app.svg?style=flat-square" alt="license" /></a>
   <!-- <a href="https://codecov.io/gh/micro-zoe/micro-app"><img src="https://img.shields.io/codecov/c/github/micro-zoe/micro-app.svg?style=flat-square" alt="test:coverage" /></a>
   <a href="https://travis-ci.com/micro-zoe/micro-app"><img src="https://img.shields.io/travis/micro-zoe/micro-app.svg?style=flat-square" alt="travis" /></a> -->
   <a href="https://gitter.im/zoe-community/zoe-room">
@@ -21,7 +21,7 @@ Micro App 不再以监听url的变化来渲染微前端，而是借鉴了WebComp
 # 特性
 Micro App不仅使用简单，还提供了 JS沙箱、样式隔离、元素隔离、数据通信、预加载 等一系列完善的功能。
 
-##### 概念图
+#### 概念图
 ![image](https://img10.360buyimg.com/imagetools/jfs/t1/168885/23/20790/54203/6084d445E0c9ec00e/d879637b4bb34253.png ':size=750')
 
 # 开始使用
