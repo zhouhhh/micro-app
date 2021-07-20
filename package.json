@@ -5,7 +5,6 @@
   "main": "lib/index.min.js",
   "module": "lib/index.esm.js",
   "types": "lib/index.d.ts",
-  "private": false,
   "directories": {
     "doc": "docs"
   },
