@@ -13,24 +13,21 @@
   <!-- https://img.shields.io/travis/micro-zoe/micro-app.svg?style=flat-square -->
 </p>
 
-## 简介
+# 简介
 Micro App 是由京东零售iPaaS前端研发团队推出的一款微前端框架，不同于目前流行的开源框架，它从组件化的思维实现微前端，旨在降低上手难度、提升工作效率。Micro App借鉴了WebComponent的思想，通过CustomElement结合自定义的ShadowDom，将所有功能都封装到一个类WebComponent组件中，从而实现在基座应用中嵌入一行代码即可渲染一个微前端应用，它是目前市面上接入成本最低的微前端框架。
 
-## 功能
-Micro App提供了 JS沙箱、样式隔离、元素隔离、数据通信 等一系列完善的功能。
+# 功能
+Micro App不仅使用简单，还提供了 JS沙箱、样式隔离、元素隔离、数据通信、预加载 等一系列完善的功能。
 
-<p align="center">
-  <a href="https://cangdu.org/micro-app/">
-    <img src="https://cangdu.org/img/micro-app-functions.png" alt="logo" height="150" />
-  </a>
-</p>
+##### 概念图
+![image](https://img10.360buyimg.com/imagetools/jfs/t1/168885/23/20790/54203/6084d445E0c9ec00e/d879637b4bb34253.png ':size=750')
 
-## 开始使用
+# 开始使用
 微前端分为基座应用和子应用，我们分别列出基座应用和子应用需要进行的修改，具体介绍Micro App的使用方式。
 
 `下述以react代码为例`
 
-### 基座应用
+#### 基座应用
 1、安装依赖
 ```bash
 yarn add @micro-zoe/micro-app
@@ -78,7 +75,7 @@ export function MyPage () {
 }
 ```
 
-### 子应用
+#### 子应用
 添加路由前缀
 
 ```js
@@ -99,7 +96,8 @@ export default function AppRoute () {
 
 **注意**: 子应用的静态资源需要支持跨域访问。
 
-## 本地开发
+
+# 本地开发
 1、下载项目
 ```
 git clone https://github.com/micro-zoe/micro-app.git
@@ -117,8 +115,8 @@ yarn start # 访问 http://localhost:3000
 
 默认启动react基座应用，如果想启动vue基座应用，可以运行`yarn start:main-vue2`
 
-## FAQ
+# FAQ
 https://cangdu.org/micro-app/docs.html#/zh-cn/questions
 
-## License
+# License
 MIT
