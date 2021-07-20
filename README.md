@@ -18,13 +18,13 @@
 # 简介
 Micro App 不再以监听url的变化来渲染微前端，而是借鉴了WebComponent的思想，通过CustomElement结合自定义的ShadowDom，将所有功能都封装到一个类WebComponent组件中，从而实现微前端的组件化渲染，并且由于自定义ShadowDom的隔离特性，Micro App不需要子应用做过多的修改，这是目前市面上接入成本最低的微前端框架。
 
-# 特性
+# ✨特点
 Micro App不仅使用简单，还提供了 JS沙箱、样式隔离、元素隔离、数据通信、预加载 等一系列完善的功能。
 
 #### 概念图
 ![image](https://img10.360buyimg.com/imagetools/jfs/t1/168885/23/20790/54203/6084d445E0c9ec00e/d879637b4bb34253.png ':size=750')
 
-# 开始使用
+# 🔧开始使用
 微前端分为基座应用和子应用，我们分别列出基座应用和子应用需要进行的修改，具体介绍Micro App的使用方式。
 
 `下述以react代码为例`
@@ -99,7 +99,7 @@ export default function AppRoute () {
 **注意**: 子应用的静态资源需要支持跨域访问。
 
 
-# 本地开发
+# 🧑‍🤝‍🧑 参与共建
 1、下载项目
 ```
 git clone https://github.com/micro-zoe/micro-app.git
@@ -117,7 +117,7 @@ yarn start # 访问 http://localhost:3000
 
 默认启动react基座应用，如果想启动vue基座应用，可以运行`yarn start:main-vue2`
 
-# FAQ
+# 🤔FAQ
 https://cangdu.org/micro-app/docs.html#/zh-cn/questions
 
 # License
