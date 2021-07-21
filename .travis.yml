@@ -19,5 +19,5 @@ install:
   - yarn
 
 script:
-  - npm run build
+  - npm run test
   
