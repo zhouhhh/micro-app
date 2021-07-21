@@ -96,6 +96,8 @@ export default function AppRoute () {
 ```
 以上即完成了微前端的渲染。
 
+在线案例：https://cangdu.org/micro-app/demo/
+
 **注意**: 子应用的静态资源需要支持跨域访问。
 
 
