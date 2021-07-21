@@ -46,7 +46,7 @@ module.exports = {
         strictNullChecks: true,
         noUnusedParameters: true,
         experimentalDecorators: true,
-        allowSyntheticDefaultImports: true
+        allowSyntheticDefaultImports: true,
       }
     }
   }
