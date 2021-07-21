@@ -5,14 +5,24 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/@micro-zoe/micro-app"><img src="https://img.shields.io/npm/v/@micro-zoe/micro-app.svg?style=flat-square" alt="version"/></a>
-  <a href="https://www.npmjs.com/package/@micro-zoe/micro-app"><img src="https://img.shields.io/npm/dt/@micro-zoe/micro-app.svg?style=flat-square" alt="downloads"/></a>
-  <a href="https://github.com/micro-zoe/micro-app/blob/master/LICENSE"><img src="https://img.shields.io/npm/l/@micro-zoe/micro-app.svg?style=flat-square" alt="license"/></a>
+  <a href="https://www.npmjs.com/package/@micro-zoe/micro-app">
+    <img src="https://img.shields.io/npm/v/@micro-zoe/micro-app.svg?style=flat-square" alt="version"/>
+  </a>
+  <a href="https://www.npmjs.com/package/@micro-zoe/micro-app">
+    <img src="https://img.shields.io/npm/dt/@micro-zoe/micro-app.svg?style=flat-square" alt="downloads"/>
+  </a>
+  <a href="https://github.com/micro-zoe/micro-app/blob/master/LICENSE">
+    <img src="https://img.shields.io/npm/l/@micro-zoe/micro-app.svg?style=flat-square" alt="license"/>
+  </a>
   <a href="https://gitter.im/zoe-community/zoe-room">
     <img src="https://badges.gitter.im/Join%20Chat.svg" alt="gitter">
   </a>
-  <a href="https://travis-ci.com/github/bailicangdu/micro-app"><img src="https://travis-ci.com/bailicangdu/micro-app.svg?branch=master" alt="travis"/></a>
-  <a href="https://coveralls.io/github/bailicangdu/micro-app?branch=master"><img src="https://coveralls.io/repos/github/bailicangdu/micro-app/badge.svg?branch=master" alt="test:coverage"/></a>
+  <a href="https://travis-ci.com/github/bailicangdu/micro-app">
+    <img src="https://travis-ci.com/bailicangdu/micro-app.svg?branch=master" alt="travis"/>
+  </a>
+  <a href="https://coveralls.io/github/bailicangdu/micro-app?branch=master">
+    <img src="https://coveralls.io/repos/github/bailicangdu/micro-app/badge.svg?branch=master" alt="test:coverage"/>
+  </a>
 </p>
 
 # 简介
@@ -96,10 +106,9 @@ export default function AppRoute () {
 ```
 以上即完成了微前端的渲染。
 
-在线案例：https://cangdu.org/micro-app/demo/
-
 **注意**: 子应用的静态资源需要支持跨域访问。
 
+在线案例：https://cangdu.org/micro-app/demo/
 
 # 🧑‍🤝‍🧑 参与共建
 如果你对这个项目感兴趣，可以通过加入组织或提Pull requests的方式参与共建，非常欢迎与期待你的加入。
@@ -122,8 +131,14 @@ yarn start # 访问 http://localhost:3000
 
 默认启动react基座应用，如果想启动vue基座应用，可以运行`yarn start:main-vue2`
 
+#### 你也可以使用 Gitpod 进行在线开发：
+<a href="https://gitpod.io/#https://github.com/micro-zoe/micro-app">
+  <img src="https://cangdu.org/img/open-in-gitpod.svg" alt="gitpod"/>
+</a>
+
+
 # 🤔FAQ
 https://cangdu.org/micro-app/docs.html#/zh-cn/questions
 
 # License
-MIT
+Micro App base on MIT license
