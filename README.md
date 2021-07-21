@@ -1,18 +1,18 @@
 <p align="center">
   <a href="https://cangdu.org/micro-app/">
-    <img src="https://cangdu.org/micro-app/_media/logo.png" alt="logo" width="180" />
+    <img src="https://cangdu.org/micro-app/_media/logo.png" alt="logo" width="180"/>
   </a>
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/@micro-zoe/micro-app"><img src="https://img.shields.io/npm/v/@micro-zoe/micro-app.svg?style=flat-square" alt="version" /></a>
-  <a href="https://www.npmjs.com/package/@micro-zoe/micro-app"><img src="https://img.shields.io/npm/dt/@micro-zoe/micro-app.svg?style=flat-square" alt="downloads" /></a>
-  <a href="https://github.com/micro-zoe/micro-app/blob/master/LICENSE"><img src="https://img.shields.io/npm/l/@micro-zoe/micro-app.svg?style=flat-square" alt="license" /></a>
+  <a href="https://www.npmjs.com/package/@micro-zoe/micro-app"><img src="https://img.shields.io/npm/v/@micro-zoe/micro-app.svg?style=flat-square" alt="version"/></a>
+  <a href="https://www.npmjs.com/package/@micro-zoe/micro-app"><img src="https://img.shields.io/npm/dt/@micro-zoe/micro-app.svg?style=flat-square" alt="downloads"/></a>
+  <a href="https://github.com/micro-zoe/micro-app/blob/master/LICENSE"><img src="https://img.shields.io/npm/l/@micro-zoe/micro-app.svg?style=flat-square" alt="license"/></a>
   <a href="https://gitter.im/zoe-community/zoe-room">
     <img src="https://badges.gitter.im/Join%20Chat.svg" alt="gitter">
   </a>
-  <a href="https://travis-ci.com/github/bailicangdu/micro-app"><img src="https://travis-ci.com/bailicangdu/micro-app.svg?branch=master" alt="travis" /></a>
-  <a href="https://coveralls.io/github/bailicangdu/micro-app?branch=master"><img src="https://img.shields.io/coveralls/bailicangdu/micro-app.svg?style=flat-square" alt="test:coverage" /></a>
+  <a href="https://travis-ci.com/github/bailicangdu/micro-app"><img src="https://travis-ci.com/bailicangdu/micro-app.svg?branch=master" alt="travis"/></a>
+  <a href="https://coveralls.io/github/bailicangdu/micro-app?branch=master"><img src="https://coveralls.io/repos/github/bailicangdu/micro-app/badge.svg?branch=master" alt="test:coverage"/></a>
 </p>
 
 # 简介
