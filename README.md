@@ -108,7 +108,7 @@ export default function AppRoute () {
 
 **注意**: 子应用的静态资源需要支持跨域访问。
 
-在线案例：https://cangdu.org/micro-app/demo/
+**在线案例**：https://cangdu.org/micro-app/demo/
 
 # 🧑‍🤝‍🧑 参与共建
 如果你对这个项目感兴趣，可以通过加入组织或提Pull requests的方式参与共建，非常欢迎与期待你的加入。
