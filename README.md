@@ -23,9 +23,6 @@
   <a href="https://coveralls.io/github/bailicangdu/micro-app?branch=master">
     <img src="https://coveralls.io/repos/github/bailicangdu/micro-app/badge.svg?branch=master" alt="coveralls"/>
   </a>
-  <a href="https://github.com/micro-zoe/micro-app">
-    <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs"/>
-  </a>
 </p>
 
 # 简介
