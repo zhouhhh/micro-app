@@ -1,3 +1,4 @@
+// 初始化页面内容
 const root = document.querySelector('#root')
 root.innerHTML = `
   <div class='container'>

@@ -1,3 +1,4 @@
+// 初始化子应用文档内容
 const root = document.querySelector('#root')
 root.innerHTML = `
   <div class='container'>
@@ -6,6 +7,7 @@ root.innerHTML = `
   </div>
 `
 
+// 动态创建js、css标签
 const dynamicLink = document.createElement('link')
 dynamicLink.setAttribute('rel', 'stylesheet')
 dynamicLink.setAttribute('href', '/common/link2.css')
@@ -16,6 +18,11 @@ dynamicScript.setAttribute('src', './script2.js')
 document.body.appendChild(dynamicScript)
 
 console.log('子应用打印的信息 - 1')
+
+/**
+ * testBindFunction 为基座应用的全局变量，子应用访问时会兜底到基座应用
+ * 这里测试 testBindFunction 绑定的this及原型属性是否正常
+ */
 testBindFunction()
 testBindFunction() // test bind_function cacheMap
 eval('console.log("在app1 eval中执行")')

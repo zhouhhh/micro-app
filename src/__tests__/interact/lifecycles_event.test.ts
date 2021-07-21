@@ -15,6 +15,7 @@ describe('lifecycles_event', () => {
     return releaseAllEffect()
   })
 
+  // 生命周期函数测试覆盖
   test('render common app', async () => {
     const microappElement = document.createElement('micro-app')
     microappElement.setAttribute('name', 'test-app')

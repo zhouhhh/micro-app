@@ -13,8 +13,10 @@
   <link rel="stylesheet" href="./link1.css" exclude id='app4-link-exclude'>
   <link rel="apple-touch-icon" />
   <link rel="stylesheet" href="./link1.css" global>
+  <!-- 重复的 link1.css 会从缓存中读取 -->
   <link rel="stylesheet" href="./link1.css" global>
   <link rel="stylesheet" href="/common/link2.css">
+  <!-- common app中有设置全局link2.css、global.js，所以会先尝试从缓存中获取 -->
   <link rel="stylesheet" href="./link2.css">
   <script src="/common/global.js"></script>
   <title>element-config</title>
@@ -23,6 +25,7 @@
   <div id="root"></div>
   <script src="./script1.js" exclude id='app4-script-exclude'></script>
   <script src="./script2.js" global></script>
+  <!-- 重复的 script2.js 会从缓存中读取 -->
   <script src="./script2.js" global></script>
 </body>
 </html>

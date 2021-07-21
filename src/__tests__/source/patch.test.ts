@@ -15,7 +15,7 @@ describe('source patch', () => {
     return releaseAllEffect()
   })
 
-  // getElementsByName 测试
+  // 子应用中操作元素的行为需要被拦截和处理
   test('element query', async () => {
     const microappElement1 = document.createElement('micro-app')
     microappElement1.setAttribute('name', 'test-app1')

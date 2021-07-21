@@ -16,6 +16,7 @@ describe('create_app', () => {
     return releaseAllEffect()
   })
 
+  // 在子应用加载完静态资源之前就卸载，然后重新渲染
   test('unmount app before end of loading resource and remount', async () => {
     const microappElement1 = document.createElement('micro-app')
     microappElement1.setAttribute('name', 'test-app1')

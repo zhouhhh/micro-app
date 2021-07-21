@@ -50,15 +50,18 @@ describe('data center', () => {
     const cbForApp2AutoTrigger = jest.fn()
     const cbForGlobal = jest.fn()
 
+    // 子应用app1绑定的监听函数
     const app1Cb = jest.fn()
     const app1CbOther = jest.fn()
     const app1Global = jest.fn()
 
+    // 子应用2绑定的监听函数
     const app2Cb = jest.fn()
     const app2CbAutoTrigger = jest.fn()
     const app2GlobalCb = jest.fn()
     const app2GlobalCbAutoTrigger = jest.fn()
 
+    // 数据对象
     const dataToApp1One = { info: 'data to app1 from baseapp' }
     const dataToApp1Two = { info: 'data to app1 from baseapp' }
     const dataFromApp1 = { info: 'data from app1' }

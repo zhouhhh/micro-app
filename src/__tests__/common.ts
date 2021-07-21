@@ -22,6 +22,7 @@ export const ports = {
   source_patch: 9013,
 }
 
+// 启动服务
 export function startServer (port?: number): void {
   if (typeof port === 'number') {
     liveServer.params.port = port
@@ -30,6 +31,7 @@ export function startServer (port?: number): void {
   liveServer.start(liveServer.params)
 }
 
+// 重写console.warn和console.error
 const rawWarn = global.console.warn
 const rawError = global.console.error
 export function rewriteConsole (): void {
@@ -37,6 +39,13 @@ export function rewriteConsole (): void {
   global.console.error = jest.fn()
 }
 
+// 释放console
+export function releaseConsole (): void {
+  global.console.warn = rawWarn
+  global.console.error = rawError
+}
+
+// 初始基座页面的内容
 export function initDocument (): void {
   const baseStyle = document.createElement('style')
   baseStyle.textContent = `
@@ -71,11 +80,6 @@ export function commonStartEffect (port?: number): void {
   initDocument()
 }
 
-export function releaseConsole (): void {
-  global.console.warn = rawWarn
-  global.console.error = rawError
-}
-
 export function releaseAllEffect (): Promise<boolean> {
   // 所有test结束后，jest会自动清空document及其内容，从而导致出错，所以要主动卸载所有应用
   document.querySelector('#app-container')!.innerHTML = ''
@@ -90,11 +94,16 @@ export function releaseAllEffect (): Promise<boolean> {
   })
 }
 
+/**
+ * 绑定应用
+ * @param appName 应用名称
+ */
 export function setAppName (appName: string): void {
   setCurrentAppName(appName)
   defer(() => setCurrentAppName(null))
 }
 
+// 清空当前绑定的应用
 export function clearAppName (): void {
   setCurrentAppName(null)
 }
