@@ -11,8 +11,8 @@
   <a href="https://gitter.im/zoe-community/zoe-room">
     <img src="https://badges.gitter.im/Join%20Chat.svg" alt="gitter">
   </a>
-  <!-- <a href="https://codecov.io/gh/micro-zoe/micro-app"><img src="https://img.shields.io/codecov/c/github/micro-zoe/micro-app.svg?style=flat-square" alt="test:coverage" /></a> -->
   <a href="https://travis-ci.com/github/bailicangdu/micro-app"><img src="https://travis-ci.com/bailicangdu/micro-app.svg?branch=master" alt="travis" /></a>
+  <a href="https://coveralls.io/github/bailicangdu/micro-app?branch=master"><img src="https://img.shields.io/coveralls/bailicangdu/micro-app.svg?style=flat-square" alt="test:coverage" /></a>
 </p>
 
 # 简介
