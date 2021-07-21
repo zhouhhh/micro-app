@@ -98,5 +98,5 @@ window.addEventListener('unmount', () => {
 window.dispatchEvent(new CustomEvent('unmount-me'))
 
 Promise.resolve().then(() => {
-  window.microApp?.dispatch({ unmountMe: true })
+  window.microApp && window.microApp.dispatch({ unmountMe: true })
 })
