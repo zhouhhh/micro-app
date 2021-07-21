@@ -6,13 +6,13 @@
 
 <p align="center">
   <a href="https://www.npmjs.com/package/@micro-zoe/micro-app">
-    <img src="https://img.shields.io/npm/v/@micro-zoe/micro-app.svg?style=flat-square" alt="version"/>
+    <img src="https://img.shields.io/npm/v/@micro-zoe/micro-app.svg" alt="version"/>
   </a>
   <a href="https://www.npmjs.com/package/@micro-zoe/micro-app">
-    <img src="https://img.shields.io/npm/dt/@micro-zoe/micro-app.svg?style=flat-square" alt="downloads"/>
+    <img src="https://img.shields.io/npm/dt/@micro-zoe/micro-app.svg" alt="downloads"/>
   </a>
   <a href="https://github.com/micro-zoe/micro-app/blob/master/LICENSE">
-    <img src="https://img.shields.io/npm/l/@micro-zoe/micro-app.svg?style=flat-square" alt="license"/>
+    <img src="https://img.shields.io/npm/l/@micro-zoe/micro-app.svg" alt="license"/>
   </a>
   <a href="https://gitter.im/zoe-community/zoe-room">
     <img src="https://badges.gitter.im/Join%20Chat.svg" alt="gitter">
