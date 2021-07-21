@@ -21,7 +21,7 @@
     <img src="https://travis-ci.com/bailicangdu/micro-app.svg?branch=master" alt="travis"/>
   </a>
   <a href="https://coveralls.io/github/bailicangdu/micro-app?branch=master">
-    <img src="https://coveralls.io/repos/github/bailicangdu/micro-app/badge.svg?branch=master" alt="test:coverage"/>
+    <img src="https://coveralls.io/repos/github/bailicangdu/micro-app/badge.svg?branch=master" alt="coveralls"/>
   </a>
 </p>
 
@@ -141,4 +141,4 @@ yarn start # 访问 http://localhost:3000
 https://cangdu.org/micro-app/docs.html#/zh-cn/questions
 
 # License
-Micro App base on MIT license
+Micro App base on **MIT** license
