@@ -102,7 +102,7 @@ export default function AppRoute () {
 # 🧑‍🤝‍🧑 参与共建
 如果你对这个项目感兴趣，可以通过加入组织或提Pull requests的方式参与共建，非常欢迎与期待你的加入。
 
-##### 本地运行
+#### 本地运行
 1、下载项目
 ```
 git clone https://github.com/micro-zoe/micro-app.git
