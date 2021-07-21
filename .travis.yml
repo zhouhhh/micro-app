@@ -19,5 +19,5 @@ install:
   - yarn
 
 script:
-  - npm run test
+  - npm run test:coverage
   
