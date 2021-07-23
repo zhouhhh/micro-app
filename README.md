@@ -26,16 +26,16 @@
 </p>
 
 # 简介
-与目前流行的以路由拦截实现微前端渲染不同是，Micro App不再以监听路由的变化来渲染微前端，而是借鉴了WebComponent的思想，通过CustomElement结合自定义的ShadowDom，将所有功能都封装到一个类WebComponent组件中，从而实现微前端的组件化渲染，并且由于自定义ShadowDom的元素隔离特性，Micro App不需要子应用在入口文件暴露出方法及修改webpack配置，从而降低上手难度，这是目前接入成本最低的微前端框架。
+与目前流行的以路由拦截实现微前端渲染不同是，MicroApp不再以监听路由的变化来渲染微前端，而是借鉴了WebComponent的思想，通过CustomElement结合自定义的ShadowDom，将所有功能都封装到一个类WebComponent组件中，从而实现微前端的组件化渲染，并且由于自定义ShadowDom的元素隔离特性，MicroApp不需要子应用在入口文件暴露出方法及修改webpack配置，从而降低上手难度，这是目前接入成本最低的微前端框架。
 
 # ✨特点
-Micro App不仅使用简单，还提供了 JS沙箱、样式隔离、元素隔离、数据通信、预加载 等一系列完善的功能。
+MicroApp不仅使用简单，还提供了 JS沙箱、样式隔离、元素隔离、数据通信、预加载 等一系列完善的功能。
 
 #### 概念图
 ![image](https://img10.360buyimg.com/imagetools/jfs/t1/168885/23/20790/54203/6084d445E0c9ec00e/d879637b4bb34253.png ':size=750')
 
 # 🔧开始使用
-微前端分为基座应用和子应用，我们分别列出基座应用和子应用需要进行的修改，具体介绍Micro App的使用方式。
+微前端分为基座应用和子应用，我们分别列出基座应用和子应用需要进行的修改，具体介绍MicroApp的使用方式。
 
 `下述以react代码为例`
 
@@ -141,4 +141,4 @@ yarn start # 访问 http://localhost:3000
 https://cangdu.org/micro-app/docs.html#/zh-cn/questions
 
 # License
-Micro App base on **MIT** license
+MicroApp base on **MIT** license
