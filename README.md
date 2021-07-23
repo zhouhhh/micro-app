@@ -26,7 +26,7 @@
 </p>
 
 # 简介
-与目前流行的以路由拦截实现微前端渲染不同是，MicroApp不再以监听路由的变化来渲染微前端，而是借鉴了WebComponent的思想，通过CustomElement结合自定义的ShadowDom，将所有功能都封装到一个类WebComponent组件中，从而实现微前端的组件化渲染，并且由于自定义ShadowDom的元素隔离特性，MicroApp不需要子应用在入口文件暴露出方法及修改webpack配置，从而降低上手难度，这是目前接入成本最低的微前端框架。
+MicroApp是一款基于类WebComponent进行渲染的微前端框架，与目前流行的以路由拦截实现微前端渲染不同是，MicroApp不再以监听路由的变化来渲染微前端，而是借鉴了WebComponent的思想，通过CustomElement结合自定义的ShadowDom，将所有功能都封装到一个类WebComponent组件中，从而实现微前端的组件化渲染，并且由于自定义ShadowDom的元素隔离特性，MicroApp不需要子应用在入口文件暴露出方法及修改webpack配置，从而降低上手难度，这是目前接入成本最低的微前端框架。
 
 # ✨特点
 MicroApp不仅使用简单，还提供了 JS沙箱、样式隔离、元素隔离、数据通信、预加载 等一系列完善的功能。
