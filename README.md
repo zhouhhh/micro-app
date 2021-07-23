@@ -30,7 +30,7 @@ MicroApp是一款基于类WebComponent进行渲染的微前端框架，不同于
 
 MicroApp与技术栈无关，也不和业务绑定，可以用于任何前端框架和业务。
 
-### 概念图
+#### 概念图
 ![image](https://img10.360buyimg.com/imagetools/jfs/t1/168885/23/20790/54203/6084d445E0c9ec00e/d879637b4bb34253.png ':size=750')
 
 # 🔧开始使用
