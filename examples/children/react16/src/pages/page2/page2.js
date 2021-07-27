@@ -55,10 +55,10 @@ const Page2 = () => {
 
   return (
     <div>
-      <div>
+      {/* <div>
         <p>styled-component👇</p>
         <StyledButton>按钮</StyledButton>
-      </div>
+      </div> */}
       <Form
         name="validate_other"
         {...formItemLayout}

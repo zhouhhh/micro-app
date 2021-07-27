@@ -165,3 +165,9 @@ declare module '@micro-app/types' {
     start(options?: OptionsType): void
   }
 }
+
+declare namespace JSX {
+  interface IntrinsicElements {
+    'micro-app': any
+  }
+}
