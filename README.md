@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://cangdu.org/micro-app/">
+  <a href="https://zeroing.jd.com/micro-app/">
     <img src="https://cangdu.org/micro-app/_media/logo.png" alt="logo" width="180"/>
   </a>
 </p>
@@ -109,7 +109,7 @@ export default function AppRoute () {
 
 **注意**: 子应用的静态资源需要支持跨域访问。
 
-**在线案例**：https://cangdu.org/micro-app/demo/
+**在线案例**：https://zeroing.jd.com/micro-app/demo/
 
 # 🤝 参与共建
 如果你对这个项目感兴趣，可以通过加入组织或提Pull requests的方式参与共建，非常欢迎与期待你的加入。
@@ -139,7 +139,7 @@ yarn start # 访问 http://localhost:3000
 
 
 # 🤔FAQ
-https://cangdu.org/micro-app/docs.html#/zh-cn/questions
+https://zeroing.jd.com/micro-app/docs.html#/zh-cn/questions
 
 # License
 MicroApp base on **MIT** license
