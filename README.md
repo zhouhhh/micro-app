@@ -112,7 +112,7 @@ export default function AppRoute () {
 **在线案例**：https://zeroing.jd.com/micro-app/demo/
 
 # 🤝 参与共建
-如果你对这个项目感兴趣，可以通过加入组织或提Pull requests的方式参与共建，非常欢迎与期待你的加入。
+如果你对这个项目感兴趣，欢迎提PR参与共建，也希望您 "Star" 支持一下 谢谢！ ^_^
 
 ### 本地运行
 1、下载项目
