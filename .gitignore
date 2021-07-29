@@ -3,9 +3,8 @@ node_modules/
 dist/
 lib/
 es/
-## 忽略根目录的polyfill、plugins
+## 忽略根目录的polyfill
 /polyfill/
-/plugins/
 
 # editor config
 .vscode/
