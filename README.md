@@ -28,15 +28,15 @@
 [Discussions](https://github.com/micro-zoe/micro-app/discussions)
 
 # 📖简介
-[MicroApp](https://github.com/micro-zoe/micro-app/issues/8)是一款基于类WebComponent进行渲染的微前端框架，不同于目前流行的开源框架，它从组件化的思维实现微前端，旨在降低上手难度、提升工作效率。它是目前市面上接入微前端成本最低的框架，并且提供了JS沙箱、样式隔离、元素隔离、预加载、资源地址补全、插件系统、数据通信等一系列完善的功能。
+[micro-app](https://github.com/micro-zoe/micro-app/issues/8)是一款基于类WebComponent进行渲染的微前端框架，不同于目前流行的开源框架，它从组件化的思维实现微前端，旨在降低上手难度、提升工作效率。它是目前市面上接入微前端成本最低的框架，并且提供了JS沙箱、样式隔离、元素隔离、预加载、资源地址补全、插件系统、数据通信等一系列完善的功能。
 
-MicroApp与技术栈无关，也不和业务绑定，可以用于任何前端框架和业务。
+micro-app与技术栈无关，也不和业务绑定，可以用于任何前端框架和业务。
 
 #### 概念图
 ![image](https://img10.360buyimg.com/imagetools/jfs/t1/168885/23/20790/54203/6084d445E0c9ec00e/d879637b4bb34253.png ':size=750')
 
 # 🔧开始使用
-微前端分为基座应用和子应用，我们分别列出基座应用和子应用需要进行的修改，具体介绍MicroApp的使用方式。
+微前端分为基座应用和子应用，我们分别列出基座应用和子应用需要进行的修改，具体介绍micro-app的使用方式。
 
 `下述以react代码为例`
 
@@ -137,9 +137,52 @@ yarn start # 访问 http://localhost:3000
   <img src="https://cangdu.org/img/open-in-gitpod.svg" alt="gitpod"/>
 </a>
 
+# 🤔常见问题
+[问题汇总](https://zeroing.jd.com/micro-app/docs.html#/zh-cn/questions)
+<details>
 
-# 🤔FAQ
-https://zeroing.jd.com/micro-app/docs.html#/zh-cn/questions
+  <summary>micro-app的优势在哪里？</summary>
+  使用简单、功能强大。
+
+  具体细节请参考文章：[micro-app介绍](https://github.com/micro-zoe/micro-app/issues/8)
+
+</details>
+<details>
+  <summary>兼容性如何？</summary>
+  micro-app依赖于CustomElements和Proxy两个较新的API。
+
+  对于不支持CustomElements的浏览器，可以通过引入polyfill进行兼容，详情可参考：[webcomponents/polyfills](https://github.com/webcomponents/polyfills/tree/master/packages/custom-elements)。
+
+  但是Proxy暂时没有做兼容，所以对于不支持Proxy的浏览器无法运行micro-app。
+
+  浏览器兼容性可以查看：[Can I Use](https://caniuse.com/?search=Proxy)
+
+  总体如下：
+  - PC端：除了IE浏览器，其它浏览器基本兼容。
+  - 移动端：ios10+、android5+
+</details>
+
+<details>
+  <summary>子应用一定要支持跨域吗？</summary>
+  是的！
+
+  如果是开发环境，可以设置headers支持跨域。
+  ```js
+  devServer: {
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+    },
+  },
+  ```
+
+  如果是线上环境，可以通过[配置nginx](https://segmentfault.com/a/1190000012550346)支持跨域。
+</details>
+
+<details>
+  <summary>支持vite吗?</summary>
+  
+  支持，详情请查看[适配vite](https://zeroing.jd.com/micro-app/docs.html#/zh-cn/other?id=_3%e3%80%81%e9%80%82%e9%85%8dvite)
+</details>
 
 # License
-MicroApp base on **MIT** license
+micro-app base on **MIT** license
