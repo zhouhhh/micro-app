@@ -23,7 +23,7 @@ function Angular11 () {
         baseurl='/micro-app/demo/angular11'
         // destory
         // inline
-        // scopecss='false'
+        // disableScopecss
       >
       </micro-app>
     </div>
