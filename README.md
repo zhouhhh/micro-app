@@ -166,7 +166,7 @@ yarn start # 访问 http://localhost:3000
   <summary>子应用一定要支持跨域吗？</summary>
   是的！
 
-  如果是开发环境，可以设置headers支持跨域。
+  如果是开发环境，可以在webpack-dev-server中设置headers支持跨域。
   ```js
   devServer: {
     headers: {
