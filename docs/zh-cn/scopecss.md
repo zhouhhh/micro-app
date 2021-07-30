@@ -1,4 +1,4 @@
-`MicroApp`中有三种样式隔离形态：默认隔离、禁用隔离、shadowDOM强制隔离
+`micro-app`中有三种样式隔离形态：默认隔离、禁用隔离、shadowDOM强制隔离
 
 #### 1、默认隔离
 默认隔离会以`<micro-app>`标签作为样式作用域，利用标签的`name`属性为每个样式添加前缀，将子应用的样式影响禁锢在当前标签区域。
@@ -8,7 +8,7 @@
 #### 2、禁用隔离
 禁用方式：[disableScopecss](/zh-cn/configure?id=disablescopecss)
 
-禁用样式隔离后，`MicroApp`不会对任何样式进行处理，同时css静态资源地址补全功能将失效。
+禁用样式隔离后，`micro-app`不会对任何样式进行处理，同时css静态资源地址补全功能将失效。
 
 如果css中一些图片等资源无法正常渲染，需要设置__webpack_public_path__，详情请看[静态资源](/zh-cn/static-source)一章
 

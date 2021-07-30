@@ -24,11 +24,11 @@ devServer: {
 如果是线上环境，可以通过[配置nginx](https://segmentfault.com/a/1190000012550346)支持跨域。
 
 ## 3、兼容性如何
-MicroApp依赖于CustomElements和Proxy两个较新的API。
+micro-app依赖于CustomElements和Proxy两个较新的API。
 
 对于不支持CustomElements的浏览器，可以通过引入polyfill进行兼容，详情可参考：[webcomponents/polyfills](https://github.com/webcomponents/polyfills/tree/master/packages/custom-elements)。
 
-但是Proxy暂时没有做兼容，所以对于不支持Proxy的浏览器无法运行MicroApp。
+但是Proxy暂时没有做兼容，所以对于不支持Proxy的浏览器无法运行micro-app。
 
 浏览器兼容性可以查看：[Can I Use](https://caniuse.com/?search=Proxy)
 
@@ -78,7 +78,7 @@ vue3中需要配置publicPath补全资源地址，详情请查看[public-path](/
 },
 ```
 
-## 9、MicroApp 报错 an app named xx already exists
+## 9、micro-app 报错 an app named xx already exists
 这是`name`名称冲突导致的，请确保每个子应用的`name`值是唯一的。
 
 ## 10、基座应用的样式影响到子应用
