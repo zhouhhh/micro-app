@@ -83,7 +83,7 @@ export function MyPage () {
       <h1>加载子应用</h1>
       /**
        * micro-app为自定义标签，可以在任何地方使用
-       * url为html地址 (基座应用和子应用本质是在同一个页面，这里的url只是html地址，子应用的路由还是基于浏览器地址)
+       * name为应用名称，全局唯一，url为html地址
        */
       <micro-app name='app1' url='http://localhost:3000/' baseurl='/my-page'></micro-app>
     </div>
@@ -114,7 +114,7 @@ export default function AppRoute () {
 >
 > 1、子应用需要支持跨域访问
 >
-> 2、url属性指向的是html地址，子应用的路由还是基于浏览器地址进行匹配的，详情请查看[路由一章](https://zeroing.jd.com/micro-app/docs.html#/zh-cn/route)
+> 2、url属性指向的是html地址，子应用的路由是基于浏览器地址进行匹配的，详情请查看[路由一章](https://zeroing.jd.com/micro-app/docs.html#/zh-cn/route)
 
 **在线案例**：https://zeroing.jd.com/micro-app/demo/
 
