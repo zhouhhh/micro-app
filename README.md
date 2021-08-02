@@ -114,7 +114,7 @@ export default function AppRoute () {
 >
 > 1、子应用需要支持跨域访问。
 >
-> 2、`url`指向的是html地址，子应用的路由还是基于浏览器地址进行匹配的
+> 2、url属性指向的是html地址，子应用的路由还是基于浏览器地址进行匹配的
 
 **在线案例**：https://zeroing.jd.com/micro-app/demo/
 
