@@ -111,6 +111,7 @@ export default function AppRoute () {
 以上即完成了微前端的渲染。
 
 > 注意
+>
 > 1、子应用需要支持跨域访问。
 >
 > 2、`url`属性和子应用路由的关系请查看[这里](https://zeroing.jd.com/micro-app/docs.html#/zh-cn/route)
