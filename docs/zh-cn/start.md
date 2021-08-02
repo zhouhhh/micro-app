@@ -46,7 +46,10 @@ export function MyPage () {
   return (
     <div>
       <h1>加载子应用</h1>
-      // 👇 micro-app为自定义标签，可以在任何地方使用
+      /**
+       * micro-app为自定义标签，可以在任何地方使用
+       * url为html地址 (基座应用和子应用本质是在同一个页面，这里的url只是html地址，子应用的路由还是基于浏览器地址的)
+       */
       <micro-app name='app1' url='http://localhost:3000/' baseurl='/my-page'></micro-app>
     </div>
   )
@@ -56,7 +59,9 @@ export function MyPage () {
 > [!NOTE]
 > 1、`name`和`url`属性必传，`name`值不可以重复。
 >
-> 2、`baseurl`是基座应用分配给子应用的路由前缀，非必传，默认值为空字符串。
+> 2、`url`属性和子应用路由的关系请查看[这里](/zh-cn/route)
+>
+> 3、`baseurl`是基座应用分配给子应用的路由前缀，非必传，默认值为空字符串。
 
 #### 子应用
 添加路由前缀

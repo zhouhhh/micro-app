@@ -81,7 +81,10 @@ export function MyPage () {
   return (
     <div>
       <h1>加载子应用</h1>
-      // 👇 micro-app为自定义标签，可以在任何地方使用
+      /**
+       * micro-app为自定义标签，可以在任何地方使用
+       * url为html地址 (基座应用和子应用本质是在同一个页面，这里的url只是html地址，子应用的路由还是基于浏览器地址)
+       */
       <micro-app name='app1' url='http://localhost:3000/' baseurl='/my-page'></micro-app>
     </div>
   )
@@ -107,7 +110,13 @@ export default function AppRoute () {
 ```
 以上即完成了微前端的渲染。
 
-**注意**: 子应用的静态资源需要支持跨域访问。
+> 注意
+> 1、子应用需要支持跨域访问。
+>
+> 2、`url`属性和子应用路由的关系请查看[这里](https://zeroing.jd.com/micro-app/docs.html#/zh-cn/route)
+>
+> 3、`baseurl`是基座应用分配给子应用的路由前缀，非必传。
+
 
 **在线案例**：https://zeroing.jd.com/micro-app/demo/
 
@@ -142,7 +151,7 @@ yarn start # 访问 http://localhost:3000
 <details>
 
   <summary>micro-app的优势在哪里？</summary>
-  使用简单、功能强大。
+  上手简单、功能强大。
 
   具体细节请参考文章：[micro-app介绍](https://github.com/micro-zoe/micro-app/issues/8)
 
