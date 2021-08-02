@@ -114,10 +114,7 @@ export default function AppRoute () {
 >
 > 1、子应用需要支持跨域访问。
 >
-> 2、`url`属性和子应用路由的关系请查看[这里](https://zeroing.jd.com/micro-app/docs.html#/zh-cn/route)
->
-> 3、`baseurl`是基座应用分配给子应用的路由前缀，非必传。
-
+> 2、`url`指向的是html地址，子应用的路由还是基于浏览器地址进行匹配的
 
 **在线案例**：https://zeroing.jd.com/micro-app/demo/
 
