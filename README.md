@@ -82,8 +82,9 @@ export function MyPage () {
     <div>
       <h1>加载子应用</h1>
       /**
-       * micro-app为自定义标签，可以在任何地方使用
-       * name为应用名称，全局唯一，url为html地址
+       * 1、micro-app为自定义标签，可以在任何地方使用
+       * 2、name为应用名称，全局唯一
+       * 3、url为html地址
        */
       <micro-app name='app1' url='http://localhost:3000/' baseurl='/my-page'></micro-app>
     </div>
