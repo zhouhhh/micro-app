@@ -59,12 +59,7 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
           app.getAppStatus() === appStatus.UNMOUNT
         )
       ) {
-        app.isPrefetch = false
-        defer(() => app.mount(
-          this.shadowRoot ?? this,
-          this.getDisposeResult('inline'),
-          this.getAttribute('baseurl') ?? '',
-        ))
+        this.handleAppMount(app)
       } else if (app.isPrefetch) {
         console.error(
           formatLogMessage(`the url: ${this.url} is different from prefetch url: ${app.url}`)
@@ -121,9 +116,10 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
     const attrName = this.getAttribute('name')
     const attrUrl = formatURL(this.getAttribute('url'))
     if (this.legalAttribute('name', attrName) && this.legalAttribute('url', attrUrl)) {
-      if (attrName !== this.name && appInstanceMap.has(attrName!)) {
-        const existApp = appInstanceMap.get(attrName!)!
-        if (existApp.getAppStatus() !== appStatus.UNMOUNT) {
+      const existApp = appInstanceMap.get(attrName!)
+      if (attrName !== this.name && existApp) {
+        // 处理已缓存的非预加载app
+        if (existApp.getAppStatus() !== appStatus.UNMOUNT && !existApp.isPrefetch) {
           this.setAttribute('name', this.name)
           return console.error(
             formatLogMessage(`an app named ${attrName} already exists`)
@@ -136,7 +132,12 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
         this.name = attrName as string
         this.url = attrUrl
         ;(this.shadowRoot ?? this).innerHTML = ''
-        this.handleCreate()
+        if (existApp?.isPrefetch) {
+          // 预加载app直接挂载
+          this.handleAppMount(existApp)
+        } else {
+          this.handleCreate()
+        }
       }
     } else if (attrName !== this.name) {
       this.setAttribute('name', this.name)
@@ -158,6 +159,16 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
     }
 
     return true
+  }
+
+  // 加载预加载应用
+  handleAppMount (app: AppInterface): void {
+    app.isPrefetch = false
+    defer(() => app.mount(
+      this.shadowRoot ?? this,
+      this.getDisposeResult('inline'),
+      this.getAttribute('baseurl') ?? '',
+    ))
   }
 
   // 创建应用
