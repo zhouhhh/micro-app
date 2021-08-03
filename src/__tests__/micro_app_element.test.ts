@@ -17,6 +17,10 @@ describe('micro_app_element', () => {
           name: 'test-app1',
           url: `http://127.0.0.1:${ports.micro_app_element}/common`,
         },
+        {
+          name: 'test-app12',
+          url: `http://127.0.0.1:${ports.micro_app_element}/common`,
+        },
       ]
     })
   })
@@ -36,7 +40,7 @@ describe('micro_app_element', () => {
 
     await new Promise((reslove) => {
       microappElement2.addEventListener('mounted', () => {
-        expect(appInstanceMap.size).toBe(2)
+        expect(appInstanceMap.size).toBe(3)
         reslove(true)
       }, false)
     })
@@ -223,5 +227,30 @@ describe('micro_app_element', () => {
     appCon.removeChild(microappElement11)
 
     appCon.appendChild(microappElement11)
+  })
+
+  // 修改name或url成功，且修改后的应用为预加载或已经卸载的应用，此时直接从缓存中重新挂载
+  test('change name or url to an exist prefetch/unmount app ', async () => {
+    const microappElement13 = document.createElement('micro-app')
+    microappElement13.setAttribute('name', 'test-app13')
+    microappElement13.setAttribute('url', `http://127.0.0.1:${ports.micro_app_element}/dynamic/`)
+
+    appCon.appendChild(microappElement13)
+    await new Promise((reslove) => {
+      function handleMounted () {
+        microappElement13.removeEventListener('mounted', handleMounted)
+        microappElement13.setAttribute('name', 'test-app12')
+        microappElement13.setAttribute('url', `http://127.0.0.1:${ports.micro_app_element}/common`)
+        reslove(true)
+      }
+      microappElement13.addEventListener('mounted', handleMounted, false)
+    })
+
+    await new Promise((reslove) => {
+      defer(() => {
+        expect(appInstanceMap.get('test-app12')?.isPrefetch).toBeFalsy()
+        reslove(true)
+      })
+    })
   })
 })

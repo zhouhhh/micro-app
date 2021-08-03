@@ -132,8 +132,13 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
         this.name = attrName as string
         this.url = attrUrl
         ;(this.shadowRoot ?? this).innerHTML = ''
-        if (existApp?.isPrefetch) {
-          // 预加载app直接挂载
+        /**
+         * existApp存在
+         * 如果attrName和this.name相等，则existApp已经被卸载
+         * 如果attrName和this.name不相等，则existApp为预加载或已卸载
+         */
+        if (existApp && existApp.url === attrUrl) {
+          // app直接挂载
           this.handleAppMount(existApp)
         } else {
           this.handleCreate()
@@ -161,7 +166,7 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
     return true
   }
 
-  // 加载预加载应用
+  // 挂载应用
   handleAppMount (app: AppInterface): void {
     app.isPrefetch = false
     defer(() => app.mount(

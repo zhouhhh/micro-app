@@ -5,10 +5,11 @@ import { useIntl } from 'umi';
 import defaultSettings from '../config/defaultSettings';
 import microApp from '@micro-zoe/micro-app'
 import painfulJoya from '@micro-zoe/plugin-painful-joya'
+import config from './config'
 const { pwa } = defaultSettings;
 const isHttps = document.location.protocol === 'https:'; // if pwa is true
 
-// microApp.preFetch([{name: 'react17', url: 'http://localhost:3002/', disableScopecss: false}])
+// microApp.preFetch([{name: 'vue2', url: `${config.vue2}micro-app/vue2`, disableScopecss: false}])
 
 microApp.start({
   // shadowDOM: true,

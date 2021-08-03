@@ -28,7 +28,7 @@ function Vue2 () {
       }
       <micro-app
         name='vue2'
-        url={`${config.vue2}micro-app/vue2/index.html`}
+        url={`${config.vue2}micro-app/vue2/`}
         data={data}
         // onBeforemount={() => hideLoading(false)}
         onMounted={() => hideLoading(false)}
