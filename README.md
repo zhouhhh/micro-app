@@ -123,7 +123,7 @@ devServer: {
 
 ![image](https://img12.360buyimg.com/imagetools/jfs/t1/196940/34/1541/38365/610a14fcE46c21374/c321b9f8fa50a8fc.png)
 
-上面列出了react和vue框架的使用方式，它们是可以自由组合的，比如基座应用是react，子应用是vue，或者基座应用是vue，子应用是react，或者基座应用和子应用都是react、vue。 `micro-app`对前端框架没有限制，任何框架的页面都可以作为基座应用嵌入任何类型框架的子应用。
+上面列出了react和vue框架的使用方式，它们是可以自由组合的，比如基座应用是react，子应用是vue，或者基座应用是vue，子应用是react，或者基座应用和子应用都是react、vue。 micro-app对前端框架没有限制，任何框架都可以作为基座应用嵌入任何类型框架的子应用。
 
 更多详细配置可以查看[官网文档](https://zeroing.jd.com/micro-app/docs.html#/zh-cn/start)
 
