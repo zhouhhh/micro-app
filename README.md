@@ -38,9 +38,9 @@ micro-app与技术栈无关，也不和业务绑定，可以用于任何前端�
 # 🔧开始使用
 微前端分为基座应用和子应用，我们分别列出基座应用和子应用需要进行的修改，具体介绍micro-app的使用方式。
 
-`下述以react代码为例`
-
 ### 基座应用
+`基座应用vue框架为例`
+
 1、安装依赖
 ```bash
 yarn add @micro-zoe/micro-app
@@ -48,7 +48,7 @@ yarn add @micro-zoe/micro-app
 
 2、在入口处引入依赖
 ```js
-// index.js
+// main.js
 import microApp from '@micro-zoe/micro-app'
 
 microApp.start()
@@ -56,46 +56,46 @@ microApp.start()
 
 3、分配一个路由给子应用
 ```js
-import { BrowserRouter, Switch, Route } from 'react-router-dom'
-import MyPage from './my-page'
+// router.js
+import Vue from 'vue'
+import VueRouter from 'vue-router'
+import MyPage from './my-page.vue'
 
-export default function AppRoute () {
-  return (
-    <BrowserRouter>
-      <Switch>
-        // 👇 非严格匹配，/my-page/* 都将匹配到 MyPage 组件
-        <Route path='/my-page'>
-          <MyPage />
-        </Route>
-        ...
-      </Switch>
-    </BrowserRouter>
-  )
-}
+Vue.use(VueRouter)
+
+const routes = [
+  {
+    // 👇 非严格匹配，/my-page/xxx 都将匹配到 MyPage 组件
+    path: '/my-page/*', 
+    name: 'my-page',
+    component: MyPage,
+  },
+]
+
+export default routes
 ```
 
-4、在页面中使用组件
-```js
-// my-page.js
-export function MyPage () {
-  return (
-    <div>
-      <h1>加载子应用</h1>
-      /**
-       * 1、micro-app为自定义标签，可以在任何地方使用
-       * 2、name为应用名称，全局唯一
-       * 3、url为html地址
-       */
-      <micro-app name='app1' url='http://localhost:3000/' baseurl='/my-page'></micro-app>
-    </div>
-  )
-}
+4、在`my-page`页面中使用组件
+```html
+<!-- my-page.vue -->
+<template>
+  <div>
+    <h1>子应用</h1>
+    <!-- name为应用名称，全局唯一，url为html地址-->
+    <micro-app name='app1' url='http://localhost:3000/' baseurl='/my-page'></micro-app>
+  </div>
+</template>
 ```
+
+> url指向的是html地址，基座应用和子应用本质是在同一个页面，子应用的路由是基于浏览器地址的，详情请查看[路由一章](https://zeroing.jd.com/micro-app/docs.html#/zh-cn/route)
 
 ### 子应用
-添加路由前缀
+`子应用react框架为例`
+
+1、添加路由前缀
 
 ```js
+// router.js
 import { BrowserRouter, Switch, Route } from 'react-router-dom'
 
 export default function AppRoute () {
@@ -109,15 +109,22 @@ export default function AppRoute () {
   )
 }
 ```
-以上即完成了微前端的渲染。
 
-> 注意
->
-> 1、子应用需要支持跨域访问
->
-> 2、url属性指向的是html地址，不会影响子应用，子应用的路由是基于浏览器地址进行匹配的，详情请查看[路由一章](https://zeroing.jd.com/micro-app/docs.html#/zh-cn/route)
+2、在webpack-dev-server的headers中设置跨域支持。
+```js
+devServer: {
+  headers: {
+    'Access-Control-Allow-Origin': '*',
+  },
+},
+```
 
-**在线案例**：https://zeroing.jd.com/micro-app/demo/
+以上微前端就可以正常渲染，实现了在vue基座应用中嵌入react子应用，效果如下：
+![](https://img13.360buyimg.com/imagetools/jfs/t1/184476/5/17467/173051/610a0db9E96b9f231/44eb0e4edb3769d1.png)
+
+更多详细配置可以查看[官网文档](https://zeroing.jd.com/micro-app/docs.html#/zh-cn/start)
+
+在线案例：https://zeroing.jd.com/micro-app/demo/
 
 # 🤝 参与共建
 如果你对这个项目感兴趣，欢迎提PR参与共建，也欢迎您 "Star" 支持一下 ^_^
