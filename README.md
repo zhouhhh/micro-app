@@ -87,7 +87,7 @@ export default routes
 </template>
 ```
 
-> url和子应用路由的关系请查看[这里](https://zeroing.jd.com/micro-app/docs.html#/zh-cn/route)
+> url和子应用路由的关系请查看[路由一章](https://zeroing.jd.com/micro-app/docs.html#/zh-cn/route)
 
 ## 子应用
 >  子应用react框架为例
