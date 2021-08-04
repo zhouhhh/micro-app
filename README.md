@@ -120,7 +120,7 @@ devServer: {
 ```
 
 以上微前端就可以正常渲染，实现了在vue基座应用中嵌入react子应用，效果如下：
-![](https://img13.360buyimg.com/imagetools/jfs/t1/184476/5/17467/173051/610a0db9E96b9f231/44eb0e4edb3769d1.png)
+![image](https://img12.360buyimg.com/imagetools/jfs/t1/196940/34/1541/38365/610a14fcE46c21374/c321b9f8fa50a8fc.png)
 
 更多详细配置可以查看[官网文档](https://zeroing.jd.com/micro-app/docs.html#/zh-cn/start)
 
