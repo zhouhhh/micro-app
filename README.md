@@ -39,7 +39,7 @@ micro-app与技术栈无关，也不和业务绑定，可以用于任何前端�
 微前端分为基座应用和子应用，我们分别列出基座应用和子应用需要进行的修改，具体介绍micro-app的使用方式。
 
 ## 基座应用
-> 基座应用vue框架为例
+> 基座应用以vue框架为例
 
 1、安装依赖
 ```bash
@@ -90,7 +90,7 @@ export default routes
 > url和子应用路由的关系请查看[路由一章](https://zeroing.jd.com/micro-app/docs.html#/zh-cn/route)
 
 ## 子应用
->  子应用react框架为例
+>  子应用以react框架为例
 
 1、添加路由前缀
 
