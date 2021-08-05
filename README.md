@@ -160,7 +160,7 @@ yarn start # 访问 http://localhost:3000
 <details>
 
   <summary>micro-app的优势在哪里？</summary>
-  上手简单、功能强大。
+  上手简单、侵入性低，只需改动少量的代码即可接入微前端，同时提供丰富的功能。
 
   具体细节请参考文章：[micro-app介绍](https://github.com/micro-zoe/micro-app/issues/8)
 
