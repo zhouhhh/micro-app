@@ -25,7 +25,7 @@
   </a>
 </p>
 
-English｜[简体中文](https://github.com/micro-zoe/micro-app/blob/master/README.zh-cn.md)｜[Discussions](https://github.com/micro-zoe/micro-app/discussions)｜[Gitter](https://gitter.im/zoe-community/zoe-room)
+[Discussions](https://github.com/micro-zoe/micro-app/discussions)｜[Gitter](https://gitter.im/zoe-community/zoe-room)
 
 # 📖简介
 [micro-app](https://github.com/micro-zoe/micro-app/issues/8)是一款基于类WebComponent进行渲染的微前端框架，不同于目前流行的开源框架，它从组件化的思维实现微前端，旨在降低上手难度、提升工作效率。它是目前市面上接入微前端成本最低的框架，并且提供了JS沙箱、样式隔离、元素隔离、预加载、资源地址补全、插件系统、数据通信等一系列完善的功能。
