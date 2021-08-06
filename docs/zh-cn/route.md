@@ -152,10 +152,27 @@ let app = new Vue({
 > vue-router@4设置baseURL的方式请查看 https://next.router.vuejs.org/
 
 
+### 应用之间如何跳转
+因为每个应用的路由实例都是不同的，路由实例只能控制自身，无法影响其它应用，要实现应用之间的跳转有两种方式：
 
-### 子应用之间如何跳转
-因为每个应用的路由实例都是不同的，每个应用只能在自己的`baseurl`之内跳转。
+### 1、history.pushState(replaceState)
+[history.pushState](https://developer.mozilla.org/zh-CN/docs/Web/API/History/pushState)和[history.replaceState](https://developer.mozilla.org/zh-CN/docs/Web/API/History/replaceState)可以直接修改浏览器地址，但是它们无法触发`popstate`事件，所以在跳转后需要主动触发一次`popstate`事件。
 
-跨应用跳转时推荐使用 [history.pushState](https://developer.mozilla.org/zh-CN/docs/Web/API/History/pushState) 进行跳转。
+例如：
+```js
+history.pushState(null, null, 'page2')
 
-也可以通过数据通信进行控制。
+// 主动触发一次popstate事件
+window.dispatchEvent(new PopStateEvent('popstate', { state: null }))
+```
+
+对于hash路由也同样适用
+```js
+history.pushState(null, null, '#/page2')
+
+// 主动触发一次popstate事件
+window.dispatchEvent(new PopStateEvent('popstate', { state: null }))
+```
+
+### 2、数据通信进行控制
+如基座下发指令控制子应用进行跳转，或者子应用向基座应用上传一个可以控制自身路由的函数。

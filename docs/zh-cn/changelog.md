@@ -15,6 +15,7 @@
 - **Bug Fix**
 
   - 🐞 修复了切换至预加载app时报app already exists错误
+  - 🐞 修复了地址补全对于a标签的错误处理
 
 - **Update**
 

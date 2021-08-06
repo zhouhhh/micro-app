@@ -56,8 +56,6 @@ function flatChildren (
     } else {
       if (/^(img|iframe)$/i.test(dom.tagName) && dom.hasAttribute('src')) {
         dom.setAttribute('src', CompletionPath(dom.getAttribute('src')!, app.url))
-      } else if (/^a$/i.test(dom.tagName) && dom.hasAttribute('href')) {
-        dom.setAttribute('href', CompletionPath(dom.getAttribute('href')!, app.url))
       }
     }
   }
