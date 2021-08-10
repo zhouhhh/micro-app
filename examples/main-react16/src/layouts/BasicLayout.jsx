@@ -36,20 +36,6 @@ const menuDataRender = (menuList) =>
     return Authorized.check(item.authority, localItem, null);
   });
 
-const defaultFooterDom = (
-  <DefaultFooter
-    copyright={`${new Date().getFullYear()} 京东零售-应用业务产品研发部`}
-    links={[
-      {
-        key: 'Micro App',
-        title: 'Micro App',
-        href: 'https://github.com/micro-zoe/micro-app/',
-        blankTarget: true,
-      },
-    ]}
-  />
-);
-
 const BasicLayout = (props) => {
   const {
     dispatch,
@@ -123,10 +109,6 @@ const BasicLayout = (props) => {
         );
       }}
       footerRender={() => {
-        if (settings.footerRender || settings.footerRender === undefined) {
-          return defaultFooterDom;
-        }
-
         return null;
       }}
       menuDataRender={menuDataRender}

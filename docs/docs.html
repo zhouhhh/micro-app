@@ -52,20 +52,6 @@
         '/zh-cn/_sidebar.md': '/_sidebar.md',
         '/zh-cn/_navbar.md': '/_navbar.md',
       },
-      plugins: [
-        function (hook, vm) {
-          var footer = [
-            // '<hr/>',
-            '<footer style="text-align: center;">',
-            '<span>micro-app &copy; 2021 京东零售-应用业务产品研发部</span>',
-            '</footer>'
-          ].join('')
-
-          hook.afterEach(function (html) {
-            return html + footer
-          })
-        }
-      ],
       copyCode: {
         buttonText : '复制代码',
         successText: '复制成功'

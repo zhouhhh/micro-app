@@ -1,0 +1,3 @@
+- [Gitter群聊](https://gitter.im/zoe-community/zoe-room)
+- [GitHub讨论组](https://github.com/micro-zoe/micro-app/discussions)
+- [BUG反馈](https://github.com/micro-zoe/micro-app/issues)

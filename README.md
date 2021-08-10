@@ -31,7 +31,7 @@
 English｜[简体中文](https://github.com/micro-zoe/micro-app/blob/master/README.zh-cn.md)｜[Discussions](https://github.com/micro-zoe/micro-app/discussions)｜[Gitter](https://gitter.im/zoe-community/zoe-room)
 
 # 📖Introduction
-[micro-app](https://github.com/micro-zoe/micro-app/issues/8) is a micro front-end framework for rendering based on WebComponent-like, different from the current popular open source framework, it realizes the micro front-end from the component thinking, aiming to reduce the difficulty of getting started and improve work efficiency. 
+[micro-app](https://github.com/micro-zoe/micro-app/issues/8) is a micro front-end framework for rendering based on WebComponent-like, it realizes the micro front-end from the component thinking, aiming to reduce the difficulty of getting started and improve work efficiency. 
 
 It is the lowest cost framework for accessing micro front-end, and provides a series of perfect functions such as JS sandbox, style isolation, element isolation, preloading, resource address completion, plugin system, data communication and so on.
 
@@ -183,7 +183,7 @@ The react base application is started by default. If you want to start the vue b
     headers: {
       'Access-Control-Allow-Origin': '*',
     },
-  },
+  }
   ```
 
   If it is a production environment, you can support cross-domain through [Configuration nginx](https://segmentfault.com/a/1190000012550346).

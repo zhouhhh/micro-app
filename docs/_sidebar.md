@@ -21,5 +21,5 @@
 - 其他
 
   - [常见问题](zh-cn/questions)
-  <!-- - [联系我们](zh-cn/contact-us) -->
+  - [讨论区](zh-cn/chat)
   - [更新日志](zh-cn/scopedchangelog)
