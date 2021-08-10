@@ -15,7 +15,7 @@
     <img src="https://img.shields.io/npm/l/@micro-zoe/micro-app.svg" alt="license"/>
   </a>
   <a href="https://makeapullrequest.com/">
-    <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs-welcome"/>
+    <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?color=blue" alt="PRs-welcome"/>
   </a>
   <a href="https://gitter.im/zoe-community/zoe-room">
     <img src="https://badges.gitter.im/Join%20Chat.svg" alt="gitter">
