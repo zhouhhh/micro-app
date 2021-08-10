@@ -14,6 +14,9 @@
   <a href="https://github.com/micro-zoe/micro-app/blob/master/LICENSE">
     <img src="https://img.shields.io/npm/l/@micro-zoe/micro-app.svg" alt="license"/>
   </a>
+  <a href="https://makeapullrequest.com/">
+    <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs-welcome"/>
+  </a>
   <a href="https://gitter.im/zoe-community/zoe-room">
     <img src="https://badges.gitter.im/Join%20Chat.svg" alt="gitter">
   </a>
@@ -194,4 +197,4 @@ The react base application is started by default. If you want to start the vue b
 </details>
 
 # License
-micro-app base on **MIT** license
+micro-app base on [MIT](https://github.com/micro-zoe/micro-app/blob/master/LICENSE) license
