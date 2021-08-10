@@ -28,9 +28,9 @@
 [English](https://github.com/micro-zoe/micro-app)｜简体中文｜[讨论组](https://github.com/micro-zoe/micro-app/discussions)｜[Gitter群聊](https://gitter.im/zoe-community/zoe-room)
 
 # 📖简介
-[micro-app](https://github.com/micro-zoe/micro-app/issues/8)是一款基于类WebComponent进行渲染的微前端框架，不同于目前流行的开源框架，它从组件化的思维实现微前端，旨在降低上手难度、提升工作效率。它是目前市面上接入微前端成本最低的框架，并且提供了JS沙箱、样式隔离、元素隔离、预加载、资源地址补全、插件系统、数据通信等一系列完善的功能。
+[micro-app](https://github.com/micro-zoe/micro-app/issues/8)是一款基于类WebComponent进行渲染的微前端框架，不同于目前流行的开源框架，它从组件化的思维实现微前端，旨在降低上手难度、提升工作效率。它是目前接入微前端成本最低的框架，并且提供了JS沙箱、样式隔离、元素隔离、预加载、资源地址补全、插件系统、数据通信等一系列完善的功能。
 
-micro-app与技术栈无关，也不和业务绑定，可以用于任何前端框架和业务。
+micro-app与技术栈无关，也不和业务绑定，可以用于任何前端框架。
 
 #### 概念图
 ![image](https://img10.360buyimg.com/imagetools/jfs/t1/168885/23/20790/54203/6084d445E0c9ec00e/d879637b4bb34253.png ':size=750')
@@ -81,7 +81,7 @@ export default routes
 <template>
   <div>
     <h1>子应用</h1>
-    <!-- name为应用名称，全局唯一，url为html地址-->
+    <!-- name为应用名称，全局唯一，url为html地址 -->
     <micro-app name='app1' url='http://localhost:3000/' baseurl='/my-page'></micro-app>
   </div>
 </template>
@@ -90,7 +90,7 @@ export default routes
 > url和子应用路由的关系请查看[路由一章](https://zeroing.jd.com/micro-app/docs.html#/zh-cn/route)
 
 ## 子应用
->  子应用以react框架为例
+> 子应用以react框架为例
 
 1、添加路由前缀
 
@@ -100,7 +100,7 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom'
 
 export default function AppRoute () {
   return (
-    // 👇 添加路由前缀，子应用可以通过window.__MICRO_APP_BASE_URL__获取基座下发的baseurl
+    // 👇 添加路由前缀，子应用可以通过window.__MICRO_APP_BASE_URL__获取基座应用下发的baseurl
     <BrowserRouter basename={window.__MICRO_APP_BASE_URL__ || '/'}>
       <Switch>
         ...
@@ -127,13 +127,11 @@ devServer: {
 
 更多详细配置可以查看[官网文档](https://zeroing.jd.com/micro-app/docs.html#/zh-cn/start)
 
-在线案例：https://zeroing.jd.com/micro-app/demo/
-
 # 🤝 参与共建
 如果你对这个项目感兴趣，欢迎提PR参与共建，也欢迎您 "Star" 支持一下 ^_^
 
 ### 本地运行
-1、下载项目
+1、克隆项目
 ```
 git clone https://github.com/micro-zoe/micro-app.git
 ```
@@ -150,12 +148,7 @@ yarn start # 访问 http://localhost:3000
 
 默认启动react基座应用，如果想启动vue基座应用，可以运行`yarn start:main-vue2`
 
-#### 你也可以使用 Gitpod 进行在线开发：
-<a href="https://gitpod.io/#https://github.com/micro-zoe/micro-app">
-  <img src="https://cangdu.org/img/open-in-gitpod.svg" alt="gitpod"/>
-</a>
-
-# 🤔常见问题
+# FAQ
 [问题汇总](https://zeroing.jd.com/micro-app/docs.html#/zh-cn/questions)
 <details>
 

@@ -88,15 +88,18 @@ myApp.addEventListener('error', () => {
 
 <!-- tabs:end -->
 
-### 子应用卸载
-子应用被卸载时`micro-app`会向子应用发送一个名为`unmount`的事件。
+### 在子应用中监听生命周期
+对于子应用只有两个生命周期，挂载和卸载。
 
-虽然在卸载时`micro-app`会自动清除子应用的全局副作用函数，如定时器、事件监听等，但仍有一些清除操作需要用户手动执行。
+**挂载**：子应用的js被执行则为挂载，所以不需要特殊的监听，一般在入口js文件中进行挂载相关操作。
+
+**卸载**：子应用被卸载时会接受到一个名为`unmount`的事件，在卸载时开发者需要对定时器、全局事件监听以及前端框架等副作用函数进行清除。
 
 ```js
 // 子应用中监听卸载事件
 window.addEventListener('unmount', function () {
   console.log('我被卸载了')
+  // react -- 卸载根组件
   ReactDOM.unmountComponentAtNode(document.getElementById('app'))
 })
 ```

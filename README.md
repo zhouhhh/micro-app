@@ -25,25 +25,27 @@
   </a>
 </p>
 
-[Discussions](https://github.com/micro-zoe/micro-app/discussions)｜[Gitter](https://gitter.im/zoe-community/zoe-room)
+English｜[简体中文](https://github.com/micro-zoe/micro-app/blob/master/README.zh-cn.md)｜[Discussions](https://github.com/micro-zoe/micro-app/discussions)｜[Gitter](https://gitter.im/zoe-community/zoe-room)
 
-# 📖简介
-[micro-app](https://github.com/micro-zoe/micro-app/issues/8)是一款基于类WebComponent进行渲染的微前端框架，不同于目前流行的开源框架，它从组件化的思维实现微前端，旨在降低上手难度、提升工作效率。它是目前市面上接入微前端成本最低的框架，并且提供了JS沙箱、样式隔离、元素隔离、预加载、资源地址补全、插件系统、数据通信等一系列完善的功能。
+# 📖Introduction
+[micro-app](https://github.com/micro-zoe/micro-app/issues/8) is a micro front-end framework for rendering based on WebComponent-like, different from the current popular open source framework, it realizes the micro front-end from the component thinking, aiming to reduce the difficulty of getting started and improve work efficiency. 
 
-micro-app与技术栈无关，也不和业务绑定，可以用于任何前端框架和业务。
+It is the lowest cost framework for accessing micro front-end, and provides a series of perfect functions such as JS sandbox, style isolation, element isolation, preloading, resource address completion, plugin system, data communication and so on.
 
-# 开始使用
-微前端分为基座应用和子应用，我们分别列出基座应用和子应用需要进行的修改，具体介绍micro-app的使用方式。
+The micro-app has nothing to do with the technology stack, nor is it tied to the business, and can be used in any front-end framework.
 
-## 基座应用
-> 基座应用以vue框架为例
+# Getting Start
+The micro front-end is divided into base application and sub application. We list the modifications required for base application and sub application respectively, and introduce the use of micro-app in detail.
 
-1、安装依赖
+## base application
+> The base application takes the vue framework as an example
+
+1、Install
 ```bash
 yarn add @micro-zoe/micro-app
 ```
 
-2、在入口处引入依赖
+2、import at the entrance
 ```js
 // main.js
 import microApp from '@micro-zoe/micro-app'
@@ -51,7 +53,7 @@ import microApp from '@micro-zoe/micro-app'
 microApp.start()
 ```
 
-3、分配一个路由给子应用
+3、Assign a route to the sub application
 ```js
 // router.js
 import Vue from 'vue'
@@ -62,7 +64,7 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    // 👇 非严格匹配，/my-page/xxx 都将匹配到 MyPage 组件
+    // 👇 Non-strict matching, /my-page/xxx will be matched to the MyPage component
     path: '/my-page/*', 
     name: 'my-page',
     component: MyPage,
@@ -72,24 +74,24 @@ const routes = [
 export default routes
 ```
 
-4、在`my-page`页面中使用组件
+4、Use components in `my-page` pages
 ```html
 <!-- my-page.vue -->
 <template>
   <div>
-    <h1>子应用</h1>
-    <!-- name为应用名称，全局唯一，url为html地址-->
+    <h1>sub application</h1>
+    <!-- name is the application name, globally unique, url is the html address -->
     <micro-app name='app1' url='http://localhost:3000/' baseurl='/my-page'></micro-app>
   </div>
 </template>
 ```
 
-> url和子应用路由的关系请查看[路由一章](https://zeroing.jd.com/micro-app/docs.html#/zh-cn/route)
+> Please refer to [Routing Chapter](https://zeroing.jd.com/micro-app/docs.html#/zh-cn/route) for the relationship between url and sub application routing
 
-## 子应用
->  子应用以react框架为例
+## sub application
+> The sub application takes the react framework as an example
 
-1、添加路由前缀
+1、Add basename for route
 
 ```js
 // router.js
@@ -97,7 +99,7 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom'
 
 export default function AppRoute () {
   return (
-    // 👇 添加路由前缀，子应用可以通过window.__MICRO_APP_BASE_URL__获取基座下发的baseurl
+    // 👇 the sub application can get the baseurl issued by the base application through window.__MICRO_APP_BASE_URL__
     <BrowserRouter basename={window.__MICRO_APP_BASE_URL__ || '/'}>
       <Switch>
         ...
@@ -107,7 +109,7 @@ export default function AppRoute () {
 }
 ```
 
-2、在webpack-dev-server的headers中设置跨域支持。
+2、Set cross-domain support in the headers of webpack-dev-server.
 ```js
 devServer: {
   headers: {
@@ -116,72 +118,63 @@ devServer: {
 },
 ```
 
-以上微前端就可以正常渲染，实现了在vue基座应用中嵌入react子应用，效果如下：
+Then micro front-end can be rendered normally, and the react sub application is embedded in the vue base application. The effect is as follows：
 
-![image](https://img12.360buyimg.com/imagetools/jfs/t1/196940/34/1541/38365/610a14fcE46c21374/c321b9f8fa50a8fc.png)
+![image](https://img10.360buyimg.com/imagetools/jfs/t1/188373/14/17696/41854/6111f4a0E532736ba/4b86f4f8e2044519.png)
 
-上面列出了react和vue框架的使用方式，它们是可以自由组合的，比如基座应用是react，子应用是vue，或者基座应用是vue，子应用是react，或者基座应用和子应用都是react、vue。 micro-app对前端框架没有限制，任何框架都可以作为基座应用嵌入任何类型框架的子应用。
+The above lists the usage of react and Vue framework. They can be combined freely. For example, the base application is react, the sub application is Vue, or the base application is Vue, the sub application is react, or both the base application and the sub application are react and Vue. The micro-app has no restrictions on the front-end framework, and any framework can be used as a base application to embed any type of sub application of the framework.
 
-更多详细配置可以查看[官网文档](https://zeroing.jd.com/micro-app/docs.html#/zh-cn/start)
+More detailed configuration can be viewed [Official website document](https://zeroing.jd.com/micro-app/docs.html#/zh-cn/start).
 
-在线案例：https://zeroing.jd.com/micro-app/demo/
+# 🤝 Participate in micro-app
+If you are interested in this project, you are welcome to mention PR, and also welcome your "Star" ^_^
 
-# 🤝 参与共建
-如果你对这个项目感兴趣，欢迎提PR参与共建，也欢迎您 "Star" 支持一下 ^_^
-
-### 本地运行
-1、下载项目
+### development
+1、Clone
 ```
 git clone https://github.com/micro-zoe/micro-app.git
 ```
 
-2、安装依赖
+2、Installation dependencies
 ```
 yarn bootstrap
 ```
 
-3、运行项目
+3、Run project
 ```
-yarn start # 访问 http://localhost:3000
+yarn start
 ```
 
-默认启动react基座应用，如果想启动vue基座应用，可以运行`yarn start:main-vue2`
+The react base application is started by default. If you want to start the vue base application, you can run: `yarn start:main-vue2`
 
-#### 你也可以使用 Gitpod 进行在线开发：
-<a href="https://gitpod.io/#https://github.com/micro-zoe/micro-app">
-  <img src="https://cangdu.org/img/open-in-gitpod.svg" alt="gitpod"/>
-</a>
-
-# 🤔常见问题
-[问题汇总](https://zeroing.jd.com/micro-app/docs.html#/zh-cn/questions)
+# FAQ
 <details>
 
-  <summary>micro-app的优势在哪里？</summary>
-  上手简单、侵入性低，只需改动少量的代码即可接入微前端，同时提供丰富的功能。
-
-  具体细节请参考文章：[micro-app介绍](https://github.com/micro-zoe/micro-app/issues/8)
+  <summary>What are the advantages of micro-app?</summary>
+  It is easy to use and low invasive. It only needs to change a small amount of code to access the micro front-end, and provides rich functions at the same time.
 
 </details>
 <details>
-  <summary>兼容性如何？</summary>
-  micro-app依赖于CustomElements和Proxy两个较新的API。
+  <summary>How compatible?</summary>
+  The micro-app relies on two newer APIs, CustomElements and Proxy.
 
-  对于不支持CustomElements的浏览器，可以通过引入polyfill进行兼容，详情可参考：[webcomponents/polyfills](https://github.com/webcomponents/polyfills/tree/master/packages/custom-elements)。
+  For browsers that do not support CustomElements, they can be compatible by introducing polyfills. For details, please refer to: [webcomponents/polyfills](https://github.com/webcomponents/polyfills/tree/master/packages/custom-elements)。
 
-  但是Proxy暂时没有做兼容，所以对于不支持Proxy的浏览器无法运行micro-app。
+  However, Proxy is not compatible for the time being, so the micro-app cannot be run on browsers that do not support Proxy.
 
-  浏览器兼容性可以查看：[Can I Use](https://caniuse.com/?search=Proxy)
+  Browser compatibility can be viewed: [Can I Use](https://caniuse.com/?search=Proxy)
 
-  总体如下：
-  - PC端：除了IE浏览器，其它浏览器基本兼容。
-  - 移动端：ios10+、android5+
+  The general is as follows:
+  - desktop: Except IE browser, other browsers are basically compatible.
+  - mobile: ios10+、android5+
 </details>
 
 <details>
-  <summary>子应用一定要支持跨域吗？</summary>
-  是的！
+  <summary>Must sub applications support cross-domain?</summary>
+  yes!
 
-  如果是开发环境，可以在webpack-dev-server中设置headers支持跨域。
+  If it is a development environment, you can set headers in webpack-dev-server to support cross-domain.
+
   ```js
   devServer: {
     headers: {
@@ -190,13 +183,14 @@ yarn start # 访问 http://localhost:3000
   },
   ```
 
-  如果是线上环境，可以通过[配置nginx](https://segmentfault.com/a/1190000012550346)支持跨域。
+  If it is a production environment, you can support cross-domain through [Configuration nginx](https://segmentfault.com/a/1190000012550346).
+
 </details>
 
 <details>
-  <summary>支持vite吗?</summary>
+  <summary>Does it support vite?</summary>
   
-  支持，详情请查看[适配vite](https://zeroing.jd.com/micro-app/docs.html#/zh-cn/other?id=_3%e3%80%81%e9%80%82%e9%85%8dvite)
+  Yes, please see [adapt vite](https://zeroing.jd.com/micro-app/docs.html#/zh-cn/other?id=_3%e3%80%81%e9%80%82%e9%85%8dvite) for details.
 </details>
 
 # License
