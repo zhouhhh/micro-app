@@ -28,7 +28,7 @@
 [English](https://github.com/micro-zoe/micro-app)｜简体中文｜[讨论组](https://github.com/micro-zoe/micro-app/discussions)｜[Gitter群聊](https://gitter.im/zoe-community/zoe-room)
 
 # 📖简介
-[micro-app](https://github.com/micro-zoe/micro-app/issues/8)是一款基于类WebComponent进行渲染的微前端框架，它从组件化的思维实现微前端，旨在降低上手难度、提升工作效率。它是目前接入微前端成本最低的框架，并且提供了JS沙箱、样式隔离、元素隔离、预加载、资源地址补全、插件系统、数据通信等一系列完善的功能。
+micro-app是京东零售推出的一款微前端框架，它基于类WebComponent进行渲染，从组件化的思维实现微前端，旨在降低上手难度、提升工作效率。它是目前接入微前端成本最低的框架，并且提供了JS沙箱、样式隔离、元素隔离、预加载、资源地址补全、插件系统、数据通信等一系列完善的功能。
 
 micro-app与技术栈无关，也不和业务绑定，可以用于任何前端框架。
 
