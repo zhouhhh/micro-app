@@ -128,7 +128,9 @@ devServer: {
 更多详细配置可以查看[官网文档](https://zeroing.jd.com/micro-app/docs.html#/zh-cn/start)
 
 # 🤝 参与共建
-如果你对这个项目感兴趣，欢迎提 pull request，也欢迎 "Star" 支持一下 ^_^
+如果您对这个项目感兴趣，欢迎提 pull request，也欢迎 "Star" 支持一下 ^_^
+
+如果您或您的团队正在使用，请务必[告诉我们](https://github.com/micro-zoe/micro-app/issues/35)
 
 ### 本地运行
 1、克隆项目
