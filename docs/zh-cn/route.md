@@ -3,7 +3,7 @@
 ### url属性和子应用路由的关系
 答：没有关系！
 
-micro-app的url属性指向html的地址，它只是用来获取html，不会对子应用产生影响。
+micro-app的url属性指向html的地址，它只是用来获取html。
 
 基座应用和子应用本质是在同一个页面渲染，所以影响到子应用路由的是浏览器地址。
 
@@ -13,7 +13,7 @@ micro-app的url属性指向html的地址，它只是用来获取html，不会对
 
 基座应用会匹配`page1`并渲染对应的组件，子应用也是一样，浏览器地址会同时影响到基座应用和子应用，因为每个应用都有一套自己的路由系统，它们是可以共存的，不会冲突。
 
-此时我们要渲染子应用`http://www.xxx.com/`的`page1`页面，那么url属性填写的不是`http://www.xxx.com/page1/`，而是`http://www.xxx.com/`。
+此时我们要渲染子应用`http://www.xxx.com/`的`page1`页面，那么url属性填写的是`http://www.xxx.com/`，而不是`http://www.xxx.com/page1/`。
 
 ```html
 // http://www.xxx.com/ 会兜底到 http://www.xxx.com/index.html
@@ -23,15 +23,27 @@ micro-app的url属性指向html的地址，它只是用来获取html，不会对
 
 ### 路由配置
 
-如果子应用是单页面应用，那么不需要关心路由的问题。
+路由配置非常容易出问题，下面列出了一些注意点：
 
-如果是子应用多页面，需要正确配置路由，否则容易出错，以下是需要注意的点：
-
+**路由类型**
 - 1、基座是hash路由，子应用也必须是hash路由
 - 2、基座是history路由，子应用可以是hash或history路由
-- 3、基座路由匹配的path不能使用严格匹配
-- 4、子应用根据基座路由分配的path添加路由前缀
-- 5、如果基座是history路由，子应用是hash路由，不需要设置路由前缀
+
+**路由前缀(baseurl)**
+- 1、如果基座是history路由，子应用是hash路由，不需要设置路由前缀
+- 2、vue-router在hash模式下不支持置base添加路由前缀，需要创建一个空的路由页面，将其它路由作为它的children
+
+```js
+const routes = [
+    {
+      path: window.__MICRO_APP_BASE_URL__ || '/',
+      component: Home,
+      children: [
+        // 其他的路由都写到这里
+      ],
+    },
+]
+```
 
 **示例**
 

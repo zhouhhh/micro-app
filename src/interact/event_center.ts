@@ -8,7 +8,7 @@ type eventInfo = {
 export default class EventCenter {
   eventList = new Map<string, eventInfo>()
 
-  // 判断名称是否正确
+  // whether the name is legal
   isLegalName (name: string): boolean {
     if (!name) {
       console.error(
@@ -21,10 +21,10 @@ export default class EventCenter {
   }
 
   /**
-   * 绑定监听函数
-   * @param name 事件名称
-   * @param f 绑定函数
-   * @param autoTrigger 在初次绑定监听函数时有缓存数据，是否需要主动触发一次，默认为false
+   * add listener
+   * @param name event name
+   * @param f listener
+   * @param autoTrigger If there is cached data when first bind listener, whether it needs to trigger, default is false
    */
   on (name: string, f: CallableFunction, autoTrigger = false): void {
     if (this.isLegalName(name)) {
@@ -42,7 +42,7 @@ export default class EventCenter {
         }
         this.eventList.set(name, eventInfo)
       } else if (autoTrigger && Object.getOwnPropertyNames(eventInfo.data).length) {
-        // 如果数据池中有数据，绑定时主动触发一次
+        // auto trigger when data not null
         f(eventInfo.data)
       }
 
@@ -50,7 +50,7 @@ export default class EventCenter {
     }
   }
 
-  // 解除绑定，但数据不清空
+  // remove listener, but the data is not cleared
   off (name: string, f?: CallableFunction): void {
     if (this.isLegalName(name)) {
       const eventInfo = this.eventList.get(name)
@@ -64,7 +64,7 @@ export default class EventCenter {
     }
   }
 
-  // 发送数据
+  // dispatch data
   dispatch (name: string, data: Record<PropertyKey, unknown>): void {
     if (this.isLegalName(name)) {
       if (toString.call(data) !== '[object Object]') {
@@ -74,7 +74,7 @@ export default class EventCenter {
       }
       let eventInfo = this.eventList.get(name)
       if (eventInfo) {
-        // 当数据不相等时才更新
+        // Update when the data is not equal
         if (eventInfo.data !== data) {
           eventInfo.data = data
           for (const f of eventInfo.callbacks) {
@@ -91,7 +91,7 @@ export default class EventCenter {
     }
   }
 
-  // 获取数据
+  // get data
   getData (name: string): Record<PropertyKey, unknown> | null {
     const eventInfo = this.eventList.get(name)
     return eventInfo?.data ?? null

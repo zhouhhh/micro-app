@@ -19,16 +19,16 @@ import {
 } from './load_event'
 import microApp from '../micro_app'
 
-// 全局script，跨应用复用
+// Global scripts, reuse across apps
 export const globalScripts = new Map<string, string>()
 const supportModuleScript = isSupportModuleScript()
 
 /**
- * 提取script标签
- * @param script script标签
- * @param parent 父级容器
- * @param app 实例
- * @param isDynamic 是否动态插入
+ * Extract script elements
+ * @param script script element
+ * @param parent parent element of script
+ * @param app app
+ * @param isDynamic dynamic insert
  */
 export function extractScriptElement (
   script: HTMLScriptElement,
@@ -45,7 +45,7 @@ export function extractScriptElement (
     (!supportModuleScript && script.type === 'module')
   ) {
     replaceComment = document.createComment(`${script.noModule ? 'noModule' : 'module'} script ignored by micro-app`)
-  } else if (src) { // 远程script
+  } else if (src) { // remote script
     src = CompletionPath(src, app.url)
     const info = {
       code: '',
@@ -62,7 +62,7 @@ export function extractScriptElement (
     } else {
       return { url: src, info }
     }
-  } else if (script.textContent) { // 内联script
+  } else if (script.textContent) { // inline script
     const nonceStr: string = createNonceStr()
     const info = {
       code: script.textContent,
@@ -90,9 +90,9 @@ export function extractScriptElement (
 }
 
 /**
- * 获取script远程资源
- * @param wrapElement 容器
- * @param app 实例
+ *  Get remote resources of script
+ * @param wrapElement htmlDom
+ * @param app app
  */
 export function fetchScriptsFromHtml (
   wrapElement: HTMLElement,
@@ -131,10 +131,10 @@ export function fetchScriptsFromHtml (
 }
 
 /**
- * 请求js成功，记录code值
- * @param url script地址
- * @param info 详情
- * @param data 资源内容
+ * fetch js succeeded, record the code value
+ * @param url script address
+ * @param info resource script info
+ * @param data code
  */
 export function fetchScriptSuccess (
   url: string,
@@ -149,9 +149,9 @@ export function fetchScriptSuccess (
 }
 
 /**
- * mount生命周期中执行js
- * @param scriptList html中的script列表
- * @param app 应用实例
+ * Execute js in the mount lifecycle
+ * @param scriptList script list
+ * @param app app
  */
 export function execScripts (scriptList: Map<string, sourceScriptInfo>, app: AppInterface): void {
   const scriptListEntries: Array<[string, sourceScriptInfo]> = Array.from(scriptList.entries())
@@ -184,11 +184,11 @@ export function execScripts (scriptList: Map<string, sourceScriptInfo>, app: App
 }
 
 /**
- * 获取动态创建的远程js
- * @param url js地址
+ * Get dynamically created remote script
+ * @param url script address
  * @param info info
- * @param app 应用
- * @param originScript 原script标签
+ * @param app app
+ * @param originScript origin script element
  */
 export function runDynamicScript (
   url: string,
@@ -242,12 +242,12 @@ export function runDynamicScript (
 }
 
 /**
- * 运行代码
- * @param url 文件地址
- * @param code js代码
- * @param app 应用实例
- * @param module 是否是module标签
- * @param isDynamic 动态创建的script标签
+ * run code
+ * @param url script address
+ * @param code js code
+ * @param app app
+ * @param module type='module' of script
+ * @param isDynamic dynamically created script
  */
 export function runScript (
   url: string,
@@ -274,11 +274,10 @@ export function runScript (
 }
 
 /**
- * 绑定js作用域
- * @param url js地址
- * @param code 代码内容
- * @param app 应用实例
- * @returns string
+ * bind js scope
+ * @param url script address
+ * @param code code
+ * @param app app
  */
 function bindScope (
   url: string,
@@ -296,12 +295,11 @@ function bindScope (
 }
 
 /**
- * 调用插件处理文件
- * @param url js地址
- * @param code 代码
- * @param appName 应用名称
- * @param plugins 插件列表
- * @returns string
+ * Call the plugin to process the file
+ * @param url script address
+ * @param code code
+ * @param appName app name
+ * @param plugins plugin list
  */
 function usePlugins (url: string, code: string, appName: string, plugins: plugins): string {
   if (toString.call(plugins.global) === '[object Array]') {

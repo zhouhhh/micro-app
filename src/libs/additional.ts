@@ -14,14 +14,14 @@ function unmountAppInline (): void {
   appInstanceMap.clear()
 }
 
-// 循环内嵌时子应用卸载后辈应用
+// if micro-app run in micro application, delete all next generation application when unmount event received
 export function listenUmountAppInline (): void {
   if (window.__MICRO_APP_ENVIRONMENT__) {
     window.addEventListener('unmount', unmountAppInline, false)
   }
 }
 
-// 解除监听
+// release listener
 export function replaseUnmountAppInline (): void {
   if (window.__MICRO_APP_ENVIRONMENT__) {
     window.removeEventListener('unmount', unmountAppInline, false)

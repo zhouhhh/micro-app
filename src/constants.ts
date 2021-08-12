@@ -3,7 +3,7 @@ export enum ObservedAttrName {
   URL = 'url',
 }
 
-// 应用状态
+// app status
 export enum appStatus {
   NOT_LOADED = 'NOT_LOADED',
   LOADING_SOURCE_CODE = 'LOADING_SOURCE_CODE',
@@ -14,7 +14,7 @@ export enum appStatus {
   UNMOUNT = 'UNMOUNT',
 }
 
-// 生命周期
+// lifecycles
 export enum lifeCycles {
   CREATED = 'created',
   BEFOREMOUNT = 'beforemount',

@@ -10,8 +10,8 @@ enum CSSRuleType {
 }
 
 /**
- * 绑定css作用域
- * 特殊情况:
+ * Bind css scope
+ * Special case:
  * 1. html-abc | abc-html
  * 2. html body.abc
  * 3. abchtml | htmlabc | abcbody | bodyabc
@@ -37,7 +37,7 @@ function scopedStyleRule (rule: CSSStyleRule, prefix: string): string {
   return cssText.replace(/^[\s\S]+{/, (selectors) => {
     return selectors.replace(/(^|,)([^,]+)/g, (all, $1, $2) => {
       if (builtInRootSelectorRE.test($2)) {
-        // body[name=xx]|body.xx|body#xx 等都不需要转换
+        // body[name=xx]|body.xx|body#xx etc. do not need to handle
         return all.replace(builtInRootSelectorRE, prefix)
       }
       return `${$1} ${prefix} ${$2.replace(/^\s*/, '')}`
@@ -46,11 +46,11 @@ function scopedStyleRule (rule: CSSStyleRule, prefix: string): string {
 }
 
 /**
- * 补全静态资源地址
- * @param cssText css内容
- * @param baseURI 域名
- * @param textContent 原始内容
- * @param linkpath link资源地址，如果是link转换为的style，会带有linkpath
+ * Complete static resource address
+ * @param cssText css content
+ * @param baseURI domain name
+ * @param textContent origin content
+ * @param linkpath link resource address, if it is the style converted from link, it will have linkpath
  */
 function scopedHost (
   cssText: string,
@@ -83,7 +83,7 @@ function scopedHost (
   })
 }
 
-// 处理media 和 supports
+// handle media and supports
 function scopedPackRule (
   rule: CSSMediaRule | CSSSupportsRule,
   prefix: string,
@@ -94,9 +94,9 @@ function scopedPackRule (
 }
 
 /**
- * 依次处理每个cssRule
+ * Process each cssrule
  * @param rules cssRule
- * @param prefix 前缀
+ * @param prefix prefix as micro-app[name=xxx]
  */
 function scopedRule (rules: CSSRule[], prefix: string): string {
   let result = ''
@@ -121,7 +121,7 @@ function scopedRule (rules: CSSRule[], prefix: string): string {
 }
 
 /**
- * 绑定css通用方法
+ * common method of bind CSS
  */
 function commonAction (
   templateStyle: HTMLStyleElement,
@@ -139,9 +139,9 @@ function commonAction (
     linkpath,
   )
   /**
-   * 解决部分safari浏览器下content引号丢失的问题
-   * 参考文档 https://developer.mozilla.org/zh-CN/docs/Web/CSS/content
-   * 如果依然有问题，推荐使用attr()方案降级处理
+   * Solve the problem of missing content quotes in some Safari browsers
+   * docs: https://developer.mozilla.org/zh-CN/docs/Web/CSS/content
+   * If there are still problems, it is recommended to use the attr()
    */
   if (isSafari()) {
     result = result.replace(/([;{]\s*content:\s*)([^\s"][^";}]*)/gm, (all, $1, $2) => {
@@ -160,9 +160,9 @@ function commonAction (
 let templateStyle: HTMLStyleElement = rawDocument.body.querySelector('#micro-app-template-style')
 
 /**
- * 绑定css作用域
- * @param styleElement 目标style元素
- * @param appName 应用名称
+ * scopedCSS
+ * @param styleElement target style element
+ * @param appName app name
  */
 export default function scopedCSS (styleElement: HTMLStyleElement, appName: string): HTMLStyleElement {
   const app = appInstanceMap.get(appName)
@@ -182,7 +182,7 @@ export default function scopedCSS (styleElement: HTMLStyleElement, appName: stri
     } else {
       const observer = new MutationObserver(function () {
         observer.disconnect()
-        // styled-component 暂时不处理
+        // styled-component will not be processed temporarily
         if (
           (!styleElement.textContent && styleElement.sheet?.cssRules?.length) ||
           styleElement.hasAttribute('data-styled')

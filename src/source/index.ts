@@ -6,7 +6,7 @@ import { extractScriptElement, fetchScriptsFromHtml } from './scripts'
 import scopedCSS from './scoped_css'
 
 /**
- * 将html字符串转换为dom
+ * transform html string to dom
  * @param str string dom
  */
 function getWrapElement (str: string): HTMLElement {
@@ -18,10 +18,10 @@ function getWrapElement (str: string): HTMLElement {
 }
 
 /**
- * 递归处理每一个子元素
- * @param parent 父元素
- * @param app 应用实例
- * @param microAppHead micro-app-head标签
+ * Recursively process each child element
+ * @param parent parent element
+ * @param app app
+ * @param microAppHead micro-app-head element
  */
 function flatChildren (
   parent: HTMLElement,
@@ -62,9 +62,9 @@ function flatChildren (
 }
 
 /**
- * 提取link和script，绑定style作用域
- * @param htmlStr html字符串
- * @param app 应用实例
+ * Extract link and script, bind style scope
+ * @param htmlStr html string
+ * @param app app
  */
 function extractSourceDom (htmlStr: string, app: AppInterface) {
   const wrapElement = getWrapElement(htmlStr)
@@ -95,8 +95,8 @@ function extractSourceDom (htmlStr: string, app: AppInterface) {
 }
 
 /**
- * 提取并格式化html
- * @param app 应用实例
+ * Get and format html
+ * @param app app
  */
 export default function extractHtml (app: AppInterface): void {
   fetchSource(app.url, app.name, { cache: 'no-cache' }).then((htmlStr: string) => {

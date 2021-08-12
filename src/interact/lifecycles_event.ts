@@ -17,11 +17,11 @@ function eventHandler (event: CustomEvent, element: HTMLElement): void {
 }
 
 /**
- * 发送生命周期事件
- * @param element 容器元素
- * @param appName 应用名称
- * @param lifecycleName 生命周期名称
- * @param error 错误钩子的参数
+ * dispatch lifeCycles event
+ * @param element container
+ * @param appName app.name
+ * @param lifecycleName lifeCycle name
+ * @param error param from error hook
  */
 export default function dispatchLifecyclesEvent (
   element: HTMLElement,
@@ -49,7 +49,7 @@ export default function dispatchLifecyclesEvent (
   })
 
   eventHandler(event, element)
-  // 全局钩子
+  // global hooks
   // @ts-ignore
   if (typeof microApp.lifeCycles?.[lifecycleName] === 'function') {
     // @ts-ignore
@@ -60,8 +60,8 @@ export default function dispatchLifecyclesEvent (
 }
 
 /**
- * 向微应用发送卸载事件
- * @param appName 应用名称
+ * Dispatch unmount event to micro app
+ * @param appName app.name
  */
 export function dispatchUnmountToMicroApp (appName: string): void {
   const event = new CustomEvent(`unmount-${appName}`)

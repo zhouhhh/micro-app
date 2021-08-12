@@ -1,6 +1,7 @@
 import type { microWindowType } from '@micro-app/types'
 import { getCurrentAppName, formatLogMessage } from '../libs/utils'
 
+// save raw methods
 const rawWindowAddEventListener = window.addEventListener
 const rawWindowRemoveEventListener = window.removeEventListener
 const rawSetInterval = window.setInterval
@@ -11,11 +12,11 @@ const rawClearTimeout = window.clearTimeout
 const rawDocumentAddEventListener = document.addEventListener
 const rawDocumentRemoveEventListener = document.removeEventListener
 
-// document.onclick绑定列表，每个应用的绑定函数是唯一的
+// document.onclick binding list, the binding function of each application is unique
 const documentClickListMap = new Map<string, unknown>()
 let hasRewriteDocumentOnClick = false
 /**
- * 重写document.onclick，只执行一次
+ * Rewrite document.onclick and execute it only once
  */
 function overwriteDocumentOnClick (): void {
   hasRewriteDocumentOnClick = true
@@ -63,7 +64,7 @@ function overwriteDocumentOnClick (): void {
 }
 
 /**
- * document 的事件是全局共享的，在子应用卸载时我们需要清空这些副作用事件绑定
+ * The document event is globally, we need to clear these event bindings when micro application unmounted
  */
 const documentEventListenerMap = new Map<string, Map<string, Set<EventListenerOrEventListenerObject>>>()
 export function effectDocumentEvent (): void {
@@ -111,17 +112,16 @@ export function effectDocumentEvent (): void {
   }
 }
 
-// 清空document事件代理
+// Clear the document event agent
 export function releaseEffectDocumentEvent (): void {
   document.addEventListener = rawDocumentAddEventListener
   document.removeEventListener = rawDocumentRemoveEventListener
 }
 
 /**
- * 格式化特定事件名称
- * @param type 事件名称
- * @param microWindow 原型对象
- * @returns string
+ * Format event name
+ * @param type event name
+ * @param microWindow micro window
  */
 function formatEventType (type: string, microWindow: microWindowType): string {
   if (type === 'unmount') {
@@ -131,8 +131,8 @@ function formatEventType (type: string, microWindow: microWindowType): string {
 }
 
 /**
- * 注册和监听副作用事件
- * @param microWindow 原型对象
+ * Rewrite side-effect events
+ * @param microWindow micro window
  */
 export default function effect (microWindow: microWindowType): CallableFunction {
   const eventListenerMap = new Map<string, Set<EventListenerOrEventListenerObject>>()
@@ -198,7 +198,7 @@ export default function effect (microWindow: microWindowType): CallableFunction 
   }
 
   return () => {
-    // 清空window绑定事件
+    // Clear window binding events
     if (eventListenerMap.size) {
       eventListenerMap.forEach((listenerList, type) => {
         if (listenerList.size) {
@@ -210,7 +210,7 @@ export default function effect (microWindow: microWindowType): CallableFunction 
       eventListenerMap.clear()
     }
 
-    // 清空定时器
+    // Clear timers
     if (intervalIdList.size) {
       intervalIdList.forEach((intervalId: number) => {
         rawClearInterval(intervalId)
@@ -227,10 +227,10 @@ export default function effect (microWindow: microWindowType): CallableFunction 
 
     const appName = microWindow.__MICRO_APP_NAME__
 
-    // 清空当前子应用通过document.onclick绑定的函数
+    // Clear the function bound by micro application through document.onclick
     documentClickListMap.delete(appName)
 
-    // 清空document绑定事件
+    // Clear document binding event
     const documentAppListenersMap = documentEventListenerMap.get(appName)
     if (documentAppListenersMap) {
       documentAppListenersMap.forEach((listenerList, type) => {

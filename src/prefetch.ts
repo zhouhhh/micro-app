@@ -24,22 +24,20 @@ function filterPreFetchTarget<T extends prefetchParam> (apps: T[]): T[] {
 }
 
 /**
- * 预加载
  * preFetch([
  *  {
  *    name: string,
  *    url: string,
- *    disableScopecss: boolean,
- *    disableSandbox: boolean,
- *    macro: boolean,
- *    shadowDOM: boolean,
+ *    disableScopecss?: boolean,
+ *    disableSandbox?: boolean,
+ *    macro?: boolean,
  *  },
  *  ...
  * ])
- * 注意：
- *  1、预加载是异步的，在浏览器空闲时才会执行
- *  2、预加载的 disableScopecss、disableSandbox、macro、shadowDOM 和micro-app组件要保持一致，如果冲突，谁先执行则以谁为准
- * @param apps 应用列表
+ * Note:
+ *  1: preFetch is asynchronous and is performed only when the browser is idle
+ *  2: disableScopecss, disableSandbox, macro must be same with micro-app element, if conflict, the one who executes first shall prevail
+ * @param apps micro apps
  */
 export default function preFetch (apps: prefetchParamList): void {
   requestIdleCallback(() => {
@@ -49,10 +47,7 @@ export default function preFetch (apps: prefetchParamList): void {
       const app = new CreateApp({
         name: item.name,
         url: item.url,
-        scopecss: !(
-          (item.disableScopecss ?? microApp.disableScopecss) ||
-          (item.shadowDOM ?? microApp.shadowDOM)
-        ),
+        scopecss: !(item.disableScopecss ?? microApp.disableScopecss),
         useSandbox: !(item.disableSandbox ?? microApp.disableSandbox),
         macro: item.macro ?? microApp.macro,
       })

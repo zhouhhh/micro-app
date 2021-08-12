@@ -3,7 +3,7 @@ import React from 'react'
 
 type MicroElementType = HTMLElement & Record<string, unknown>
 
-// 生命周期事件
+// lifecycles
 const eventLifeCycles = ['oncreated', 'onbeforemount', 'onmounted', 'onunmount', 'onerror', 'ondatachange']
 
 export default function jsxCustomEvent (
@@ -14,7 +14,7 @@ export default function jsxCustomEvent (
   const newProps = Object.assign({}, props)
 
   if (/^micro-app(-\S+)?/.test(type as string) && props) {
-    // 初始化和卸载、更新时都会执行
+    // ref will call when create, update, unmount
     newProps.ref = (element: MicroElementType | null) => {
       if (typeof props.ref === 'function') {
         props.ref(element)
@@ -22,9 +22,9 @@ export default function jsxCustomEvent (
         (props.ref as any).current = element
       }
 
-      // 卸载和更新时，element为null
+      // when unmount and update the element is null
       if (element) {
-        // 前后数据不同时才更新数据，保持和其它框架(如vue)一致
+        // Update data when the prev and next data are different
         if (toString.call(props.data) === '[object Object]' && element.data !== props.data) {
           element.data = props.data
         }

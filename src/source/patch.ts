@@ -26,6 +26,7 @@ declare global {
   }
 }
 
+// save raw methods
 const rawSetAttribute = Element.prototype.setAttribute
 const rawAppendChild = Node.prototype.appendChild
 const rawInsertBefore = Node.prototype.insertBefore
@@ -44,14 +45,14 @@ const rawGetElementsByClassName = Document.prototype.getElementsByClassName
 const rawGetElementsByTagName = Document.prototype.getElementsByTagName
 const rawGetElementsByName = Document.prototype.getElementsByName
 
-// 记录元素与映射元素
+// Record element and map element
 const dynamicElementInMicroAppMap = new WeakMap<Node, Element | Comment>()
 
 /**
- * 处理新建的node，格式化style、link、script标签
- * @param parent 父元素
- * @param child 新增的元素
- * @param app 应用实例
+ * Process the new node and format the style, link and script element
+ * @param parent parent node
+ * @param child new node
+ * @param app app
  */
 function handleNewNode (parent: Node, child: Node, app: AppInterface): Node {
   if (child instanceof HTMLStyleElement) {
@@ -101,11 +102,11 @@ function handleNewNode (parent: Node, child: Node, app: AppInterface): Node {
     )
 
     if (url && info) {
-      if (info.code) { // 内联script
+      if (info.code) { // inline script
         const replaceElement = runScript(url, info.code, app, info.module, true)
         dynamicElementInMicroAppMap.set(child, replaceElement)
         return replaceElement
-      } else { // 外部script
+      } else { // remote script
         const replaceElement = runDynamicScript(url, info, app, child)
         dynamicElementInMicroAppMap.set(child, replaceElement)
         return replaceElement
@@ -120,12 +121,12 @@ function handleNewNode (parent: Node, child: Node, app: AppInterface): Node {
 }
 
 /**
- * 针对插入head和body的元素进行处理，其它情况正常执行
- * @param app 实例
- * @param method 原方法
- * @param parent 父元素
- * @param targetChild 经过格式化的目标元素
- * @param passiveChild insertBefore replaceChild的第二个参数
+ * Handle the elements inserted into head and body, and execute normally in other cases
+ * @param app app
+ * @param method raw method
+ * @param parent parent node
+ * @param targetChild target node
+ * @param passiveChild second param of insertBefore and replaceChild
  */
 function invokePrototypeMethod (
   app: AppInterface,
@@ -135,14 +136,14 @@ function invokePrototypeMethod (
   passiveChild?: Node | null,
 ): any {
   /**
-   * 如果passiveChild不是子元素，则 insertBefore replaceChild 会有问题，此时降级处理为 appendchild
-   * 类似：document.head.insertBefore(targetChild, document.head.childNodes[0])
+   * If passiveChild is not the child node, insertBefore replaceChild will have a problem, at this time, it will be degraded to appendChild
+   * E.g: document.head.insertBefore(targetChild, document.head.childNodes[0])
    */
   if (parent instanceof HTMLHeadElement) {
     const microAppHead = app.container!.querySelector('micro-app-head')!
     /**
-     * 1、passiveChild 存在，则必然为 insertBefore 或 replaceChild
-     * 2、removeChild时，targetChild不一定在microAppHead或者head中
+     * 1. If passivechild exists, it must be insertBefore or replacechild
+     * 2. When removeChild, targetChild may not be in microAppHead or head
      */
     if (passiveChild && !microAppHead.contains(passiveChild)) {
       return rawAppendChild.call(microAppHead, targetChild)
@@ -175,17 +176,17 @@ function invokePrototypeMethod (
   return rawMethod.call(parent, targetChild, passiveChild)
 }
 
-// 获取映射元素
+// Get the map element
 function getMappingNode (node: Node): Node {
   return dynamicElementInMicroAppMap.get(node) ?? node
 }
 
 /**
- * 新增元素通用处理方法
- * @param parent 父元素
- * @param newChild 新增元素
- * @param passiveChild 可能存在的passive元素
- * @param rawMethod 原方法
+ * method of handle new node
+ * @param parent parent node
+ * @param newChild new node
+ * @param passiveChild passive node
+ * @param rawMethod raw method
  */
 function commonElementHander (
   parent: Node,
@@ -226,12 +227,12 @@ function commonElementHander (
 }
 
 /**
- * 重写元素原型链方法
+ * Rewrite element prototype method
  */
 export function patchElementPrototypeMethods (): void {
   patchDocument()
 
-  // 重写setAttribute
+  // Rewrite setAttribute
   Element.prototype.setAttribute = function setAttribute (key: string, value: string): void {
     if (/^micro-app(-\S+)?/i.test(this.tagName) && key === 'data') {
       if (toString.call(value) === '[object Object]') {
@@ -263,7 +264,7 @@ export function patchElementPrototypeMethods (): void {
     }
   }
 
-  // 添加元素👇
+  // prototype methods of add element👇
   Node.prototype.appendChild = function appendChild<T extends Node> (newChild: T): T {
     return commonElementHander(this, newChild, null, rawAppendChild)
   }
@@ -293,7 +294,7 @@ export function patchElementPrototypeMethods (): void {
     }
   }
 
-  // 删除元素👇
+  // prototype methods of delete element👇
   Node.prototype.removeChild = function removeChild<T extends Node> (oldChild: T): T {
     if (oldChild?.__MICRO_APP_NAME__) {
       const app = appInstanceMap.get(oldChild.__MICRO_APP_NAME__)
@@ -313,8 +314,8 @@ export function patchElementPrototypeMethods (): void {
 }
 
 /**
- * 将微应用中新建的元素打标
- * @param element 新建的元素
+ * Mark the newly created element in the micro application
+ * @param element new element
  */
 function markElement <T extends { __MICRO_APP_NAME__: string }> (element: T): T {
   const appName = getCurrentAppName()
@@ -324,9 +325,9 @@ function markElement <T extends { __MICRO_APP_NAME__: string }> (element: T): T 
   return element
 }
 
-// document相关方法
+// methods of document
 function patchDocument () {
-  // 创建元素👇
+  // create element 👇
   Document.prototype.createElement = function createElement (
     tagName: string,
     options?: ElementCreationOptions,
@@ -349,7 +350,7 @@ function patchDocument () {
     return markElement(element)
   }
 
-  // 查询元素👇
+  // query element👇
   function querySelector (selectors: string): any {
     const appName = getCurrentAppName()
     if (!appName || selectors === 'head' || selectors === 'body') {
@@ -369,7 +370,7 @@ function patchDocument () {
   Document.prototype.querySelector = querySelector
   Document.prototype.querySelectorAll = querySelectorAll
 
-  // querySelector 不支持数字开头
+  // querySelector does not support the beginning of a number
   Document.prototype.getElementById = function getElementById (key: string): HTMLElement | null {
     const appName = getCurrentAppName()
     if (!appName || /^\d/.test(key)) {
@@ -420,7 +421,7 @@ function releasePatchDocument (): void {
   Document.prototype.getElementsByName = rawGetElementsByName
 }
 
-// 解除绑定
+// release patch
 export function releasePatches (): void {
   setCurrentAppName(null)
   releasePatchDocument()
@@ -433,7 +434,7 @@ export function releasePatches (): void {
   Element.prototype.prepend = rawPrepend
 }
 
-// 设置micro-app、micro-app-body的样式
+// Set the style of micro-app-head and micro-app-body
 let hasRejectMicroAppStyle = false
 export function rejectMicroAppStyle (): void {
   if (!hasRejectMicroAppStyle) {

@@ -14,9 +14,6 @@
   <a href="https://github.com/micro-zoe/micro-app/blob/master/LICENSE">
     <img src="https://img.shields.io/npm/l/@micro-zoe/micro-app.svg" alt="license"/>
   </a>
-  <a href="https://makeapullrequest.com/">
-    <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?color=blue" alt="PRs-welcome"/>
-  </a>
   <a href="https://gitter.im/zoe-community/zoe-room">
     <img src="https://badges.gitter.im/Join%20Chat.svg" alt="gitter">
   </a>
@@ -95,7 +92,7 @@ export default routes
 ## 子应用
 > 子应用以react框架为例
 
-1、添加路由前缀
+1、添加路由前缀(如果基座应用是history路由，子应用是hash路由，不需要设置路由前缀，这一步可以省略)
 
 ```js
 // router.js

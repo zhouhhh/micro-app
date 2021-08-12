@@ -35,5 +35,5 @@ export default defineConfig({
     outDir: 'vite',
   },
   clearScreen: false,
-  base: `${process.env.NODE_ENV === 'production' ? 'https://cangdu.org' : ''}/micro-app/vite/`,
+  base: `${process.env.NODE_ENV === 'production' ? 'https://zeroing.jd.com' : ''}/micro-app/vite/`,
 })

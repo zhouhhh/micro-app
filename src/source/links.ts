@@ -15,16 +15,16 @@ import {
   dispatchOnErrorEvent,
 } from './load_event'
 
-// 全局link，跨应用复用
+// Global links, reuse across apps
 export const globalLinks = new Map<string, string>()
 
 /**
- * 提取link标签
- * @param link link标签
- * @param parent link父级容器
- * @param app 实例
- * @param microAppHead micro-app-head标签，初始化时必传
- * @param isDynamic 是否是动态插入
+ * Extract link elements
+ * @param link link element
+ * @param parent parent element of link
+ * @param app app
+ * @param microAppHead micro-app-head element
+ * @param isDynamic dynamic insert
  */
 export function extractLinkFromHtml (
   link: HTMLLinkElement,
@@ -41,7 +41,7 @@ export function extractLinkFromHtml (
     if (!isDynamic) {
       replaceComment = document.createComment(`the link with href=${href} move to micro-app-head as style element`)
       const placeholderComment = document.createComment(`placeholder for link with href=${href}`)
-      // style标签统一放入microAppHead
+      // all style elements insert into microAppHead
       microAppHead!.appendChild(placeholderComment)
       app.source.links.set(href, {
         code: '',
@@ -70,9 +70,9 @@ export function extractLinkFromHtml (
 }
 
 /**
- * 获取link远程资源
- * @param wrapElement 容器
- * @param app 应用实例
+ * Get link remote resources
+ * @param wrapElement htmlDom
+ * @param app app
  * @param microAppHead micro-app-head
  */
 export function fetchLinksFromHtml (
@@ -103,12 +103,12 @@ export function fetchLinksFromHtml (
 }
 
 /**
- * 请求link资源成功，将placeholder替换为style标签
- * @param url 资源地址
- * @param info 资源详情
- * @param data 资源内容
+ * fetch link succeeded, replace placeholder with style tag
+ * @param url resource address
+ * @param info resource link info
+ * @param data code
  * @param microAppHead micro-app-head
- * @param app 应用实例
+ * @param app app
  */
 export function fetchLinkSuccess (
   url: string,
@@ -132,12 +132,12 @@ export function fetchLinkSuccess (
 }
 
 /**
- * 获取动态创建的link资源
- * @param url link地址
+ * get css from dynamic link
+ * @param url link address
  * @param info info
- * @param app 应用实例
- * @param originLink 原link标签
- * @param replaceStyle style映射
+ * @param app app
+ * @param originLink origin link element
+ * @param replaceStyle style element which replaced origin link
  */
 export function foramtDynamicLink (
   url: string,

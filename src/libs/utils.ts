@@ -27,8 +27,8 @@ export const rawDocument = new Function('return document')()
 export const version = '__VERSION__'
 
 /**
- * 格式化log信息
- * @param msg log信息
+ * Format log msg
+ * @param msg log msg
  */
 export function formatLogMessage (msg: string): string {
   if (typeof msg === 'string') {
@@ -39,32 +39,32 @@ export function formatLogMessage (msg: string): string {
 }
 
 /**
- * 延迟执行
- * @param fn 回调函数
- * @param args 入参
+ * async execution
+ * @param fn callback
+ * @param args params
  */
 export function defer (fn: Func, ...args: any[]): void {
   Promise.resolve().then(fn.bind(null, ...args))
 }
 
 /**
- * 添加地址协议
- * @param url 地址
+ * Add address protocol
+ * @param url address
  */
 export function addProtocol (url: string): string {
   return url.startsWith('//') ? `${location.protocol}${url}` : url
 }
 
 /**
- * 格式化URL地址
- * @param url 地址
+ * Format URL address
+ * @param url address
  */
 export function formatURL (url: string | null): string {
   if (typeof url !== 'string' || !url) return ''
 
   try {
     const { origin, pathname } = new URL(addProtocol(url))
-    // 如果以.html结尾，则不需要补全 /
+    // If it ends with .html, don’t need to add /
     if (/\.html$/.test(pathname)) {
       return `${origin}${pathname}`
     }
@@ -77,7 +77,7 @@ export function formatURL (url: string | null): string {
 }
 
 /**
- * 获取的地址的有效域名，如 https://xxx/xx/xx.html 格式化为 https://xxx/xx/
+ * Get valid address, such as https://xxx/xx/xx.html to https://xxx/xx/
  * @param url app.url
  */
 export function getEffectivePath (url: string): string {
@@ -91,9 +91,9 @@ export function getEffectivePath (url: string): string {
 }
 
 /**
- * 补全静态资源相对地址
- * @param path 静态资源地址
- * @param baseURI 基础地址 -- app.url
+ * Complete address
+ * @param path address
+ * @param baseURI base url(app.url)
  */
 export function CompletionPath (path: string, baseURI: string): string {
   if (/^((((ht|f)tps?)|file):)?\/\//.test(path)) return path
@@ -104,8 +104,9 @@ export function CompletionPath (path: string, baseURI: string): string {
 }
 
 /**
- * 获取link资源所在文件夹，用于补全css中的相对地址
- * @param linkpath link地址
+ * Get the folder where the link resource is located,
+ * which is used to complete the relative address in the css
+ * @param linkpath full link address
  */
 export function getLinkFileDir (linkpath: string): string {
   const pathArr = linkpath.split('/')
@@ -114,11 +115,11 @@ export function getLinkFileDir (linkpath: string): string {
 }
 
 /**
- * promise流
- * @param promiseList promise数组，必传
- * @param successsCb 成功回调，必传
- * @param errorCb 失败回调，必传
- * @param finallyCb 结束回调，必传
+ * promise stream
+ * @param promiseList promise list
+ * @param successsCb success callback
+ * @param errorCb failed callback
+ * @param finallyCb finally callback
  */
 export function promiseStream <T> (
   promiseList: Array<Promise<T> | T>,
@@ -157,18 +158,18 @@ export function promiseStream <T> (
   })
 }
 
-// 检测浏览器是否支持module script
+// Check whether the browser supports module script
 export function isSupportModuleScript (): boolean {
   const s = document.createElement('script')
   return 'noModule' in s
 }
 
-// 创建随机symbol字符串
+// Create a random symbol string
 export function createNonceStr (): string {
   return Math.random().toString(36).substr(2, 15)
 }
 
-// 数组去重
+// Array deduplication
 export function unique (array: any[]): any[] {
   return array.filter(function (this: Record<PropertyKey, unknown>, item) {
     return item in this ? false : (this[item] = true)
@@ -190,35 +191,35 @@ export const requestIdleCallback = window.requestIdleCallback ||
   }
 
 /**
- * 记录当前正在运行的appName
+ * Record the currently running app.name
  */
 let currentMicroAppName: string | null = null
 export function setCurrentAppName (appName: string | null): void {
   currentMicroAppName = appName
 }
 
-// 获取当前运行的应用名称
+// get the currently running app.name
 export function getCurrentAppName (): string | null {
   return currentMicroAppName
 }
 
-// 清除appName绑定
+// Clear appName
 export function removeDomScope (): void {
   setCurrentAppName(null)
 }
 
-// 是否是safari浏览器
+// is safari browser
 export function isSafari (): boolean {
   return /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent)
 }
 
-// 是否是函数类型
+// is function
 export function isFunction (target: unknown): boolean {
   return typeof target === 'function'
 }
 
 /**
- * 创建纯净的无绑定的元素
+ * Create pure elements
  */
 export function pureCreateElement<K extends keyof HTMLElementTagNameMap> (tagName: K, options?: ElementCreationOptions): HTMLElementTagNameMap[K] {
   const element = rawDocument.createElement(tagName, options)

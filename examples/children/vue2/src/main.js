@@ -11,16 +11,10 @@ import App from './App.vue'
 Vue.config.productionTip = false
 Vue.use(ElementUI)
 
-
-function getBaseName () {
-  // 基座是history路由，子应用是hash路由，不需要设置路由前缀
-  return '/'
-}
-
 const router = new VueRouter({
-  options: {
-    base: getBaseName(),
-  },
+  // vue-router在hash模式下不支持base，可以用一个根页面进行包裹
+  // base: window.__MICRO_APP_BASE_URL__ || '/',
+  // mode: 'history',
   routes,
 })
 

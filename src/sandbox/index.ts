@@ -23,14 +23,14 @@ type injectDataType = {
   rawDocument: Document
 }
 
-// 可以逃逸到外层window的变量
+// Variables that can escape to rawWindow
 const staticEscapeProperties: PropertyKey[] = [
   'System',
   '__cjsWrapper',
   '__REACT_ERROR_OVERLAY_GLOBAL_HOOK__',
 ]
 
-// 一些只能赋值到原window上的变量
+// Variables that can only assigned to rawWindow
 const escapeSetterKeyList: PropertyKey[] = [
   'location',
 ]
@@ -49,7 +49,7 @@ const unscopables = {
 }
 
 /**
- * 宏任务延迟执行，解决vue3的部分渲染问题
+ * macro task to solve the rendering problem of vue3
  */
 let macroTimer: number
 function macroTask (fn: TimerHandler): void {
@@ -58,26 +58,26 @@ function macroTask (fn: TimerHandler): void {
 }
 
 export default class SandBox implements SandBoxInterface {
-  static activeCount = 0 // 正在运行的沙盒数量
-  active = false // 当前沙盒运行状态
+  static activeCount = 0 // number of active sandbox
+  active = false // sandbox state
   proxyWindow: WindowProxy & injectDataType
   releaseEffect: CallableFunction
-  // 强隔离的全局变量(只能在沙箱中获取和设置的属性，不会兜底到外层window)
+  // Scoped global Properties(Properties that can only get and set in microWindow, will not escape to rawWindow)
   scopeProperties: PropertyKey[] = ['webpackJsonp']
-  // 可以泄漏到外部window的全局变量
+  // Properties that can be escape to rawWindow
   escapeProperties: PropertyKey[] = []
-  microWindow = {} as Window & injectDataType // 代理原型
-  injectedKeys: Set<PropertyKey> = new Set() // proxyWindow新添加的属性
-  escapeKeys: Set<PropertyKey> = new Set() // 泄漏到外部window的变量，卸载时清除
+  microWindow = {} as Window & injectDataType // Proxy target
+  injectedKeys: Set<PropertyKey> = new Set() // Properties newly added to microWindow
+  escapeKeys: Set<PropertyKey> = new Set() // Properties escape to rawWindow, cleared when unmount
 
   constructor (appName: string, url: string, macro: boolean) {
     const descriptorTargetMap = new Map<PropertyKey, 'target' | 'rawWindow'>()
     const hasOwnProperty = (key: PropertyKey) => this.microWindow.hasOwnProperty(key) || rawWindow.hasOwnProperty(key)
-    // 通过插件系统获取隔离属性和可逃逸属性
+    // get scopeProperties and escapeProperties from plugins
     this.getScopeProperties(appName)
-    // 注入全局变量
+    // inject global properties
     this.inject(this.microWindow, appName, url)
-    // 重写全局事件监听&定时器
+    // Rewrite global event listener & timeout
     this.releaseEffect = effect(this.microWindow)
 
     this.proxyWindow = new Proxy(this.microWindow, {
@@ -89,7 +89,7 @@ export default class SandBox implements SandBoxInterface {
         }
 
         if (key === 'top' || key === 'parent') {
-          if (rawWindow === rawWindow.parent) { // 不在iframe
+          if (rawWindow === rawWindow.parent) { // not in iframe
             return this.proxyWindow
           }
           return Reflect.get(rawWindow, key) // iframe
@@ -236,8 +236,8 @@ export default class SandBox implements SandBoxInterface {
   }
 
   /**
-   * 通过插件系统获取隔离属性和可逃逸属性
-   * @param appName 应用名称
+   * get scopeProperties and escapeProperties from plugins
+   * @param appName app name
    */
   getScopeProperties (appName: string): void {
     if (typeof microApp.plugins !== 'object') return
@@ -270,9 +270,9 @@ export default class SandBox implements SandBoxInterface {
   }
 
   /**
-   * 向原型window注入全局变量
-   * @param microWindow 原型window
-   * @param appName 应用名称
+   * nject global properties to microWindow
+   * @param microWindow micro window
+   * @param appName app name
    * @param url app url
    */
   inject (microWindow: microWindowType, appName: string, url: string): void {

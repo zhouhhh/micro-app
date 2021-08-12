@@ -2,12 +2,12 @@
   <div class="vue2">
     <el-button type="primary" round @click='changeData'>发送数据</el-button>
     <micro-app
-        name='vue2'
-        url='http://localhost:4001/micro-app/vue2'
-        :data='data'
-      >
-      <!-- destory inline scopecss -->
-      </micro-app>
+      name='vue2'
+      url='http://localhost:4001/micro-app/vue2'
+      :data='data'
+    >
+    <!-- destory inline scopecss  baseurl='/vue2' -->
+    </micro-app>
   </div>
 </template>
 

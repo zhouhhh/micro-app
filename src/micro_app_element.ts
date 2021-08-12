@@ -23,14 +23,14 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
   isWating = false
   cacheData: Record<PropertyKey, unknown> | null = null
 
-  // 👇可配置项
-  // shadowDom 开启shadowDOM，默认为false
-  // destory 卸载时是否强制删除缓存资源，默认为false
-  // inline js以内联script方式运行，默认为false
-  // disableScopecss 禁用css隔离，默认为false
-  // disableSandbox 停用js沙盒，默认为false
-  // macro 用于解决vue3的异步渲染问题，和预加载的入参保持一致，默认为false
-  // baseUrl 路由前缀，默认为 ''
+  // 👇Configuration
+  // shadowDom: use shadowDOM, default is false
+  // destory: whether delete cache resources when unmount, default is false
+  // inline: whether js runs in inline script mode, default is false
+  // disableScopecss: whether disable css scoped, default is false
+  // disableSandbox: whether disable sandbox, default is false
+  // macro: used to solve the async render problem of vue3, default is false
+  // baseUrl: route prefix, default is ''
 
   connectedCallback (): void {
     if (++MicroAppElement.microAppCount === 1) {
@@ -108,8 +108,7 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
   }
 
   /**
-   * 处理初始化后name或url发生变化
-   * 只要name或url发生变化，则将旧应用完全卸载，并渲染新的应用
+   * handle for change of name an url after element inited
    */
   handleAttributeUpdate = (): void => {
     this.isWating = false
@@ -118,7 +117,7 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
     if (this.legalAttribute('name', attrName) && this.legalAttribute('url', attrUrl)) {
       const existApp = appInstanceMap.get(attrName!)
       if (attrName !== this.name && existApp) {
-        // 处理已缓存的非预加载app
+        // handling of cached and non-prefetch apps
         if (existApp.getAppStatus() !== appStatus.UNMOUNT && !existApp.isPrefetch) {
           this.setAttribute('name', this.name)
           return console.error(
@@ -133,12 +132,12 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
         this.url = attrUrl
         ;(this.shadowRoot ?? this).innerHTML = ''
         /**
-         * existApp存在
-         * 如果attrName和this.name相等，则existApp已经被卸载
-         * 如果attrName和this.name不相等，则existApp为预加载或已卸载
+         * when existApp not undefined
+         * if attrName and this.name are equal, existApp has been unmounted
+         * if attrName and this.name are not equal, existApp is prefetch or unmounted
          */
         if (existApp && existApp.url === attrUrl) {
-          // app直接挂载
+          // mount app
           this.handleAppMount(existApp)
         } else {
           this.handleCreate()
@@ -150,9 +149,9 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
   }
 
   /**
-   * 判断元素属性是否符合条件
-   * @param name 属性名称
-   * @param val 属性值
+   * judge the attribute is correct
+   * @param name attribute name
+   * @param val attribute value
    */
   legalAttribute (name: string, val: AttrType): boolean {
     if (typeof val !== 'string' || !val) {
@@ -166,7 +165,7 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
     return true
   }
 
-  // 挂载应用
+  // mount app
   handleAppMount (app: AppInterface): void {
     app.isPrefetch = false
     defer(() => app.mount(
@@ -176,7 +175,7 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
     ))
   }
 
-  // 创建应用
+  // create app instance
   handleCreate (): void {
     const instance: AppInterface = new CreateApp({
       name: this.name!,
@@ -193,8 +192,8 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
   }
 
   /**
-   * 卸载应用
-   * @param destory 是否完全销毁
+   * unmount app
+   * @param destory delete cache resources when unmount
    */
   handleUnmount (destory: boolean): void {
     const app = appInstanceMap.get(this.name!)
@@ -202,9 +201,9 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
   }
 
   /**
-   * 获取配置结果
-   * 全局的优先级最低
-   * @param name 名称
+   * Get configuration results
+   * Global setting is lowest priority
+   * @param name Configuration item name
    */
   getDisposeResult (name: string): boolean {
     // @ts-ignore
@@ -212,7 +211,7 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
   }
 
   /**
-   * 基座应用传入的数据
+   * Data from the base application
    */
   set data (value: Record<PropertyKey, unknown> | null) {
     if (this.name) {
@@ -223,7 +222,7 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
   }
 
   /**
-   * data取值只在jsx-custom-event中使用一次
+   * get data only used in jsx-custom-event once
    */
   get data (): Record<PropertyKey, unknown> | null {
     if (this.name) {
@@ -236,8 +235,8 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
 }
 
 /**
- * 定义元素
- * @param tagName 元素名称
+ * define element
+ * @param tagName element name
  */
 export function defineElement (tagName: string): boolean {
   if (window.customElements.get(tagName)) {

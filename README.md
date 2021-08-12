@@ -14,9 +14,6 @@
   <a href="https://github.com/micro-zoe/micro-app/blob/master/LICENSE">
     <img src="https://img.shields.io/npm/l/@micro-zoe/micro-app.svg" alt="license"/>
   </a>
-  <a href="https://makeapullrequest.com/">
-    <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?color=blue" alt="PRs-welcome"/>
-  </a>
   <a href="https://gitter.im/zoe-community/zoe-room">
     <img src="https://badges.gitter.im/Join%20Chat.svg" alt="gitter">
   </a>
@@ -38,7 +35,7 @@ It is the lowest cost framework for accessing micro front-end, and provides a se
 The micro-app has nothing to do with the technology stack, nor is it tied to the business, and can be used in any front-end framework.
 
 # Getting Start
-The micro front-end is divided into base application and sub application. We list the modifications required for base application and sub application respectively, and introduce the use of micro-app in detail.
+The micro front-end is divided into base application and micro application. We list the modifications required for base application and micro application respectively, and introduce the use of micro-app in detail.
 
 ## base application
 > The base application takes the vue framework as an example
@@ -56,7 +53,7 @@ import microApp from '@micro-zoe/micro-app'
 microApp.start()
 ```
 
-3、Assign a route to the sub application
+3、Assign a route to the micro application
 ```js
 // router.js
 import Vue from 'vue'
@@ -82,19 +79,19 @@ export default routes
 <!-- my-page.vue -->
 <template>
   <div>
-    <h1>sub application</h1>
+    <h1>micro application</h1>
     <!-- name is the application name, globally unique, url is the html address -->
     <micro-app name='app1' url='http://localhost:3000/' baseurl='/my-page'></micro-app>
   </div>
 </template>
 ```
 
-> Please refer to [Routing Chapter](https://zeroing.jd.com/micro-app/docs.html#/zh-cn/route) for the relationship between url and sub application routing
+> Please refer to [Routing Chapter](https://zeroing.jd.com/micro-app/docs.html#/zh-cn/route) for the relationship between url and micro application routing
 
-## sub application
-> The sub application takes the react framework as an example
+## micro application
+> The micro application takes the react framework as an example
 
-1、Add basename for route
+1、Add basename for route(If the base application is history route and the micro application is hash route, it is not necessary to set the baseurl, this step can be skipped)
 
 ```js
 // router.js
@@ -102,7 +99,7 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom'
 
 export default function AppRoute () {
   return (
-    // 👇 the sub application can get the baseurl issued by the base application through window.__MICRO_APP_BASE_URL__
+    // 👇 the micro application can get the baseurl issued by the base application through window.__MICRO_APP_BASE_URL__
     <BrowserRouter basename={window.__MICRO_APP_BASE_URL__ || '/'}>
       <Switch>
         ...
@@ -121,11 +118,11 @@ devServer: {
 },
 ```
 
-Then micro front-end can be rendered normally, and the react sub application is embedded in the vue base application. The effect is as follows：
+Then micro front-end can be rendered normally, and the react micro application is embedded in the vue base application. The effect is as follows：
 
 ![image](https://img10.360buyimg.com/imagetools/jfs/t1/188373/14/17696/41854/6111f4a0E532736ba/4b86f4f8e2044519.png)
 
-The above lists the usage of react and Vue framework. They can be combined freely. For example, the base application is react, the sub application is Vue, or the base application is Vue, the sub application is react, or both the base application and the sub application are react and Vue. The micro-app has no restrictions on the front-end framework, and any framework can be used as a base application to embed any type of sub application of the framework.
+The above lists the usage of react and Vue framework. They can be combined freely. For example, the base application is react, the micro application is Vue, or the base application is Vue, the micro application is react, or both the base application and the micro application are react and Vue. The micro-app has no restrictions on the front-end framework, and any framework can be used as a base application to embed any type of micro application of the framework.
 
 More detailed configuration can be viewed [Official website document](https://zeroing.jd.com/micro-app/docs.html#/zh-cn/start).
 
@@ -173,7 +170,7 @@ The react base application is started by default. If you want to start the vue b
 </details>
 
 <details>
-  <summary>Must sub applications support cross-domain?</summary>
+  <summary>Must micro applications support cross-domain?</summary>
   yes!
 
   If it is a development environment, you can set headers in webpack-dev-server to support cross-domain.

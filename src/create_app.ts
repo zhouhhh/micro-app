@@ -12,10 +12,10 @@ import SandBox from './sandbox'
 import { defer } from './libs/utils'
 import dispatchLifecyclesEvent, { dispatchUnmountToMicroApp } from './interact/lifecycles_event'
 
-// 微应用实例
+// micro app instances
 export const appInstanceMap = new Map<string, AppInterface>()
 
-// CreateApp构造函数入参
+// params of CreateApp
 export interface CreateAppParam {
   name: string
   url: string
@@ -29,7 +29,7 @@ export interface CreateAppParam {
 
 export default class CreateApp implements AppInterface {
   private status: string = appStatus.NOT_LOADED
-  private loadSourceLevel: -1|0|1|2 = 0 // level为2，资源加载完成
+  private loadSourceLevel: -1|0|1|2 = 0
   isPrefetch = false
   name: string
   url: string
@@ -46,7 +46,7 @@ export default class CreateApp implements AppInterface {
     this.container = container ?? null
     this.inline = inline ?? false
     this.baseurl = baseurl ?? ''
-    // 初始化时非必传👆
+    // optional during init👆
     this.name = name
     this.url = url
     this.useSandbox = useSandbox
@@ -62,14 +62,14 @@ export default class CreateApp implements AppInterface {
     }
   }
 
-  // 加载资源
+  // Load resources
   loadSourceCode (): void {
     this.status = appStatus.LOADING_SOURCE_CODE
     extractHtml(this)
   }
 
   /**
-   * 资源加载完成，非预加载和卸载时执行mount操作
+   * When resource is loaded, mount app if it is not prefetch or unmount
    */
   onLoad (html: HTMLElement): void {
     if (++this.loadSourceLevel === 2) {
@@ -84,7 +84,7 @@ export default class CreateApp implements AppInterface {
   }
 
   /**
-   * 加载html资源出错
+   * Error loading HTML
    * @param e Error
    */
   onLoadError (e: Error): void {
@@ -96,10 +96,10 @@ export default class CreateApp implements AppInterface {
   }
 
   /**
-   * 初始化资源完成后进行渲染
-   * @param container 容器
-   * @param inline 是否使用内联模式
-   * @param baseurl 路由前缀，每个应用的前缀都是不同的，兜底为空字符串
+   * mount app
+   * @param container app container
+   * @param inline js runs in inline mode
+   * @param baseurl route prefix, default is ''
    */
   mount (
     container?: HTMLElement | ShadowRoot,
@@ -155,8 +155,8 @@ export default class CreateApp implements AppInterface {
   }
 
   /**
-   * 应用卸载
-   * @param destory 是否完全销毁，删除缓存资源
+   * unmount app
+   * @param destory completely destroyed, delete cache resources
    */
   unmount (destory: boolean): void {
     if (this.status === appStatus.LOAD_SOURCE_ERROR) {
@@ -168,7 +168,7 @@ export default class CreateApp implements AppInterface {
       this.name,
       lifeCycles.UNMOUNT,
     )
-    // 向微应用发送卸载事件，在沙盒清空之前&声明周期执行之后触发
+    // Send an unmount event to the micro application, which is triggered before the sandbox is cleared & after the unmount lifecycle is executed
     dispatchUnmountToMicroApp(this.name)
     this.sandBox?.stop()
     this.container = null
@@ -178,7 +178,7 @@ export default class CreateApp implements AppInterface {
   }
 
   /**
-   * 阻断应用正常渲染的错误钩子
+   * app rendering error
    * @param e Error
    */
   onerror (e: Error): void {
@@ -190,7 +190,7 @@ export default class CreateApp implements AppInterface {
     )
   }
 
-  // 获取应用状态
+  // get app status
   getAppStatus (): string {
     return this.status
   }
