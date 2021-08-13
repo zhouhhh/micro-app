@@ -22,9 +22,9 @@ import microApp from '@micro-zoe/micro-app'
 microApp.start({
   /**
    * 自定义fetch
-   * @param url 静态资源地址
-   * @param options fetch请求配置项
-   * @param appName 应用名称
+   * @param {string} url 静态资源地址
+   * @param {object} options fetch请求配置项
+   * @param {string|null} appName 应用名称
    * @returns Promise<string>
   */
   fetch (url, options, appName) {

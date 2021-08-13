@@ -6,50 +6,35 @@ declare module '@micro-app/types' {
   type microWindowType = Window & any
 
   interface SandBoxInterface {
-    active: boolean // 沙箱状态
+    active: boolean // sandbox state
     proxyWindow: WindowProxy
     releaseEffect: CallableFunction
-    // 强隔离的全局变量(只能在沙箱中获取和设置的属性，不会兜底到外层window)
+    // Scoped global Properties(Properties that can only get and set in microWindow, will not escape to rawWindow)
     scopeProperties: Array<PropertyKey>
-    // 可以泄漏到外部window的全局变量
+    // Properties that can be escape to rawWindow
     escapeProperties: Array<PropertyKey>
-    microWindow: Window // 代理原型
-    injectedKeys: Set<PropertyKey>// proxyWindow新添加的属性
-    escapeKeys: Set<PropertyKey>// 泄漏到外部window的变量，卸载时清除
+    microWindow: Window // Proxy target
+    injectedKeys: Set<PropertyKey> // Properties newly added to microWindow
+    escapeKeys: Set<PropertyKey> // Properties escape to rawWindow, cleared when unmount
     start(baseurl: string): void
     stop(): void
     inject(microWindow: microWindowType, appName: string, url: string): void
   }
 
-  interface MicroAppElementType {
-    name: AttrType // 应用名称
-    url: AttrType // 应用地址
-    isWating: boolean // 是否正在合并执行
-    cacheData: Record<PropertyKey, unknown> | null // data缓存数据
-    connectedCallback(): void // 元素插入文档中的钩子函数
-    disconnectedCallback(): void // 元素被删除的钩子函数
-    attributeChangedCallback(a: 'name' | 'url', o: string, n: string): void // 监听属性发生变化
-    handleAttributeUpdate(): void // 处理初始化后name或url发生变化
-    legalAttribute(name: string, val: AttrType): boolean // 判断元素属性是否符合条件
-    handleCreate(): void // 创建应用
-    handleUnmount (destory: boolean): void // 卸载应用
-    getDisposeResult (name: string): boolean // 获取配置结果
-  }
-
   type sourceLinkInfo = {
-    code: string // 代码内容
-    placeholder?: Comment | null // 占位注释元素
-    isGlobal: boolean // 是否全局资源
+    code: string // code
+    placeholder?: Comment | null // placeholder comment
+    isGlobal: boolean // is global asset
   }
 
   type sourceScriptInfo = {
-    code: string // 代码内容
-    isExternal: boolean // 是否是远程script
-    isDynamic: boolean // 是否是动态创建的script
-    async: boolean // 异步脚本
-    defer: boolean // 延迟执行
-    module: boolean // module类型
-    isGlobal?: boolean // 是否是全局script
+    code: string // code
+    isExternal: boolean // external script
+    isDynamic: boolean // dynamic create script
+    async: boolean // async script
+    defer: boolean // defer script
+    module: boolean // module type script
+    isGlobal?: boolean // share js to global
   }
 
   interface sourceType {
@@ -58,30 +43,46 @@ declare module '@micro-app/types' {
     scripts: Map<string, sourceScriptInfo>
   }
 
-  // 微应用实例
+  // app instance
   interface AppInterface {
-    isPrefetch: boolean // 是否是预加载，默认false
-    name: string // 应用名称
-    url: string // 应用地址
-    container: HTMLElement | ShadowRoot | null // dom容器
-    inline: boolean // 是否使用内联script
-    scopecss: boolean // 是否使用css隔离
-    useSandbox: boolean // 是否开启沙盒
-    macro: boolean // 是否使用宏任务延迟
-    baseurl: string // 路由前缀
-    source: sourceType // 资源列表
-    sandBox: SandBoxInterface | null // 沙盒实例
-    loadSourceCode(): void // 开始加载静态资源
-    onLoad(html: HTMLElement): void // 资源加载完成，还没执行
-    onLoadError(e: Error): void // 加载html静态资源失败
+    isPrefetch: boolean // whether prefetch app, default is false
+    name: string // app name
+    url: string // app url
+    container: HTMLElement | ShadowRoot | null // app container
+    inline: boolean //  whether js runs in inline script mode, default is false
+    scopecss: boolean // whether use css scoped, default is true
+    useSandbox: boolean // whether use js sandbox, default is true
+    macro: boolean // used to solve the async render problem of vue3, default is false
+    baseurl: string // route prefix, default is ''
+    source: sourceType // sources of css, js, html
+    sandBox: SandBoxInterface | null // sanxbox
+    loadSourceCode(): void // Load resources
+    onLoad(html: HTMLElement): void // resource is loaded
+    onLoadError(e: Error): void // Error loading HTML
     mount(
       container?: HTMLElement | ShadowRoot,
       inline?: boolean,
       baseurl?: string,
-    ): void // 初始化资源完成后进行渲染
-    unmount(destory: boolean): void // 卸载应用
-    onerror(e: Error): void // 渲染出错
-    getAppStatus(): string // 获取应用状态
+    ): void // mount app
+    unmount(destory: boolean): void // unmount app
+    onerror(e: Error): void // app rendering error
+    getAppStatus(): string // get app status
+  }
+
+  interface MicroAppElementType {
+    name: AttrType // app name
+    url: AttrType // app url
+    isWating: boolean // combine action of set attribute name, url
+    cacheData: Record<PropertyKey, unknown> | null // Cache data
+    connectedCallback(): void // Hooks for element append to documents
+    disconnectedCallback(): void // Hooks for element delete from documents
+    attributeChangedCallback(a: 'name' | 'url', o: string, n: string): void // Hooks for element attributes change
+    handleAttributeUpdate(): void // handle for change of attribute name, url after inited
+    legalAttribute(name: string, val: AttrType): boolean // judge the attribute is legal
+    handleAppMount(app: AppInterface): void // mount app
+    handleCreate(): void // create app
+    handleUnmount (destory: boolean): void // unmount app
+    getDisposeResult (name: string): boolean // Get configuration
   }
 
   type prefetchParam = {
@@ -93,10 +94,10 @@ declare module '@micro-app/types' {
     shadowDOM?: boolean
   }
 
-  // 预加载入参
+  // prefetch params
   type prefetchParamList = Array<prefetchParam> | (() => Array<prefetchParam>)
 
-  // 声明周期
+  // lifeCycles
   interface lifeCyclesType {
     created?(e?: CustomEvent): void
     beforemount?(e?: CustomEvent): void
@@ -106,34 +107,39 @@ declare module '@micro-app/types' {
   }
 
   type plugins = {
-    // 全局插件
+    // global plugin
     global?: Array<{
-      // 强隔离的全局变量
+      // Scoped global Properties
       scopeProperties?: Array<PropertyKey>
-      // 可以逃逸到外部的全局变量
+      // Properties that can be escape to rawWindow
       escapeProperties?: Array<PropertyKey>
-      // 配置项
+      // options for plugin as the third parameter of loader
       options?: unknown
-      // 处理函数
+      // handle function
       loader?: (code: string, url: string, options: unknown) => string
     }>
 
-    // 子应用单独配置插件
+    // plugin for special app
     modules?: {
       [name: string]: Array<{
-        // 强隔离的全局变量
+        // Scoped global Properties
         scopeProperties?: Array<PropertyKey>
-        // 可以逃逸到外部的全局变量
+        // Properties that can be escape to rawWindow
         escapeProperties?: Array<PropertyKey>
-        // 配置项
+        // options for plugin as the third parameter of loader
         options?: unknown
-        // 处理函数
+        // handle function
         loader?: (code: string, url: string, options: unknown) => string
       }>
     }
   }
 
-  type fetchType = (url: string, options: Record<string, unknown>, appName: string) => Promise<string>
+  type fetchType = (url: string, options: Record<string, unknown>, appName: string | null) => Promise<string>
+
+  type globalAssetsType = {
+    js?: string[],
+    css?: string[],
+  }
 
   type OptionsType = {
     tagName?: string
@@ -147,9 +153,10 @@ declare module '@micro-app/types' {
     preFetchApps?: prefetchParamList
     plugins?: plugins
     fetch?: fetchType
+    globalAssets?: globalAssetsType,
   }
 
-  // MicroApp 配置对象
+  // MicroApp config
   interface MicroAppConfigType {
     tagName: string
     shadowDOM?: boolean

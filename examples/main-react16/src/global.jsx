@@ -113,7 +113,7 @@ microApp.start({
     return fetch(url, Object.assign(options, config)).then((res) => {
       return res.text()
     })
-  }
+  },
 })
 
 if (pwa) {

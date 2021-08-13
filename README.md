@@ -14,8 +14,8 @@
   <a href="https://github.com/micro-zoe/micro-app/blob/master/LICENSE">
     <img src="https://img.shields.io/npm/l/@micro-zoe/micro-app.svg" alt="license"/>
   </a>
-  <a href="https://gitter.im/zoe-community/zoe-room">
-    <img src="https://badges.gitter.im/Join%20Chat.svg" alt="gitter">
+  <a href="https://gitter.im/microzoe/micro-app">
+    <img src="https://badges.gitter.im/microzoe/micro-app.svg" alt="gitter">
   </a>
   <a href="https://travis-ci.com/github/bailicangdu/micro-app">
     <img src="https://travis-ci.com/bailicangdu/micro-app.svg?branch=master" alt="travis"/>
@@ -25,7 +25,7 @@
   </a>
 </p>
 
-English｜[简体中文](https://github.com/micro-zoe/micro-app/blob/master/README.zh-cn.md)｜[Discussions](https://github.com/micro-zoe/micro-app/discussions)｜[Gitter](https://gitter.im/zoe-community/zoe-room)
+English｜[简体中文](https://github.com/micro-zoe/micro-app/blob/master/README.zh-cn.md)｜[Discussions](https://github.com/micro-zoe/micro-app/discussions)｜[Gitter](https://gitter.im/microzoe/micro-app)
 
 # 📖Introduction
 micro-app is a micro front-end framework launched by JD Retail. It renders based on webcomponent-like and realizes the micro front-end from component thinking, it aiming to reduce the difficulty of getting started and improve work efficiency. 

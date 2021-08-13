@@ -80,7 +80,9 @@ describe('main process', () => {
             url: '',
           }
         ]
-      }
+      },
+      // globalAssets 测试分支覆盖
+      globalAssets: 'xxx' as any,
     })
 
     preFetch([{

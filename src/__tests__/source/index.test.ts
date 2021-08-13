@@ -14,7 +14,13 @@ describe('source index', () => {
   let appCon: Element
   beforeAll(() => {
     commonStartEffect(ports.source_index)
-    microApp.start()
+    microApp.start({
+      // globalAssets 测试分支覆盖
+      globalAssets: {
+        js: 'xx' as any,
+        css: 'xx' as any,
+      }
+    })
     appCon = document.querySelector('#app-container')!
   })
 
@@ -112,7 +118,6 @@ describe('source index', () => {
       microappElement6.addEventListener('mounted', () => {
         expect(document.getElementById('app2-img1')?.src).toBe(`http://127.0.0.1:${ports.source_index}/path-a/img.jpg`)
         expect(document.getElementById('app2-iframe1')?.src).toBe(`http://127.0.0.1:${ports.source_index}/path-b/`)
-        expect(document.getElementById('app2-a1')?.href).toBe(`http://127.0.0.1:${ports.source_index}/ssr-render/path-c/index.html`)
         reslove(true)
       }, false)
     })

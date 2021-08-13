@@ -1,6 +1,6 @@
 import type { OptionsType, MicroAppConfigType, lifeCyclesType, plugins, fetchType } from '@micro-app/types'
 import { defineElement } from './micro_app_element'
-import preFetch from './prefetch'
+import preFetch, { getGlobalAssets } from './prefetch'
 import { formatLogMessage, isFunction } from './libs/utils'
 import { EventCenterForBaseApp } from './interact'
 
@@ -46,8 +46,14 @@ class MicroApp extends EventCenterForBaseApp implements MicroAppConfigType {
         this.plugins = options.plugins
       }
 
+      // load app assets when browser is idle
       if (options.preFetchApps) {
         preFetch(options.preFetchApps)
+      }
+
+      // load global assets when browser is idle
+      if (options.globalAssets) {
+        getGlobalAssets(options.globalAssets)
       }
     }
   }

@@ -20,6 +20,7 @@ export const ports = {
   source_scripts: 9011,
   source_scripts2: 9012,
   source_patch: 9013,
+  prefetch: 9014,
 }
 
 // 启动服务

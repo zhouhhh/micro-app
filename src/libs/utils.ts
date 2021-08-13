@@ -125,12 +125,12 @@ export function promiseStream <T> (
   promiseList: Array<Promise<T> | T>,
   successsCb: CallableFunction,
   errorCb: CallableFunction,
-  finallyCb: CallableFunction,
+  finallyCb?: CallableFunction,
 ): void {
   let finishedNum = 0
 
   function isFinished () {
-    if (++finishedNum === promiseList.length) finallyCb()
+    if (++finishedNum === promiseList.length && finallyCb) finallyCb()
   }
 
   promiseList.forEach((p, i) => {

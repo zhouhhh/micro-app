@@ -36,3 +36,46 @@ import './public-path'
 ```
 
 更多详细配置请查看webpack文档 [public-path](https://webpack.docschina.org/guides/public-path/#on-the-fly)
+
+### 资源共享
+当多个子应用拥有相同的js或css资源，可以指定这些资源在多个子应用之间共享，在子应用加载时直接从缓存中提取数据，从而提高渲染效率和性能。
+
+设置资源共享的方式有两种：
+#### 1、设置 globalAssets
+globalAssets用于设置全局共享资源，它和预加载的思路相同，在浏览器空闲时加载资源并放入缓存。
+
+当子应用加载相同地址的js或css资源时，会直接从缓存中提取数据。
+
+**使用方式**
+```js
+// index.js
+import microApp from '@micro-zoe/micro-app'
+
+microApp.start({
+  globalAssets: {
+    js: ['js地址1', 'js地址2', ...], // js地址
+    css: ['css地址1', 'css地址2', ...], // css地址
+  }
+})
+```
+
+#### 2、设置 global 属性
+在link、script设置`global`属性会将文件提取为公共文件，共享给其它应用。
+
+设置`global`属性后文件第一次加载会放入公共缓存，其它子应用加载相同的资源时直接从缓存中读取内容。
+
+**使用方式**
+```html
+<link rel="stylesheet" href="xx.css" global>
+<script src="xx.js" global></script>
+```
+
+### 资源过滤
+当子应用不需要加载某个js或css，可以通过在link、script、style设置exclude属性过滤这些资源，当micro-app遇到带有exclude属性的元素会进行删除。
+
+**使用方式**
+```html
+<link rel="stylesheet" href="xx.css" exclude>
+<script src="xx.js" exclude></script>
+<style exclude></style>
+```

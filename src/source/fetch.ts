@@ -7,7 +7,7 @@ import microApp from '../micro_app'
  * @param appName app name
  * @param config config of fetch
  */
-export function fetchSource (url: string, appName: string, options = {}): Promise<string> {
+export function fetchSource (url: string, appName: string | null = null, options = {}): Promise<string> {
   if (isFunction(microApp.fetch)) {
     return microApp.fetch!(url, options, appName)
   }

@@ -149,8 +149,8 @@ microApp.start({
 ```
 
 ## 其它配置
-### exclude
-如果子应用的一些静态资源不希望被基座应用加载并渲染，可以在标签上添加`exclude`属性进行过滤。
+### exclude(过滤资源)
+当子应用不需要加载某个js或css，可以通过在link、script、style设置exclude属性过滤这些资源，当micro-app遇到带有exclude属性的元素会进行删除。
 
 **使用方式**
 ```html
@@ -159,13 +159,31 @@ microApp.start({
 <style exclude></style>
 ```
 
-### global
-当多个子应用使用相同的js或css资源，在link、script设置`global`属性会将文件提取为公共缓存。
+### global(资源共享)
+当多个子应用使用相同的js或css资源，在link、script设置`global`属性会将文件提取为公共文件，共享给其它应用。
 
-设置`global`后文件第一次加载会放入公共缓存，其它子应用加载相同的资源时直接从缓存中读取内容并渲染，从而提升性能、节省流量。
+设置`global`属性后文件第一次加载会放入公共缓存，其它子应用加载相同的资源时直接从缓存中读取内容并渲染，从而提升性能、节省流量。
 
 **使用方式**
 ```html
 <link rel="stylesheet" href="xx.css" global>
 <script src="xx.js" global></script>
+```
+
+### globalAssets(资源共享)
+globalAssets用于设置全局共享资源，它和预加载的思路相同，在浏览器空闲时加载资源并放入缓存，提高渲染效率。
+
+当子应用加载相同地址的js或css资源时，会直接从缓存中提取数据。
+
+**使用方式**
+```js
+// index.js
+import microApp from '@micro-zoe/micro-app'
+
+microApp.start({
+  globalAssets: {
+    js: ['js地址1', 'js地址2', ...], // js地址
+    css: ['css地址1', 'css地址2', ...], // css地址
+  }
+})
 ```

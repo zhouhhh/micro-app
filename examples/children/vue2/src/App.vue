@@ -16,7 +16,7 @@ export default {
   name: 'App',
   data () {
     return {
-      activeName: window.location.href.includes('page2') ? 'page2': '/',
+      activeName: window.location.href.includes('#/page2') ? 'page2': '/',
     }
   },
   created () {

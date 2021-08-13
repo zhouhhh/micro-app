@@ -149,7 +149,7 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
   }
 
   /**
-   * judge the attribute is correct
+   * judge the attribute is legal
    * @param name attribute name
    * @param val attribute value
    */
@@ -201,7 +201,7 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
   }
 
   /**
-   * Get configuration results
+   * Get configuration
    * Global setting is lowest priority
    * @param name Configuration item name
    */
