@@ -2,13 +2,18 @@
 /** @jsx jsxCustomEvent */
 import jsxCustomEvent from '@micro-zoe/micro-app/polyfill/jsx-custom-event'
 import { useState, useEffect } from 'react'
-import { Button } from 'antd'
+import { Button, Spin } from 'antd'
+import { LoadingOutlined } from '@ant-design/icons'
 import config from '../../config'
 import './multiple.less'
+
+const antIcon = <LoadingOutlined style={{ fontSize: 30 }} spin />
 
 function Vue3 () {
   const [data, changeData] = useState({from: '来自基座的初始化数据'})
   const [reactname, changename] = useState('react162')
+  const [showLoading, hideLoading] = useState(true)
+
   useEffect(() => {
     console.time('react16')
   }, [])
@@ -28,6 +33,9 @@ function Vue3 () {
           改变react16的name
         </Button>
       </div>
+      {
+        showLoading && <Spin indicator={antIcon} />
+      }
       <div className='multiple-con'>
         <micro-app
           class='multiple-micro-app'
@@ -35,6 +43,7 @@ function Vue3 () {
           url={`${config.react16}micro-app/react16`}
           data={data}
           baseurl='/micro-app/demo/multiple'
+          onMounted={() => hideLoading(false)}
           // destory
           // inline
           // scopecss='false'

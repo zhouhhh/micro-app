@@ -3,8 +3,11 @@
 import jsxCustomEvent from '@micro-zoe/micro-app/polyfill/jsx-custom-event'
 import { useState, useEffect } from 'react'
 import { Button, Spin } from 'antd'
+import { LoadingOutlined } from '@ant-design/icons'
 import config from '../../config'
 import './vue2.less'
+
+const antIcon = <LoadingOutlined style={{ fontSize: 30 }} spin />
 
 function Vue2 () {
   const [data, changeData] = useState({from: '来自基座的初始化数据'})
@@ -24,7 +27,7 @@ function Vue2 () {
         </Button>
       </div>
       {
-        showLoading && <Spin />
+        showLoading && <Spin indicator={antIcon} />
       }
       <micro-app
         name='vue2'

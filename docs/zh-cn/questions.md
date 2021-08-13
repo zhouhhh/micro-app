@@ -96,11 +96,29 @@ vue3中需要配置publicPath补全资源地址，详情请查看[public-path](/
   - 3、window.rawWindow
 
 ## 13、错误信息 `ReferenceError: xxxx is not defined`
-  在微前端的沙箱环境中，顶层变量不会泄漏为全局变量。
+在微前端的沙箱环境中，顶层变量不会泄漏为全局变量。
 
-  例如在正常情况下，通过 var name 或 function name () {} 定义的顶层变量会泄漏为全局变量，通过window.name或name就可以全局访问。但是在微前端环境下，所有js都会放入一个沙箱函数中运行，导致这些顶层变量无法泄漏为全局变量，从而导致上述问题。
+例如在正常情况下，通过 var name 或 function name () {} 定义的顶层变量会泄漏为全局变量，通过window.name或name就可以全局访问。但是在微前端环境下，所有js都会放入一个沙箱函数中运行，导致这些顶层变量无法泄漏为全局变量，从而导致上述问题。
 
-  解决方式：通过 window.name = xx，明确声明全局变量。
+**解决方式**：通过 window.name = xx，明确声明全局变量。
+
+这个问题常见于通过webpack打包的dll文件，因为dll文件的内容和js地址相对固定，可以通过插件系统进行修改。
+```js
+microApp.start({
+  plugins: {
+    modules: {
+      应用名称: [{
+        loader(code, url) {
+          if (url === 'xxx.js') {
+            code = code.replace('var xx_dll=', 'window.xx_dll=')
+          }
+          return code
+        }
+      }]
+    }
+  }
+})
+```
 
 ## 14、子应用加载sockjs-node失败
   这个问题常见于create-react-app创建的子应用，推荐通过插件系统来解决。

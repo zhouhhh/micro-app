@@ -17,11 +17,11 @@
   <a href="https://gitter.im/microzoe/micro-app">
     <img src="https://badges.gitter.im/microzoe/micro-app.svg" alt="gitter">
   </a>
-  <a href="https://travis-ci.com/github/bailicangdu/micro-app">
-    <img src="https://travis-ci.com/bailicangdu/micro-app.svg?branch=master" alt="travis"/>
+  <a href="https://travis-ci.com/github/micro-zoe/micro-app">
+    <img src="https://travis-ci.com/micro-zoe/micro-app.svg?branch=master" alt="travis"/>
   </a>
-  <a href="https://coveralls.io/github/bailicangdu/micro-app?branch=master">
-    <img src="https://coveralls.io/repos/github/bailicangdu/micro-app/badge.svg?branch=master" alt="coveralls"/>
+  <a href="https://coveralls.io/github/micro-zoe/micro-app?branch=master">
+    <img src="https://coveralls.io/repos/github/micro-zoe/micro-app/badge.svg?branch=master" alt="coveralls"/>
   </a>
 </p>
 

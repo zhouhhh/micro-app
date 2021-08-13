@@ -3,7 +3,10 @@
 import jsxCustomEvent from '@micro-zoe/micro-app/polyfill/jsx-custom-event'
 import { useState } from 'react'
 import { Spin } from 'antd'
+import { LoadingOutlined } from '@ant-design/icons'
 import config from '../../config'
+
+const antIcon = <LoadingOutlined style={{ fontSize: 30 }} spin />
 
 function Vue3 () {
   const [showLoading, hideLoading] = useState(true)
@@ -12,7 +15,7 @@ function Vue3 () {
   return (
     <div>
       {
-        showLoading && <Spin />
+        showLoading && <Spin indicator={antIcon} />
       }
       <micro-app
         name='vue3'

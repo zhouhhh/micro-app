@@ -353,7 +353,7 @@ function patchDocument () {
   // query element👇
   function querySelector (selectors: string): any {
     const appName = getCurrentAppName()
-    if (!appName || selectors === 'head' || selectors === 'body') {
+    if (!appName || selectors === 'head' || selectors === 'body' || selectors === 'html') {
       return rawQuerySelector.call(rawDocument, selectors)
     }
     return appInstanceMap.get(appName)?.container?.querySelector(selectors) ?? null
@@ -361,7 +361,7 @@ function patchDocument () {
 
   function querySelectorAll (selectors: string): any {
     const appName = getCurrentAppName()
-    if (!appName || selectors === 'head' || selectors === 'body') {
+    if (!appName || selectors === 'head' || selectors === 'body' || selectors === 'html') {
       return rawQuerySelectorAll.call(rawDocument, selectors)
     }
     return appInstanceMap.get(appName)?.container?.querySelectorAll(selectors) ?? []
@@ -393,6 +393,7 @@ function patchDocument () {
       !appName ||
       /^body$/i.test(key) ||
       /^head$/i.test(key) ||
+      /^html$/i.test(key) ||
       (!appInstanceMap.get(appName)?.inline && /^script$/i.test(key))
     ) {
       return rawGetElementsByTagName.call(rawDocument, key)

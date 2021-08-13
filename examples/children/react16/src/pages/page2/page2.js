@@ -15,17 +15,17 @@ import {
   message,
 } from 'antd';
 import { UploadOutlined, InboxOutlined } from '@ant-design/icons';
-import styled from 'styled-components'
+// import styled from 'styled-components'
 import './page2.css'
 
-const StyledButton = styled.button`
-  background: transparent;
-  border-radius: 3px;
-  border: 2px solid blue;
-  color: blue;
-  margin: 0 1em;
-  padding: 0.25em 1em;
-`
+// const StyledButton = styled.button`
+//   background: transparent;
+//   border-radius: 3px;
+//   border: 2px solid blue;
+//   color: blue;
+//   margin: 0 1em;
+//   padding: 0.25em 1em;
+// `
 
 const { Option } = Select;
 const formItemLayout = {

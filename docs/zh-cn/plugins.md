@@ -56,11 +56,10 @@ microApp.start({
     ],
     modules: {
       'appName1': [{
-        scopeProperties: ['key', 'key', ...],
-        escapeProperties: ['key', 'key', ...],
-        options: 配置项,
         loader(code, url, options) {
-          console.log('只适用于appName1的插件')
+          if (url === 'xxx.js') {
+            code = code.replace('var abc =', 'window.abc =')
+          }
           return code
         }
       }],

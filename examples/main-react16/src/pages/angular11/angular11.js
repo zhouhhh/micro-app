@@ -4,7 +4,10 @@ import jsxCustomEvent from '@micro-zoe/micro-app/polyfill/jsx-custom-event'
 import 'zone.js'
 import { useState } from 'react'
 import { Spin } from 'antd'
+import { LoadingOutlined } from '@ant-design/icons'
 import config from '../../config'
+
+const antIcon = <LoadingOutlined style={{ fontSize: 30 }} spin />
 
 function Angular11 () {
   const [showLoading, hideLoading] = useState(true)
@@ -13,7 +16,7 @@ function Angular11 () {
   return (
     <div>
       {
-        showLoading && <Spin />
+        showLoading && <Spin indicator={antIcon} />
       }
       <micro-app
         name='angular11'

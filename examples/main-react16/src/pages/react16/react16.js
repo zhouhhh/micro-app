@@ -8,7 +8,7 @@ import microApp from '@micro-zoe/micro-app'
 import config from '../../config'
 import './react16.less'
 
-const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />
+const antIcon = <LoadingOutlined style={{ fontSize: 30 }} spin />
 
 export default class App extends React.Component {
   state = {

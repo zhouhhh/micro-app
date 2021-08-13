@@ -8,7 +8,7 @@ import config from '../../config'
 import './inline.less'
 
 function Vue2 () {
-  const [data, changeData] = useState({from: '来自基座的初始化数据'})
+  const [data] = useState({from: '来自基座的初始化数据'})
   const [showLoading, hideLoading] = useState(true)
   return (
     <div>

@@ -12,7 +12,7 @@ document.querySelector('micro-app').version
 ```
 
 ### 2、自定义fetch
-通过自定义fetch替换框架自带的fetch，可以修改请求配置，或拦截HTML、JS、CSS等静态资源。
+通过自定义fetch替换框架自带的fetch，可以修改fetch配置(添加cookie或header信息等等)，或拦截HTML、JS、CSS等静态资源。
 
 自定义的fetch必须是一个返回string类型的Promise。
 
@@ -29,15 +29,19 @@ microApp.start({
   */
   fetch (url, options, appName) {
     if (url === 'http://localhost:3001/error.js') {
+      // 删除 http://localhost:3001/error.js 的内容
       return Promise.resolve('')
     }
     
     let config = null
     if (url === 'http://localhost:3001/micro-app/react16/') {
       config = {
+        // 添加header信息
         headers: {
           'custom-head': 'custom-head',
-        }
+        },
+        // micro-app默认不带cookie，如果需要添加cookie需要配置credentials
+        credentials: 'include', // 请求时带上cookie
       }
     }
 
@@ -47,6 +51,11 @@ microApp.start({
   }
 })
 ```
+
+> [!NOTE]
+> 1、micro-app默认不带cookie，如果需要添加cookie需要重写fetch，添加credentials配置
+>
+> 2、如果跨域请求带cookie，那么`Access-Control-Allow-Origin`不能设置为`*`，这一点需要注意
 
 ### 3、适配vite
 当子应用是vite应用时需要做特别的适配，适配vite的代价是巨大的，我们必须关闭沙箱功能，因为沙箱在`module script`下不支持，这导致大部分功能失效，包括：环境变量、样式隔离、元素隔离、数据通信、资源地址补全、baseurl 等。
