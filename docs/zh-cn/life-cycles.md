@@ -42,7 +42,7 @@ import jsxCustomEvent from '@micro-zoe/micro-app/polyfill/jsx-custom-event'
   onBeforemount={() => console.log('即将被渲染')}
   onMounted={() => console.log('已经渲染完成')}
   onUnmount={() => console.log('被卸载')}
-  onErrort={() => console.log('渲染出错')}
+  onError={() => console.log('渲染出错')}
 />
 ```
 
