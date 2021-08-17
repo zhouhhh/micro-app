@@ -86,7 +86,7 @@ const cjsConfig = Object.assign({}, baseConfig, {
 // polyfill配置
 const polyfillConfig = []
 const polyfillFiles = fse.readdirSync('./src/polyfill')
-polyfillFiles?.forEach((file) => {
+polyfillFiles && polyfillFiles.forEach((file) => {
   if (/\.ts$/.test(file)) {
     const config = {
       input: path.join(__dirname, `src/polyfill/${file}`),
