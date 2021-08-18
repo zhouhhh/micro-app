@@ -195,5 +195,9 @@ The react base application is started by default. If you want to start the vue b
   Yes, please see [adapt vite](https://zeroing.jd.com/micro-app/docs.html#/zh-cn/other?id=_3%e3%80%81%e9%80%82%e9%85%8dvite) for details.
 </details>
 
+# Contributors
+
+<a href="https://github.com/micro-zoe/micro-app/graphs/contributors"><img src="https://opencollective.com/micro-app/contributors.svg?width=890&button=false" /></a>
+
 # License
 [MIT License](https://github.com/micro-zoe/micro-app/blob/master/LICENSE)

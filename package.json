@@ -2,10 +2,10 @@
   "name": "@micro-zoe/micro-app",
   "version": "0.2.4",
   "description": "A minimalist solution for building micro front-end applications",
+  "private": false,
   "main": "lib/index.min.js",
   "module": "lib/index.esm.js",
   "types": "lib/index.d.ts",
-  "private": false,
   "directories": {
     "doc": "docs"
   },
@@ -62,7 +62,7 @@
     "plugins",
     "typings"
   ],
-  "author": "zero",
+  "author": "cangdu",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/micro-zoe/micro-app/issues"

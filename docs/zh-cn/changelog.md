@@ -19,6 +19,7 @@
 - **Bug Fix**
 
   - 🐞 修复了在子应用中请求html元素被拦截的问题
+  - 🐞 修复低版本nodejs对于rollup.config.js执行错误的问题
 
 - **Update**
 
