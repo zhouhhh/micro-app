@@ -81,9 +81,10 @@ export function formatURL (url: string | null): string {
  * @param url app.url
  */
 export function getEffectivePath (url: string): string {
-  const { pathname } = new URL(addProtocol(url))
+  const { origin, pathname } = new URL(url)
   if (/\.(\w+)$/.test(pathname)) {
-    const pathArr = url.split('/')
+    const fullPath = `${origin}${pathname}`
+    const pathArr = fullPath.split('/')
     pathArr.pop()
     return pathArr.join('/') + '/'
   }
