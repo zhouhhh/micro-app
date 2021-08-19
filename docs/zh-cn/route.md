@@ -5,7 +5,7 @@
 
 micro-app的url属性指向html的地址，它只是用来获取html。
 
-基座应用和子应用本质是在同一个页面渲染，所以影响到子应用路由的是浏览器地址。
+micro-app不是iframe，不会重开一个window窗口，基座应用和子应用本质是在同一个页面渲染，所以影响到子应用路由的是浏览器地址。
 
 举个栗子🌰 :
 
@@ -13,13 +13,20 @@ micro-app的url属性指向html的地址，它只是用来获取html。
 
 基座应用会匹配`page1`并渲染对应的组件，子应用也是一样，浏览器地址会同时影响到基座应用和子应用，因为每个应用都有一套自己的路由系统，它们是可以共存的，不会冲突。
 
-此时我们要渲染子应用`http://www.xxx.com/`的`page1`页面，那么url属性填写的是`http://www.xxx.com/`，而不是`http://www.xxx.com/page1/`。
+此时我们要渲染子应用`http://www.xxx.com/`的`page1`前端路由，那么url属性填写的是`http://www.xxx.com/`，而不是`http://www.xxx.com/page1/`。
 
 ```html
 // http://www.xxx.com/ 会兜底到 http://www.xxx.com/index.html
 <micro-app url='http://www.xxx.com/'></micro-app>
 ```
 子应用加载完成后会根据浏览器的地址`page1`匹配到对应的组件并渲染，最终效果和访问`http://www.xxx.com/page1/`一致。
+
+同理，页面参数和hash也是以浏览器为准。
+
+例如，下面的hash值是无效的，`#page1`应该添加到浏览器地址上。
+```html
+<micro-app url='http://www.xxx.com/#/page1'></micro-app>
+```
 
 ### 路由配置
 

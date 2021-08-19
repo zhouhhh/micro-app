@@ -71,7 +71,7 @@ microApp.start({
 ```js
 // vite.config.js
 export default defineConfig({
-  base: `${process.env.NODE_ENV === 'production' ? 'http://my-site.com' : ''}/micro-app/vite/`,
+  base: `${process.env.NODE_ENV === 'production' ? 'http://my-site.com' : ''}/basename/`,
   plugins: [
     ...
     // 自定义插件
@@ -116,7 +116,7 @@ vite环境下，当路由的baseName和vite.base值不相等，两者会进行�
 ```js
 <micro-app
   name='child-name'
-  url='http://localhost:3001/micro-app/vite/'
+  url='http://localhost:3001/basename/'
   inline // 使用内联script模式
   disableSandbox // 关闭沙箱
 >
@@ -135,9 +135,9 @@ microApp.start({
       appName: [{
         loader(code) {
           if (process.env.NODE_ENV === 'development') {
-            // 这里 /micro-app/vite/ 需要和子应用vite.config.js中base的配置保持一致
+            // 这里 /basename/ 需要和子应用vite.config.js中base的配置保持一致
             code = code.replace(/(from|import)(\s*['"])(\/micro-app\/vite\/)/g, all => {
-              return all.replace('/micro-app/vite/', '子应用域名/micro-app/vite/')
+              return all.replace('/basename/', '子应用域名/basename/')
             })
           }
 
