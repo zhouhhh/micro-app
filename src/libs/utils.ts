@@ -100,9 +100,7 @@ export function getEffectivePath (url: string): string {
 export function CompletionPath (path: string, baseURI: string): string {
   if (/^((((ht|f)tps?)|file):)?\/\//.test(path)) return path
 
-  baseURI = addProtocol(baseURI)
-
-  return new URL(path, getEffectivePath(baseURI)).toString()
+  return new URL(path, getEffectivePath(addProtocol(baseURI))).toString()
 }
 
 /**

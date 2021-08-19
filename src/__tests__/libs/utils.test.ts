@@ -29,7 +29,7 @@ test('call function in micro task', () => {
   })
 })
 
-test('format url to a valid address', () => {
+test('uitls ==> formatURL', () => {
   expect(Utils.formatURL('http://localhost:3000/path-a')).toBe('http://localhost:3000/path-a/')
   expect(Utils.formatURL('//localhost:3000/path-a/')).toBe('http://localhost:3000/path-a/')
   expect(Utils.formatURL('http://localhost:3000/path-a/index.html')).toBe('http://localhost:3000/path-a/index.html')
@@ -40,21 +40,24 @@ test('format url to a valid address', () => {
   expect(console.error).toBeCalledWith('[micro-app]', expect.anything())
 })
 
-test('format url to pure path', () => {
+test('uitls ==> getEffectivePath', () => {
   expect(Utils.getEffectivePath('http://abc/index.html')).toBe('http://abc/')
-  expect(Utils.getEffectivePath('http://abc')).toBe('http://abc')
+  expect(Utils.getEffectivePath('http://abc/index.node')).toBe('http://abc/')
+  expect(Utils.getEffectivePath('http://abc/index.php')).toBe('http://abc/')
+  expect(Utils.getEffectivePath('http://abc')).toBe('http://abc/')
+  expect(Utils.getEffectivePath('http://abc/?a=1#page1')).toBe('http://abc/')
 })
 
-test('Complete the relative address of the static resource', () => {
+test('uitls ==> CompletionPath', () => {
   expect(Utils.CompletionPath('http://abc/img.png', 'http://localhost:3000/')).toBe('http://abc/img.png')
   expect(Utils.CompletionPath('/img.png', 'http://localhost:3000/path/')).toBe('http://localhost:3000/img.png')
 })
 
-test('find css file directory', () => {
+test('uitls ==> getLinkFileDir', () => {
   expect(Utils.getLinkFileDir('https://localhost:3000/path/css/filename.css')).toBe('https://localhost:3000/path/css/')
 })
 
-test('let promise run as stream', async () => {
+test('uitls ==> promiseStream', async () => {
   const successFn = jest.fn()
   const errorFn = jest.fn()
   const finallyCb = jest.fn()

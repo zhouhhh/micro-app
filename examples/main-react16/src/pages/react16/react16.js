@@ -16,7 +16,7 @@ export default class App extends React.Component {
       name: '初始化数据'
     },
     name: 'react16',
-    url: `${config.react16}micro-app/react16`,
+    url: `${config.react16}micro-app/react16?a=1`,
     // url: 'http://127.0.0.1:8080/micro-app/react16',
     showLoading: true,
     showMicroApp: true,
