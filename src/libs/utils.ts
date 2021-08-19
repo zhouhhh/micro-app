@@ -63,13 +63,13 @@ export function formatURL (url: string | null): string {
   if (typeof url !== 'string' || !url) return ''
 
   try {
-    const { origin, pathname } = new URL(addProtocol(url))
-    // If it ends with .html, don’t need to add /
-    if (/\.html$/.test(pathname)) {
-      return `${origin}${pathname}`
+    const { origin, pathname, search } = new URL(addProtocol(url))
+    // If it ends with .html/.node/.php/.net/.etc, don’t need to add /
+    if (/\.(\w+)$/.test(pathname)) {
+      return `${origin}${pathname}${search}`
     }
     const fullPath = `${origin}${pathname}/`.replace(/\/\/$/, '/')
-    return /^https?:\/\//.test(fullPath) ? fullPath : ''
+    return /^https?:\/\//.test(fullPath) ? `${fullPath}${search}` : ''
   } catch (e) {
     console.error('[micro-app]', e)
     return ''
@@ -81,13 +81,15 @@ export function formatURL (url: string | null): string {
  * @param url app.url
  */
 export function getEffectivePath (url: string): string {
-  if (/\.html$/.test(url)) {
-    const pathArr = url.split('/')
+  const { origin, pathname } = new URL(url)
+  if (/\.(\w+)$/.test(pathname)) {
+    const fullPath = `${origin}${pathname}`
+    const pathArr = fullPath.split('/')
     pathArr.pop()
     return pathArr.join('/') + '/'
   }
 
-  return url
+  return `${origin}${pathname}/`.replace(/\/\/$/, '/')
 }
 
 /**
