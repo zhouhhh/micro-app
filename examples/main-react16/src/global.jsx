@@ -75,8 +75,6 @@ microApp.start({
             code = code.replace(/(from|import)(\s*['"])(\/micro-app\/vite\/)/g, (all) => {
               return all.replace('/micro-app/vite/', 'http://localhost:7001/micro-app/vite/')
             })
-
-            code = code.replace('customElements.define(overlayId, ErrorOverlay);', '')
           }
           return code
         }

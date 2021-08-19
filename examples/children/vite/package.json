@@ -15,6 +15,6 @@
     "@vitejs/plugin-legacy": "~1.4.3",
     "@vitejs/plugin-vue": "~1.2.4",
     "@vue/compiler-sfc": "~3.1.4",
-    "vite": "~2.4.1"
+    "vite": "^2.5.0"
   }
 }

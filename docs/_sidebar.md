@@ -15,8 +15,8 @@
   - [预加载](zh-cn/prefetch)
   - [插件系统](zh-cn/plugins)
   - [多层嵌套](zh-cn/qiantao)
+  - [高级功能](zh-cn/advanced)
   - [路由](zh-cn/route)
-  - [其它](zh-cn/other)
 
 - 其他
 
