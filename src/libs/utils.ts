@@ -89,7 +89,7 @@ export function getEffectivePath (url: string): string {
     return pathArr.join('/') + '/'
   }
 
-  return url
+  return `${origin}${pathname}/`.replace(/\/\/$/, '/')
 }
 
 /**
