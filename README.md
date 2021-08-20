@@ -18,7 +18,7 @@
     <img src="https://badges.gitter.im/microzoe/micro-app.svg" alt="gitter">
   </a>
   <a href="https://travis-ci.com/github/micro-zoe/micro-app">
-    <img src="https://travis-ci.com/micro-zoe/micro-app.svg?branch=master" alt="travis"/>
+    <img src="https://api.travis-ci.com/micro-zoe/micro-app.svg?branch=master" alt="travis"/>
   </a>
   <a href="https://coveralls.io/github/micro-zoe/micro-app?branch=master">
     <img src="https://coveralls.io/repos/github/micro-zoe/micro-app/badge.svg?branch=master" alt="coveralls"/>
