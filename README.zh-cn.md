@@ -34,7 +34,7 @@ micro-app与技术栈无关，也不和业务绑定，可以用于任何前端�
 
 #### 概念图
 <p align="center">
-  <img src="https://img10.360buyimg.com/imagetools/jfs/t1/168885/23/20790/54203/6084d445E0c9ec00e/d879637b4bb34253.png" alt="概念图" width='700px'/>
+  <img src="https://img10.360buyimg.com/imagetools/jfs/t1/168885/23/20790/54203/6084d445E0c9ec00e/d879637b4bb34253.png" alt="概念图" width='700'/>
 </p>
 
 # 🔧开始使用
