@@ -34,7 +34,7 @@ micro-app与技术栈无关，也不和业务绑定，可以用于任何前端�
 
 #### 概念图
 <p>
-  <img src="https://img10.360buyimg.com/imagetools/jfs/t1/168885/23/20790/54203/6084d445E0c9ec00e/d879637b4bb34253.png" alt="概念图" width='800'/>
+  <img src="https://img10.360buyimg.com/imagetools/jfs/t1/168885/23/20790/54203/6084d445E0c9ec00e/d879637b4bb34253.png" alt="概念图" width='850'/>
 </p>
 
 # 🔧开始使用
@@ -123,7 +123,7 @@ devServer: {
 
 以上微前端就可以正常渲染，实现了在vue基座应用中嵌入react子应用，效果如下：
 
-<img src="https://img12.360buyimg.com/imagetools/jfs/t1/196940/34/1541/38365/610a14fcE46c21374/c321b9f8fa50a8fc.png" alt="result" width='800'/>
+<img src="https://img12.360buyimg.com/imagetools/jfs/t1/196940/34/1541/38365/610a14fcE46c21374/c321b9f8fa50a8fc.png" alt="result" width='950'/>
 
 上面列出了react和vue框架的使用方式，它们是可以自由组合的，比如基座应用是react，子应用是vue，或者基座应用是vue，子应用是react，或者基座应用和子应用都是react、vue。 micro-app对前端框架没有限制，任何框架都可以作为基座应用嵌入任何类型框架的子应用。
 
