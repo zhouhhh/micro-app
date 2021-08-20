@@ -48,12 +48,12 @@
 
 <script lang="ts" setup>
 import {ref, watch} from "vue";
-import {useRouter} from 'vue-router'
-const activeIndex = ref('')
-// const {currentRoute} = useRouter()
-// watch($route,(newVal,oldVal)=>{
-//
-// })
+import {useRoute, useRouter} from 'vue-router'
+const activeIndex = ref('/react16/')
+const {currentRoute} = useRouter()
+watch(currentRoute,(newVal,oldVal)=>{
+  activeIndex.value = currentRoute.value.fullPath
+})
 
 </script>
 
