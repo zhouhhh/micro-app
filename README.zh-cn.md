@@ -33,7 +33,9 @@ micro-app是京东零售推出的一款微前端框架，它基于类WebComponen
 micro-app与技术栈无关，也不和业务绑定，可以用于任何前端框架。
 
 #### 概念图
-![image](https://img10.360buyimg.com/imagetools/jfs/t1/168885/23/20790/54203/6084d445E0c9ec00e/d879637b4bb34253.png ':size=750')
+<p align="center">
+  <img src="https://img10.360buyimg.com/imagetools/jfs/t1/168885/23/20790/54203/6084d445E0c9ec00e/d879637b4bb34253.png" alt="概念图" width='700px'/>
+</p>
 
 # 🔧开始使用
 微前端分为基座应用和子应用，我们分别列出基座应用和子应用需要进行的修改，具体介绍micro-app的使用方式。
