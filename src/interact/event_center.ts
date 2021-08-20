@@ -1,4 +1,4 @@
-import { formatLogMessage } from '../libs/utils'
+import { logError } from '../libs/utils'
 
 type eventInfo = {
   data: Record<PropertyKey, unknown>,
@@ -11,9 +11,7 @@ export default class EventCenter {
   // whether the name is legal
   isLegalName (name: string): boolean {
     if (!name) {
-      console.error(
-        formatLogMessage('event-center: Invalid name')
-      )
+      logError('event-center: Invalid name')
       return false
     }
 
@@ -29,9 +27,7 @@ export default class EventCenter {
   on (name: string, f: CallableFunction, autoTrigger = false): void {
     if (this.isLegalName(name)) {
       if (typeof f !== 'function') {
-        return console.error(
-          formatLogMessage('event-center: Invalid callback function')
-        )
+        return logError('event-center: Invalid callback function')
       }
 
       let eventInfo = this.eventList.get(name)
@@ -68,9 +64,7 @@ export default class EventCenter {
   dispatch (name: string, data: Record<PropertyKey, unknown>): void {
     if (this.isLegalName(name)) {
       if (toString.call(data) !== '[object Object]') {
-        return console.error(
-          formatLogMessage('event-center: data must be object')
-        )
+        return logError('event-center: data must be object')
       }
       let eventInfo = this.eventList.get(name)
       if (eventInfo) {

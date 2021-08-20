@@ -3,9 +3,7 @@
 ### url属性和子应用路由的关系
 答：没有关系！
 
-micro-app的url属性指向html的地址，它只是用来获取html。
-
-micro-app不是iframe，不会重开一个window窗口，基座应用和子应用本质是在同一个页面渲染，所以影响到子应用路由的是浏览器地址。
+micro-app不是iframe，不会重开一个window窗口，基座应用和子应用本质是在同一个页面渲染，所以影响到子应用路由的是浏览器地址。micro-app的url属性只是html的地址，它只是用来获取html。
 
 举个栗子🌰 :
 
@@ -23,8 +21,10 @@ micro-app不是iframe，不会重开一个window窗口，基座应用和子应�
 
 同理，页面参数和hash也是以浏览器为准。
 
-例如，下面的hash值是无效的，`#page1`应该添加到浏览器地址上。
+再举个栗子🌰 :
+子应用是hash路由，我们要渲染子应用的page1页面，那么下面的hash值是无效的，`#/page1`应该添加到浏览器地址上。
 ```html
+<!-- 这里的#/page1是无效的，应该添加到浏览器地址上 -->
 <micro-app url='http://www.xxx.com/#/page1'></micro-app>
 ```
 

@@ -60,7 +60,7 @@ describe('source index', () => {
     await new Promise((reslove) => {
       microappElement3.addEventListener('mounted', () => {
         const app = appInstanceMap.get('test-app3')!
-        expect(app.source.links.size).toBe(0)
+        expect(app.source.links.size).toBe(1)
         expect(app.source.scripts.size).toBe(0)
         reslove(true)
       }, false)

@@ -130,7 +130,7 @@ devServer: {
 # 🤝 参与共建
 如果您对这个项目感兴趣，欢迎提 pull request，也欢迎 "Star" 支持一下 ^_^
 
-如果您或您的团队正在使用，请务必[告诉我们](https://github.com/micro-zoe/micro-app/issues/35)
+如果您正在使用，请务必[告诉我们](https://github.com/micro-zoe/micro-app/issues/35)
 
 ### 本地运行
 1、克隆项目
@@ -148,7 +148,7 @@ yarn bootstrap
 yarn start # 访问 http://localhost:3000
 ```
 
-默认启动react基座应用，如果想启动vue基座应用，可以运行`yarn start:main-vue2`
+更多命令请查看[DEVELP](https://github.com/micro-zoe/micro-app/blob/master/DEVELOP.zh-cn.md)
 
 # FAQ
 [问题汇总](https://zeroing.jd.com/micro-app/docs.html#/zh-cn/questions)

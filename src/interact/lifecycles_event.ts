@@ -1,5 +1,5 @@
 import microApp from '../micro_app'
-import { formatLogMessage } from '../libs/utils'
+import { logError } from '../libs/utils'
 
 function eventHandler (event: CustomEvent, element: HTMLElement): void {
   Object.defineProperties(event, {
@@ -30,9 +30,7 @@ export default function dispatchLifecyclesEvent (
   error?: Error,
 ): void {
   if (!element) {
-    return console.error(
-      formatLogMessage(`element does not exist in lifecycle ${lifecycleName}，it seems the app has unmounted`)
-    )
+    return logError(`element does not exist in lifecycle ${lifecycleName}，it seems the app has unmounted`)
   } else if (element instanceof ShadowRoot) {
     element = element.host as HTMLElement
   }

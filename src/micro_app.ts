@@ -1,7 +1,7 @@
 import type { OptionsType, MicroAppConfigType, lifeCyclesType, plugins, fetchType } from '@micro-app/types'
 import { defineElement } from './micro_app_element'
 import preFetch, { getGlobalAssets } from './prefetch'
-import { formatLogMessage, isFunction } from './libs/utils'
+import { logError, isFunction } from './libs/utils'
 import { EventCenterForBaseApp } from './interact'
 
 class MicroApp extends EventCenterForBaseApp implements MicroAppConfigType {
@@ -18,14 +18,14 @@ class MicroApp extends EventCenterForBaseApp implements MicroAppConfigType {
   preFetch = preFetch
   start (options?: OptionsType) {
     if (!window?.customElements) {
-      return console.error(formatLogMessage('customElements is not supported in this environment'))
+      return logError('customElements is not supported in this environment')
     }
 
     if (options?.tagName) {
       if (/^micro-app(-\S+)?/.test(options.tagName)) {
         this.tagName = options.tagName
       } else {
-        return console.error(formatLogMessage(`${options.tagName} is invalid tagName`))
+        return logError(`${options.tagName} is invalid tagName`)
       }
     }
 

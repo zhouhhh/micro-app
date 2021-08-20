@@ -1,5 +1,5 @@
 import type { AttrType, MicroAppElementType, AppInterface } from '@micro-app/types'
-import { formatLogMessage, defer, formatURL, version } from './libs/utils'
+import { defer, formatURL, version, logError, logWarn } from './libs/utils'
 import { ObservedAttrName, appStatus, lifeCycles } from './constants'
 import CreateApp, { appInstanceMap } from './create_app'
 import {
@@ -61,13 +61,9 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
       ) {
         this.handleAppMount(app)
       } else if (app.isPrefetch) {
-        console.error(
-          formatLogMessage(`the url: ${this.url} is different from prefetch url: ${app.url}`)
-        )
+        logError(`the url: ${this.url} is different from prefetch url: ${app.url}`)
       } else {
-        console.error(
-          formatLogMessage(`an app named ${this.name} already exists`)
-        )
+        logError(`an app named ${this.name} already exists`)
       }
     } else {
       this.handleCreate()
@@ -89,9 +85,7 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
       if (attr === ObservedAttrName.URL && !this.url) {
         newVal = formatURL(newVal)
         if (!newVal) {
-          return console.error(
-            formatLogMessage('Invalid attribute url')
-          )
+          return logError('Invalid attribute url')
         }
         this.url = newVal
       } else if (attr === ObservedAttrName.NAME && !this.name) {
@@ -120,9 +114,7 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
         // handling of cached and non-prefetch apps
         if (existApp.getAppStatus() !== appStatus.UNMOUNT && !existApp.isPrefetch) {
           this.setAttribute('name', this.name)
-          return console.error(
-            formatLogMessage(`an app named ${attrName} already exists`)
-          )
+          return logError(`an app named ${attrName} already exists`)
         }
       }
 
@@ -155,9 +147,7 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
    */
   legalAttribute (name: string, val: AttrType): boolean {
     if (typeof val !== 'string' || !val) {
-      console.error(
-        formatLogMessage(`unexpected attribute ${name}, please check again`)
-      )
+      logError(`unexpected attribute ${name}, please check again`)
 
       return false
     }
@@ -240,9 +230,7 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
  */
 export function defineElement (tagName: string): boolean {
   if (window.customElements.get(tagName)) {
-    console.warn(
-      formatLogMessage(`element ${tagName} is already defined`)
-    )
+    logWarn(`element ${tagName} is already defined`)
     return false
   }
 

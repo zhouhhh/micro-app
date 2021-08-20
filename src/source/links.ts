@@ -8,6 +8,7 @@ import {
   promiseStream,
   pureCreateElement,
   defer,
+  logError,
 } from '../libs/utils'
 import scopedCSS from './scoped_css'
 import {
@@ -96,7 +97,7 @@ export function fetchLinksFromHtml (
       app,
     )
   }, (err: {error: Error, index: number}) => {
-    console.error('[micro-app]', err)
+    logError(err)
   }, () => {
     app.onLoad(wrapElement)
   })
@@ -171,7 +172,7 @@ export function foramtDynamicLink (
     scopedCSS(replaceStyle, app.name)
     dispatchOnLoadEvent(originLink)
   }).catch((err) => {
-    console.error('[micro-app]', err)
+    logError(err)
     dispatchOnErrorEvent(originLink)
   })
 }

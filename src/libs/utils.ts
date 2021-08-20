@@ -27,15 +27,27 @@ export const rawDocument = new Function('return document')()
 export const version = '__VERSION__'
 
 /**
- * Format log msg
- * @param msg log msg
+ * format error log
+ * @param msg message
  */
-export function formatLogMessage (msg: string): string {
+export function logError (msg: unknown, ...rest: any[]) {
   if (typeof msg === 'string') {
-    return `[micro-app] ${msg}`
+    console.error(`[micro-app] ${msg}`, ...rest)
+  } else {
+    console.error('[micro-app]', msg, ...rest)
   }
+}
 
-  return msg
+/**
+ * format warn log
+ * @param msg message
+ */
+export function logWarn (msg: unknown, ...rest: any[]) {
+  if (typeof msg === 'string') {
+    console.warn(`[micro-app] ${msg}`, ...rest)
+  } else {
+    console.warn('[micro-app]', msg, ...rest)
+  }
 }
 
 /**
@@ -71,7 +83,7 @@ export function formatURL (url: string | null): string {
     const fullPath = `${origin}${pathname}/`.replace(/\/\/$/, '/')
     return /^https?:\/\//.test(fullPath) ? `${fullPath}${search}` : ''
   } catch (e) {
-    console.error('[micro-app]', e)
+    logError(e)
     return ''
   }
 }

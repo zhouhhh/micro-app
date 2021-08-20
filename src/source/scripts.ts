@@ -12,6 +12,7 @@ import {
   pureCreateElement,
   rawWindow,
   defer,
+  logError,
 } from '../libs/utils'
 import {
   dispatchOnLoadEvent,
@@ -121,7 +122,7 @@ export function fetchScriptsFromHtml (
         res.data,
       )
     }, (err: {error: Error, index: number}) => {
-      console.error('[micro-app]', err)
+      logError(err)
     }, () => {
       app.onLoad(wrapElement)
     })
@@ -178,7 +179,7 @@ export function execScripts (scriptList: Map<string, sourceScriptInfo>, app: App
         runScript(deferScriptInfo[index][0], code, app, deferScriptInfo[index][1].module, false)
       })
     }).catch((err) => {
-      console.error('[micro-app]', err)
+      logError(err)
     })
   }
 }
@@ -234,7 +235,7 @@ export function runDynamicScript (
     }
     dispatchOnLoadEvent(originScript)
   }).catch((err) => {
-    console.error('[micro-app]', err)
+    logError(err)
     dispatchOnErrorEvent(originScript)
   })
 

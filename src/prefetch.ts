@@ -1,6 +1,6 @@
 import type { prefetchParamList, prefetchParam, globalAssetsType } from '@micro-app/types'
 import CreateApp, { appInstanceMap } from './create_app'
-import { requestIdleCallback, formatURL, promiseStream } from './libs/utils'
+import { requestIdleCallback, formatURL, promiseStream, logError } from './libs/utils'
 import { fetchSource } from './source/fetch'
 import { globalLinks } from './source/links'
 import { globalScripts } from './source/scripts'
@@ -83,7 +83,7 @@ export function getGlobalAssets (assets: globalAssetsType): void {
             globalScripts.set(path, res.data)
           }
         }, (err: {error: Error, index: number}) => {
-          console.error('[micro-app]', err)
+          logError(err)
         })
       }
 
@@ -102,7 +102,7 @@ export function getGlobalAssets (assets: globalAssetsType): void {
             globalLinks.set(path, res.data)
           }
         }, (err: {error: Error, index: number}) => {
-          console.error('[micro-app]', err)
+          logError(err)
         })
       }
     })

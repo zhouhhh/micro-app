@@ -1,6 +1,6 @@
 import type { AppInterface } from '@micro-app/types'
 import { fetchSource } from './fetch'
-import { formatLogMessage, CompletionPath, pureCreateElement } from '../libs/utils'
+import { logError, CompletionPath, pureCreateElement } from '../libs/utils'
 import { extractLinkFromHtml, fetchLinksFromHtml } from './links'
 import { extractScriptElement, fetchScriptsFromHtml } from './scripts'
 import scopedCSS from './scoped_css'
@@ -74,9 +74,7 @@ function extractSourceDom (htmlStr: string, app: AppInterface) {
   if (!microAppHead || !microAppBody) {
     const msg = `element ${microAppHead ? 'body' : 'head'} is missing`
     app.onerror(new Error(msg))
-    return console.error(
-      formatLogMessage(msg)
-    )
+    return logError(msg)
   }
 
   flatChildren(wrapElement, app, microAppHead)
@@ -103,7 +101,7 @@ export default function extractHtml (app: AppInterface): void {
     if (!htmlStr) {
       const msg = 'html is empty, please check in detail'
       app.onerror(new Error(msg))
-      return console.error(formatLogMessage(msg))
+      return logError(msg)
     }
     htmlStr = htmlStr
       .replace(/<head[^>]*>[\s\S]*?<\/head>/i, (match) => {
@@ -119,10 +117,7 @@ export default function extractHtml (app: AppInterface): void {
 
     extractSourceDom(htmlStr, app)
   }).catch((e) => {
-    console.error(
-      formatLogMessage(`Failed to fetch data from ${app.url}, micro-app stop rendering`),
-      e
-    )
+    logError(`Failed to fetch data from ${app.url}, micro-app stop rendering`, e)
     app.onLoadError(e)
   })
 }

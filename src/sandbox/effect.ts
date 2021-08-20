@@ -1,5 +1,5 @@
 import type { microWindowType } from '@micro-app/types'
-import { getCurrentAppName, formatLogMessage } from '../libs/utils'
+import { getCurrentAppName, logError } from '../libs/utils'
 
 // save raw methods
 const rawWindowAddEventListener = window.addEventListener
@@ -22,9 +22,7 @@ function overwriteDocumentOnClick (): void {
   hasRewriteDocumentOnClick = true
   const descriptor = Object.getOwnPropertyDescriptor(document, 'onclick')
   if (descriptor?.configurable === false) {
-    return console.warn(
-      formatLogMessage('Cannot redefine document property onclick')
-    )
+    return logError('Cannot redefine document property onclick')
   }
   const rawOnClick = document.onclick
   document.onclick = null

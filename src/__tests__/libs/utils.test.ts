@@ -15,10 +15,16 @@ test('get native window and document', () => {
   expect(Utils.rawDocument).toBe(document)
 })
 
-test('should format string content', () => {
-  expect(Utils.formatLogMessage('msg')).toBe('[micro-app] msg')
-  // @ts-ignore
-  expect(Utils.formatLogMessage(undefined)).toBe(undefined)
+test('uitls ==> logError & logWarn', () => {
+  Utils.logError('msg')
+  expect(console.error).toBeCalledWith('[micro-app] msg')
+  Utils.logError(new Error('123'), 111)
+  expect(console.error).toBeCalledWith('[micro-app]', expect.any(Error), 111)
+
+  Utils.logWarn('msg')
+  expect(console.warn).toBeCalledWith('[micro-app] msg')
+  Utils.logWarn(new Error('123'), 111)
+  expect(console.warn).toBeCalledWith('[micro-app]', expect.any(Error), 111)
 })
 
 test('call function in micro task', () => {

@@ -1,12 +1,12 @@
 import type { Func, AppInterface } from '@micro-app/types'
 import { appInstanceMap } from '../create_app'
 import {
-  formatLogMessage,
   CompletionPath,
   getCurrentAppName,
   pureCreateElement,
   setCurrentAppName,
   rawDocument,
+  logWarn,
 } from '../libs/utils'
 import scopedCSS from './scoped_css'
 import { extractLinkFromHtml, foramtDynamicLink } from './links'
@@ -245,9 +245,7 @@ export function patchElementPrototypeMethods (): void {
         })
         this.data = cloneValue
       } else if (value !== '[object Object]') {
-        console.warn(
-          formatLogMessage('property data must be an object')
-        )
+        logWarn('property data must be an object')
       }
     } else if (
       (

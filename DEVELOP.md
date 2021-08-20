@@ -1,20 +1,46 @@
-# 开发指南
+# develop
 
-下载并运行
+### clone & run project
 ```bash
 git clone https://github.com/micro-zoe/micro-app.git
 
-// 安装项目以及demo的依赖
+cd micro-app
+
+// install dependencies
 yarn bootstrap 
 
-// 运行
+// run project
 yarn start
 ```
 
-默认主应用是`main-react16`，如果想要切换到其它应用可以执行对应的操作
+The base application `main-react16` is started by default, the sub applications started are: react16, react17, vue2, vue3, angular11, vite.
 
-如切换到`main-vue2`，运行命令：
+If you want to start the `main-vue2` base application, you can run: 
 
 ```bash
 yarn start:main-vue2
 ```
+
+### run alone
+`yarn start` will start 8 applications at the same time by default, which may cause the system to get stuck. It is recommended to run some applications separately to get a better development experience.
+
+1、run main program
+```
+yarn build:watch
+```
+
+2、enter the base application and start
+```
+cd examples/main-react16/
+
+yarn start
+```
+
+3、enter a sub application and start it
+```
+cd examples/children/react16
+
+yarn start
+```
+
+If you want to start more sub applications, you can continue to enter their directory and start.

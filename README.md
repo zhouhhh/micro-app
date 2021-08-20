@@ -129,7 +129,7 @@ More detailed configuration can be viewed [Documentation](https://zeroing.jd.com
 # 🤝 Contribution
 If you're interested in this project, you're welcome to mention pull request, and also welcome your "Star" ^_^
 
-If you or your team are using it, please [tell us](https://github.com/micro-zoe/micro-app/issues/35)
+If you are using it, please [tell us](https://github.com/micro-zoe/micro-app/issues/35)
 
 ### development
 1、Clone
@@ -137,7 +137,7 @@ If you or your team are using it, please [tell us](https://github.com/micro-zoe/
 git clone https://github.com/micro-zoe/micro-app.git
 ```
 
-2、Installation dependencies
+2、Install dependencies
 ```
 yarn bootstrap
 ```
@@ -147,7 +147,7 @@ yarn bootstrap
 yarn start
 ```
 
-The react base application is started by default. If you want to start the vue base application, you can run: `yarn start:main-vue2`
+For more commands, see [DEVELP](https://github.com/micro-zoe/micro-app/blob/master/DEVELOP.md)
 
 # FAQ
 <details>
