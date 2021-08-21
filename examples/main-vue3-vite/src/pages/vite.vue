@@ -11,14 +11,8 @@
   </div>
 </template>
 
-<script>
+<script lang="ts" setup>
 
-export default {
-  name: 'vite',
-  methods: {
-
-  }
-}
 </script>
 
 <style>

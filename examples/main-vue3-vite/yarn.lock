@@ -44,11 +44,6 @@
   resolved "https://registry.npm.taobao.org/@emmetio/scanner/download/@emmetio/scanner-1.0.0.tgz#065b2af6233fe7474d44823e3deb89724af42b5f"
   integrity sha1-Blsq9iM/50dNRII+PeuJckr0K18=
 
-"@micro-zoe/micro-app@^0.2.4":
-  version "0.2.4"
-  resolved "https://registry.nlark.com/@micro-zoe/micro-app/download/@micro-zoe/micro-app-0.2.4.tgz#6a21d1c3d04b30fd1c1937ec0b736eedb2942cd5"
-  integrity sha1-aiHRw9BLMP0cGTfsC3Nu7bKULNU=
-
 "@popperjs/core@^2.4.4":
   version "2.9.3"
   resolved "https://registry.nlark.com/@popperjs/core/download/@popperjs/core-2.9.3.tgz#8b68da1ebd7fc603999cf6ebee34a4899a14b88e"

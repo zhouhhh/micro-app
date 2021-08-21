@@ -1,31 +1,24 @@
 <template>
-  <div class="vue2">
-    <el-button type="primary" round @click='changeData'>发送数据</el-button>
-    <micro-app
-      name='vue2'
-      url='http://localhost:4001/micro-app/vue2'
-      :data='data'
-    >
+<div class="vue2">
+  <el-button type="primary" round @click='changeData'>发送数据</el-button>
+  <micro-app
+    name='vue2'
+    url='http://localhost:4001/micro-app/vue2'
+    :data='data'
+  >
     <!-- destory inline scopecss  baseurl='/vue2' -->
-    </micro-app>
-  </div>
+  </micro-app>
+</div>
 </template>
 
-<script>
+<script lang="ts" setup>
+import {ref} from "vue";
 
-export default {
-  name: 'vue2',
-  data () {
-    return {
-      data: {from: '来自基座的初始化数据'}
-    }
-  },
-  methods: {
-    changeData () {
-      this.data = {from: '来自基座的数据' + (+new Date())}
-    },
-  }
+const data = ref({from: '来自基座的初始化数据'})
+const changeData = () => {
+  data.value = {from: '来自基座的数据' + (+new Date())}
 }
+
 </script>
 
 <style>

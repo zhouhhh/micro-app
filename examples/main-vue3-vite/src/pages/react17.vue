@@ -1,31 +1,19 @@
 <template>
-  <div class="react17">
-    <micro-app
-      name='react17'
-      url='http://localhost:3002/'
-      :data='data'
-    >
+<div class="react17">
+  <micro-app
+    name='react17'
+    url='http://localhost:3002/'
+    :data='data'
+  >
     <!-- destory inline -->
-    </micro-app>
-  </div>
+  </micro-app>
+</div>
 </template>
 
-<script>
+<script lang="ts" setup>
+import {ref} from "vue";
 
-export default {
-  name: 'react17',
-  data () {
-    return {
-      data: {from: '来自基座的数据'}
-    }
-  },
-  created () {
-
-  },
-  methods: {
-
-  },
-}
+const data = ref({from: '来自基座的初始化数据'})
 </script>
 
 <style>

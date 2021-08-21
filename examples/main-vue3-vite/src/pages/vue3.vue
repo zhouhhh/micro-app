@@ -1,30 +1,22 @@
 <template>
-  <div class="vue3">
-    <micro-app
-      name='vue3'
-      url='http://localhost:4002/micro-app/vue3/'
-      :data='data'
-      macro
-      baseurl='/vue3'
-    >
+<div class="vue3">
+  <micro-app
+    name='vue3'
+    url='http://localhost:4002/micro-app/vue3/'
+    :data='data'
+    macro
+    baseurl='/vue3'
+  >
     <!-- destory inline scopecss='false' -->
-    </micro-app>
-  </div>
+  </micro-app>
+</div>
 </template>
 
-<script>
+<script lang="ts" setup>
+import {ref} from "vue";
 
-export default {
-  name: 'vue3',
-  data () {
-    return {
-      data: {from: '来自基座的初始化数据'}
-    }
-  },
-  methods: {
+const data = ref({from: '来自基座的初始化数据'})
 
-  }
-}
 </script>
 
 <style>

@@ -1,5 +1,4 @@
 <template>
-<div id="app">
   <div class="menu-con">
     <el-menu
       class="el-menu-vertical-demo"
@@ -43,15 +42,15 @@
   <div class="router-con">
     <router-view/>
   </div>
-</div>
 </template>
 
 <script lang="ts" setup>
 import {ref, watch} from "vue";
-import {useRoute, useRouter} from 'vue-router'
+import {useRouter} from 'vue-router'
+
 const activeIndex = ref('/react16/')
 const {currentRoute} = useRouter()
-watch(currentRoute,(newVal,oldVal)=>{
+watch(currentRoute, (newVal, oldVal) => {
   activeIndex.value = currentRoute.value.fullPath
 })
 

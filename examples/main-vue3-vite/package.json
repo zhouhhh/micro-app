@@ -1,13 +1,13 @@
 {
-  "name": "hfunc",
-  "version": "0.0.0",
+  "name": "main-vue3-vite",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
     "start": "vite",
     "build": "vue-tsc --noEmit && vite build",
     "serve": "vite preview"
   },
   "dependencies": {
-    "@micro-zoe/micro-app": "^0.2.4",
     "element-plus": "^1.0.2-beta.71",
     "vue": "^3.0.5",
     "vue-router": "^4.0.11"
