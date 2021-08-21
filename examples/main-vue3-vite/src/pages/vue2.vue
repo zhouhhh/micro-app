@@ -12,12 +12,20 @@
 </template>
 
 <script lang="ts" setup>
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 
 const data = ref({from: '来自基座的初始化数据'})
 const changeData = () => {
   data.value = {from: '来自基座的数据' + (+new Date())}
 }
+
+// onMounted(() => {
+//   let e = document.getElementById('vue2')
+//   console.log(e.attributes.getNamedItem("name"))
+//   let a = document.createAttribute("name")
+//   a.value = 'vue2'
+//   e.attributes.setNamedItem(a)
+// })
 
 </script>
 

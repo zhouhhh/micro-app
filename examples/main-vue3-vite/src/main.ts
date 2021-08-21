@@ -6,7 +6,6 @@ import ElementUI from 'element-plus'
 import 'element-plus/lib/theme-chalk/index.css';
 import router from './router';
 
-let app = createApp(App).use(router).use(ElementUI).mount('#app')
 
 microApp.start({
   lifeCycles: {
@@ -93,4 +92,4 @@ microApp.start({
   }
 })
 
-
+createApp(App).use(router).use(ElementUI).mount('#app')

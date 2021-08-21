@@ -30,8 +30,8 @@
 </template>
 
 <script lang="ts" setup>
-import microApp from '@micro-zoe/micro-app'
-import {onMounted, ref} from "vue";
+import app from '@micro-zoe/micro-app'
+import {onMounted, onUpdated, ref} from "vue";
 
 const data = ref({name: '初始化数据'})
 const name = ref('react16')
@@ -40,11 +40,11 @@ const showMicroApp = ref(true)
 const testNum = ref(0)
 onMounted(() => {
   console.time('react16')
-  microApp.addDataListener('react16', (data) => {
+  app.addDataListener('react16', (data) => {
     console.log('来自子应用react16的数据', data)
   })
 
-  microApp.addGlobalDataListener((data) => {
+  app.addGlobalDataListener((data) => {
     console.log('这是全局数据--基座应用', data)
   })
 })
@@ -85,11 +85,11 @@ const changeData = () => {
 }
 
 const dispatchData = () => {
-  microApp.setData('react16', {dispatch: 'data from dispatch' + (+new Date())})
+  app.setData('react16', {dispatch: 'data from dispatch' + (+new Date())})
 }
 
 const dispatchGlobalData = () => {
-  microApp.setGlobalData({name: '全局数据' + (+new Date())})
+  app.setGlobalData({name: '全局数据' + (+new Date())})
 }
 
 const changeNameUrl = () => {
@@ -101,6 +101,23 @@ const changeTestNum = () => {
   testNum.value = testNum.value + 1
 
 }
+
+onMounted(()=>{
+  const es = document.getElementsByTagName("micro-app")
+  for (let i = 0; i < es.length; i++) {
+    es[i].setAttribute("name", es[i].getAttribute("name"))
+    es[i].setAttribute("url", es[i].getAttribute("url"))
+  }
+})
+
+onUpdated(() => {
+  const es = document.getElementsByTagName("micro-app")
+  for (let i = 0; i < es.length; i++) {
+    es[i].setAttribute("name", es[i].getAttribute("name"))
+    es[i].setAttribute("url", es[i].getAttribute("url"))
+  }
+})
+
 </script>
 
 <style>
