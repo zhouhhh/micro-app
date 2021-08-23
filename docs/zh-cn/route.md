@@ -5,7 +5,7 @@
 
 micro-app不是iframe，不会重开一个window窗口，基座应用和子应用本质是在同一个页面渲染，所以影响到子应用路由的是浏览器地址。micro-app的url属性只是html的地址，它只是用来获取html。
 
-举个栗子🌰 :
+**举个栗子🌰 :**
 
 浏览器地址为：`http://localhost:3000/page1/`，此时路由地址为`page1`。
 
@@ -21,12 +21,24 @@ micro-app不是iframe，不会重开一个window窗口，基座应用和子应�
 
 同理，页面参数和hash也是以浏览器为准。
 
-再举个栗子🌰 :
+**再举个栗子🌰 :**
+
 子应用是hash路由，我们要渲染子应用的page1页面，那么下面的hash值是无效的，`#/page1`应该添加到浏览器地址上。
 ```html
 <!-- 这里的#/page1是无效的，应该添加到浏览器地址上 -->
 <micro-app url='http://www.xxx.com/#/page1'></micro-app>
+
+<!-- 👇这个url才是正确的 -->
+<micro-app url='http://www.xxx.com/'></micro-app>
 ```
+
+**再再举个栗子🌰 :**
+
+基座应用是history路由，子应用是hash路由，我们要跳转基座应用的`my-app`页面，页面中嵌入子应用，我们要展现子应用的`page1`页面。
+
+那么浏览器地址应该为：`域名/my-page#/page1`，我们在基座中跳转`my-app`页面的参数为：`router.push('/my-page#/page1')`
+
+此时基座应用会匹配到`/my-page`路径并渲染`my-app`页面，子应用匹配到`#/page1`渲染`page1`页面。
 
 ### 路由配置
 
