@@ -74,7 +74,7 @@ export function MyPage () {
   return (
     <div>
       <h1>子应用</h1>
-      // url为html地址 (基座应用和子应用本质是在同一个页面，这里的url只是html地址，子应用的路由还是基于浏览器地址的)
+      // url为html地址 (url只是html地址，子应用的路由还是基于浏览器地址)
       <micro-app name='app1' url='http://localhost:3000/' baseurl='/my-page'></micro-app>
     </div>
   )
@@ -87,7 +87,7 @@ export function MyPage () {
 <template>
   <div>
     <h1>子应用</h1>
-    <!-- url为html地址 (基座应用和子应用本质是在同一个页面，这里的url只是html地址，子应用的路由还是基于浏览器地址的) -->
+    <!-- url为html地址 (url只是html地址，子应用的路由还是基于浏览器地址) -->
     <micro-app name='app1' url='http://localhost:3000/' baseurl='/my-page'></micro-app>
   </div>
 </template>
