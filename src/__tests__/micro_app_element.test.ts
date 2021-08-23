@@ -154,7 +154,7 @@ describe('micro_app_element', () => {
       defer(() => {
         expect(microappElement8.getAttribute('url')).toBe('abc')
         // @ts-ignore
-        expect(microappElement8.url).toBe(`http://127.0.0.1:${ports.micro_app_element}/common/`)
+        expect(microappElement8.appUrl).toBe(`http://127.0.0.1:${ports.micro_app_element}/common/`)
         reslove(true)
       })
     })
