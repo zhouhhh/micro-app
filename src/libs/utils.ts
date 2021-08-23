@@ -30,7 +30,7 @@ export const version = '__VERSION__'
  * format error log
  * @param msg message
  */
-export function logError (msg: unknown, ...rest: any[]) {
+export function logError (msg: unknown, ...rest: any[]): void {
   if (typeof msg === 'string') {
     console.error(`[micro-app] ${msg}`, ...rest)
   } else {
@@ -42,7 +42,7 @@ export function logError (msg: unknown, ...rest: any[]) {
  * format warn log
  * @param msg message
  */
-export function logWarn (msg: unknown, ...rest: any[]) {
+export function logWarn (msg: unknown, ...rest: any[]): void {
   if (typeof msg === 'string') {
     console.warn(`[micro-app] ${msg}`, ...rest)
   } else {
