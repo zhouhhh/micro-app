@@ -192,7 +192,7 @@ For more commands, see [DEVELP](https://github.com/micro-zoe/micro-app/blob/mast
 <details>
   <summary>Does it support vite?</summary>
   
-  Yes, please see [adapt vite](https://zeroing.jd.com/micro-app/docs.html#/zh-cn/other?id=_3%e3%80%81%e9%80%82%e9%85%8dvite) for details.
+  Yes, please see [adapt vite](https://zeroing.jd.com/micro-app/docs.html#/zh-cn/advanced?id=_2%e3%80%81%e9%80%82%e9%85%8dvite) for details.
 </details>
 
 # Contributors
