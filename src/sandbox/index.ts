@@ -98,8 +98,10 @@ export default class SandBox implements SandBoxInterface {
         if (key === 'hasOwnProperty') return hasOwnProperty
 
         if (key === 'document' || key === 'eval') {
-          setCurrentAppName(appName)
-          ;(macro ? macroTask : defer)(() => setCurrentAppName(null))
+          if (this.active) {
+            setCurrentAppName(appName)
+            ;(macro ? macroTask : defer)(() => setCurrentAppName(null))
+          }
           switch (key) {
             case 'document':
               return rawDocument

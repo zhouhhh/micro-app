@@ -6,7 +6,6 @@ import ElementUI from 'element-plus'
 import 'element-plus/lib/theme-chalk/index.css';
 import router from './router';
 
-
 microApp.start({
   lifeCycles: {
     created() {

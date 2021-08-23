@@ -16,6 +16,7 @@
   - [插件系统](zh-cn/plugins)
   - [多层嵌套](zh-cn/qiantao)
   - [高级功能](zh-cn/advanced)
+  - [查看版本](zh-cn/version)
   - [路由](zh-cn/route)
 
 - 其他

@@ -70,8 +70,8 @@ declare module '@micro-app/types' {
   }
 
   interface MicroAppElementType {
-    name: AttrType // app name
-    url: AttrType // app url
+    appName: AttrType // app name
+    appUrl: AttrType // app url
     isWating: boolean // combine action of set attribute name, url
     cacheData: Record<PropertyKey, unknown> | null // Cache data
     connectedCallback(): void // Hooks for element append to documents

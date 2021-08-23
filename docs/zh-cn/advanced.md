@@ -1,17 +1,4 @@
-
-### 1、查看micro-app版本
-方式1：
-```js
-import { version } from '@micro-zoe/micro-app'
-```
-
-方式2：
-每个micro-app元素上都有version属性
-```js
-document.querySelector('micro-app').version
-```
-
-### 2、自定义fetch
+## 1、自定义fetch
 通过自定义fetch替换框架自带的fetch，可以修改fetch配置(添加cookie或header信息等等)，或拦截HTML、JS、CSS等静态资源。
 
 自定义的fetch必须是一个返回string类型的Promise。
@@ -57,14 +44,14 @@ microApp.start({
 >
 > 2、如果跨域请求带cookie，那么`Access-Control-Allow-Origin`不能设置为`*`，这一点需要注意
 
-### 3、适配vite
+## 2、适配vite
 当子应用是vite应用时需要做特别的适配，适配vite的代价是巨大的，我们必须关闭沙箱功能，因为沙箱在`module script`下不支持，这导致大部分功能失效，包括：环境变量、样式隔离、元素隔离、数据通信、资源地址补全、baseurl 等。
 
 在嵌入vite子应用时，`micro-app`的功能只负责渲染，其它的行为由应用自行决定，这包括如何防止样式、JS变量、元素的冲突。
 
 在module模式下，引入的资源大多为相对地址，我们的兼容主要做的事情就是将地址补全。下面给出了一种解决思路，但这不是唯一的方式，只要能够将地址补全，任何方式都是可以的。
 
-#### 👉 子应用的修改
+### 👇 子应用的修改
 `请确保vite版本>=2.5.0`
 
 ##### 1、修改vite.config.js
@@ -109,7 +96,7 @@ vite环境下，当路由的baseName和vite.base值不相等，两者会进行�
 ##### 3、静态资源
 图片等静态资源需要使用绝对地址，可以使用 `new URL('../assets/logo.png', import.meta.url)` 等方式获取资源的全链接地址。
 
-#### 👉 基座应用的修改
+### 👇 基座应用的修改
 `请确保vite版本>=2.5.0`
 
 ##### 1、关闭沙箱并使用内联script模式

@@ -87,7 +87,7 @@ vue3中需要配置publicPath补全资源地址，详情请查看[public-path](/
 如果你使用的是`ant-design`等组件库，一般会提供添加前缀进行样式隔离的功能。
 
 ## 11、支持vite吗
-支持，详情请查看[适配vite](/zh-cn/other?id=_3、适配vite)
+支持，详情请查看[适配vite](/zh-cn/advanced?id=_2、适配vite)
 
 ## 12、子应用在沙箱环境中如何获取到外部真实window？
   目前有3种方式在子应用中获取外部真实window

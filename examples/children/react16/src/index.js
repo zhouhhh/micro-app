@@ -1,4 +1,4 @@
-// import "./public-path";
+import "./public-path";
 import 'babel-polyfill'
 // import '@babel/polyfill'
 import React from "react";

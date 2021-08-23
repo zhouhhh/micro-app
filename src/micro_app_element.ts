@@ -17,8 +17,8 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
     return ['name', 'url']
   }
 
-  name = ''
-  url = ''
+  appName = ''
+  appUrl = ''
   version = version
   isWating = false
   cacheData: Record<PropertyKey, unknown> | null = null
@@ -41,29 +41,29 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
 
     defer(() => dispatchLifecyclesEvent(
       this,
-      this.name,
+      this.appName,
       lifeCycles.CREATED,
     ))
 
-    if (!this.name || !this.url) return
+    if (!this.appName || !this.appUrl) return
 
     if (this.getDisposeResult('shadowDOM') && !this.shadowRoot) {
       this.attachShadow({ mode: 'open' })
     }
 
-    const app = appInstanceMap.get(this.name)
+    const app = appInstanceMap.get(this.appName)
     if (app) {
       if (
-        app.url === this.url && (
+        app.url === this.appUrl && (
           app.isPrefetch ||
           app.getAppStatus() === appStatus.UNMOUNT
         )
       ) {
         this.handleAppMount(app)
       } else if (app.isPrefetch) {
-        logError(`the url: ${this.url} is different from prefetch url: ${app.url}`)
+        logError(`the url: ${this.appUrl} is different from prefetch url: ${app.url}`)
       } else {
-        logError(`an app named ${this.name} already exists`)
+        logError(`an app named ${this.appName} already exists`)
       }
     } else {
       this.handleCreate()
@@ -81,19 +81,22 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
   }
 
   attributeChangedCallback (attr: ObservedAttrName, _oldVal: string, newVal: string): void {
-    if (this.legalAttribute(attr, newVal) && this[attr] !== newVal) {
-      if (attr === ObservedAttrName.URL && !this.url) {
+    if (
+      this.legalAttribute(attr, newVal) &&
+      this[attr === ObservedAttrName.NAME ? 'appName' : 'appUrl'] !== newVal
+    ) {
+      if (attr === ObservedAttrName.URL && !this.appUrl) {
         newVal = formatURL(newVal)
         if (!newVal) {
           return logError('Invalid attribute url')
         }
-        this.url = newVal
-      } else if (attr === ObservedAttrName.NAME && !this.name) {
+        this.appUrl = newVal
+      } else if (attr === ObservedAttrName.NAME && !this.appName) {
         if (this.cacheData) {
           microApp.setData(newVal, this.cacheData)
           this.cacheData = null
         }
-        this.name = newVal
+        this.appName = newVal
       } else if (!this.isWating) {
         this.isWating = true
         defer(this.handleAttributeUpdate)
@@ -110,23 +113,23 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
     const attrUrl = formatURL(this.getAttribute('url'))
     if (this.legalAttribute('name', attrName) && this.legalAttribute('url', attrUrl)) {
       const existApp = appInstanceMap.get(attrName!)
-      if (attrName !== this.name && existApp) {
+      if (attrName !== this.appName && existApp) {
         // handling of cached and non-prefetch apps
         if (existApp.getAppStatus() !== appStatus.UNMOUNT && !existApp.isPrefetch) {
-          this.setAttribute('name', this.name)
+          this.setAttribute('name', this.appName)
           return logError(`an app named ${attrName} already exists`)
         }
       }
 
-      if (attrName !== this.name || attrUrl !== this.url) {
+      if (attrName !== this.appName || attrUrl !== this.appUrl) {
         this.handleUnmount(true)
-        this.name = attrName as string
-        this.url = attrUrl
+        this.appName = attrName as string
+        this.appUrl = attrUrl
         ;(this.shadowRoot ?? this).innerHTML = ''
         /**
          * when existApp not undefined
-         * if attrName and this.name are equal, existApp has been unmounted
-         * if attrName and this.name are not equal, existApp is prefetch or unmounted
+         * if attrName and this.appName are equal, existApp has been unmounted
+         * if attrName and this.appName are not equal, existApp is prefetch or unmounted
          */
         if (existApp && existApp.url === attrUrl) {
           // mount app
@@ -135,8 +138,8 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
           this.handleCreate()
         }
       }
-    } else if (attrName !== this.name) {
-      this.setAttribute('name', this.name)
+    } else if (attrName !== this.appName) {
+      this.setAttribute('name', this.appName)
     }
   }
 
@@ -168,8 +171,8 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
   // create app instance
   handleCreate (): void {
     const instance: AppInterface = new CreateApp({
-      name: this.name!,
-      url: this.url!,
+      name: this.appName!,
+      url: this.appUrl!,
       container: this.shadowRoot ?? this,
       inline: this.getDisposeResult('inline'),
       scopecss: !(this.getDisposeResult('disableScopecss') || this.getDisposeResult('shadowDOM')),
@@ -178,7 +181,7 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
       baseurl: this.getAttribute('baseurl') ?? '',
     })
 
-    appInstanceMap.set(this.name!, instance)
+    appInstanceMap.set(this.appName!, instance)
   }
 
   /**
@@ -186,7 +189,7 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
    * @param destory delete cache resources when unmount
    */
   handleUnmount (destory: boolean): void {
-    const app = appInstanceMap.get(this.name!)
+    const app = appInstanceMap.get(this.appName!)
     if (app && app.getAppStatus() !== appStatus.UNMOUNT) app.unmount(destory)
   }
 
@@ -204,8 +207,8 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
    * Data from the base application
    */
   set data (value: Record<PropertyKey, unknown> | null) {
-    if (this.name) {
-      microApp.setData(this.name, value!)
+    if (this.appName) {
+      microApp.setData(this.appName, value!)
     } else {
       this.cacheData = value
     }
@@ -215,8 +218,8 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
    * get data only used in jsx-custom-event once
    */
   get data (): Record<PropertyKey, unknown> | null {
-    if (this.name) {
-      return microApp.getData(this.name, true)
+    if (this.appName) {
+      return microApp.getData(this.appName, true)
     } else if (this.cacheData) {
       return this.cacheData
     }

@@ -54,14 +54,6 @@ watch(currentRoute, (newVal, oldVal) => {
   activeIndex.value = currentRoute.value.fullPath
 })
 
-onUpdated(() => {
-  const es = document.getElementsByTagName("micro-app")
-  for (let i = 0; i < es.length; i++) {
-    es[i].setAttribute("name", es[i].getAttribute("name"))
-    es[i].setAttribute("url", es[i].getAttribute("url"))
-  }
-})
-
 </script>
 
 <style>
