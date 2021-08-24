@@ -23,7 +23,7 @@ const observer1 = new IntersectionObserver(res => {
   setTimeout(() => {
     const myApp = document.createElement('micro-app')
     myApp.setAttribute('name', 'my-app1')
-    myApp.setAttribute('url', `${location.origin}/micro-app/react17/`)
+    myApp.setAttribute('url', `https://zeroing.jd.com/micro-app/react17/`)
     myApp.addEventListener('mounted', () => {
       microAppCon.removeChild(microAppCon.children[0])
     })
@@ -61,7 +61,7 @@ const observer3 = new IntersectionObserver(res => {
   setTimeout(() => {
     const myApp = document.createElement('micro-app')
     myApp.setAttribute('name', 'my-app2')
-    myApp.setAttribute('url', `${location.origin}/micro-app/react17/`)
+    myApp.setAttribute('url', `https://zeroing.jd.com/micro-app/react17/`)
     myApp.addEventListener('mounted', () => {
       microAppCon.removeChild(microAppCon.children[0])
     })
