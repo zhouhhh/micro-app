@@ -83,7 +83,7 @@ export default routes
 <template>
   <div>
     <h1>子应用</h1>
-    <!-- name为应用名称，全局唯一，url为html地址 -->
+    <!-- name为应用名称，url为html地址 -->
     <micro-app name='app1' url='http://localhost:3000/' baseurl='/my-page'></micro-app>
   </div>
 </template>
