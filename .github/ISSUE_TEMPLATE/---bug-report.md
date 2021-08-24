@@ -11,9 +11,9 @@ assignees: ''
 > A clear and concise description of what the bug is.
 
 ## Environment
-- **micro-app version: **
-- **framework of base app & sub app: **
-- **Build tools & version: **
+- **micro-app version:**
+- **framework of base app & sub app:**
+- **Build tools & version:**
 
 ## To Reproduce
 1.
