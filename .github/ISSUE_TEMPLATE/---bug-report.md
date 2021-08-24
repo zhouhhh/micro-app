@@ -12,8 +12,7 @@ assignees: ''
 
 ## Environment
 - **micro-app version: **
-- **framework of base app & version: **
-- **framework of sub app & version: **
+- **framework of base app & sub app: **
 - **Build tools & version: **
 
 ## To Reproduce
@@ -25,6 +24,3 @@ assignees: ''
 
 ## Reproduce repository
 <!-- Please provide a condensed code repository and upload it to your own github to help us reproduce your problem. -->
-
-## Expected behavior
-<!-- A clear and concise description of what you expected to happen. -->
