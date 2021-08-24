@@ -1,26 +1,26 @@
 ---
-name: "\U0001F41E Bug report"
-about: Create a report to help us improve
-title: "[\U0001F41E Bug]: "
+name: "\U0001F41E BUG反馈"
+about: 反馈问题以帮助我们进行改进
+title: "[\U0001F41E Bug]："
 labels: bug
 assignees: ''
 
 ---
 
-## Describe the bug
-> A clear and concise description of what the bug is.
+## 问题描述
+> 问题的具体描述
 
-## Environment
-- **micro-app version:**
-- **framework of base app & sub app:**
-- **Build tools & version:**
+## 环境信息
+- **micro-app版本:**
+- **基座&子应用使用的前端框架和版本:**  
+- **构建工具&版本:** 
 
-## To Reproduce
+## 复现步骤
 1.
 2.
 
-## Screenshots
-> If possible, please upload screenshots of the code, console, terminal, etc. to help us understand your problem.
+## 上传截图
+> 请上传代码截图、控制台、终端等截图以帮助我们了解您的问题。
 
-## Reproduce repository
-> Please provide a condensed code repository and upload it to your own github to help us reproduce your problem.
+## 复现仓库
+> 请提供一个精简的代码仓库，然后上传到自己的 github，以帮助我们复现您的问题。
