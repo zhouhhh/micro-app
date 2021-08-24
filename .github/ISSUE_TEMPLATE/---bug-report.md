@@ -8,7 +8,7 @@ assignees: ''
 ---
 
 ## Describe the bug
-<!-- A clear and concise description of what the bug is. -->
+> A clear and concise description of what the bug is.
 
 ## Environment
 - **micro-app version: **
@@ -20,7 +20,7 @@ assignees: ''
 2.
 
 ## Screenshots
-<!-- If possible, please upload screenshots of the code, console, terminal, etc. to help us understand your problem. -->
+> If possible, please upload screenshots of the code, console, terminal, etc. to help us understand your problem.
 
 ## Reproduce repository
-<!-- Please provide a condensed code repository and upload it to your own github to help us reproduce your problem. -->
+> Please provide a condensed code repository and upload it to your own github to help us reproduce your problem.
