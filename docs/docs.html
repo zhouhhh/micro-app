@@ -37,7 +37,7 @@
     window.$docsify = {
       name: 'micro-app',
       nameLink: '/micro-app/',
-      logo: '/_media/logo.png',
+      logo: '/media/logo.png',
       repo: 'https://github.com/micro-zoe/micro-app/',
       coverpage: false, // 封面
       loadSidebar: true, // 侧边栏
@@ -45,12 +45,13 @@
       subMaxLevel: 2, // 默认情况下只会有一层目录，subMaxLevel可以设置多层目录，从二级标题开始取，设置为2说明只会取二级标题
       auto2top: true, // 切换页面后是否自动跳转到页面顶部
       executeScript: true, // 执行文档里的 script 标签里的脚本，只执行第一个 script
-      loadNavbar: true,
       mergeNavbar: true,
       maxLevel: 4,
+      loadNavbar: 'navbar.md',
+      loadSidebar: 'sidebar.md',
       alias: {
-        '/zh-cn/_sidebar.md': '/_sidebar.md',
-        '/zh-cn/_navbar.md': '/_navbar.md',
+        '/zh-cn/sidebar.md': '/sidebar.md',
+        '/zh-cn/navbar.md': '/navbar.md',
       },
       copyCode: {
         buttonText : '复制代码',
