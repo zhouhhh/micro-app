@@ -160,7 +160,7 @@ Vue.use(VueRouter)
 const routes = [
   {
     // /child/* 都将匹配到ChildPage组件
-    path: '/child/*', 
+    path: '/child/*',  // vue-router@4.x 的写法为：'/child/:page*'
     name: 'child',
     component: ChildPage,
   },
