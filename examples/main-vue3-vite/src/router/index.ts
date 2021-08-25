@@ -7,42 +7,42 @@ const routes = [
     redirect: '/react16/'
   },
   {
-    path: '/react16',
+    path: '/react16/:page*',
     name: 'react16',
     component: React16,
   },
   {
-    path: '/react17',
+    path: '/react17/:page*',
     name: 'react17',
     component: () => import(/* webpackChunkName: "react17" */ '../pages/react17.vue'),
   },
   {
-    path: '/vue2',
+    path: '/vue2/:page*',
     name: 'vue2',
     component: () => import(/* webpackChunkName: "vue2" */ '../pages/vue2.vue'),
   },
   {
-    path: '/vue3',
+    path: '/vue3/:page*',
     name: 'vue3',
     component: () => import(/* webpackChunkName: "vue3" */ '../pages/vue3.vue'),
   },
   {
-    path: '/vite',
+    path: '/vite/:page*',
     name: 'vite',
     component: () => import(/* webpackChunkName: "vite" */ '../pages/vite.vue'),
   },
   {
-    path: '/angular11',
+    path: '/angular11/:page*',
     name: 'angular11',
     component: () => import(/* webpackChunkName: "angular11" */ '../pages/angular11.vue'),
   },
   {
-    path: '/multiple',
+    path: '/multiple/:page*',
     name: 'multiple',
     component: () => import(/* webpackChunkName: "multiple" */ '../pages/multiple.vue'),
   },
   {
-    path: '/self',
+    path: '/self/:page*',
     name: 'self',
     component: () => import(/* webpackChunkName: "self" */ '../pages/self.vue'),
   },
