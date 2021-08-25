@@ -54,7 +54,7 @@ Vue.use(VueRouter)
 const routes = [
   {
     // 👇👇 非严格匹配，/my-page/* 都将匹配到 MyPage 组件
-    path: '/my-page/*', 
+    path: '/my-page/*', // vue-router@4.x 的写法为：'/my-page/:page*'
     name: 'my-page',
     component: MyPage,
   },

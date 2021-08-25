@@ -60,7 +60,7 @@ microApp.start()
 ```js
 // router.js
 import Vue from 'vue'
-import VueRouter from 'vue-router'
+import VueRouter from 'vue-router' // vue-router@3.x
 import MyPage from './my-page.vue'
 
 Vue.use(VueRouter)

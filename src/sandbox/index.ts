@@ -7,6 +7,7 @@ import {
   getEffectivePath,
   rawWindow,
   rawDocument,
+  removeDomScope,
 } from '../libs/utils'
 import effect, { effectDocumentEvent, releaseEffectDocumentEvent } from './effect'
 import { EventCenterForMicroApp } from '../interact'
@@ -21,6 +22,7 @@ type injectDataType = {
   microApp: EventCenterForMicroApp
   rawWindow: Window
   rawDocument: Document
+  removeDomScope: () => void
 }
 
 // Variables that can escape to rawWindow
@@ -284,5 +286,6 @@ export default class SandBox implements SandBoxInterface {
     microWindow.microApp = new EventCenterForMicroApp(appName)
     microWindow.rawWindow = rawWindow
     microWindow.rawDocument = rawDocument
+    microWindow.removeDomScope = removeDomScope
   }
 }
