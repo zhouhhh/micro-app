@@ -1,7 +1,7 @@
 ---
 name: "\U0001F41E Bug report"
 about: Create a report to help us improve
-title: "[\U0001F41E Bug]: "
+title: ''
 labels: bug
 assignees: ''
 
@@ -12,7 +12,8 @@ assignees: ''
 
 ## Environment
 - **micro-app version:**
-- **framework of base app & sub app:**
+- **framework of base app & version:**
+- **framework of sub app & version:**
 - **Build tools & version:**
 
 ## To Reproduce

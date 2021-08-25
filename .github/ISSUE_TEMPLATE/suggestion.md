@@ -1,7 +1,7 @@
 ---
 name: 改进建议
 about: Suggest an idea for this project
-title: "[Suggestion]: "
+title: ''
 labels: Suggestion
 assignees: ''
 
