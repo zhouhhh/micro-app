@@ -10,12 +10,6 @@ assignees: ''
 ## Describe the bug
 > A clear and concise description of what the bug is.
 
-## Environment
-- **micro-app version:**
-- **framework of base app & version:**
-- **framework of sub app & version:**
-- **Build tools & version:**
-
 ## To Reproduce
 1.
 2.
@@ -25,3 +19,9 @@ assignees: ''
 
 ## Reproduce repository
 > Please provide a condensed code repository and upload it to your own github to help us reproduce your problem.
+
+## Environment
+- micro-app version:
+- framework of base app & version:
+- framework of sub app & version:
+- Build tools & version:
