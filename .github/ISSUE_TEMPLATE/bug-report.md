@@ -2,7 +2,7 @@
 name: "\U0001F41E BUG反馈"
 about: 反馈问题以帮助我们进行改进
 title: ''
-labels: bug
+labels: ''
 assignees: ''
 
 ---
