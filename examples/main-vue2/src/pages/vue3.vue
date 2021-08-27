@@ -4,7 +4,6 @@
       name='vue3'
       url='http://localhost:4002/micro-app/vue3/'
       :data='data'
-      macro
       baseurl='/vue3'
     >
     <!-- destory inline scopecss='false' -->
