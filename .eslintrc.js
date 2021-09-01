@@ -36,6 +36,7 @@ module.exports = {
     'no-prototype-builtins': 0,
     'no-unused-expressions': 0,
     'comma-dangle': ['error', 'only-multiline'],
-    'no-eval': ['error', { allowIndirect: true }]
+    'no-eval': ['error', { allowIndirect: true }],
+    'no-new-func': 0,
   }
 }

@@ -161,7 +161,7 @@ export function execScripts (scriptList: Map<string, sourceScriptInfo>, app: App
   for (const [url, info] of scriptListEntries) {
     if (!info.isDynamic) {
       if (info.defer || info.async) {
-        if (info.isExternal) {
+        if (info.isExternal && !info.code) {
           deferScriptPromise.push(fetchSource(url, app.name))
         } else {
           deferScriptPromise.push(info.code)
@@ -176,7 +176,8 @@ export function execScripts (scriptList: Map<string, sourceScriptInfo>, app: App
   if (deferScriptPromise.length) {
     Promise.all(deferScriptPromise).then((res: string[]) => {
       res.forEach((code, index) => {
-        runScript(deferScriptInfo[index][0], code, app, deferScriptInfo[index][1].module, false)
+        const [url, info] = deferScriptInfo[index]
+        runScript(url, info.code = info.code || code, app, info.module, false)
       })
     }).catch((err) => {
       logError(err)
@@ -228,7 +229,6 @@ export function runDynamicScript (
         if (info.module) (replaceElement as HTMLScriptElement).setAttribute('type', 'module')
         replaceElement.textContent = data
       } else {
-        // (0, eval)(data)
         Function(data)()
       }
     } catch (e) {
@@ -267,7 +267,6 @@ export function runScript (
       if (isDynamic) return script
       app.container?.querySelector('micro-app-body')!.appendChild(script)
     } else {
-      // (0, eval)(code)
       Function(code)()
       if (isDynamic) return document.createComment('dynamic script extract by micro-app')
     }

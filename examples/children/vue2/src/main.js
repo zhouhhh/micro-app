@@ -18,10 +18,12 @@ const router = new VueRouter({
   routes,
 })
 
-let app = new Vue({
-  router,
-  render: h => h(App),
-}).$mount('#app')
+let app
+
+// app = new Vue({
+//   router,
+//   render: h => h(App),
+// }).$mount('#app')
 
 // 监听卸载
 window.addEventListener('unmount', function () {
@@ -29,5 +31,19 @@ window.addEventListener('unmount', function () {
   // 卸载应用
   app.$destroy()
 })
+
+
+export function mount () {
+  app = new Vue({
+    router,
+    render: h => h(App),
+  }).$mount('#app')
+}
+
+export function unmount () {
+  console.log("微应用vue2卸载了 -- 来自umd-unmount");
+  // 卸载应用
+  app.$destroy()
+}
 
 console.timeEnd('vue2')

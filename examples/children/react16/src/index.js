@@ -39,13 +39,6 @@ function handleGlobalData(data) {
 // 全局数据监听
 window.microApp?.addGlobalDataListener(handleGlobalData);
 
-ReactDOM.render(
-  <React.StrictMode>
-    <Router />
-  </React.StrictMode>,
-  document.getElementById("root")
-);
-
 // 监听卸载
 window.addEventListener("unmount", function () {
   // microApp.clearApps()
@@ -63,9 +56,18 @@ document.addEventListener('click', function () {
 }, false)
 
 export function mount () {
-
+  ReactDOM.render(
+    <React.StrictMode>
+      <Router />
+    </React.StrictMode>,
+    document.getElementById("root")
+  );
 }
 
 export function unmount () {
-
+  console.log("微应用react16卸载了 -- 来自umd-unmount");
+  // 卸载前卸载全局数据监听
+  window.microApp?.removeGlobalDataListener(handleGlobalData);
+  // 卸载应用
+  ReactDOM.unmountComponentAtNode(document.getElementById("root"));
 }

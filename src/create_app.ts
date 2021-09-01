@@ -4,12 +4,13 @@ import type {
   SandBoxInterface,
   sourceLinkInfo,
   sourceScriptInfo,
+  Func,
 } from '@micro-app/types'
 import extractHtml from './source'
 import { execScripts } from './source/scripts'
 import { appStatus, lifeCycles } from './constants'
 import SandBox from './sandbox'
-import { defer } from './libs/utils'
+import { defer, isFunction } from './libs/utils'
 import dispatchLifecyclesEvent, { dispatchUnmountToMicroApp } from './interact/lifecycles_event'
 
 // micro app instances
@@ -41,6 +42,8 @@ export default class CreateApp implements AppInterface {
   baseurl = ''
   source: sourceType
   sandBox: SandBoxInterface | null = null
+  umdHookMount: Func | null = null
+  umdHookunMount: Func | null = null
 
   constructor ({ name, url, container, inline, scopecss, useSandbox, macro, baseurl }: CreateAppParam) {
     this.container = container ?? null
@@ -137,8 +140,20 @@ export default class CreateApp implements AppInterface {
 
     this.container!.appendChild(fragment)
     this.sandBox?.start(this.baseurl)
+    if (!this.umdHookMount) {
+      execScripts(this.source.scripts, this)
 
-    execScripts(this.source.scripts, this)
+      const global = this.sandBox?.proxyWindow ?? window
+      const { mount, unmount } = (global as any)[`micro-app-${this.name}`] ?? {}
+      if (isFunction(mount) && isFunction(unmount)) {
+        this.umdHookMount = mount as Func
+        this.umdHookunMount = unmount as Func
+        this.source.html!.innerHTML = this.container!.innerHTML
+        this.umdHookMount()
+      }
+    } else {
+      this.umdHookMount()
+    }
 
     if (this.status !== appStatus.UNMOUNT) {
       this.status = appStatus.MOUNTED
