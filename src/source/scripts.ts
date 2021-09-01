@@ -228,7 +228,8 @@ export function runDynamicScript (
         if (info.module) (replaceElement as HTMLScriptElement).setAttribute('type', 'module')
         replaceElement.textContent = data
       } else {
-        (0, eval)(data)
+        // (0, eval)(data)
+        Function(data)()
       }
     } catch (e) {
       console.error('[micro-app from runDynamicScript]', e, url)
@@ -266,7 +267,8 @@ export function runScript (
       if (isDynamic) return script
       app.container?.querySelector('micro-app-body')!.appendChild(script)
     } else {
-      (0, eval)(code)
+      // (0, eval)(code)
+      Function(code)()
       if (isDynamic) return document.createComment('dynamic script extract by micro-app')
     }
   } catch (e) {
