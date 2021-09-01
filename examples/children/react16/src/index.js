@@ -61,3 +61,11 @@ console.timeEnd("react16");
 document.addEventListener('click', function () {
   console.log(`子应用${window.__MICRO_APP_NAME__}内部的document.addEventListener(click)绑定`)
 }, false)
+
+export function mount () {
+
+}
+
+export function unmount () {
+
+}

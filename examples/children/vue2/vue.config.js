@@ -20,6 +20,8 @@ module.exports = {
   configureWebpack: {
     output: {
       jsonpFunction: `webpackJsonp-chile-vue2`,
+      library: `micro-app-vue2`,
+      libraryTarget: 'umd',
     }
   },
 }
