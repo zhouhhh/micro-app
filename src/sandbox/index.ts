@@ -63,6 +63,11 @@ export default class SandBox implements SandBoxInterface {
   static activeCount = 0 // number of active sandbox
   active = false // sandbox state
   proxyWindow: WindowProxy & injectDataType
+  // @ts-ignore
+  recordUmdSnapshot: CallableFunction
+  // @ts-ignore
+  rebuildUmdSnapshot: CallableFunction
+  // @ts-ignore
   releaseEffect: CallableFunction
   // Scoped global Properties(Properties that can only get and set in microWindow, will not escape to rawWindow)
   scopeProperties: PropertyKey[] = ['webpackJsonp']
@@ -80,7 +85,7 @@ export default class SandBox implements SandBoxInterface {
     // inject global properties
     this.inject(this.microWindow, appName, url)
     // Rewrite global event listener & timeout
-    this.releaseEffect = effect(this.microWindow)
+    Object.assign(this, effect(this.microWindow))
 
     this.proxyWindow = new Proxy(this.microWindow, {
       get: (target: microWindowType, key: PropertyKey): unknown => {
@@ -237,6 +242,13 @@ export default class SandBox implements SandBoxInterface {
         releaseEffectDocumentEvent()
       }
     }
+  }
+
+  // fromat env for umd mode before the first execution of umdHookMount
+  formatUmdEnv (): void {
+    this.recordUmdSnapshot()
+    this.escapeKeys.clear()
+    this.injectedKeys.clear()
   }
 
   /**

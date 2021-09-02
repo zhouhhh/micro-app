@@ -8,6 +8,8 @@ declare module '@micro-app/types' {
   interface SandBoxInterface {
     active: boolean // sandbox state
     proxyWindow: WindowProxy
+    recordUmdSnapshot: CallableFunction
+    rebuildUmdSnapshot: CallableFunction
     releaseEffect: CallableFunction
     // Scoped global Properties(Properties that can only get and set in microWindow, will not escape to rawWindow)
     scopeProperties: Array<PropertyKey>
@@ -18,6 +20,7 @@ declare module '@micro-app/types' {
     escapeKeys: Set<PropertyKey> // Properties escape to rawWindow, cleared when unmount
     start(baseurl: string): void
     stop(): void
+    formatUmdEnv(): void
     inject(microWindow: microWindowType, appName: string, url: string): void
   }
 

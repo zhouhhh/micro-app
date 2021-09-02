@@ -1,6 +1,19 @@
 import type { Func } from '@micro-app/types'
 import { isFunction } from '../libs/utils'
 
+const boundedMap = new WeakMap<CallableFunction, boolean>()
+export function isBoundedFunction (value: CallableFunction): boolean {
+  if (boundedMap.has(value)) {
+    return boundedMap.get(value)!
+  }
+
+  const boundFunction = value.name.indexOf('bound ') === 0 && !value.hasOwnProperty('prototype')
+
+  boundedMap.set(value, boundFunction)
+
+  return boundFunction
+}
+
 const constructorMap = new WeakMap<Func | FunctionConstructor, boolean>()
 function isConstructor (value: Func | FunctionConstructor) {
   if (constructorMap.has(value)) {
@@ -29,7 +42,7 @@ export default function bindFunction (rawWindow: Window, value: any): unknown {
     return rawWindowMethodMap.get(value)
   }
 
-  if (isFunction(value) && !isConstructor(value)) {
+  if (isFunction(value) && !isConstructor(value) && !isBoundedFunction(value)) {
     const bindRawWindowValue = value.bind(rawWindow)
 
     for (const key in value) {

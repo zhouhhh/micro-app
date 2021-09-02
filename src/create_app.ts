@@ -10,7 +10,7 @@ import extractHtml from './source'
 import { execScripts } from './source/scripts'
 import { appStatus, lifeCycles } from './constants'
 import SandBox from './sandbox'
-import { defer, isFunction } from './libs/utils'
+import { defer, isFunction, cloneNode } from './libs/utils'
 import dispatchLifecyclesEvent, { dispatchUnmountToMicroApp } from './interact/lifecycles_event'
 
 // micro app instances
@@ -132,26 +132,26 @@ export default class CreateApp implements AppInterface {
 
     this.status = appStatus.MOUNTING
 
-    const cloneHtml = this.source.html!.cloneNode(true)
-    const fragment = document.createDocumentFragment()
-    Array.from(cloneHtml.childNodes).forEach((node: Node) => {
-      fragment.appendChild(node)
-    })
+    cloneNode(this.source.html!, this.container!)
 
-    this.container!.appendChild(fragment)
     this.sandBox?.start(this.baseurl)
     if (!this.umdHookMount) {
       execScripts(this.source.scripts, this)
 
-      const global = this.sandBox?.proxyWindow ?? window
-      const { mount, unmount } = (global as any)[`micro-app-${this.name}`] ?? {}
+      const { mount, unmount } = ((this.sandBox?.proxyWindow ?? window) as any)[`micro-app-${this.name}`] ?? {}
+      // if mount & unmount is function, sub app is umd mode
       if (isFunction(mount) && isFunction(unmount)) {
         this.umdHookMount = mount as Func
         this.umdHookunMount = unmount as Func
-        this.source.html!.innerHTML = this.container!.innerHTML
+        this.source.html!.innerHTML = ''
+        cloneNode(this.container!, this.source.html!)
+        this.sandBox?.formatUmdEnv()
+
+        // console.log(333, this.container!.cloneNode(true), this.source.html)
         this.umdHookMount()
       }
     } else {
+      this.sandBox?.rebuildUmdSnapshot()
       this.umdHookMount()
     }
 
@@ -183,8 +183,9 @@ export default class CreateApp implements AppInterface {
       this.name,
       lifeCycles.UNMOUNT,
     )
-    // Send an unmount event to the micro application, which is triggered before the sandbox is cleared & after the unmount lifecycle is executed
-    dispatchUnmountToMicroApp(this.name)
+    // Send an unmount event to the micro app or call umd unmount hook
+    // before the sandbox is cleared & after the unmount lifecycle is executed
+    this.umdHookunMount ? this.umdHookunMount() : dispatchUnmountToMicroApp(this.name)
     this.sandBox?.stop()
     this.container = null
     if (destory) {

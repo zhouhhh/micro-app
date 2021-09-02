@@ -238,3 +238,17 @@ export function pureCreateElement<K extends keyof HTMLElementTagNameMap> (tagNam
   if (element.__MICRO_APP_NAME__) delete element.__MICRO_APP_NAME__
   return element
 }
+
+/**
+ * clone origin elements to target
+ * @param origin Cloned element
+ * @param target Accept cloned elements
+ */
+export function cloneNode <T extends Node, Q extends Node> (origin: T, target: Q): void {
+  const clonedNodes = origin.cloneNode(true)
+  const fragment = document.createDocumentFragment()
+  Array.from(clonedNodes.childNodes).forEach((node: Node) => {
+    fragment.appendChild(node)
+  })
+  target.appendChild(fragment)
+}

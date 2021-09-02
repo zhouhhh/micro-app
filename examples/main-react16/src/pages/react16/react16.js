@@ -147,7 +147,7 @@ export default class App extends React.Component {
                 onDataChange={this.handleDataChange}
                 // destory
                 baseurl='/micro-app/demo/react16'
-                // inline
+                inline
                 // disableSandbox
                 // disableScopecss
                 // macro

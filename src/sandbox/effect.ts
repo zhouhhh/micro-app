@@ -1,5 +1,8 @@
 import type { microWindowType } from '@micro-app/types'
-import { getCurrentAppName, logError } from '../libs/utils'
+import { getCurrentAppName, setCurrentAppName, logError } from '../libs/utils'
+
+type MicroEventListener = EventListenerOrEventListenerObject & Record<string, any>
+type timeInfo = {handler: TimerHandler, timeout: number | undefined, args: any[]}
 
 // save raw methods
 const rawWindowAddEventListener = window.addEventListener
@@ -64,14 +67,14 @@ function overwriteDocumentOnClick (): void {
 /**
  * The document event is globally, we need to clear these event bindings when micro application unmounted
  */
-const documentEventListenerMap = new Map<string, Map<string, Set<EventListenerOrEventListenerObject>>>()
+const documentEventListenerMap = new Map<string, Map<string, Set<MicroEventListener>>>()
 export function effectDocumentEvent (): void {
   if (!hasRewriteDocumentOnClick) {
     overwriteDocumentOnClick()
   }
   document.addEventListener = function (
     type: string,
-    listener: EventListenerOrEventListenerObject,
+    listener: MicroEventListener,
     options?: boolean | AddEventListenerOptions
   ): void {
     const appName = getCurrentAppName()
@@ -87,13 +90,14 @@ export function effectDocumentEvent (): void {
       } else {
         documentEventListenerMap.set(appName, new Map([[type, new Set([listener])]]))
       }
+      listener.__MICRO_MARK_OPTIONS__ = options
     }
-    return rawDocumentAddEventListener.call(document, type, listener, options)
+    rawDocumentAddEventListener.call(document, type, listener, options)
   }
 
   document.removeEventListener = function (
     type: string,
-    listener: EventListenerOrEventListenerObject,
+    listener: MicroEventListener,
     options?: boolean | AddEventListenerOptions,
   ): void {
     const appName = getCurrentAppName()
@@ -106,7 +110,7 @@ export function effectDocumentEvent (): void {
         }
       }
     }
-    return rawDocumentRemoveEventListener.call(document, type, listener, options)
+    rawDocumentRemoveEventListener.call(document, type, listener, options)
   }
 }
 
@@ -132,14 +136,15 @@ function formatEventType (type: string, microWindow: microWindowType): string {
  * Rewrite side-effect events
  * @param microWindow micro window
  */
-export default function effect (microWindow: microWindowType): CallableFunction {
-  const eventListenerMap = new Map<string, Set<EventListenerOrEventListenerObject>>()
-  const intervalIdList = new Set<number>()
-  const timeoutIdList = new Set<number>()
+export default function effect (microWindow: microWindowType): Record<string, CallableFunction> {
+  const appName = microWindow.__MICRO_APP_NAME__
+  const eventListenerMap = new Map<string, Set<MicroEventListener>>()
+  const intervalIdMap = new Map<number, timeInfo>()
+  const timeoutIdMap = new Map<number, timeInfo>()
 
   microWindow.addEventListener = function (
     type: string,
-    listener: EventListenerOrEventListenerObject,
+    listener: MicroEventListener,
     options?: boolean | AddEventListenerOptions,
   ): void {
     type = formatEventType(type, microWindow)
@@ -149,12 +154,13 @@ export default function effect (microWindow: microWindowType): CallableFunction 
     } else {
       eventListenerMap.set(type, new Set([listener]))
     }
-    return rawWindowAddEventListener.call(window, type, listener, options)
+    listener.__MICRO_MARK_OPTIONS__ = options
+    rawWindowAddEventListener.call(window, type, listener, options)
   }
 
   microWindow.removeEventListener = function (
     type: string,
-    listener: EventListenerOrEventListenerObject,
+    listener: MicroEventListener,
     options?: boolean | AddEventListenerOptions,
   ): void {
     type = formatEventType(type, microWindow)
@@ -162,7 +168,7 @@ export default function effect (microWindow: microWindowType): CallableFunction 
     if (listenerList?.size && listenerList.has(listener)) {
       listenerList.delete(listener)
     }
-    return rawWindowRemoveEventListener.call(window, type, listener, options)
+    rawWindowRemoveEventListener.call(window, type, listener, options)
   }
 
   microWindow.setInterval = function (
@@ -171,7 +177,7 @@ export default function effect (microWindow: microWindowType): CallableFunction 
     ...args: any[]
   ): number {
     const intervalId = rawSetInterval(handler, timeout, ...args)
-    intervalIdList.add(intervalId)
+    intervalIdMap.set(intervalId, { handler, timeout, args })
     return intervalId
   }
 
@@ -181,27 +187,101 @@ export default function effect (microWindow: microWindowType): CallableFunction 
     ...args: any[]
   ): number {
     const timeoutId = rawSetTimeout(handler, timeout, ...args)
-    timeoutIdList.add(timeoutId)
+    timeoutIdMap.set(timeoutId, { handler, timeout, args })
     return timeoutId
   }
 
   microWindow.clearInterval = function (intervalId: number) {
-    intervalIdList.delete(intervalId)
+    intervalIdMap.delete(intervalId)
     rawClearInterval(intervalId)
   }
 
   microWindow.clearTimeout = function (timeoutId: number) {
-    timeoutIdList.delete(timeoutId)
+    timeoutIdMap.delete(timeoutId)
     rawClearTimeout(timeoutId)
   }
 
-  return () => {
+  const umdWindowListenerMap = new Map<string, Set<MicroEventListener>>()
+  const umdDocumentListenerMap = new Map<string, Set<MicroEventListener>>()
+  let umdIntervalIdMap = new Map<number, timeInfo>()
+  let umdTimeoutIdMap = new Map<number, timeInfo>()
+  let umdonClickHander: unknown
+
+  // record event and timer before exec umdMountHook
+  const recordUmdSnapshot = () => {
+    // record window event
+    eventListenerMap.forEach((listenerList, type) => {
+      if (listenerList.size) {
+        umdWindowListenerMap.set(type, new Set(listenerList))
+      }
+    })
+
+    // record timers
+    if (intervalIdMap.size) {
+      umdIntervalIdMap = new Map(intervalIdMap)
+    }
+
+    if (timeoutIdMap.size) {
+      umdTimeoutIdMap = new Map(timeoutIdMap)
+    }
+
+    // record onclick hander
+    umdonClickHander = documentClickListMap.get(appName)
+
+    // record document event
+    const documentAppListenersMap = documentEventListenerMap.get(appName)
+    if (documentAppListenersMap) {
+      documentAppListenersMap.forEach((listenerList, type) => {
+        if (listenerList.size) {
+          umdDocumentListenerMap.set(type, new Set(listenerList))
+        }
+      })
+    }
+  }
+
+  // rebuild event and timer before remount umd app
+  const rebuildUmdSnapshot = () => {
+    // rebuild window event
+    umdWindowListenerMap.forEach((listenerList, type) => {
+      if (listenerList.size) {
+        for (const listener of listenerList) {
+          microWindow.addEventListener(type, listener, listener.__MICRO_MARK_OPTIONS__)
+        }
+      }
+    })
+
+    // rebuild timer
+    umdIntervalIdMap.forEach((info: timeInfo) => {
+      microWindow.setInterval(info.handler, info.timeout, ...info.args)
+    })
+
+    umdTimeoutIdMap.forEach((info: timeInfo) => {
+      microWindow.setTimeout(info.handler, info.timeout, ...info.args)
+    })
+
+    // rebuild onclick event
+    umdonClickHander && documentClickListMap.set(appName, umdonClickHander)
+
+    // rebuild document event
+    setCurrentAppName(appName)
+    umdDocumentListenerMap.forEach((listenerList, type) => {
+      if (listenerList.size) {
+        for (const listener of listenerList) {
+          document.addEventListener(type, listener, listener.__MICRO_MARK_OPTIONS__)
+        }
+      }
+    })
+    setCurrentAppName(null)
+  }
+
+  // release all event listener & interval & timeout when unmount app
+  const releaseEffect = () => {
     // Clear window binding events
     if (eventListenerMap.size) {
       eventListenerMap.forEach((listenerList, type) => {
         if (listenerList.size) {
           for (const listener of listenerList) {
-            rawWindowRemoveEventListener.call(window, type, listener)
+            rawWindowRemoveEventListener.call(window, type, listener.__MICRO_MARK_OPTIONS__)
           }
         }
       })
@@ -209,21 +289,19 @@ export default function effect (microWindow: microWindowType): CallableFunction 
     }
 
     // Clear timers
-    if (intervalIdList.size) {
-      intervalIdList.forEach((intervalId: number) => {
+    if (intervalIdMap.size) {
+      intervalIdMap.forEach((_, intervalId: number) => {
         rawClearInterval(intervalId)
       })
-      intervalIdList.clear()
+      intervalIdMap.clear()
     }
 
-    if (timeoutIdList.size) {
-      timeoutIdList.forEach((timeoutId: number) => {
+    if (timeoutIdMap.size) {
+      timeoutIdMap.forEach((_, timeoutId: number) => {
         rawClearTimeout(timeoutId)
       })
-      timeoutIdList.clear()
+      timeoutIdMap.clear()
     }
-
-    const appName = microWindow.__MICRO_APP_NAME__
 
     // Clear the function bound by micro application through document.onclick
     documentClickListMap.delete(appName)
@@ -240,5 +318,11 @@ export default function effect (microWindow: microWindowType): CallableFunction 
       })
       documentAppListenersMap.clear()
     }
+  }
+
+  return {
+    recordUmdSnapshot,
+    rebuildUmdSnapshot,
+    releaseEffect,
   }
 }

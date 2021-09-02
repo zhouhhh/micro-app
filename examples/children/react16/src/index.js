@@ -39,6 +39,13 @@ function handleGlobalData(data) {
 // 全局数据监听
 window.microApp?.addGlobalDataListener(handleGlobalData);
 
+// ReactDOM.render(
+//   <React.StrictMode>
+//     <Router />
+//   </React.StrictMode>,
+//   document.getElementById("root")
+// );
+
 // 监听卸载
 window.addEventListener("unmount", function () {
   // microApp.clearApps()
@@ -71,3 +78,5 @@ export function unmount () {
   // 卸载应用
   ReactDOM.unmountComponentAtNode(document.getElementById("root"));
 }
+
+console.log(555555555555)
