@@ -32,8 +32,9 @@ window.addEventListener('unmount', function () {
   app.$destroy()
 })
 
-
+console.log(6666666666)
 export function mount () {
+  console.log(4444444444)
   app = new Vue({
     router,
     render: h => h(App),

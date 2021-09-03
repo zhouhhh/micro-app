@@ -122,7 +122,7 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
       }
 
       if (attrName !== this.appName || attrUrl !== this.appUrl) {
-        this.handleUnmount(true)
+        this.handleUnmount(attrName === this.appName && attrUrl !== this.appUrl)
         this.appName = attrName as string
         this.appUrl = attrUrl
         ;(this.shadowRoot ?? this).innerHTML = ''
@@ -158,7 +158,13 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
     return true
   }
 
-  // mount app
+  /**
+   * mount app
+   * some serious note before mount:
+   * 1. is prefetch ?
+   * 2. is remount in another container ?
+   * 3. is remount with change properties of the container ?
+   */
   handleAppMount (app: AppInterface): void {
     app.isPrefetch = false
     defer(() => app.mount(

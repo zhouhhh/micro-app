@@ -47,6 +47,7 @@ function Vue3 () {
           // destory
           // inline
           // scopecss='false'
+          library='micro-app-react16'
         ></micro-app>
         <micro-app
           class='multiple-micro-app'
@@ -56,6 +57,7 @@ function Vue3 () {
           // destory
           // inline
           // scopecss='false'
+          library='micro-app-vue2'
         >
         </micro-app>
       </div>

@@ -64,9 +64,9 @@ export default class SandBox implements SandBoxInterface {
   active = false // sandbox state
   proxyWindow: WindowProxy & injectDataType
   // @ts-ignore
-  recordUmdSnapshot: CallableFunction
+  recordUmdEffect: CallableFunction
   // @ts-ignore
-  rebuildUmdSnapshot: CallableFunction
+  rebuildUmdEffect: CallableFunction
   // @ts-ignore
   releaseEffect: CallableFunction
   // Scoped global Properties(Properties that can only get and set in microWindow, will not escape to rawWindow)
@@ -74,8 +74,9 @@ export default class SandBox implements SandBoxInterface {
   // Properties that can be escape to rawWindow
   escapeProperties: PropertyKey[] = []
   microWindow = {} as Window & injectDataType // Proxy target
-  injectedKeys: Set<PropertyKey> = new Set() // Properties newly added to microWindow
-  escapeKeys: Set<PropertyKey> = new Set() // Properties escape to rawWindow, cleared when unmount
+  injectedKeys = new Set<PropertyKey>() // Properties newly added to microWindow
+  escapeKeys = new Set<PropertyKey>() // Properties escape to rawWindow, cleared when unmount
+  recordUmdEscapeKeys = new Set<PropertyKey>() // record escapeKeys before the first execution of umdHookMount and rebuild before remount umd app
 
   constructor (appName: string, url: string, macro: boolean) {
     const descriptorTargetMap = new Map<PropertyKey, 'target' | 'rawWindow'>()
@@ -228,12 +229,12 @@ export default class SandBox implements SandBoxInterface {
       this.releaseEffect()
       this.microWindow.microApp.clearDataListener()
 
-      this.injectedKeys.forEach((key) => {
+      this.injectedKeys.forEach((key: PropertyKey) => {
         Reflect.deleteProperty(this.microWindow, key)
       })
       this.injectedKeys.clear()
 
-      this.escapeKeys.forEach((key) => {
+      this.escapeKeys.forEach((key: PropertyKey) => {
         Reflect.deleteProperty(rawWindow, key)
       })
       this.escapeKeys.clear()
@@ -244,11 +245,20 @@ export default class SandBox implements SandBoxInterface {
     }
   }
 
-  // fromat env for umd mode before the first execution of umdHookMount
-  formatUmdEnv (): void {
-    this.recordUmdSnapshot()
-    this.escapeKeys.clear()
+  // record umd snapshot before the first execution of umdHookMount
+  recordUmdSnapshot (): void {
+    this.recordUmdEffect()
     this.injectedKeys.clear()
+    this.recordUmdEscapeKeys = new Set(this.escapeKeys)
+  }
+
+  // rebuild umd snapshot before remount umd app
+  rebuildUmdSnapshot (): void {
+    this.recordUmdEscapeKeys.forEach((key: PropertyKey) => {
+      this.escapeKeys.add(key)
+      Reflect.set(rawWindow, key, Reflect.get(this.microWindow, key))
+    })
+    this.rebuildUmdEffect()
   }
 
   /**

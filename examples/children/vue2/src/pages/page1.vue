@@ -66,7 +66,7 @@ export default {
   }
 
   /* .test-safari-before::before {
-    content: url(../assets/logo.png);
+    content: 'ddddd';
     color: red;
   } */
 </style>

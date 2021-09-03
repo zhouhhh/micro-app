@@ -1,6 +1,5 @@
 import 'babel-polyfill'
 import microApp from '@micro-zoe/micro-app'
-import painfulJoya from '@micro-zoe/plugin-painful-joya'
 import config from './config'
 // microApp.preFetch([{name: 'vue2', url: `${config.vue2}micro-app/vue2`, disableScopecss: false}])
 
@@ -30,10 +29,9 @@ microApp.start({
   },
   plugins: {
     global: [
-      painfulJoya,
       {
         scopeProperties: ['1', '2'],
-        escapeProperties: ['a', 'b'],
+        escapeProperties: ['aaa', 'b'],
         options: {a: 1,},
         loader(code, url, options) {
           // console.log('vue2插件', url, options)
@@ -43,7 +41,7 @@ microApp.start({
     modules: {
       react16: [{
         scopeProperties: ['3', '4'],
-        escapeProperties: ['c', 'd'],
+        escapeProperties: ['ccc', 'd'],
         loader(code, url) {
           if (code.indexOf('sockjs-node') > -1) {
             console.log('react16插件', url)

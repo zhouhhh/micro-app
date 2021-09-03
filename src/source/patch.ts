@@ -139,7 +139,7 @@ function invokePrototypeMethod (
    * If passiveChild is not the child node, insertBefore replaceChild will have a problem, at this time, it will be degraded to appendChild
    * E.g: document.head.insertBefore(targetChild, document.head.childNodes[0])
    */
-  if (parent instanceof HTMLHeadElement) {
+  if (parent === document.head) {
     const microAppHead = app.container!.querySelector('micro-app-head')!
     /**
      * 1. If passivechild exists, it must be insertBefore or replacechild
@@ -156,7 +156,7 @@ function invokePrototypeMethod (
       return rawMethod.call(microAppHead, targetChild)
     }
     return rawMethod.call(microAppHead, targetChild, passiveChild)
-  } else if (parent instanceof HTMLBodyElement) {
+  } else if (parent === document.body) {
     const microAppBody = app.container!.querySelector('micro-app-body')!
     if (passiveChild && !microAppBody.contains(passiveChild)) {
       return rawAppendChild.call(microAppBody, targetChild)
@@ -213,9 +213,9 @@ function commonElementHander (
     if (!(newChild instanceof Node) && appName) {
       const app = appInstanceMap.get(appName)
       if (app?.container) {
-        if (parent instanceof HTMLHeadElement) {
+        if (parent === document.head) {
           return rawMethod.call(app.container.querySelector('micro-app-head'), newChild)
-        } else if (parent instanceof HTMLBodyElement) {
+        } else if (parent === document.body) {
           return rawMethod.call(app.container.querySelector('micro-app-body'), newChild)
         }
       }

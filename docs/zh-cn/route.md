@@ -229,5 +229,8 @@ history.pushState(null, null, '#/page2')
 window.dispatchEvent(new PopStateEvent('popstate', { state: null }))
 ```
 
+> [!NOTE]
+> popstate事件是全局发送的，所有应用（包括发送popstate事件的应用）都会接受到popstate事件并进行路由匹配，此时要注意和兜底路由的冲突。
+
 ### 2、数据通信进行控制
 如基座下发指令控制子应用进行跳转，或者子应用向基座应用上传一个可以控制自身路由的函数。

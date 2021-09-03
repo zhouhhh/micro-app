@@ -62,6 +62,19 @@ document.addEventListener('click', function () {
   console.log(`子应用${window.__MICRO_APP_NAME__}内部的document.addEventListener(click)绑定`)
 }, false)
 
+document.onclick = () => {
+  console.log(`子应用${window.__MICRO_APP_NAME__}内部的document.onclick绑定`)
+}
+
+window.addEventListener('scroll', () => {
+  console.log(`scroll event from ${window.__MICRO_APP_NAME__}`)
+}, false)
+
+// setInterval(() => {
+//   console.log(`子应用${window.__MICRO_APP_NAME__}的setInterval`)
+// }, 1000)
+
+
 export function mount () {
   ReactDOM.render(
     <React.StrictMode>
@@ -69,6 +82,7 @@ export function mount () {
     </React.StrictMode>,
     document.getElementById("root")
   );
+  window.ccc = 2222
 }
 
 export function unmount () {
@@ -80,3 +94,5 @@ export function unmount () {
 }
 
 console.log(555555555555)
+
+window.aaa = 1111

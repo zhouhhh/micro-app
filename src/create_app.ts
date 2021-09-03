@@ -8,9 +8,10 @@ import type {
 } from '@micro-app/types'
 import extractHtml from './source'
 import { execScripts } from './source/scripts'
+import { formatHTMLStyleAfterUmdInit } from './source/links'
 import { appStatus, lifeCycles } from './constants'
 import SandBox from './sandbox'
-import { defer, isFunction, cloneNode } from './libs/utils'
+import { defer, isFunction, cloneNode, rawWindow } from './libs/utils'
 import dispatchLifecyclesEvent, { dispatchUnmountToMicroApp } from './interact/lifecycles_event'
 
 // micro app instances
@@ -138,16 +139,15 @@ export default class CreateApp implements AppInterface {
     if (!this.umdHookMount) {
       execScripts(this.source.scripts, this)
 
-      const { mount, unmount } = ((this.sandBox?.proxyWindow ?? window) as any)[`micro-app-${this.name}`] ?? {}
-      // if mount & unmount is function, sub app is umd mode
+      const { mount, unmount } = this.getUmdLibrary()
+      // if mount & unmount is function, the sub app is umd mode
       if (isFunction(mount) && isFunction(unmount)) {
         this.umdHookMount = mount as Func
         this.umdHookunMount = unmount as Func
+        this.sandBox?.recordUmdSnapshot()
         this.source.html!.innerHTML = ''
         cloneNode(this.container!, this.source.html!)
-        this.sandBox?.formatUmdEnv()
-
-        // console.log(333, this.container!.cloneNode(true), this.source.html)
+        formatHTMLStyleAfterUmdInit(this.source.html!, this.name)
         this.umdHookMount()
       }
     } else {
@@ -209,5 +209,12 @@ export default class CreateApp implements AppInterface {
   // get app status
   getAppStatus (): string {
     return this.status
+  }
+
+  // get umd library, if it not exist, return empty object
+  getUmdLibrary (): any {
+    const global = (this.sandBox?.proxyWindow ?? rawWindow) as any
+    const libraryName = (this.container instanceof ShadowRoot ? this.container.host : this.container)!.getAttribute('library') || `micro-app-${this.name}`
+    return global[libraryName] ?? {}
   }
 }

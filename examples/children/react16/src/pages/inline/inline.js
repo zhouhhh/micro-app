@@ -35,6 +35,7 @@ function Vue2 () {
         // inline
         // disableScopecss
         // disableSandbox
+        library='micro-app-vue2'
       />
     </div>
   )

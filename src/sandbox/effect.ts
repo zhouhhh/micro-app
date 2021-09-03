@@ -1,5 +1,5 @@
 import type { microWindowType } from '@micro-app/types'
-import { getCurrentAppName, setCurrentAppName, logError } from '../libs/utils'
+import { getCurrentAppName, setCurrentAppName, logWarn } from '../libs/utils'
 
 type MicroEventListener = EventListenerOrEventListenerObject & Record<string, any>
 type timeInfo = {handler: TimerHandler, timeout: number | undefined, args: any[]}
@@ -25,7 +25,7 @@ function overwriteDocumentOnClick (): void {
   hasRewriteDocumentOnClick = true
   const descriptor = Object.getOwnPropertyDescriptor(document, 'onclick')
   if (descriptor?.configurable === false) {
-    return logError('Cannot redefine document property onclick')
+    return logWarn('Cannot redefine document property onclick')
   }
   const rawOnClick = document.onclick
   document.onclick = null
@@ -72,6 +72,7 @@ export function effectDocumentEvent (): void {
   if (!hasRewriteDocumentOnClick) {
     overwriteDocumentOnClick()
   }
+
   document.addEventListener = function (
     type: string,
     listener: MicroEventListener,
@@ -90,7 +91,7 @@ export function effectDocumentEvent (): void {
       } else {
         documentEventListenerMap.set(appName, new Map([[type, new Set([listener])]]))
       }
-      listener.__MICRO_MARK_OPTIONS__ = options
+      listener && (listener.__MICRO_MARK_OPTIONS__ = options)
     }
     rawDocumentAddEventListener.call(document, type, listener, options)
   }
@@ -142,6 +143,7 @@ export default function effect (microWindow: microWindowType): Record<string, Ca
   const intervalIdMap = new Map<number, timeInfo>()
   const timeoutIdMap = new Map<number, timeInfo>()
 
+  // listener may be null, e.g test-passive
   microWindow.addEventListener = function (
     type: string,
     listener: MicroEventListener,
@@ -154,7 +156,7 @@ export default function effect (microWindow: microWindowType): Record<string, Ca
     } else {
       eventListenerMap.set(type, new Set([listener]))
     }
-    listener.__MICRO_MARK_OPTIONS__ = options
+    listener && (listener.__MICRO_MARK_OPTIONS__ = options)
     rawWindowAddEventListener.call(window, type, listener, options)
   }
 
@@ -208,7 +210,7 @@ export default function effect (microWindow: microWindowType): Record<string, Ca
   let umdonClickHander: unknown
 
   // record event and timer before exec umdMountHook
-  const recordUmdSnapshot = () => {
+  const recordUmdEffect = () => {
     // record window event
     eventListenerMap.forEach((listenerList, type) => {
       if (listenerList.size) {
@@ -240,13 +242,11 @@ export default function effect (microWindow: microWindowType): Record<string, Ca
   }
 
   // rebuild event and timer before remount umd app
-  const rebuildUmdSnapshot = () => {
+  const rebuildUmdEffect = () => {
     // rebuild window event
     umdWindowListenerMap.forEach((listenerList, type) => {
-      if (listenerList.size) {
-        for (const listener of listenerList) {
-          microWindow.addEventListener(type, listener, listener.__MICRO_MARK_OPTIONS__)
-        }
+      for (const listener of listenerList) {
+        microWindow.addEventListener(type, listener, listener?.__MICRO_MARK_OPTIONS__)
       }
     })
 
@@ -265,10 +265,8 @@ export default function effect (microWindow: microWindowType): Record<string, Ca
     // rebuild document event
     setCurrentAppName(appName)
     umdDocumentListenerMap.forEach((listenerList, type) => {
-      if (listenerList.size) {
-        for (const listener of listenerList) {
-          document.addEventListener(type, listener, listener.__MICRO_MARK_OPTIONS__)
-        }
+      for (const listener of listenerList) {
+        document.addEventListener(type, listener, listener?.__MICRO_MARK_OPTIONS__)
       }
     })
     setCurrentAppName(null)
@@ -279,10 +277,8 @@ export default function effect (microWindow: microWindowType): Record<string, Ca
     // Clear window binding events
     if (eventListenerMap.size) {
       eventListenerMap.forEach((listenerList, type) => {
-        if (listenerList.size) {
-          for (const listener of listenerList) {
-            rawWindowRemoveEventListener.call(window, type, listener.__MICRO_MARK_OPTIONS__)
-          }
+        for (const listener of listenerList) {
+          rawWindowRemoveEventListener.call(window, type, listener)
         }
       })
       eventListenerMap.clear()
@@ -310,10 +306,8 @@ export default function effect (microWindow: microWindowType): Record<string, Ca
     const documentAppListenersMap = documentEventListenerMap.get(appName)
     if (documentAppListenersMap) {
       documentAppListenersMap.forEach((listenerList, type) => {
-        if (listenerList.size) {
-          for (const listener of listenerList) {
-            rawDocumentRemoveEventListener.call(document, type, listener)
-          }
+        for (const listener of listenerList) {
+          rawDocumentRemoveEventListener.call(document, type, listener)
         }
       })
       documentAppListenersMap.clear()
@@ -321,8 +315,8 @@ export default function effect (microWindow: microWindowType): Record<string, Ca
   }
 
   return {
-    recordUmdSnapshot,
-    rebuildUmdSnapshot,
+    recordUmdEffect,
+    rebuildUmdEffect,
     releaseEffect,
   }
 }
