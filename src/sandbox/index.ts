@@ -228,6 +228,7 @@ export default class SandBox implements SandBoxInterface {
       this.active = false
       this.releaseEffect()
       this.microWindow.microApp.clearDataListener()
+      this.microWindow.microApp.clearGlobalDataListener()
 
       this.injectedKeys.forEach((key: PropertyKey) => {
         Reflect.deleteProperty(this.microWindow, key)

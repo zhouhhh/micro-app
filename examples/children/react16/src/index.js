@@ -25,8 +25,9 @@ window.microApp?.addDataListener((data) => {
 }, true)
 
 function handleGlobalData(data) {
+  console.log(222222, 'react16: 来全局数据')
   Modal.info({
-    title: "来全局数据",
+    title: "react16: 来全局数据",
     content: (
       <div>
         <p>{JSON.stringify(data)}</p>
@@ -51,7 +52,7 @@ window.addEventListener("unmount", function () {
   // microApp.clearApps()
   console.log("微应用react16卸载了");
   // 卸载前卸载全局数据监听
-  window.microApp?.removeGlobalDataListener(handleGlobalData);
+  // window.microApp?.removeGlobalDataListener(handleGlobalData);
   // 卸载应用
   ReactDOM.unmountComponentAtNode(document.getElementById("root"));
 })
@@ -88,7 +89,7 @@ export function mount () {
 export function unmount () {
   console.log("微应用react16卸载了 -- 来自umd-unmount");
   // 卸载前卸载全局数据监听
-  window.microApp?.removeGlobalDataListener(handleGlobalData);
+  // window.microApp?.removeGlobalDataListener(handleGlobalData);
   // 卸载应用
   ReactDOM.unmountComponentAtNode(document.getElementById("root"));
 }

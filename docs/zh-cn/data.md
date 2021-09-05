@@ -9,7 +9,7 @@
 
 如果想要同时向多个子应用发送数据，可以看一下节[全局数据通信](/zh-cn/data?id=全局数据通信)
 
-#### 1、基座应用向子应用发送数据
+### 1、基座应用向子应用发送数据
   基座应用向子应用发送数据有两种方式：
 
   **方式1: 通过data属性发送数据**
@@ -56,12 +56,12 @@
   microApp.setData('my-app', {type: '新的数据'})
   ```
 
-#### 2、子应用获取来自基座应用的数据
+### 2、子应用获取来自基座应用的数据
   `micro-app`会向子应用注入名称为`microApp`的全局对象，子应用通过这个对象和基座应用进行数据交互。
  
   有两种方式获取来自基座应用的数据：
 
-  **方式1：绑定监听函数**
+  **方式1：绑定/解绑监听函数**
   
   监听函数只有在数据变化时才会触发。
   ```js
@@ -77,10 +77,10 @@
    */
   window.microApp?.addDataListener(dataListener: Function, autoTrigger?: boolean)
 
-  // 解除绑定
+  // 解绑指定函数
   window.microApp?.removeDataListener(dataListener)
 
-  // 清空所有当前应用的绑定函数
+  // 清空当前子应用的所有绑定函数(全局数据函数除外)
   window.microApp?.clearDataListener()
   ```
 
@@ -89,12 +89,12 @@
   window.microApp?.getData() // 返回data数据
   ```
 
-#### 3、子应用向基座应用发送数据
+### 3、子应用向基座应用发送数据
 ```js
 window.microApp?.dispatch({type: '子应用发送的数据'})
 ```
 
-#### 4、基座应用获取来自子应用的数据
+### 4、基座应用获取来自子应用的数据
 基座应用获取来自子应用的数据有三种方式：
 
 **方式1: 监听自定义事件**
@@ -118,6 +118,7 @@ window.microApp?.dispatch({type: '子应用发送的数据'})
     url='xx'
     data={this.state.dataxx}
     // 数据在event.detail.data字段中，子应用每次发送数据都会重新触发事件
+    // onDataChange函数在子应用卸载时会自动解绑，不需要手动处理
     onDataChange={(e) => console.log(e.detail.data)}
   />
   ```
@@ -129,7 +130,8 @@ window.microApp?.dispatch({type: '子应用发送的数据'})
     name='my-app'
     url='xx'
     :data='data'
-    // 数据在事件对象的detail.data字段中，子应用每次发送数据都会重新触发事件
+    <!-- 数据在事件对象的detail.data字段中，子应用每次发送数据都会重新触发事件 -->
+    <!-- datachange函数在子应用卸载时会自动解绑，不需要手动处理 -->
     @datachange='handleDataChange'
   />
   ```
@@ -195,10 +197,10 @@ function dataListener (data) {
  */
 microApp.addGlobalDataListener(dataListener: Function, autoTrigger?: boolean)
 
-// 解除绑定
+// 解绑指定函数
 microApp.removeGlobalDataListener(dataListener)
 
-// 清空所有全局数据的绑定函数
+// 清空基座应用绑定的全局数据函数
 microApp.clearGlobalDataListener()
 ```
 
@@ -216,10 +218,10 @@ function dataListener (data) {
  */
 window.microApp?.addGlobalDataListener(dataListener: Function, autoTrigger?: boolean)
 
-// 解除绑定
+// 解绑指定函数
 window.microApp?.removeGlobalDataListener(dataListener)
 
-// 清空所有全局数据绑定函数
+// 清空当前子应用绑定的全局数据函数
 window.microApp?.clearGlobalDataListener()
 ```
 <!-- tabs:end -->
@@ -243,16 +245,6 @@ window.microApp?.setGlobalData({type: '全局数据'})
 ```
 <!-- tabs:end -->
 
-> [!NOTE]
-> 注意点：
+> [!TIP]
 >
-> 1、clearGlobalDataListener会清空所有应用的绑定，不仅限于自身
->
-> 2、在子应用卸载时，需要调用removeGlobalDataListener主动解绑函数。
-> ```js
-> window.addEventListener('unmount', function () {
->   window.microApp?.removeGlobalDataListener(dataListener)
-> 
->   ReactDOM.unmountComponentAtNode(document.getElementById('root'))
-> })
-> ```
+> 1、在子应用卸载时，子应用中所有的数据绑定函数会自动解绑，基座应用中的数据解绑需要开发者手动处理。

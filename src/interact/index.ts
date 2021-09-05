@@ -2,6 +2,8 @@ import EventCenter from './event_center'
 import { appInstanceMap } from '../create_app'
 import { removeDomScope } from '../libs/utils'
 
+type cbInSubApp = CallableFunction & { __APP_NAME: string, __AUTO_TRIGGER__: undefined | boolean }
+
 const eventCenter = new EventCenter()
 
 /**
@@ -22,6 +24,12 @@ class EventCenterForGlobal {
    * @param autoTrigger If there is cached data when first bind listener, whether it needs to trigger, default is false
    */
   addGlobalDataListener (cb: CallableFunction, autoTrigger?: boolean): void {
+    const appName = (this as any).appName
+    // is appName exists, the global data class is in sub app
+    if (appName) {
+      (cb as cbInSubApp).__APP_NAME = appName
+      ;(cb as cbInSubApp).__AUTO_TRIGGER__ = autoTrigger
+    }
     eventCenter.on('global', cb, autoTrigger)
   }
 
@@ -45,9 +53,21 @@ class EventCenterForGlobal {
 
   /**
    * clear all listener of global data
+   * if appName exists, only the specified function is cleared
    */
   clearGlobalDataListener (): void {
-    eventCenter.off('global')
+    const appName = (this as any).appName
+    const eventInfo = eventCenter.eventList.get('global')
+    if (eventInfo?.callbacks?.size) {
+      for (const cb of eventInfo.callbacks) {
+        if (
+          (appName && ((cb as cbInSubApp).__APP_NAME === appName)) ||
+          !(appName || (cb as cbInSubApp).__APP_NAME)
+        ) {
+          eventInfo.callbacks.delete(cb)
+        }
+      }
+    }
   }
 }
 
@@ -167,3 +187,11 @@ export class EventCenterForMicroApp extends EventCenterForGlobal {
     eventCenter.off(formatEventName(this.appName, true))
   }
 }
+
+// export function recordDataCenterSnapshot (appName: string) {
+
+// }
+
+// export function rebuildDataCenterSnapshot (appName: string) {
+
+// }

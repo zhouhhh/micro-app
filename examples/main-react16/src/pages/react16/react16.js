@@ -101,6 +101,10 @@ export default class App extends React.Component {
     })
   }
 
+  handleGlobalDataForBaseApp = (data) => {
+    console.log('这是全局数据--基座应用-react16', data)
+  }
+
   componentDidMount () {
     console.time('a1')
     console.time('react16')
@@ -109,14 +113,13 @@ export default class App extends React.Component {
       console.log('来自子应用react16的数据', data)
     })
 
-    microApp.addGlobalDataListener((data) => {
-      console.log('这是全局数据--基座应用', data)
-    })
-
+    microApp.addGlobalDataListener(this.handleGlobalDataForBaseApp)
   }
 
   componentWillUnmount ()  {
     microApp.clearDataListener('react16')
+    // microApp.removeGlobalDataListener(this.handleGlobalDataForBaseApp)
+    microApp.clearGlobalDataListener()
   }
 
   render () {
