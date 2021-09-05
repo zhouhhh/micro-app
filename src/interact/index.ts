@@ -53,7 +53,8 @@ class EventCenterForGlobal {
 
   /**
    * clear all listener of global data
-   * if appName exists, only the specified function is cleared
+   * if appName exists, only the specified functions is cleared
+   * if appName not exists, only clear the base app functions
    */
   clearGlobalDataListener (): void {
     const appName = (this as any).appName
@@ -124,6 +125,11 @@ export class EventCenterForBaseApp extends EventCenterForGlobal {
 // Event center for micro app
 export class EventCenterForMicroApp extends EventCenterForGlobal {
   appName: string
+  umdDataListeners?: {
+    global: Set<CallableFunction>,
+    normal: Set<CallableFunction>,
+  }
+
   constructor (appName: string) {
     super()
     this.appName = appName
@@ -135,6 +141,7 @@ export class EventCenterForMicroApp extends EventCenterForGlobal {
    * @param autoTrigger If there is cached data when first bind listener, whether it needs to trigger, default is false
    */
   addDataListener (cb: CallableFunction, autoTrigger?: boolean): void {
+    (cb as cbInSubApp).__AUTO_TRIGGER__ = autoTrigger
     eventCenter.on(formatEventName(this.appName, true), cb, autoTrigger)
   }
 
@@ -188,10 +195,38 @@ export class EventCenterForMicroApp extends EventCenterForGlobal {
   }
 }
 
-// export function recordDataCenterSnapshot (appName: string) {
+/**
+ * Record UMD function before exec umdHookMount
+ * @param microAppEventCneter
+ */
+export function recordDataCenterSnapshot (microAppEventCneter: EventCenterForMicroApp): void {
+  const appName = microAppEventCneter.appName
+  microAppEventCneter.umdDataListeners = { global: new Set(), normal: new Set() }
+  const globalEventInfo = eventCenter.eventList.get('global')
+  if (globalEventInfo?.callbacks?.size) {
+    for (const cb of globalEventInfo.callbacks) {
+      if ((cb as cbInSubApp).__APP_NAME === appName) {
+        microAppEventCneter.umdDataListeners.global.add(cb)
+      }
+    }
+  }
 
-// }
+  const subAppEventInfo = eventCenter.eventList.get(formatEventName(appName, true))
+  if (subAppEventInfo?.callbacks?.size) {
+    microAppEventCneter.umdDataListeners.normal = new Set(subAppEventInfo.callbacks)
+  }
+}
 
-// export function rebuildDataCenterSnapshot (appName: string) {
+/**
+ * Rebind the UMD function of the record before remount
+ * @param microAppEventCneter instance of EventCenterForMicroApp
+ */
+export function rebuildDataCenterSnapshot (microAppEventCneter: EventCenterForMicroApp): void {
+  for (const cb of microAppEventCneter.umdDataListeners!.global) {
+    microAppEventCneter.addGlobalDataListener(cb, (cb as cbInSubApp).__AUTO_TRIGGER__)
+  }
 
-// }
+  for (const cb of microAppEventCneter.umdDataListeners!.normal) {
+    microAppEventCneter.addDataListener(cb, (cb as cbInSubApp).__AUTO_TRIGGER__)
+  }
+}

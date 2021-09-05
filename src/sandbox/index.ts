@@ -10,7 +10,11 @@ import {
   removeDomScope,
 } from '../libs/utils'
 import effect, { effectDocumentEvent, releaseEffectDocumentEvent } from './effect'
-import { EventCenterForMicroApp } from '../interact'
+import {
+  EventCenterForMicroApp,
+  recordDataCenterSnapshot,
+  rebuildDataCenterSnapshot,
+} from '../interact'
 import microApp from '../micro_app'
 
 /* eslint-disable camelcase */
@@ -249,6 +253,7 @@ export default class SandBox implements SandBoxInterface {
   // record umd snapshot before the first execution of umdHookMount
   recordUmdSnapshot (): void {
     this.recordUmdEffect()
+    recordDataCenterSnapshot(this.microWindow.microApp)
     this.injectedKeys.clear()
     this.recordUmdEscapeKeys = new Set(this.escapeKeys)
   }
@@ -260,6 +265,7 @@ export default class SandBox implements SandBoxInterface {
       Reflect.set(rawWindow, key, Reflect.get(this.microWindow, key))
     })
     this.rebuildUmdEffect()
+    rebuildDataCenterSnapshot(this.microWindow.microApp)
   }
 
   /**
