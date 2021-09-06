@@ -1,6 +1,6 @@
 
 function mount () {
-  const root = document.querySelector('#root')
+  const root = document.querySelector('#umd-root2')
   root.innerHTML = `
     <div class='container'>
       <span class='test-color'>text1</span>
@@ -10,8 +10,8 @@ function mount () {
 }
 
 function unmount () {
-  const root = document.querySelector('#root')
-  root.innerHTML = ''
+  const root = document.querySelector('#umd-root2')
+  root && (root.innerHTML = '')
 }
 
 window['umd-app2'] = { mount, unmount }

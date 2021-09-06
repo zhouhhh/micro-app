@@ -1,7 +1,16 @@
-// 动态创建js、css标签
-const dynamicStyle = document.createElement('style')
-document.head.appendChild(dynamicStyle)
-dynamicStyle.textContent = '.test-color { color: green; }'
+// 👇 测试style标签延迟隔离，clone dom 导致的样式隔离失效的情况
+const dynamicStyle1 = document.createElement('style')
+document.head.appendChild(dynamicStyle1)
+dynamicStyle1.textContent = '.test-color { color: green; }'
+
+// 👇 测试style同步隔离，clone dom后不需要处理的case
+const dynamicStyle2 = document.createElement('style')
+dynamicStyle2.textContent = '.test-font { color: yellow; }'
+document.head.appendChild(dynamicStyle2)
+
+// 👇 测试 style 没有textcontent时的分支覆盖
+const dynamicStyle3 = document.createElement('style')
+document.head.appendChild(dynamicStyle3)
 
 window.addEventListener('umd-window-event', () => {
   console.warn('umd-window-event is triggered')
@@ -32,16 +41,28 @@ window.gd1 = 1
 // 卸载后，逃逸的__cjsWrapper会被删除，重新渲染后，此值恢复
 window.__cjsWrapper = '__cjsWrapper'
 
+let renderCount = 0
+
 function mount () {
-  const root = document.querySelector('#root')
+  renderCount++
+  const root = document.querySelector('#umd-root1')
   root.innerHTML = `
     <div class='container'>
       <span class='test-color'>text1</span>
       <span class='test-font'>text2</span>
     </div>
   `
-  // 重写gd1，验证重新渲染后恢复的值为1
-  expect(window.gd1).toBe(1)
+  if (window.microApp) {
+    // 沙箱环境下，因为快照，gd1始终为1
+    expect(window.gd1).toBe(1)
+  } else {
+    // 关闭沙箱后，第一次值为1，再次渲染时值始终为2
+    if (renderCount === 1) {
+      expect(window.gd1).toBe(1)
+    } else {
+      expect(window.gd1).toBe(2)
+    }
+  }
   expect(window.__cjsWrapper).toBe('__cjsWrapper')
   window.gd1 = 2
   window.gd2 = 2
@@ -49,8 +70,8 @@ function mount () {
 }
 
 function unmount () {
-  const root = document.querySelector('#root')
-  root.innerHTML = ''
+  const root = document.querySelector('#umd-root1')
+  root && (root.innerHTML = '')
 }
 
 window['umd-app1'] = { mount, unmount }

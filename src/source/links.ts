@@ -181,12 +181,12 @@ export function foramtDynamicLink (
 
 /**
  * In umd mode, source.html needs to clone container before umdHookMount is executed. Since MutationObserver is asynchronous, the style element in container may not be scoped css yet.
- * @param temp source.html
+ * @param tempHTML source.html
  * @param appName app.name
  */
-export function formatHTMLStyleAfterUmdInit (temp: HTMLElement, appName: string): void {
+export function formatHTMLStyleAfterUmdInit (tempHTML: HTMLElement, appName: string): void {
   requestIdleCallback(() => {
-    const styleList = Array.from(temp.querySelectorAll('style'))
+    const styleList = Array.from(tempHTML.querySelectorAll('style'))
     for (const styleElement of styleList) {
       if (styleElement.textContent?.indexOf(`${microApp.tagName}[name=${appName}]`) === -1) {
         scopedCSS(styleElement, appName)

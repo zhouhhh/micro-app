@@ -297,17 +297,65 @@ describe('main process', () => {
   })
 
   /**
+   * name: test-app7
+   * 预加载: false
+   * 执行前: appInstanceMap => [
+   *  {name: 'test-app5'},
+   *  {name: 'test-app3'},
+   *  {name: 'test-app2'},
+   *  {name: 'test-app6'},
+   * ]
+   *
+   * 关闭沙箱后，micro-app只渲染umd app，快照功能失效
+   */
+  test('render umd app with disablesandbox', async () => {
+    const microAppElement7 = document.createElement('micro-app')
+    microAppElement7.setAttribute('name', 'test-app7')
+    microAppElement7.setAttribute('library', 'umd-app1') // 自定义umd名称
+    microAppElement7.setAttribute('url', `http://127.0.0.1:${ports.index}/umd1`)
+    microAppElement7.setAttribute('disablesandbox', 'true')
+
+    let commonReslove: CallableFunction
+    function firstMountHandler () {
+      window.dispatchEvent(new CustomEvent('umd-window-event'))
+      expect(console.warn).toHaveBeenCalledWith('umd-window-event is triggered')
+      microAppElement7.removeEventListener('mounted', firstMountHandler)
+      appCon.removeChild(microAppElement7)
+      commonReslove(true)
+    }
+
+    microAppElement7.addEventListener('mounted', firstMountHandler)
+
+    await new Promise((reslove) => {
+      commonReslove = reslove
+      appCon.appendChild(microAppElement7)
+    })
+
+    await new Promise((reslove) => {
+      commonReslove = reslove
+      microAppElement7.addEventListener('mounted', () => {
+        window.dispatchEvent(new CustomEvent('umd-window-event'))
+        expect(console.warn).toHaveBeenCalledWith('umd-window-event is triggered')
+        reslove(true)
+      })
+      // 再次渲染
+      appCon.appendChild(microAppElement7)
+    })
+  })
+
+  /**
    * 卸载所有应用
    * 卸载前：appInstanceMap => [
    *  {name: 'test-app5'},
    *  {name: 'test-app3'},
    *  {name: 'test-app2'},
    *  {name: 'test-app6'},
+   *  {name: 'test-app7'},
    * ]
    */
   test('clear all apps', () => {
     appCon.innerHTML = ''
     // test-app5为预加载，test-app2不强制删除，所以卸载后还有2个应用
-    expect(appInstanceMap.size).toBe(4)
+    expect(appInstanceMap.size).toBe(5)
   })
 })
