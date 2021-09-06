@@ -1,12 +1,11 @@
+import { CallableFunctionForInteract } from '@micro-app/types'
 import { logError } from '../libs/utils'
 
-type eventInfo = {
-  data: Record<PropertyKey, unknown>,
-  callbacks: Set<CallableFunction>,
-}
-
 export default class EventCenter {
-  eventList = new Map<string, eventInfo>()
+  eventList = new Map<string, {
+    data: Record<PropertyKey, unknown>,
+    callbacks: Set<CallableFunctionForInteract>,
+  }>()
 
   // whether the name is legal
   isLegalName (name: string): boolean {
@@ -24,7 +23,7 @@ export default class EventCenter {
    * @param f listener
    * @param autoTrigger If there is cached data when first bind listener, whether it needs to trigger, default is false
    */
-  on (name: string, f: CallableFunction, autoTrigger = false): void {
+  on (name: string, f: CallableFunctionForInteract, autoTrigger = false): void {
     if (this.isLegalName(name)) {
       if (typeof f !== 'function') {
         return logError('event-center: Invalid callback function')
@@ -47,7 +46,7 @@ export default class EventCenter {
   }
 
   // remove listener, but the data is not cleared
-  off (name: string, f?: CallableFunction): void {
+  off (name: string, f?: CallableFunctionForInteract): void {
     if (this.isLegalName(name)) {
       const eventInfo = this.eventList.get(name)
       if (eventInfo) {

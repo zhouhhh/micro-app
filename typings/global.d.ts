@@ -177,6 +177,9 @@ declare module '@micro-app/types' {
     preFetch(apps: prefetchParamList): void
     start(options?: OptionsType): void
   }
+
+  // special CallableFunction for interact
+  type CallableFunctionForInteract = CallableFunction & { __APP_NAME__?: string, __AUTO_TRIGGER__?: boolean }
 }
 
 declare namespace JSX {

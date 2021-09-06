@@ -122,7 +122,7 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
       }
 
       if (attrName !== this.appName || attrUrl !== this.appUrl) {
-        this.handleUnmount(attrName === this.appName && attrUrl !== this.appUrl)
+        this.handleUnmount(attrName === this.appName)
         this.appName = attrName as string
         this.appUrl = attrUrl
         ;(this.shadowRoot ?? this).innerHTML = ''

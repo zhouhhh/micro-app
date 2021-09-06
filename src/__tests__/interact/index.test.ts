@@ -1,6 +1,11 @@
 /* eslint-disable promise/param-names */
 import microApp from '../..'
-import { EventCenterForBaseApp, EventCenterForMicroApp } from '../../interact'
+import {
+  EventCenterForBaseApp,
+  EventCenterForMicroApp,
+  recordDataCenterSnapshot,
+  rebuildDataCenterSnapshot,
+} from '../../interact'
 import { defer } from '../../libs/utils'
 import { rewriteConsole, releaseConsole } from '../common'
 import CreateApp, { appInstanceMap } from '../../create_app'
@@ -42,6 +47,11 @@ describe('data center', () => {
   const baseApp = new EventCenterForBaseApp()
   const microApp1 = new EventCenterForMicroApp('test-app1')
   const microApp2 = new EventCenterForMicroApp('test-app2')
+
+  // umd app 分支代码覆盖
+  test('coverage branch of pure umd app', () => {
+    recordDataCenterSnapshot(microApp1)
+  })
 
   test('main process of data center', async () => {
     // 基座监听子应用app1的数据
@@ -204,17 +214,32 @@ describe('data center', () => {
     expect(app2GlobalCb).toBeCalledWith(globalData3)
     expect(app2GlobalCbAutoTrigger).toBeCalledWith(globalData3)
 
-    // 任何一个应用清空监听，则所有应用的监听函数都会被清除
+    // 每个应用只能清空自身的全局数据监听
     cbForGlobal.mockClear()
     app1Global.mockClear()
     app2GlobalCb.mockClear()
     app2GlobalCbAutoTrigger.mockClear()
     microApp2.clearGlobalDataListener()
     baseApp.setGlobalData(globalData4)
-    expect(cbForGlobal).not.toBeCalled()
+    // 基座应用全局数据函数没有被清空
+    expect(cbForGlobal).toBeCalledWith(globalData4)
+    // 上一步已经解绑
     expect(app1Global).not.toBeCalled()
     expect(app2GlobalCb).not.toBeCalled()
     expect(app2GlobalCbAutoTrigger).not.toBeCalled()
+
+    cbForGlobal.mockClear()
+    app1Global.mockClear()
+    app2GlobalCb.mockClear()
+    // microApp2重新绑定全局数据监听
+    microApp2.addGlobalDataListener(app2GlobalCb)
+    // 清空基座应用全局数据绑定
+    baseApp.clearGlobalDataListener()
+    baseApp.setGlobalData(globalData3)
+    // 基座全局绑定不再执行
+    expect(cbForGlobal).not.toBeCalled()
+    // microApp2全局数据函数正常执行
+    expect(app2GlobalCb).toBeCalledWith(globalData3)
   })
 
   // 一些异常情况
@@ -248,5 +273,13 @@ describe('data center', () => {
     expect(app2EventHandler).not.toBeCalled()
     appInstanceMap.delete('test-app2')
     microApp2.dispatch({ info: '应用被卸载后发送数据' })
+  })
+
+  // umd app 数据绑定函数快照代码分支覆盖
+  test('coverage of umd app', () => {
+    recordDataCenterSnapshot(microApp1)
+    rebuildDataCenterSnapshot(microApp1)
+    const microApp3 = new EventCenterForMicroApp('test-app3')
+    recordDataCenterSnapshot(microApp3)
   })
 })

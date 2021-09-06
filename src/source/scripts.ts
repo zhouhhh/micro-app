@@ -290,8 +290,8 @@ function bindScope (
     code = usePlugins(url, code, app.name, microApp.plugins)
   }
   if (app.sandBox) {
-    rawWindow.proxyWindow = app.sandBox.proxyWindow
-    return `;(function(window, self){with(window){;${code}\n}}).call(window.proxyWindow, window.proxyWindow, window.proxyWindow);`
+    rawWindow.__PROXY_WINDOW__ = app.sandBox.proxyWindow
+    return `;(function(window, self){with(window){;${code}\n}}).call(window.__PROXY_WINDOW__, window.__PROXY_WINDOW__, window.__PROXY_WINDOW__);`
   }
   return code
 }

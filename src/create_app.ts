@@ -146,6 +146,9 @@ export default class CreateApp implements AppInterface {
         this.umdHookunMount = unmount as Func
         this.sandBox?.recordUmdSnapshot()
         this.source.html!.innerHTML = ''
+        /**
+         * TODO: Some UI frameworks insert and record container elements to micro-app-body, such as modal and notification. The DOM remounted is a cloned element, so the cached elements of UI frameworks are invalid, this may cause bug when remount app
+         */
         cloneNode(this.container!, this.source.html!)
         formatHTMLStyleAfterUmdInit(this.source.html!, this.name)
         this.umdHookMount()

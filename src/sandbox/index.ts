@@ -80,7 +80,7 @@ export default class SandBox implements SandBoxInterface {
   microWindow = {} as Window & injectDataType // Proxy target
   injectedKeys = new Set<PropertyKey>() // Properties newly added to microWindow
   escapeKeys = new Set<PropertyKey>() // Properties escape to rawWindow, cleared when unmount
-  recordUmdEscapeKeys = new Set<PropertyKey>() // record escapeKeys before the first execution of umdHookMount and rebuild before remount umd app
+  recordUmdinjectedValues?: Map<PropertyKey, unknown>// record injected values before the first execution of umdHookMount and rebuild before remount umd app
 
   constructor (appName: string, url: string, macro: boolean) {
     const descriptorTargetMap = new Map<PropertyKey, 'target' | 'rawWindow'>()
@@ -254,15 +254,17 @@ export default class SandBox implements SandBoxInterface {
   recordUmdSnapshot (): void {
     this.recordUmdEffect()
     recordDataCenterSnapshot(this.microWindow.microApp)
-    this.injectedKeys.clear()
-    this.recordUmdEscapeKeys = new Set(this.escapeKeys)
+
+    this.recordUmdinjectedValues = new Map<PropertyKey, unknown>()
+    this.injectedKeys.forEach((key: PropertyKey) => {
+      this.recordUmdinjectedValues!.set(key, Reflect.get(this.microWindow, key))
+    })
   }
 
   // rebuild umd snapshot before remount umd app
   rebuildUmdSnapshot (): void {
-    this.recordUmdEscapeKeys.forEach((key: PropertyKey) => {
-      this.escapeKeys.add(key)
-      Reflect.set(rawWindow, key, Reflect.get(this.microWindow, key))
+    this.recordUmdinjectedValues!.forEach((value: unknown, key: PropertyKey) => {
+      Reflect.set(this.proxyWindow, key, value)
     })
     this.rebuildUmdEffect()
     rebuildDataCenterSnapshot(this.microWindow.microApp)

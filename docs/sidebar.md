@@ -18,6 +18,7 @@
   - [高级功能](zh-cn/advanced)
   - [查看版本](zh-cn/version)
   - [路由](zh-cn/route)
+  - [部署](zh-cn/deploy)
 
 - 其他
 

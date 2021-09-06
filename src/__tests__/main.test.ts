@@ -1,4 +1,4 @@
-/* eslint-disable promise/param-names */
+/* eslint-disable promise/param-names, no-console */
 import { commonStartEffect, releaseAllEffect, ports } from './common'
 import microApp, { preFetch, removeDomScope, version, pureCreateElement } from '..'
 import { appInstanceMap } from '../create_app'
@@ -27,8 +27,8 @@ describe('main process', () => {
         // beforemount () {
         //   console.log('beforemount 全局监听')
         // },
-        mounted (e: CustomEvent) {
-          console.log('mounted 全局监听', e.detail.name)
+        mounted () {
+          // console.log('mounted 全局监听')
         },
         // unmount () {
         //   console.log('unmount 全局监听')
@@ -206,7 +206,7 @@ describe('main process', () => {
             microappElement3.setAttribute('url', `http://127.0.0.1:${ports.index}/ssr-render`)
           }, 500)
         } else {
-          expect(appInstanceMap.size).toBe(prefetchAppNum + 1)
+          expect(appInstanceMap.size).toBe(prefetchAppNum + 2)
           reslove(true)
         }
       }, false)
@@ -215,7 +215,7 @@ describe('main process', () => {
     await new Promise((reslove) => {
       microappElement3.addEventListener('unmount', () => {
         defer(() => {
-          expect(appInstanceMap.size).toBe(prefetchAppNum)
+          expect(appInstanceMap.size).toBe(prefetchAppNum + 1)
           reslove(true)
         })
       }, false)
@@ -229,6 +229,7 @@ describe('main process', () => {
    * 预加载: false
    * 执行前: appInstanceMap => [
    *  {name: 'test-app5'},
+   *  {name: 'test-app3'},
    *  {name: 'test-app2'},
    * ]
    */
@@ -247,15 +248,66 @@ describe('main process', () => {
   })
 
   /**
+   * name: test-app6
+   * 预加载: false
+   * 执行前: appInstanceMap => [
+   *  {name: 'test-app5'},
+   *  {name: 'test-app3'},
+   *  {name: 'test-app2'},
+   * ]
+   *
+   * 渲染umd应用，卸载时记录快照、重新渲染时恢复快照
+   */
+  test('mount and remount umd app ', async () => {
+    const microAppElement6 = document.createElement('micro-app')
+    microAppElement6.setAttribute('name', 'test-app6')
+    microAppElement6.setAttribute('library', 'umd-app1') // 自定义umd名称
+    microAppElement6.setAttribute('url', `http://127.0.0.1:${ports.index}/umd1`)
+
+    let commonReslove: CallableFunction
+    function firstMountHandler () {
+      window.dispatchEvent(new CustomEvent('umd-window-event'))
+      expect(console.warn).toHaveBeenCalledWith('umd-window-event is triggered')
+      document.dispatchEvent(new CustomEvent('click'))
+      expect(console.warn).toHaveBeenCalledWith('click event from umd init env')
+      microAppElement6.removeEventListener('mounted', firstMountHandler)
+      appCon.removeChild(microAppElement6)
+      commonReslove(true)
+    }
+
+    microAppElement6.addEventListener('mounted', firstMountHandler)
+
+    await new Promise((reslove) => {
+      commonReslove = reslove
+      appCon.appendChild(microAppElement6)
+    })
+
+    await new Promise((reslove) => {
+      commonReslove = reslove
+      microAppElement6.addEventListener('mounted', () => {
+        window.dispatchEvent(new CustomEvent('umd-window-event'))
+        expect(console.warn).toHaveBeenCalledWith('umd-window-event is triggered')
+        document.dispatchEvent(new CustomEvent('click'))
+        expect(console.warn).toHaveBeenCalledWith('click event from umd init env')
+        reslove(true)
+      })
+      // 再次渲染
+      appCon.appendChild(microAppElement6)
+    })
+  })
+
+  /**
    * 卸载所有应用
    * 卸载前：appInstanceMap => [
    *  {name: 'test-app5'},
+   *  {name: 'test-app3'},
    *  {name: 'test-app2'},
+   *  {name: 'test-app6'},
    * ]
    */
   test('clear all apps', () => {
     appCon.innerHTML = ''
     // test-app5为预加载，test-app2不强制删除，所以卸载后还有2个应用
-    expect(appInstanceMap.size).toBe(2)
+    expect(appInstanceMap.size).toBe(4)
   })
 })

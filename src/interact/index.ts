@@ -1,8 +1,7 @@
+import { CallableFunctionForInteract } from '@micro-app/types'
 import EventCenter from './event_center'
 import { appInstanceMap } from '../create_app'
 import { removeDomScope } from '../libs/utils'
-
-type cbInSubApp = CallableFunction & { __APP_NAME: string, __AUTO_TRIGGER__: undefined | boolean }
 
 const eventCenter = new EventCenter()
 
@@ -23,12 +22,12 @@ class EventCenterForGlobal {
    * @param cb listener
    * @param autoTrigger If there is cached data when first bind listener, whether it needs to trigger, default is false
    */
-  addGlobalDataListener (cb: CallableFunction, autoTrigger?: boolean): void {
+  addGlobalDataListener (cb: CallableFunctionForInteract, autoTrigger?: boolean): void {
     const appName = (this as any).appName
-    // is appName exists, the global data class is in sub app
+    // if appName exists, this is in sub app
     if (appName) {
-      (cb as cbInSubApp).__APP_NAME = appName
-      ;(cb as cbInSubApp).__AUTO_TRIGGER__ = autoTrigger
+      cb.__APP_NAME__ = appName
+      cb.__AUTO_TRIGGER__ = autoTrigger
     }
     eventCenter.on('global', cb, autoTrigger)
   }
@@ -37,7 +36,7 @@ class EventCenterForGlobal {
    * remove listener of global data
    * @param cb listener
    */
-  removeGlobalDataListener (cb: CallableFunction): void {
+  removeGlobalDataListener (cb: CallableFunctionForInteract): void {
     if (typeof cb === 'function') {
       eventCenter.off('global', cb)
     }
@@ -59,11 +58,11 @@ class EventCenterForGlobal {
   clearGlobalDataListener (): void {
     const appName = (this as any).appName
     const eventInfo = eventCenter.eventList.get('global')
-    if (eventInfo?.callbacks?.size) {
+    if (eventInfo?.callbacks.size) {
       for (const cb of eventInfo.callbacks) {
         if (
-          (appName && ((cb as cbInSubApp).__APP_NAME === appName)) ||
-          !(appName || (cb as cbInSubApp).__APP_NAME)
+          (appName && (appName === cb.__APP_NAME__)) ||
+          !(appName || cb.__APP_NAME__)
         ) {
           eventInfo.callbacks.delete(cb)
         }
@@ -122,12 +121,12 @@ export class EventCenterForBaseApp extends EventCenterForGlobal {
   }
 }
 
-// Event center for micro app
+// Event center for sub app
 export class EventCenterForMicroApp extends EventCenterForGlobal {
   appName: string
   umdDataListeners?: {
-    global: Set<CallableFunction>,
-    normal: Set<CallableFunction>,
+    global: Set<CallableFunctionForInteract>,
+    normal: Set<CallableFunctionForInteract>,
   }
 
   constructor (appName: string) {
@@ -140,8 +139,8 @@ export class EventCenterForMicroApp extends EventCenterForGlobal {
    * @param cb listener
    * @param autoTrigger If there is cached data when first bind listener, whether it needs to trigger, default is false
    */
-  addDataListener (cb: CallableFunction, autoTrigger?: boolean): void {
-    (cb as cbInSubApp).__AUTO_TRIGGER__ = autoTrigger
+  addDataListener (cb: CallableFunctionForInteract, autoTrigger?: boolean): void {
+    cb.__AUTO_TRIGGER__ = autoTrigger
     eventCenter.on(formatEventName(this.appName, true), cb, autoTrigger)
   }
 
@@ -149,7 +148,7 @@ export class EventCenterForMicroApp extends EventCenterForGlobal {
    * remove listener
    * @param cb listener
    */
-  removeDataListener (cb: CallableFunction): void {
+  removeDataListener (cb: CallableFunctionForInteract): void {
     if (typeof cb === 'function') {
       eventCenter.off(formatEventName(this.appName, true), cb)
     }
@@ -202,17 +201,18 @@ export class EventCenterForMicroApp extends EventCenterForGlobal {
 export function recordDataCenterSnapshot (microAppEventCneter: EventCenterForMicroApp): void {
   const appName = microAppEventCneter.appName
   microAppEventCneter.umdDataListeners = { global: new Set(), normal: new Set() }
+
   const globalEventInfo = eventCenter.eventList.get('global')
-  if (globalEventInfo?.callbacks?.size) {
+  if (globalEventInfo?.callbacks.size) {
     for (const cb of globalEventInfo.callbacks) {
-      if ((cb as cbInSubApp).__APP_NAME === appName) {
+      if (appName === cb.__APP_NAME__) {
         microAppEventCneter.umdDataListeners.global.add(cb)
       }
     }
   }
 
   const subAppEventInfo = eventCenter.eventList.get(formatEventName(appName, true))
-  if (subAppEventInfo?.callbacks?.size) {
+  if (subAppEventInfo?.callbacks.size) {
     microAppEventCneter.umdDataListeners.normal = new Set(subAppEventInfo.callbacks)
   }
 }
@@ -223,10 +223,10 @@ export function recordDataCenterSnapshot (microAppEventCneter: EventCenterForMic
  */
 export function rebuildDataCenterSnapshot (microAppEventCneter: EventCenterForMicroApp): void {
   for (const cb of microAppEventCneter.umdDataListeners!.global) {
-    microAppEventCneter.addGlobalDataListener(cb, (cb as cbInSubApp).__AUTO_TRIGGER__)
+    microAppEventCneter.addGlobalDataListener(cb, cb.__AUTO_TRIGGER__)
   }
 
   for (const cb of microAppEventCneter.umdDataListeners!.normal) {
-    microAppEventCneter.addDataListener(cb, (cb as cbInSubApp).__AUTO_TRIGGER__)
+    microAppEventCneter.addDataListener(cb, cb.__AUTO_TRIGGER__)
   }
 }
