@@ -1,5 +1,5 @@
 import type { SandBoxInterface, microWindowType } from '@micro-app/types'
-import bindFunction from './bind_function'
+import bindFunctionToRawWidow from './bind_function'
 import {
   unique,
   setCurrentAppName,
@@ -132,7 +132,7 @@ export default class SandBox implements SandBoxInterface {
 
         const rawValue = Reflect.get(rawWindow, key)
 
-        return bindFunction(rawWindow, rawValue)
+        return bindFunctionToRawWidow(rawWindow, rawValue)
       },
       set: (target: microWindowType, key: PropertyKey, value: unknown): boolean => {
         if (this.active) {

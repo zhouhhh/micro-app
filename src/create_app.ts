@@ -32,6 +32,8 @@ export interface CreateAppParam {
 export default class CreateApp implements AppInterface {
   private status: string = appStatus.NOT_LOADED
   private loadSourceLevel: -1|0|1|2 = 0
+  private umdHookMount: Func | null = null
+  private umdHookunMount: Func | null = null
   isPrefetch = false
   name: string
   url: string
@@ -43,8 +45,6 @@ export default class CreateApp implements AppInterface {
   baseurl = ''
   source: sourceType
   sandBox: SandBoxInterface | null = null
-  umdHookMount: Func | null = null
-  umdHookunMount: Func | null = null
 
   constructor ({ name, url, container, inline, scopecss, useSandbox, macro, baseurl }: CreateAppParam) {
     this.container = container ?? null
@@ -79,7 +79,7 @@ export default class CreateApp implements AppInterface {
     if (++this.loadSourceLevel === 2) {
       this.source.html = html
 
-      if (this.isPrefetch || this.status === appStatus.UNMOUNT) return
+      if (this.isPrefetch || appStatus.UNMOUNT === this.status) return
 
       this.status = appStatus.LOAD_SOURCE_FINISHED
 
@@ -93,7 +93,7 @@ export default class CreateApp implements AppInterface {
    */
   onLoadError (e: Error): void {
     this.loadSourceLevel = -1
-    if (this.status !== appStatus.UNMOUNT) {
+    if (appStatus.UNMOUNT !== this.status) {
       this.onerror(e)
       this.status = appStatus.LOAD_SOURCE_ERROR
     }
@@ -110,14 +110,11 @@ export default class CreateApp implements AppInterface {
     inline?: boolean,
     baseurl?: string,
   ): void {
-    if (!this.container && container) {
-      this.container = container
-    }
-
     if (typeof inline === 'boolean' && inline !== this.inline) {
       this.inline = inline
     }
 
+    this.container = this.container ?? container!
     this.baseurl = baseurl ?? this.baseurl
 
     if (this.loadSourceLevel !== 2) {
@@ -139,7 +136,7 @@ export default class CreateApp implements AppInterface {
     if (!this.umdHookMount) {
       execScripts(this.source.scripts, this)
 
-      const { mount, unmount } = this.getUmdLibrary()
+      const { mount, unmount } = this.getUmdLibraryHooks()
       // if mount & unmount is function, the sub app is umd mode
       if (isFunction(mount) && isFunction(unmount)) {
         this.umdHookMount = mount as Func
@@ -158,10 +155,10 @@ export default class CreateApp implements AppInterface {
       this.umdHookMount()
     }
 
-    if (this.status !== appStatus.UNMOUNT) {
+    if (appStatus.UNMOUNT !== this.status) {
       this.status = appStatus.MOUNTED
       defer(() => {
-        if (this.status !== appStatus.UNMOUNT) {
+        if (appStatus.UNMOUNT !== this.status) {
           dispatchLifecyclesEvent(
             this.container as HTMLElement,
             this.name,
@@ -215,9 +212,14 @@ export default class CreateApp implements AppInterface {
   }
 
   // get umd library, if it not exist, return empty object
-  getUmdLibrary (): any {
-    const global = (this.sandBox?.proxyWindow ?? rawWindow) as any
-    const libraryName = (this.container instanceof ShadowRoot ? this.container.host : this.container)!.getAttribute('library') || `micro-app-${this.name}`
-    return global[libraryName] ?? {}
+  private getUmdLibraryHooks (): any {
+    // after execScripts, the app maybe unmounted
+    if (appStatus.UNMOUNT !== this.status) {
+      const global = (this.sandBox?.proxyWindow ?? rawWindow) as any
+      const libraryName = (this.container instanceof ShadowRoot ? this.container.host : this.container)!.getAttribute('library') || `micro-app-${this.name}`
+      return global[libraryName] ?? {}
+    }
+
+    return {}
   }
 }

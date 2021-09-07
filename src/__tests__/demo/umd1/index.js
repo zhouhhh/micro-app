@@ -24,9 +24,19 @@ setInterval(() => {
   console.warn('setInterval from umd init env')
 }, 1000)
 
+document.onclick = () => {
+  console.warn('onclick event from umd init env')
+}
+
 document.addEventListener('click', () => {
   console.warn('click event from umd init env')
 })
+
+// 单测分支覆盖
+function handleDocumentLoad () {}
+document.addEventListener('load', handleDocumentLoad, false)
+document.removeEventListener('load', handleDocumentLoad)
+document.addEventListener('error-handler', null, false)
 
 window.microApp && window.microApp.addDataListener(() => {
   console.warn('scoped data from umd init env')

@@ -283,7 +283,6 @@ describe('main process', () => {
     })
 
     await new Promise((reslove) => {
-      commonReslove = reslove
       microAppElement6.addEventListener('mounted', () => {
         window.dispatchEvent(new CustomEvent('umd-window-event'))
         expect(console.warn).toHaveBeenCalledWith('umd-window-event is triggered')
@@ -332,7 +331,6 @@ describe('main process', () => {
     })
 
     await new Promise((reslove) => {
-      commonReslove = reslove
       microAppElement7.addEventListener('mounted', () => {
         window.dispatchEvent(new CustomEvent('umd-window-event'))
         expect(console.warn).toHaveBeenCalledWith('umd-window-event is triggered')

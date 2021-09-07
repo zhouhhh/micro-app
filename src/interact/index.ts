@@ -61,7 +61,7 @@ class EventCenterForGlobal {
     if (eventInfo?.callbacks.size) {
       for (const cb of eventInfo.callbacks) {
         if (
-          (appName && (appName === cb.__APP_NAME__)) ||
+          (appName && appName === cb.__APP_NAME__) ||
           !(appName || cb.__APP_NAME__)
         ) {
           eventInfo.callbacks.delete(cb)

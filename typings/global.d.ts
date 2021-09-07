@@ -60,8 +60,6 @@ declare module '@micro-app/types' {
     baseurl: string // route prefix, default is ''
     source: sourceType // sources of css, js, html
     sandBox: SandBoxInterface | null // sanxbox
-    umdHookMount: Func | null // mount hook of umd
-    umdHookunMount: Func | null // unmount hook of umd
     loadSourceCode(): void // Load resources
     onLoad(html: HTMLElement): void // resource is loaded
     onLoadError(e: Error): void // Error loading HTML

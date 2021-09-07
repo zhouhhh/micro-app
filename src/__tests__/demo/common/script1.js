@@ -17,7 +17,7 @@ const dynamicScript = document.createElement('script')
 dynamicScript.setAttribute('src', './script2.js')
 document.body.appendChild(dynamicScript)
 
-console.log('子应用打印的信息 - 1')
+console.log(`子应用 ${window.__MICRO_APP_NAME__} 打印的信息 - 1`)
 
 /**
  * testBindFunction 为基座应用的全局变量，子应用访问时会兜底到基座应用
@@ -25,7 +25,7 @@ console.log('子应用打印的信息 - 1')
  */
 testBindFunction()
 testBindFunction() // test bind_function cacheMap
-eval('console.log("在app1 eval中执行")')
+eval(`console.log("在${window.__MICRO_APP_NAME__} eval中执行")`)
 
 // document 事件相关
 ;(() => {
@@ -33,13 +33,13 @@ eval('console.log("在app1 eval中执行")')
   document.removeEventListener('keydown', () => {})
   // document click 事件
   function onClickOfApp1 () {
-    console.warn('子应用app1的onclick')
+    console.warn(`子应用${window.__MICRO_APP_NAME__}的onclick`)
   }
   document.onclick = onClickOfApp1
 
   const clickEvent = new CustomEvent('click')
   document.dispatchEvent(clickEvent)
-  expect(console.warn).toHaveBeenLastCalledWith('子应用app1的onclick')
+  expect(console.warn).toHaveBeenLastCalledWith(`子应用${window.__MICRO_APP_NAME__}的onclick`)
 
   expect(document.onclick).toBe(onClickOfApp1)
 
@@ -98,12 +98,13 @@ eval('console.log("在app1 eval中执行")')
 })()
 
 window.addEventListener('unmount', () => {
-  console.log('addEventListener--unmount: app1 卸载了')
+  console.log(`addEventListener--unmount: ${window.__MICRO_APP_NAME__} 卸载了`)
 })
 
-// 发送事件，通知基座卸载自己 -- create-app测试独有
+// 发送事件，通知基座立即卸载自己 -- create-app测试独有
 window.dispatchEvent(new CustomEvent('unmount-me'))
 
+// 通过数据通信，异步卸载自己
 Promise.resolve().then(() => {
-  window.microApp && window.microApp.dispatch({ unmountMe: true })
+  window.microApp && window.microApp.dispatch({ unmountMeAsync: true })
 })

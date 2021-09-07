@@ -45,5 +45,10 @@ describe('prefetch', () => {
   test('globalAssets should work normal', async () => {
     expect(globalLinks.get(`http://127.0.0.1:${ports.prefetch}/common/link1.css`)).not.toBeNull()
     expect(globalScripts.get(`http://127.0.0.1:${ports.prefetch}/common/script1.js`)).not.toBeNull()
+    await new Promise((reslove) => {
+      setTimeout(() => {
+        reslove(true)
+      }, 100)
+    })
   })
 })

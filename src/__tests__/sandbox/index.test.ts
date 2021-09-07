@@ -16,6 +16,7 @@ declare global {
     key2: string
     key3: string
     _babelPolyfill: boolean
+    boundFunction: any
   }
 }
 
@@ -368,5 +369,19 @@ describe('sandbox', () => {
     sandbox.start('')
 
     expect(window._babelPolyfill).toBeFalsy()
+  })
+
+  // 测试bind_function中的isBoundedFunction方法
+  test('test bind_function of isBoundedFunction', () => {
+    const sandbox = new Sandbox('test-isBoundedFunction', `http://127.0.0.1:${ports.sandbox}/common/`, false)
+    sandbox.start('')
+    const proxyWindow: any = sandbox.proxyWindow
+
+    function willbind () {}
+    const boundFunction = willbind.bind(window)
+    window.boundFunction = boundFunction
+
+    expect(proxyWindow.boundFunction.name).toBe('bound willbind')
+    expect(proxyWindow.boundFunction).toBe(boundFunction)
   })
 })

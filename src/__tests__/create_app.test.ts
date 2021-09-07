@@ -130,7 +130,7 @@ describe('create_app', () => {
     microappElement5.addEventListener('mounted', mountedHandler2)
 
     function unmountTestApp5 (data: Record<string, unknown>) {
-      if (data.unmountMe === true) {
+      if (data.unmountMeAsync === true) {
         appCon.removeChild(microappElement5)
         microApp.removeDataListener('test-app5', unmountTestApp5)
       }

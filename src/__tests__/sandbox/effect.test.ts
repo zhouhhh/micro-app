@@ -60,4 +60,34 @@ describe('sandbox effect', () => {
       }, false)
     })
   })
+
+  //
+  test('coverage branch of umd effect snapshot', async () => {
+    const microAppElement3 = document.createElement('micro-app')
+    microAppElement3.setAttribute('name', 'test-app3')
+    microAppElement3.setAttribute('library', 'umd-app2') // 自定义umd名称
+    microAppElement3.setAttribute('url', `http://127.0.0.1:${ports.effect}/umd2`)
+
+    let commonReslove: CallableFunction
+    function firstMountHandler () {
+      microAppElement3.removeEventListener('mounted', firstMountHandler)
+      appCon.removeChild(microAppElement3)
+      commonReslove(true)
+    }
+
+    microAppElement3.addEventListener('mounted', firstMountHandler)
+
+    await new Promise((reslove) => {
+      commonReslove = reslove
+      appCon.appendChild(microAppElement3)
+    })
+
+    await new Promise((reslove) => {
+      microAppElement3.addEventListener('mounted', () => {
+        reslove(true)
+      })
+      // 再次渲染
+      appCon.appendChild(microAppElement3)
+    })
+  })
 })

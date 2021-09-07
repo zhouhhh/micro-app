@@ -7,6 +7,7 @@ export function isBoundedFunction (value: CallableFunction): boolean {
     return boundedMap.get(value)!
   }
 
+  // bind function
   const boundFunction = value.name.indexOf('bound ') === 0 && !value.hasOwnProperty('prototype')
 
   boundedMap.set(value, boundFunction)
@@ -37,7 +38,7 @@ function isConstructor (value: Func | FunctionConstructor) {
 
 const rawWindowMethodMap = new WeakMap<CallableFunction, CallableFunction>()
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export default function bindFunction (rawWindow: Window, value: any): unknown {
+export default function bindFunctionToRawWidow (rawWindow: Window, value: any): unknown {
   if (rawWindowMethodMap.has(value)) {
     return rawWindowMethodMap.get(value)
   }

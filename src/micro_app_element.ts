@@ -115,7 +115,7 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
       const existApp = appInstanceMap.get(attrName!)
       if (attrName !== this.appName && existApp) {
         // handling of cached and non-prefetch apps
-        if (existApp.getAppStatus() !== appStatus.UNMOUNT && !existApp.isPrefetch) {
+        if (appStatus.UNMOUNT !== existApp.getAppStatus() && !existApp.isPrefetch) {
           this.setAttribute('name', this.appName)
           return logError(`an app named ${attrName} already exists`)
         }
@@ -196,7 +196,7 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
    */
   handleUnmount (destory: boolean): void {
     const app = appInstanceMap.get(this.appName!)
-    if (app && app.getAppStatus() !== appStatus.UNMOUNT) app.unmount(destory)
+    if (app && appStatus.UNMOUNT !== app.getAppStatus()) app.unmount(destory)
   }
 
   /**
