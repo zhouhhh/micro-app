@@ -58,7 +58,7 @@ class EventCenterForGlobal {
   clearGlobalDataListener (): void {
     const appName = (this as any).appName
     const eventInfo = eventCenter.eventList.get('global')
-    if (eventInfo?.callbacks.size) {
+    if (eventInfo) {
       for (const cb of eventInfo.callbacks) {
         if (
           (appName && appName === cb.__APP_NAME__) ||
@@ -203,7 +203,7 @@ export function recordDataCenterSnapshot (microAppEventCneter: EventCenterForMic
   microAppEventCneter.umdDataListeners = { global: new Set(), normal: new Set() }
 
   const globalEventInfo = eventCenter.eventList.get('global')
-  if (globalEventInfo?.callbacks.size) {
+  if (globalEventInfo) {
     for (const cb of globalEventInfo.callbacks) {
       if (appName === cb.__APP_NAME__) {
         microAppEventCneter.umdDataListeners.global.add(cb)
@@ -212,7 +212,7 @@ export function recordDataCenterSnapshot (microAppEventCneter: EventCenterForMic
   }
 
   const subAppEventInfo = eventCenter.eventList.get(formatEventName(appName, true))
-  if (subAppEventInfo?.callbacks.size) {
+  if (subAppEventInfo) {
     microAppEventCneter.umdDataListeners.normal = new Set(subAppEventInfo.callbacks)
   }
 }

@@ -245,9 +245,9 @@ export function pureCreateElement<K extends keyof HTMLElementTagNameMap> (tagNam
  * @param target Accept cloned elements
  */
 export function cloneNode <T extends Node, Q extends Node> (origin: T, target: Q): void {
-  const clonedNodes = origin.cloneNode(true)
+  const clonedOrigin = origin.cloneNode(true)
   const fragment = document.createDocumentFragment()
-  Array.from(clonedNodes.childNodes).forEach((node: Node) => {
+  Array.from(clonedOrigin.childNodes).forEach((node: Node) => {
     fragment.appendChild(node)
   })
   target.appendChild(fragment)

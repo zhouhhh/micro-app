@@ -12,6 +12,7 @@ function Vue2 () {
   const [showLoading, hideLoading] = useState(true)
   return (
     <div>
+      <div>子应用内嵌其它子应用</div>
       <div className='btn-con'>
         <Button
           type='primary'
