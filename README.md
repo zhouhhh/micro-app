@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://zeroing.jd.com/micro-app/">
+  <a href="https://micro-zoe.github.io/micro-app/">
     <img src="https://cangdu.org/micro-app/_media/logo.png" alt="logo" width="200"/>
   </a>
 </p>
@@ -25,7 +25,7 @@
   </a>
 </p>
 
-English｜[简体中文](https://github.com/micro-zoe/micro-app/blob/master/README.zh-cn.md)｜[Documentation](https://zeroing.jd.com/micro-app/)｜[Discussions](https://github.com/micro-zoe/micro-app/discussions)｜[Gitter](https://gitter.im/microzoe/micro-app)
+English｜[简体中文](https://github.com/micro-zoe/micro-app/blob/master/README.zh-cn.md)｜[Documentation](https://micro-zoe.github.io/micro-app/)｜[Discussions](https://github.com/micro-zoe/micro-app/discussions)｜[Gitter](https://gitter.im/microzoe/micro-app)
 
 # 📖Introduction
 micro-app is a micro front-end framework launched by JD Retail. It renders based on webcomponent-like and realizes the micro front-end from component thinking, it aiming to reduce the difficulty of getting started and improve work efficiency. 
@@ -86,7 +86,7 @@ export default routes
 </template>
 ```
 
-> Please refer to [Routing Chapter](https://zeroing.jd.com/micro-app/docs.html#/zh-cn/route) for the relationship between url and micro application routing
+> Please refer to [Routing Chapter](https://micro-zoe.github.io/micro-app/docs.html#/zh-cn/route) for the relationship between url and micro application routing
 
 ## micro application
 > The micro application takes the react framework as an example
@@ -124,7 +124,7 @@ Then micro front-end can be rendered normally, and the react micro application i
 
 The above lists the usage of react and Vue framework. They can be combined freely. For example, the base application is react, the micro application is Vue, or the base application is Vue, the micro application is react, or both the base application and the micro application are react and Vue. The micro-app has no restrictions on the front-end framework, and any framework can be used as a base application to embed any type of micro application of the framework.
 
-More detailed configuration can be viewed [Documentation](https://zeroing.jd.com/micro-app/docs.html#/zh-cn/start).
+More detailed configuration can be viewed [Documentation](https://micro-zoe.github.io/micro-app/docs.html#/zh-cn/start).
 
 # 🤝 Contribution
 If you're interested in this project, you're welcome to mention pull request, and also welcome your "Star" ^_^
@@ -192,7 +192,7 @@ For more commands, see [DEVELP](https://github.com/micro-zoe/micro-app/blob/mast
 <details>
   <summary>Does it support vite?</summary>
   
-  Yes, please see [adapt vite](https://zeroing.jd.com/micro-app/docs.html#/zh-cn/advanced?id=_2%e3%80%81%e9%80%82%e9%85%8dvite) for details.
+  Yes, please see [adapt vite](https://micro-zoe.github.io/micro-app/docs.html#/zh-cn/advanced?id=_2%e3%80%81%e9%80%82%e9%85%8dvite) for details.
 </details>
 
 # Contributors

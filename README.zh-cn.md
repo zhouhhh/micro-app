@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://zeroing.jd.com/micro-app/">
+  <a href="https://micro-zoe.github.io/micro-app/">
     <img src="https://cangdu.org/micro-app/_media/logo.png" alt="logo" width="180"/>
   </a>
 </p>
@@ -25,7 +25,7 @@
   </a>
 </p>
 
-[English](https://github.com/micro-zoe/micro-app)｜简体中文｜[官网文档](https://zeroing.jd.com/micro-app/)｜[讨论组](https://github.com/micro-zoe/micro-app/discussions)｜[Gitter群聊](https://gitter.im/microzoe/micro-app)
+[English](https://github.com/micro-zoe/micro-app)｜简体中文｜[官网文档](https://micro-zoe.github.io/micro-app/)｜[讨论组](https://github.com/micro-zoe/micro-app/discussions)｜[Gitter群聊](https://gitter.im/microzoe/micro-app)
 
 # 📖简介
 micro-app是京东零售推出的一款微前端框架，它基于类WebComponent进行渲染，从组件化的思维实现微前端，旨在降低上手难度、提升工作效率。它是目前接入微前端成本最低的框架，并且提供了JS沙箱、样式隔离、元素隔离、预加载、资源地址补全、插件系统、数据通信等一系列完善的功能。
@@ -89,7 +89,7 @@ export default routes
 </template>
 ```
 
-> url和子应用路由的关系请查看[路由一章](https://zeroing.jd.com/micro-app/docs.html#/zh-cn/route)
+> url和子应用路由的关系请查看[路由一章](https://micro-zoe.github.io/micro-app/docs.html#/zh-cn/route)
 
 ## 子应用
 > 子应用以react框架为例
@@ -127,7 +127,7 @@ devServer: {
 
 上面列出了react和vue框架的使用方式，它们是可以自由组合的，比如基座应用是react，子应用是vue，或者基座应用是vue，子应用是react，或者基座应用和子应用都是react、vue。 micro-app对前端框架没有限制，任何框架都可以作为基座应用嵌入任何类型框架的子应用。
 
-更多详细配置可以查看[官网文档](https://zeroing.jd.com/micro-app/docs.html#/zh-cn/start)
+更多详细配置可以查看[官网文档](https://micro-zoe.github.io/micro-app/docs.html#/zh-cn/start)
 
 # 🤝 参与共建
 如果您对这个项目感兴趣，欢迎提 pull request，也欢迎 "Star" 支持一下 ^_^
@@ -153,7 +153,7 @@ yarn start # 访问 http://localhost:3000
 更多命令请查看[DEVELP](https://github.com/micro-zoe/micro-app/blob/master/DEVELOP.zh-cn.md)
 
 # FAQ
-[问题汇总](https://zeroing.jd.com/micro-app/docs.html#/zh-cn/questions)
+[问题汇总](https://micro-zoe.github.io/micro-app/docs.html#/zh-cn/questions)
 <details>
 
   <summary>micro-app的优势在哪里？</summary>
@@ -196,7 +196,7 @@ yarn start # 访问 http://localhost:3000
 <details>
   <summary>支持vite吗?</summary>
   
-  支持，详情请查看[适配vite](https://zeroing.jd.com/micro-app/docs.html#/zh-cn/advanced?id=_2%e3%80%81%e9%80%82%e9%85%8dvite)
+  支持，详情请查看[适配vite](https://micro-zoe.github.io/micro-app/docs.html#/zh-cn/advanced?id=_2%e3%80%81%e9%80%82%e9%85%8dvite)
 </details>
 
 # 贡献者们
