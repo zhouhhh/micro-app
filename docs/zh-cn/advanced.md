@@ -144,3 +144,86 @@ microApp.start({
 > 3、请确保vite版本>=2.5.0
 
 
+## 3、内存优化
+虽然我们在卸载子应用时对变量和事件进行了清除，但仍有一些变量无法回收。
+
+如果子应用渲染和卸载非常频繁，建议通过下面方式进行内存优化。
+
+### 子应用
+#### 1、在入口文件导出相应的生命周期钩子
+
+<!-- tabs:start -->
+
+#### ** React **
+```js
+// index.js
+...
+// 应用每次渲染时都会执行 mount 方法，在此处可以执行初始化相关操作（必传)
+export function mount () {
+  ReactDOM.render(<App />, document.getElementById("root"))
+}
+
+// 应用每次卸载时都会执行 unmount 方法，在此处可以执行卸载相关操作（必传)
+export function unmount () {
+  // 卸载应用
+  ReactDOM.unmountComponentAtNode(document.getElementById("root"));
+}
+
+```
+
+#### ** Vue **
+```js
+// main.js
+...
+let app
+// 应用每次渲染时都会执行 mount 方法，在此处可以执行初始化相关操作（必传)
+export function mount () {
+  app = new Vue({
+    router,
+    render: h => h(App),
+  }).$mount('#app')
+}
+
+// 应用每次卸载时都会执行 unmount 方法，在此处可以执行卸载相关操作（必传)
+export function unmount () {
+  // 卸载应用
+  app.$destroy()
+}
+
+```
+<!-- tabs:end -->
+
+#### 2、修改webpack配置
+```js
+// webpack.config.js
+module.exports = {
+  ...
+  output: {
+    library: 'micro-app-子应用的name', // 子应用的name就是<micro-app name='xxx'></micro-app>中name属性的值
+    libraryTarget: 'umd',
+    jsonpFunction: `webpackJsonp_${packageName}`,
+  },
+}
+```
+
+通常`library`的值固定为`micro-app-子应用的name`，但也可以自定义，此时需要在`<micro-app></micro-app>`标签中通过`library`属性指定名称。
+
+```js
+// webpack.config.js
+module.exports = {
+  ...
+  output: {
+    library: '自定义的library名称',
+    libraryTarget: 'umd',
+    jsonpFunction: `webpackJsonp_${packageName}`,
+  },
+}
+```
+
+```html
+<micro-app
+  name='xxx'
+  url='xxx'
+  library='自定义的library名称'
+></micro-app>
+```

@@ -185,7 +185,8 @@ export default class CreateApp implements AppInterface {
     )
     // Send an unmount event to the micro app or call umd unmount hook
     // before the sandbox is cleared & after the unmount lifecycle is executed
-    this.umdHookunMount ? this.umdHookunMount() : dispatchUnmountToMicroApp(this.name)
+    this.umdHookunMount && this.umdHookunMount()
+    dispatchUnmountToMicroApp(this.name)
     this.sandBox?.stop()
     this.container = null
     if (destory) {
@@ -217,7 +218,7 @@ export default class CreateApp implements AppInterface {
     if (appStatus.UNMOUNT !== this.status) {
       const global = (this.sandBox?.proxyWindow ?? rawWindow) as any
       const libraryName = (this.container instanceof ShadowRoot ? this.container.host : this.container)!.getAttribute('library') || `micro-app-${this.name}`
-      return toString.call(global[libraryName]) === '[object Object]' ? global[libraryName] : {}
+      return typeof global[libraryName] === 'object' ? global[libraryName] : {}
     }
 
     return {}

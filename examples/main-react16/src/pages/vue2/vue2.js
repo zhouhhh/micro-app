@@ -6,7 +6,6 @@ import { Button, Spin } from 'antd'
 import { LoadingOutlined } from '@ant-design/icons'
 import config from '../../config'
 import './vue2.less'
-import microApp from '@micro-zoe/micro-app'
 
 const antIcon = <LoadingOutlined style={{ fontSize: 30 }} spin />
 
@@ -15,9 +14,6 @@ function Vue2 () {
   const [showLoading, hideLoading] = useState(true)
   useEffect(() => {
     console.time('vue2')
-    microApp.addGlobalDataListener((data) => {
-      console.log('这是全局数据--基座vue2', data)
-    })
   }, [])
   return (
     <div>
@@ -28,13 +24,6 @@ function Vue2 () {
           style={{width: '120px'}}
         >
           发送数据
-        </Button>
-        <Button
-          type='primary'
-          onClick={() => microApp.setGlobalData({name: '全局数据' + (+new Date())})}
-          style={{width: '120px'}}
-        >
-          发送全局数据
         </Button>
       </div>
       {

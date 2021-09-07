@@ -118,8 +118,7 @@ export default class App extends React.Component {
 
   componentWillUnmount ()  {
     microApp.clearDataListener('react16')
-    // microApp.removeGlobalDataListener(this.handleGlobalDataForBaseApp)
-    microApp.clearGlobalDataListener()
+    microApp.removeGlobalDataListener(this.handleGlobalDataForBaseApp)
   }
 
   render () {
@@ -172,7 +171,7 @@ export default class App extends React.Component {
               name='modal-app1'
               url={this.state.url}
               baseurl='/micro-app/demo/react16'
-              inline
+              library='micro-app-react16'
               // disableSandbox
               // macro
             />

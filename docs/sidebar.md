@@ -15,10 +15,10 @@
   - [预加载](zh-cn/prefetch)
   - [插件系统](zh-cn/plugins)
   - [多层嵌套](zh-cn/qiantao)
-  - [高级功能](zh-cn/advanced)
   - [查看版本](zh-cn/version)
+  - [高级功能](zh-cn/advanced)
   - [路由](zh-cn/route)
-  - [部署](zh-cn/deploy)
+  <!-- - [部署](zh-cn/deploy) -->
 
 - 其他
 

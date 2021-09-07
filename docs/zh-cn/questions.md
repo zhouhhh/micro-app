@@ -150,3 +150,6 @@ microApp.start({
     如：`fetch('/api/data')`，在请求时会自动被浏览器补全为`fetch('基座域名/api/data')`
 
     为了避免这个问题，子应用需要使用完整的地址：`fetch('子应用域名/api/data')`
+
+## 15、子应用多次渲染后内存越来越大
+  参考[内存优化](/zh-cn/advanced?id=_3、内存优化)一章
