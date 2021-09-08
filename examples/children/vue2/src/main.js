@@ -46,3 +46,7 @@ export function unmount () {
   app.$destroy()
 }
 
+// 非微前端环境直接运行
+if (!window.__MICRO_APP_ENVIRONMENT__) {
+  mount()
+}

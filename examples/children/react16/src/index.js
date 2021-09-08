@@ -57,23 +57,6 @@ window.microApp?.addGlobalDataListener(handleGlobalData);
 //   ReactDOM.unmountComponentAtNode(document.getElementById("root"));
 // })
 
-// document.addEventListener('click', function () {
-//   console.log(`子应用${window.__MICRO_APP_NAME__}内部的document.addEventListener(click)绑定`)
-// }, false)
-
-// document.onclick = () => {
-//   console.log(`子应用${window.__MICRO_APP_NAME__}内部的document.onclick绑定`)
-// }
-
-// window.addEventListener('scroll', () => {
-//   console.log(`scroll event from ${window.__MICRO_APP_NAME__}`)
-// }, false)
-
-// setInterval(() => {
-//   console.log(`子应用${window.__MICRO_APP_NAME__}的setInterval`)
-// }, 1000)
-
-
 export function mount () {
   ReactDOM.render(
     <React.StrictMode>
@@ -91,3 +74,24 @@ export function unmount () {
   // 卸载应用
   ReactDOM.unmountComponentAtNode(document.getElementById("root"));
 }
+
+// 非微前端环境直接运行
+if (!window.__MICRO_APP_ENVIRONMENT__) {
+  mount()
+}
+
+// document.addEventListener('click', function () {
+//   console.log(`子应用${window.__MICRO_APP_NAME__}内部的document.addEventListener(click)绑定`)
+// }, false)
+
+// document.onclick = () => {
+//   console.log(`子应用${window.__MICRO_APP_NAME__}内部的document.onclick绑定`)
+// }
+
+// window.addEventListener('scroll', () => {
+//   console.log(`scroll event from ${window.__MICRO_APP_NAME__}`)
+// }, false)
+
+// setInterval(() => {
+//   console.log(`子应用${window.__MICRO_APP_NAME__}的setInterval`)
+// }, 1000)
