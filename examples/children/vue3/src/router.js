@@ -2,7 +2,7 @@ import { createRouter, createWebHistory, createWebHashHistory } from 'vue-router
 import Home from './pages/page1.vue';
 
 const routes = createRouter({
-  history: createWebHistory(window.__MICRO_APP_BASE_URL__ || '/micro-app/vue3/'),
+  history: createWebHistory(window.__MICRO_APP_BASE_ROUTE__ || '/micro-app/vue3/'),
   routes: [
     {
       path: '/',

@@ -10,14 +10,14 @@ let config = {
 const isEnvPro = process.env.NODE_ENV === 'production'
 
 if (isEnvPro) {
-  const baseUrl = `${location.origin}/`
+  const locationOrigin = `${location.origin}/`
   config = {
-    react16: baseUrl,
-    react17: baseUrl,
-    vue2: baseUrl,
-    vue3: baseUrl,
-    angular11: baseUrl,
-    vite: baseUrl,
+    react16: locationOrigin,
+    react17: locationOrigin,
+    vue2: locationOrigin,
+    vue3: locationOrigin,
+    angular11: locationOrigin,
+    vite: locationOrigin,
   }
 }
 

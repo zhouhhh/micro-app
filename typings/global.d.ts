@@ -18,7 +18,7 @@ declare module '@micro-app/types' {
     microWindow: Window // Proxy target
     injectedKeys: Set<PropertyKey> // Properties newly added to microWindow
     escapeKeys: Set<PropertyKey> // Properties escape to rawWindow, cleared when unmount
-    start(baseurl: string): void
+    start(baseroute: string): void
     stop(): void
     recordUmdSnapshot(): void
     rebuildUmdSnapshot(): void
@@ -57,7 +57,7 @@ declare module '@micro-app/types' {
     scopecss: boolean // whether use css scoped, default is true
     useSandbox: boolean // whether use js sandbox, default is true
     macro: boolean // used to solve the async render problem of vue3, default is false
-    baseurl: string // route prefix, default is ''
+    baseroute: string // route prefix, default is ''
     source: sourceType // sources of css, js, html
     sandBox: SandBoxInterface | null // sanxbox
     loadSourceCode(): void // Load resources
@@ -66,7 +66,7 @@ declare module '@micro-app/types' {
     mount(
       container?: HTMLElement | ShadowRoot,
       inline?: boolean,
-      baseurl?: string,
+      baseroute?: string,
     ): void // mount app
     unmount(destory: boolean): void // unmount app
     onerror(e: Error): void // app rendering error

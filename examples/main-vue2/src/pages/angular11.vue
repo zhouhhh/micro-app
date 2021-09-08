@@ -3,7 +3,7 @@
     <micro-app
         name='angular11'
         url='http://localhost:6001/micro-app/angular11'
-        baseurl='/angular11'
+        baseRoute='/angular11'
         :data='data'
         inline
       >

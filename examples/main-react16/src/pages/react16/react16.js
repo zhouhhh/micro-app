@@ -148,8 +148,8 @@ export default class App extends React.Component {
                 onError={this.error}
                 onDataChange={this.handleDataChange}
                 // destory
-                baseurl='/micro-app/demo/react16'
-                inline
+                baseRoute='/micro-app/demo/react16'
+                // inline
                 // disableSandbox
                 // disableScopecss
                 // macro
@@ -170,7 +170,7 @@ export default class App extends React.Component {
             <micro-app
               name='modal-app1'
               url={this.state.url}
-              baseurl='/micro-app/demo/react16'
+              baseRoute='/micro-app/demo/react16'
               library='micro-app-react16'
               // disableSandbox
               // macro

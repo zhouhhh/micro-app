@@ -23,6 +23,7 @@ type injectDataType = {
   __MICRO_APP_NAME__: string
   __MICRO_APP_PUBLIC_PATH__: string
   __MICRO_APP_BASE_URL__: string
+  __MICRO_APP_BASE_ROUTE__: string
   microApp: EventCenterForMicroApp
   rawWindow: Window
   rawDocument: Document
@@ -216,10 +217,10 @@ export default class SandBox implements SandBoxInterface {
     })
   }
 
-  start (baseurl: string): void {
+  start (baseroute: string): void {
     if (!this.active) {
       this.active = true
-      this.microWindow.__MICRO_APP_BASE_URL__ = baseurl
+      this.microWindow.__MICRO_APP_BASE_ROUTE__ = this.microWindow.__MICRO_APP_BASE_URL__ = baseroute
       if (rawWindow._babelPolyfill) rawWindow._babelPolyfill = false
       if (++SandBox.activeCount === 1) {
         effectDocumentEvent()

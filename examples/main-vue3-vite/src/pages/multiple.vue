@@ -6,7 +6,7 @@
       class='multiple-micro-app'
       name='react162'
       url='http://localhost:3001/micro-app/react16/'
-      baseurl='/multiple'
+      baseRoute='/multiple'
       :data='data'
     ></micro-app>
     <!-- destory inline scopecss='false' -->

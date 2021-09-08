@@ -42,7 +42,7 @@ function Vue3 () {
           name={reactname}
           url={`${config.react16}micro-app/react16`}
           data={data}
-          baseurl='/micro-app/demo/multiple'
+          baseRoute='/micro-app/demo/multiple'
           onMounted={() => hideLoading(false)}
           // destory
           // inline

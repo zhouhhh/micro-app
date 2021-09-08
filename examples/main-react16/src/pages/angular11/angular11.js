@@ -23,7 +23,7 @@ function Angular11 () {
         url={`${config.angular11}micro-app/angular11`}
         data={data}
         onMounted={() => hideLoading(false)}
-        baseurl='/micro-app/demo/angular11'
+        baseRoute='/micro-app/demo/angular11'
         // destory
         // inline
         // disableScopecss

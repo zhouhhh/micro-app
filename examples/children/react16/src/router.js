@@ -19,7 +19,7 @@ function getDefaultKey () {
 
 function App () {
   return (
-    <BrowserRouter basename={window.__MICRO_APP_BASE_URL__ || '/micro-app/react16/'}>
+    <BrowserRouter basename={window.__MICRO_APP_BASE_ROUTE__ || '/micro-app/react16/'}>
       <Menu
         mode="horizontal"
         defaultSelectedKeys={[getDefaultKey()]}

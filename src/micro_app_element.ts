@@ -30,7 +30,7 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
   // disableScopecss: whether disable css scoped, default is false
   // disableSandbox: whether disable sandbox, default is false
   // macro: used to solve the async render problem of vue3, default is false
-  // baseUrl: route prefix, default is ''
+  // baseRoute: route prefix, default is ''
 
   connectedCallback (): void {
     if (++MicroAppElement.microAppCount === 1) {
@@ -170,7 +170,7 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
     defer(() => app.mount(
       this.shadowRoot ?? this,
       this.getDisposeResult('inline'),
-      this.getAttribute('baseurl') ?? '',
+      this.getBaseRouteCompatible(),
     ))
   }
 
@@ -184,7 +184,7 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
       scopecss: !(this.getDisposeResult('disableScopecss') || this.getDisposeResult('shadowDOM')),
       useSandbox: !this.getDisposeResult('disableSandbox'),
       macro: this.getDisposeResult('macro'),
-      baseurl: this.getAttribute('baseurl') ?? '',
+      baseroute: this.getBaseRouteCompatible(),
     })
 
     appInstanceMap.set(this.appName!, instance)
@@ -207,6 +207,15 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
   getDisposeResult (name: string): boolean {
     // @ts-ignore
     return (this.hasAttribute(name) || microApp[name]) && this.getAttribute(name) !== 'false'
+  }
+
+  /**
+   * 2021-09-08
+   * get baseRoute
+   * getAttribute('baseurl') is compatible writing of versions below 0.3.1
+   */
+  getBaseRouteCompatible (): string {
+    return this.getAttribute('baseroute') ?? this.getAttribute('baseurl') ?? ''
   }
 
   /**

@@ -6,7 +6,7 @@
     url='http://localhost:4001/micro-app/vue2'
     :data='data'
   >
-    <!-- destory inline scopecss  baseurl='/vue2' -->
+    <!-- destory inline scopecss  baseRoute='/vue2' -->
   </micro-app>
 </div>
 </template>

@@ -21,7 +21,7 @@
       @error='error'
       @datachange='handleDataChange'
       inline
-      baseurl='/react16'
+      baseRoute='/react16'
     >
       <!-- destory  inline -->
     </micro-app>

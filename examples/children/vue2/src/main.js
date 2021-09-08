@@ -13,7 +13,7 @@ Vue.use(ElementUI)
 
 const router = new VueRouter({
   // vue-router在hash模式下不支持base，可以用一个根页面进行包裹
-  // base: window.__MICRO_APP_BASE_URL__ || '/',
+  // base: window.__MICRO_APP_BASE_ROUTE__ || '/',
   // mode: 'history',
   routes,
 })

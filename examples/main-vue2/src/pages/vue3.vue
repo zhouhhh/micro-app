@@ -4,7 +4,7 @@
       name='vue3'
       url='http://localhost:4002/micro-app/vue3/'
       :data='data'
-      baseurl='/vue3'
+      baseRoute='/vue3'
     >
     <!-- destory inline scopecss='false' -->
     </micro-app>

@@ -145,12 +145,10 @@ microApp.start({
 
 
 ## 3、内存优化
-虽然我们在卸载子应用时对变量和事件进行了清除，但仍有一些变量无法回收。
+虽然我们在卸载子应用时对变量和事件进行了清除，但仍有一些变量无法回收。如果子应用渲染和卸载非常频繁，建议通过下面方式进行内存优化。
 
-如果子应用渲染和卸载非常频繁，建议通过下面方式进行内存优化。
-
-### 子应用
-#### 1、在入口文件导出相应的生命周期钩子
+### 方式一、将子应用修改为umd应用
+##### 步骤1：在子应用入口文件导出相应的生命周期钩子
 
 <!-- tabs:start -->
 
@@ -193,7 +191,7 @@ export function unmount () {
 ```
 <!-- tabs:end -->
 
-#### 2、修改webpack配置
+##### 步骤2：修改子应用的webpack配置
 ```js
 // webpack.config.js
 module.exports = {
@@ -206,7 +204,7 @@ module.exports = {
 }
 ```
 
-通常`library`的值固定为`micro-app-子应用的name`，但也可以自定义，此时需要在`<micro-app></micro-app>`标签中通过`library`属性指定名称。
+通常`library`的值固定为`micro-app-子应用的name`，但也可以自定义，自定义的值需要在`<micro-app>`标签中通过`library`属性指定。
 
 ```js
 // webpack.config.js
@@ -221,9 +219,19 @@ module.exports = {
 ```
 
 ```html
+<!-- 基座应用 -->
 <micro-app
   name='xxx'
   url='xxx'
   library='自定义的library名称'
 ></micro-app>
 ```
+
+### 方式二、使用inline内联模式
+```html
+<!-- 基座应用 -->
+<micro-app name='xx' url='xx' inline></micro-app>
+```
+默认情况下，子应用的js会被提取并在后台运行。开启inline后，被提取的js会作为script标签插入应用中运行，这会稍微损耗性能。
+
+所以我们更推荐使用方式一。

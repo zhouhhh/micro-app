@@ -25,7 +25,7 @@ export interface CreateAppParam {
   useSandbox: boolean
   macro?: boolean
   inline?: boolean
-  baseurl?: string
+  baseroute?: string
   container?: HTMLElement | ShadowRoot
 }
 
@@ -42,14 +42,14 @@ export default class CreateApp implements AppInterface {
   scopecss: boolean
   useSandbox: boolean
   macro = false
-  baseurl = ''
+  baseroute = ''
   source: sourceType
   sandBox: SandBoxInterface | null = null
 
-  constructor ({ name, url, container, inline, scopecss, useSandbox, macro, baseurl }: CreateAppParam) {
+  constructor ({ name, url, container, inline, scopecss, useSandbox, macro, baseroute }: CreateAppParam) {
     this.container = container ?? null
     this.inline = inline ?? false
-    this.baseurl = baseurl ?? ''
+    this.baseroute = baseroute ?? ''
     // optional during init👆
     this.name = name
     this.url = url
@@ -103,19 +103,19 @@ export default class CreateApp implements AppInterface {
    * mount app
    * @param container app container
    * @param inline js runs in inline mode
-   * @param baseurl route prefix, default is ''
+   * @param baseroute route prefix, default is ''
    */
   mount (
     container?: HTMLElement | ShadowRoot,
     inline?: boolean,
-    baseurl?: string,
+    baseroute?: string,
   ): void {
     if (typeof inline === 'boolean' && inline !== this.inline) {
       this.inline = inline
     }
 
     this.container = this.container ?? container!
-    this.baseurl = baseurl ?? this.baseurl
+    this.baseroute = baseroute ?? this.baseroute
 
     if (this.loadSourceLevel !== 2) {
       this.status = appStatus.LOADING_SOURCE_CODE
@@ -132,7 +132,7 @@ export default class CreateApp implements AppInterface {
 
     cloneNode(this.source.html!, this.container!)
 
-    this.sandBox?.start(this.baseurl)
+    this.sandBox?.start(this.baseroute)
     if (!this.umdHookMount) {
       execScripts(this.source.scripts, this)
 
