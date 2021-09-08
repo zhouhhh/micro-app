@@ -29,7 +29,7 @@ class MicroApp extends EventCenterForBaseApp implements MicroAppConfigType {
       }
     }
 
-    if (defineElement(this.tagName) && options && toString.call(options) === '[object Object]') {
+    if (options && toString.call(options) === '[object Object]') {
       this.shadowDOM = options.shadowDOM
       this.destory = options.destory
       this.inline = options.inline
@@ -56,6 +56,8 @@ class MicroApp extends EventCenterForBaseApp implements MicroAppConfigType {
         getGlobalAssets(options.globalAssets)
       }
     }
+
+    defineElement(this.tagName)
   }
 }
 

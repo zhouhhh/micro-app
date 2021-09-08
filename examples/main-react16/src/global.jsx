@@ -91,7 +91,7 @@ microApp.start({
     }
 
     let config = null
-    if (url === 'http://localhost:3001/micro-app/react16/') {
+    if (url === 'http://localhost:3001/micro-app/react16/?a=1') {
       config = {
         headers: {
           'custom-head': 'custom-head',
