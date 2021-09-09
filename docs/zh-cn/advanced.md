@@ -205,7 +205,7 @@ if (!window.__MICRO_APP_ENVIRONMENT__) {
 module.exports = {
   ...
   output: {
-    library: 'micro-app-子应用的name', // 子应用的name就是<micro-app name='xxx'></micro-app>中name属性的值
+    library: 'micro-app-子应用的name', // 子应用的name就是<micro-app name='子应用的name'></micro-app>中name属性的值
     libraryTarget: 'umd',
     jsonpFunction: `webpackJsonp_${packageName}`,
   },
