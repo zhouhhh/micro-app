@@ -139,7 +139,7 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom'
 
 export default function AppRoute () {
   return (
-    // 添加路由前缀basename
+    // 👇👇 添加路由前缀，子应用可以通过window.__MICRO_APP_BASE_URL__获取基座下发的baseurl，如果没有设置baseurl属性，则此值默认为空字符串
     <BrowserRouter basename={window.__MICRO_APP_BASE_URL__ || '/'}>
       <Switch>
         ...
@@ -198,9 +198,8 @@ import VueRouter from 'vue-router'
 import routes from './router'
 
 const router = new VueRouter({
-  options: {
-    base: window.__MICRO_APP_BASE_URL__ || '/',
-  },
+  // 👇👇 添加路由前缀，子应用可以通过window.__MICRO_APP_BASE_URL__获取基座下发的baseurl，如果没有设置baseurl属性，则此值默认为空字符串
+  base: window.__MICRO_APP_BASE_URL__ || '/',
   routes,
 })
 
