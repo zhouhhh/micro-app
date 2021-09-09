@@ -25,7 +25,7 @@
   </a>
 </p>
 
-English｜[简体中文](https://github.com/micro-zoe/micro-app/blob/master/README.zh-cn.md)｜[Documentation](https://micro-zoe.github.io/micro-app/)｜[Discussions](https://github.com/micro-zoe/micro-app/discussions)｜[Gitter](https://gitter.im/microzoe/micro-app)
+English｜[简体中文](./README.zh-cn.md)｜[Documentation](https://micro-zoe.github.io/micro-app/)｜[Discussions](https://github.com/micro-zoe/micro-app/discussions)｜[Gitter](https://gitter.im/microzoe/micro-app)
 
 # 📖Introduction
 micro-app is a micro front-end framework launched by JD Retail. It renders based on webcomponent-like and realizes the micro front-end from component thinking, it aiming to reduce the difficulty of getting started and improve work efficiency. 
@@ -196,14 +196,9 @@ For more commands, see [DEVELP](https://github.com/micro-zoe/micro-app/blob/mast
 </details>
 
 # Contributors
+<a href="https://github.com/micro-zoe/micro-app/graphs/contributors"><img src="./.github/contributors.svg" /></a>
 <!-- opencollective is inaccurate  -->
 <!-- <a href="https://github.com/micro-zoe/micro-app/graphs/contributors"><img src="https://opencollective.com/micro-app/contributors.svg?width=890&button=false" /></a> -->
-<a href="https://github.com/micro-zoe/micro-app/graphs/contributors">
-  <img src="https://avatars.githubusercontent.com/u/20297227?v=4" alt="logo" width="64" height='64' class="avatar circle" />
-  <img src="https://avatars.githubusercontent.com/u/5918515?v=4" alt="logo" width="64" height='64' class="avatar circle" />
-  <img src="https://avatars.githubusercontent.com/u/42961884?v=4" alt="logo" width="64" height='64' class="avatar circle" />
-  <img src="https://avatars.githubusercontent.com/u/19631404?v=4" alt="logo" width="64" height='64' class="avatar circle" />
-</a>
 
 # License
 [MIT License](https://github.com/micro-zoe/micro-app/blob/master/LICENSE)
