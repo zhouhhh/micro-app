@@ -23,5 +23,5 @@
 - 其他
 
   - [常见问题](zh-cn/questions)
+  - [更新日志](zh-cn/changelog)
   - [讨论区](zh-cn/chat)
-  - [更新日志](zh-cn/scopedchangelog)

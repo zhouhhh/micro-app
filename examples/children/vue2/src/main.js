@@ -20,17 +20,17 @@ const router = new VueRouter({
 
 let app
 
-// app = new Vue({
-//   router,
-//   render: h => h(App),
-// }).$mount('#app')
+app = new Vue({
+  router,
+  render: h => h(App),
+}).$mount('#app')
 
-// // 监听卸载
-// window.addEventListener('unmount', function () {
-//   console.log('微应用vue2卸载了')
-//   // 卸载应用
-//   app.$destroy()
-// })
+// 监听卸载
+window.addEventListener('unmount', function () {
+  console.log('微应用vue2卸载了')
+  // 卸载应用
+  app.$destroy()
+})
 
 export function mount () {
   app = new Vue({

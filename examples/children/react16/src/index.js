@@ -7,10 +7,10 @@ import "antd/dist/antd.css";
 import "./index.css";
 import Router from "./router";
 import { Modal, notification } from "antd";
-import microApp from '@micro-zoe/micro-app'
+import subMicroApp from '@micro-zoe/micro-app'
 
 // 循环内嵌
-microApp.start({
+subMicroApp.start({
   tagName: 'micro-app-sub'
 })
 
@@ -56,6 +56,7 @@ window.microApp?.addGlobalDataListener(handleGlobalData);
 //   // 卸载应用
 //   ReactDOM.unmountComponentAtNode(document.getElementById("root"));
 // })
+
 
 export function mount () {
   ReactDOM.render(
