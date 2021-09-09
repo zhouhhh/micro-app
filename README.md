@@ -202,7 +202,7 @@ For more commands, see [DEVELP](https://github.com/micro-zoe/micro-app/blob/mast
   <img src="https://avatars.githubusercontent.com/u/20297227?v=4" alt="logo" width="64" height='64' class="avatar circle" />
   <img src="https://avatars.githubusercontent.com/u/5918515?v=4" alt="logo" width="64" height='64' class="avatar circle" />
   <img src="https://avatars.githubusercontent.com/u/42961884?v=4" alt="logo" width="64" height='64' class="avatar circle" />
-  <img src="https://avatars.githubusercontent.com/u/19631404?v=4" alt="logo" width="64" height='64' class="avatar circle" />
+  <img src="https://avatars.githubusercontent.com/u/19631404?v=4" alt="logo" width="64" height='64' class="avatar circle" style="border-radius: 50%;" />
 </a>
 
 # License
