@@ -30,7 +30,7 @@
 
 以react-router为例，在子应用的路由中配置`basename`：
 ```js
-<BrowserRouter basename={window.__MICRO_APP_BASE_URL__ || '/'}>
+<BrowserRouter basename={window.__MICRO_APP_BASE_ROUTE__ || '/'}>
   <Switch>
     ...
   </Switch>

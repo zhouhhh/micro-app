@@ -211,7 +211,7 @@ let app = new Vue({
 <!-- tabs:end -->
 
 > [!TIP]
-> vue-router@4设置baseroute的方式请查看 https://next.router.vuejs.org/
+> vue-router@4.x设置base的方式请查看 https://next.router.vuejs.org/
 
 
 ### 应用之间如何跳转
