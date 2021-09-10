@@ -80,7 +80,7 @@ export default routes
 <template>
   <div>
     <h1>micro application</h1>
-    <!-- name is the application name, globally unique, url is the html address -->
+    <!-- 👇 name is the application name, globally unique, url is the html address -->
     <micro-app name='app1' url='http://localhost:3000/' baseurl='/my-page'></micro-app>
   </div>
 </template>
