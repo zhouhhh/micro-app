@@ -84,7 +84,7 @@ export default routes
   <div>
     <h1>子应用</h1>
     <!-- 👇 name为应用名称，url为html地址 -->
-    <micro-app name='app1' url='http://localhost:3000/' baseurl='/my-page'></micro-app>
+    <micro-app name='app1' url='http://localhost:3000/' baseroute='/my-page'></micro-app>
   </div>
 </template>
 ```
@@ -102,8 +102,8 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom'
 
 export default function AppRoute () {
   return (
-    // 👇 添加路由前缀，子应用可以通过window.__MICRO_APP_BASE_URL__获取基座应用下发的baseurl
-    <BrowserRouter basename={window.__MICRO_APP_BASE_URL__ || '/'}>
+    // 👇 添加路由前缀，子应用可以通过window.__MICRO_APP_BASE_ROUTE__获取基座应用下发的baseroute
+    <BrowserRouter basename={window.__MICRO_APP_BASE_ROUTE__ || '/'}>
       <Switch>
         ...
       </Switch>

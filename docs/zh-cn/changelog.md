@@ -8,6 +8,19 @@
 
 ---
 
+### 0.3.2
+
+`2021-09-10`
+
+- **New**
+
+  - 🆕 新增了`baseroute`配置项，用于替换`baseurl`
+  - 🆕 新增了`__MICRO_APP_BASE_ROUTE__`全局变量，用于替换`__MICRO_APP_BASE_URL__`
+
+- **Update**
+
+  - 📝 废弃了`baseurl`和`__MICRO_APP_BASE_URL__`，但依然兼容旧版
+
 ### 0.3.1
 
 `2021-09-08`

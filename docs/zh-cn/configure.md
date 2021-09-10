@@ -20,13 +20,13 @@
 
 当`url`的值发生变化时，会卸载当前应用并根据新的`url`值重新渲染。
 
-## baseurl
+## baseroute
 - Desc: `子应用的路由前缀`
 - Type: `string`
 - Default: `''`
-- 使用方式: `<micro-app name='xx' url='xx' baseurl='/my-page/'></micro-app>`
+- 使用方式: `<micro-app name='xx' url='xx' baseroute='/my-page/'></micro-app>`
 
-在微前端环境下，子应用可以从window上获取baseurl的值，用于设置路由前缀。
+在微前端环境下，子应用可以从window上获取baseroute的值，用于设置路由前缀。
 
 以react-router为例，在子应用的路由中配置`basename`：
 ```js
@@ -92,7 +92,7 @@
 >
 > 5、`__MICRO_APP_ENVIRONMENT__`、`__MICRO_APP_PUBLIC_PATH__`等全局变量失效
 >
-> 6、baseurl失效
+> 6、baseroute失效
 
 ## macro
 - Desc: `以宏任务方式绑定元素作用域`

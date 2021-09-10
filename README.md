@@ -81,7 +81,7 @@ export default routes
   <div>
     <h1>micro application</h1>
     <!-- 👇 name is the application name, globally unique, url is the html address -->
-    <micro-app name='app1' url='http://localhost:3000/' baseurl='/my-page'></micro-app>
+    <micro-app name='app1' url='http://localhost:3000/' baseroute='/my-page'></micro-app>
   </div>
 </template>
 ```
@@ -91,7 +91,7 @@ export default routes
 ## micro application
 > The micro application takes the react framework as an example
 
-1、Add basename for route(If the base application is history route and the micro application is hash route, it is not necessary to set the baseurl, this step can be skipped)
+1、Add basename for route(If the base application is history route and the micro application is hash route, it is not necessary to set the baseroute, this step can be skipped)
 
 ```js
 // router.js
@@ -99,8 +99,8 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom'
 
 export default function AppRoute () {
   return (
-    // 👇 the micro application can get the baseurl issued by the base application through window.__MICRO_APP_BASE_URL__
-    <BrowserRouter basename={window.__MICRO_APP_BASE_URL__ || '/'}>
+    // 👇 the micro application can get the baseroute issued by the base application through window.__MICRO_APP_BASE_ROUTE__
+    <BrowserRouter basename={window.__MICRO_APP_BASE_ROUTE__ || '/'}>
       <Switch>
         ...
       </Switch>

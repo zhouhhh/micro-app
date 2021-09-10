@@ -1,6 +1,7 @@
 - 指南
   - [介绍](/)
   - [快速开始](zh-cn/start)
+  <!-- - [API](zh-cn/api) -->
 
 - 功能
 
@@ -19,6 +20,10 @@
   - [高级功能](zh-cn/advanced)
   - [路由](zh-cn/route)
   <!-- - [部署](zh-cn/deploy) -->
+
+<!-- - 其他
+
+  - [常见问题](zh-cn/questions) -->
 
 - 其他
 

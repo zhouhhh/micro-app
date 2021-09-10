@@ -45,7 +45,7 @@ microApp.start({
 > 2、如果跨域请求带cookie，那么`Access-Control-Allow-Origin`不能设置为`*`，这一点需要注意
 
 ## 2、适配vite
-当子应用是vite应用时需要做特别的适配，适配vite的代价是巨大的，我们必须关闭沙箱功能，因为沙箱在`module script`下不支持，这导致大部分功能失效，包括：环境变量、样式隔离、元素隔离、数据通信、资源地址补全、baseurl 等。
+当子应用是vite应用时需要做特别的适配，适配vite的代价是巨大的，我们必须关闭沙箱功能，因为沙箱在`module script`下不支持，这导致大部分功能失效，包括：环境变量、样式隔离、元素隔离、数据通信、资源地址补全、baseroute 等。
 
 在嵌入vite子应用时，`micro-app`的功能只负责渲染，其它的行为由应用自行决定，这包括如何防止样式、JS变量、元素的冲突。
 
@@ -63,19 +63,19 @@ export default defineConfig({
     ...
     // 自定义插件
     (function () {
-      let baseUrl = ''
+      let basePath = ''
       return {
         name: "vite:micro-app",
         apply: 'build', // 只在生产环境生效
         configResolved(config) {
           // 获取资源地址前缀
-          baseUrl = `${config.base}${config.build.assetsDir}/`
+          basePath = `${config.base}${config.build.assetsDir}/`
         },
         renderChunk(code, chunk) {
           // build后，import会通过相对地址引入模块，需要将其补全
           if (chunk.fileName.endsWith('.js') && /(from|import)(\s*['"])(\.\.?\/)/g.test(code)) {
             code = code.replace(/(from|import)(\s*['"])(\.\.?\/)/g, (all, $1, $2, $3) => {
-              return all.replace($3, new URL($3, baseUrl))
+              return all.replace($3, new URL($3, basePath))
             })
           }
           return code

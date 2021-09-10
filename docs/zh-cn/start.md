@@ -76,8 +76,8 @@ export function MyPage () {
       <h1>子应用</h1>
       // name(必传)：应用名称，每个`name`都对应一个应用，必须以字母开头，且不可以带有 `.`、`#` 等特殊符号
       // url(必传)：页面html的地址
-      // baseurl(可选)：基座应用分配给子应用的路由前缀，就是上面的my-page
-      <micro-app name='app1' url='http://localhost:3000/' baseurl='/my-page'></micro-app>
+      // baseroute(可选)：基座应用分配给子应用的路由前缀，就是上面的my-page
+      <micro-app name='app1' url='http://localhost:3000/' baseroute='/my-page'></micro-app>
     </div>
   )
 }
@@ -92,9 +92,9 @@ export function MyPage () {
     <!-- 
       name(必传)：应用名称，每个`name`都对应一个应用，必须以字母开头，且不可以带有 `.`、`#` 等特殊符号
       url(必传)：页面html的地址
-      baseurl(可选)：基座应用分配给子应用的路由前缀，就是上面的my-page
+      baseroute(可选)：基座应用分配给子应用的路由前缀，就是上面的my-page
      -->
-    <micro-app name='app1' url='http://localhost:3000/' baseurl='/my-page'></micro-app>
+    <micro-app name='app1' url='http://localhost:3000/' baseroute='/my-page'></micro-app>
   </div>
 </template>
 ```
@@ -113,8 +113,8 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom'
 
 export default function AppRoute () {
   return (
-    // 👇👇 添加路由前缀，子应用可以通过window.__MICRO_APP_BASE_URL__获取基座下发的baseurl，如果没有设置baseurl属性，则此值默认为空字符串
-    <BrowserRouter basename={window.__MICRO_APP_BASE_URL__ || '/'}>
+    // 👇👇 添加路由前缀，子应用可以通过window.__MICRO_APP_BASE_ROUTE__获取基座下发的baseroute，如果没有设置baseroute属性，则此值默认为空字符串
+    <BrowserRouter basename={window.__MICRO_APP_BASE_ROUTE__ || '/'}>
       <Switch>
         ...
       </Switch>
@@ -131,8 +131,8 @@ import VueRouter from 'vue-router'
 import routes from './router'
 
 const router = new VueRouter({
-  // 👇👇 添加路由前缀，子应用可以通过window.__MICRO_APP_BASE_URL__获取基座下发的baseurl，如果没有设置baseurl属性，则此值默认为空字符串
-  base: window.__MICRO_APP_BASE_URL__ || '/',
+  // 👇👇 添加路由前缀，子应用可以通过window.__MICRO_APP_BASE_ROUTE__获取基座下发的baseroute，如果没有设置baseroute属性，则此值默认为空字符串
+  base: window.__MICRO_APP_BASE_ROUTE__ || '/',
   routes,
 })
 
@@ -161,7 +161,7 @@ devServer: {
 > [!NOTE]
 > 1、url只是html地址，子应用的页面渲染还是基于浏览器地址的，关于这点请查看[路由一章](/zh-cn/route)
 >
-> 2、baseurl的作用请查看[路由配置](/zh-cn/route?id=路由配置)
+> 2、baseroute的作用请查看[路由配置](/zh-cn/route?id=路由配置)
 >
 > 3、子应用必须支持跨域访问，跨域配置参考[这里](/zh-cn/questions?id=_2、子应用静态资源一定要支持跨域吗？)
 > 
