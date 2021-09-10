@@ -37,7 +37,7 @@ microApp.start({
       }],
       react162: [{
         loader(code: string, url: string) {
-          if (code.indexOf('sockjs-node') > -1) {
+          if (process.env.NODE_ENV === 'development' && code.indexOf('sockjs-node') > -1) {
             console.log('react16插件', url)
             code = code.replace('window.location.port', '3001')
           }
@@ -46,7 +46,7 @@ microApp.start({
       }],
       react17: [{
         loader(code: string, url: string) {
-          if (code.indexOf('sockjs-node') > -1) {
+          if (process.env.NODE_ENV === 'development' && code.indexOf('sockjs-node') > -1) {
             console.log('react17插件', url)
             code = code.replace('window.location.port', '3002')
           }
