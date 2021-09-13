@@ -244,7 +244,7 @@ window.dispatchEvent(new PopStateEvent('popstate', { state: null }))
 
 例如：
 
-**基座下发跳转方法：**
+**基座下发pushState函数：**
 <!-- tabs:start -->
 
 #### ** React **
@@ -273,27 +273,27 @@ export default (props) => {
 #### ** Vue **
 
 ```html
-<template
-  <micro-app name='子应用名称' url='...'></micro-app>
+<template>
+  <micro-app name='子应用名称' url='...' :data='microAppData'></micro-app>
 </template>
 
 <script>
-import microApp from '@micro-zoe/micro-app'
-
 export default {
-  name: 'page',
-  created () {
-    // 👇 基座向子应用下发一个名为pushState的方法
-    microApp.setData(子应用名称, {
-      pushState: (path) => {
-        this.$router.push(path)
+  data () {
+    return {
+      microAppData: {
+        pushState: (path) => {
+          this.$router.push(path)
+        }
       }
-    })
-  }
+    }
+  },
 }
 </script>
 ```
 <!-- tabs:end -->
+
+**子应用使用pushState跳转：**
 
 子应用通过 `window.microApp.getData().pushState(path)` 进行跳转。
 
