@@ -1,6 +1,6 @@
 {
   "name": "@micro-zoe/micro-app",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "A minimalist solution for building micro front-end applications",
   "private": false,
   "main": "lib/index.min.js",

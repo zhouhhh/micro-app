@@ -41,7 +41,7 @@
   <micro-app
     name='my-app'
     url='xx'
-    :data='data' // data只接受对象类型，数据变化时会重新发送
+    :data='dataxx' // data只接受对象类型，数据变化时会重新发送
   />
   ```
   <!-- tabs:end -->

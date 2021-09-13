@@ -1,7 +1,6 @@
 /* eslint-disable promise/param-names */
 import { commonStartEffect, releaseAllEffect, ports } from './common'
 import { appInstanceMap } from '../create_app'
-import MicroAppElement from '../micro_app_element'
 import microApp from '..'
 import { defer } from '../libs/utils'
 
@@ -163,27 +162,6 @@ describe('micro_app_element', () => {
     appCon.removeChild(microappElement8)
   })
 
-  // microAppCount为0后依然卸载应用，此时无法执行卸载
-  test('unmount app when microAppCount less than 1', async () => {
-    // 清空所有app
-    appCon.innerHTML = ''
-    const microappElement9 = document.createElement('micro-app')
-    microappElement9.setAttribute('name', 'test-app9')
-    microappElement9.setAttribute('url', `http://127.0.0.1:${ports.micro_app_element}/common/`)
-
-    appCon.appendChild(microappElement9)
-    await new Promise((reslove) => {
-      microappElement9.addEventListener('mounted', () => {
-        // @ts-ignore
-        microappElement9.disconnectedCallback()
-        expect(MicroAppElement.microAppCount).toBe(0)
-        reslove(true)
-      }, false)
-    })
-
-    appCon.removeChild(microappElement9)
-  })
-
   // 重新渲染带有shadowDom和baseurl属性应用 -- 分支覆盖
   test('coverage branch of remount app with shadowDom & baseurl', async () => {
     const microappElement10 = document.createElement('micro-app')
@@ -251,6 +229,21 @@ describe('micro_app_element', () => {
         expect(appInstanceMap.get('test-app12')?.isPrefetch).toBeFalsy()
         reslove(true)
       })
+    })
+  })
+
+  // getBaseRouteCompatible 分支覆盖
+  test('coverage branch of getBaseRouteCompatible', async () => {
+    const microappElement14 = document.createElement('micro-app')
+    microappElement14.setAttribute('name', 'test-app14')
+    microappElement14.setAttribute('url', `http://127.0.0.1:${ports.micro_app_element}/common/`)
+    microappElement14.setAttribute('baseroute', '/path')
+
+    appCon.appendChild(microappElement14)
+    await new Promise((reslove) => {
+      microappElement14.addEventListener('mounted', () => {
+        reslove(true)
+      }, false)
     })
   })
 })

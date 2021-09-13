@@ -11,10 +11,19 @@ import microApp from './micro_app'
 import dispatchLifecyclesEvent from './interact/lifecycles_event'
 import { listenUmountAppInline, replaseUnmountAppInline } from './libs/additional'
 
+// record all micro-app elements
+const elementInstanceMap = new Map<Element, boolean>()
 export default class MicroAppElement extends HTMLElement implements MicroAppElementType {
-  static microAppCount = 0
   static get observedAttributes (): string[] {
     return ['name', 'url']
+  }
+
+  constructor () {
+    super()
+    // cloned node of umd container also trigger constructor, we should skip
+    if (!this.querySelector('micro-app-head')) {
+      this.performWhenFirstCreated()
+    }
   }
 
   appName = ''
@@ -23,7 +32,7 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
   isWating = false
   cacheData: Record<PropertyKey, unknown> | null = null
 
-  // 👇Configuration
+  // 👇 Configuration
   // shadowDom: use shadowDOM, default is false
   // destory: whether delete cache resources when unmount, default is false
   // inline: whether js runs in inline script mode, default is false
@@ -33,10 +42,8 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
   // baseRoute: route prefix, default is ''
 
   connectedCallback (): void {
-    if (++MicroAppElement.microAppCount === 1) {
-      patchElementPrototypeMethods()
-      rejectMicroAppStyle()
-      listenUmountAppInline()
+    if (!elementInstanceMap.has(this)) {
+      this.performWhenFirstCreated()
     }
 
     defer(() => dispatchLifecyclesEvent(
@@ -71,12 +78,11 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
   }
 
   disconnectedCallback (): void {
-    if (MicroAppElement.microAppCount > 0) {
-      this.handleUnmount(this.getDisposeResult('destory'))
-      if (--MicroAppElement.microAppCount === 0) {
-        releasePatches()
-        replaseUnmountAppInline()
-      }
+    elementInstanceMap.delete(this)
+    this.handleUnmount(this.getDisposeResult('destory'))
+    if (elementInstanceMap.size === 0) {
+      releasePatches()
+      replaseUnmountAppInline()
     }
   }
 
@@ -101,6 +107,15 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
         this.isWating = true
         defer(this.handleAttributeUpdate)
       }
+    }
+  }
+
+  // Perform global initialization when the element count is 1
+  performWhenFirstCreated (): void {
+    if (elementInstanceMap.set(this, true).size === 1) {
+      patchElementPrototypeMethods()
+      rejectMicroAppStyle()
+      listenUmountAppInline()
     }
   }
 

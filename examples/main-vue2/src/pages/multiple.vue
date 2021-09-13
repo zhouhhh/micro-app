@@ -8,6 +8,7 @@
         url='http://localhost:3001/micro-app/react16/'
         baseRoute='/multiple'
         :data='data'
+        library='micro-app-react16'
       ></micro-app>
       <!-- destory inline scopecss='false' -->
       <micro-app
@@ -15,6 +16,7 @@
         name='vue22'
         url='http://localhost:4001/micro-app/vue2/'
         :data='data'
+        library='micro-app-vue2'
       >
       </micro-app>
     </div>

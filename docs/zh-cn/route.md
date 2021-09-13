@@ -5,7 +5,7 @@
 
 micro-app不是iframe，不会重开一个window窗口，基座应用和子应用本质是在同一个页面渲染，所以影响到子应用路由的是浏览器地址。micro-app的url属性只是html的地址，它只是用来获取html。
 
-**举个栗子🌰 :**
+**举个栗子 🌰 :**
 
 浏览器地址为：`http://localhost:3000/page1/`，此时路由地址为`page1`。
 
@@ -21,7 +21,7 @@ micro-app不是iframe，不会重开一个window窗口，基座应用和子应�
 
 同理，页面参数和hash也是以浏览器为准。
 
-**再举个栗子🌰 :**
+**栗子2 🌰 :**
 
 子应用是hash路由，我们要渲染子应用的page1页面，那么下面的hash值是无效的，`#/page1`应该添加到浏览器地址上。
 ```html
@@ -32,7 +32,7 @@ micro-app不是iframe，不会重开一个window窗口，基座应用和子应�
 <micro-app url='http://www.xxx.com/'></micro-app>
 ```
 
-**再再举个栗子🌰 :**
+**栗子3 🌰 :**
 
 基座应用是history路由，子应用是hash路由，我们要跳转基座应用的`my-app`页面，页面中嵌入子应用，我们要展现子应用的`page1`页面。
 
@@ -46,8 +46,7 @@ micro-app配置如下：
 <micro-app url='http://www.xxx.com/'></micro-app>
 ```
 
-
-**再再再举个栗子🌰 :**
+**栗子4 🌰 :**
 
 基座应用是history路由，子应用也是history路由，我们要跳转基座应用的`my-app`页面，`my-app`页面中嵌入子应用，我们要展现子应用的`page1`页面。
 
@@ -239,7 +238,63 @@ window.dispatchEvent(new PopStateEvent('popstate', { state: null }))
 > [!NOTE]
 > 1、popstate事件是全局发送的，所有正在运行的应用（包括发送popstate事件的应用）都会接受到popstate事件并进行路由匹配，此时要注意和兜底路由的冲突。
 >
-> 2、一些框架(比如angular)对popstate支持性不好，此时建议使用下面的方式2进行跳转。
+> 2、popstate常出现一些预料不到的问题，此时建议使用下面的方式2进行跳转。
 
-### 2、数据通信进行控制
-如基座下发指令控制子应用进行跳转，或者子应用向基座应用上传一个可以控制自身路由的函数。
+### 2、基座路由控制
+
+例如：
+
+**基座下发跳转方法：**
+<!-- tabs:start -->
+
+#### ** React **
+```js
+import { useEffect } from 'react'
+import microApp from '@micro-zoe/micro-app'
+
+export default (props) => {
+  function pushState (path) {
+    props.history.push(path)
+  }
+
+  useEffect(() => {
+    // 👇 基座向子应用下发一个名为pushState的方法
+    microApp.setData(子应用名称, { pushState })
+  }, [])
+
+  return (
+    <div>
+      <micro-app name='子应用名称' url='...'></micro-app>
+    </div>
+  )
+}
+```
+
+#### ** Vue **
+
+```html
+<template
+  <micro-app name='子应用名称' url='...'></micro-app>
+</template>
+
+<script>
+import microApp from '@micro-zoe/micro-app'
+
+export default {
+  name: 'page',
+  created () {
+    // 👇 基座向子应用下发一个名为pushState的方法
+    microApp.setData(子应用名称, {
+      pushState: (path) => {
+        this.$router.push(path)
+      }
+    })
+  }
+}
+</script>
+```
+<!-- tabs:end -->
+
+子应用通过 `window.microApp.getData().pushState(path)` 进行跳转。
+
+这种方式更加规范，出错的可能性更小。

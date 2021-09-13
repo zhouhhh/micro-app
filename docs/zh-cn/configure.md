@@ -159,7 +159,7 @@ microApp.start({
 <style exclude></style>
 ```
 
-### global(资源共享)
+### global
 当多个子应用使用相同的js或css资源，在link、script设置`global`属性会将文件提取为公共文件，共享给其它应用。
 
 设置`global`属性后文件第一次加载会放入公共缓存，其它子应用加载相同的资源时直接从缓存中读取内容并渲染，从而提升性能、节省流量。
@@ -170,7 +170,7 @@ microApp.start({
 <script src="xx.js" global></script>
 ```
 
-### globalAssets(资源共享)
+### globalAssets
 globalAssets用于设置全局共享资源，它和预加载的思路相同，在浏览器空闲时加载资源并放入缓存，提高渲染效率。
 
 当子应用加载相同地址的js或css资源时，会直接从缓存中提取数据。

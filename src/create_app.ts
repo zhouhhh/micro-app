@@ -130,7 +130,7 @@ export default class CreateApp implements AppInterface {
 
     this.status = appStatus.MOUNTING
 
-    cloneNode(this.source.html!, this.container!)
+    cloneNode(this.source.html!, this.container! as Element)
 
     this.sandBox?.start(this.baseroute)
     if (!this.umdHookMount) {
@@ -142,11 +142,10 @@ export default class CreateApp implements AppInterface {
         this.umdHookMount = mount as Func
         this.umdHookunMount = unmount as Func
         this.sandBox?.recordUmdSnapshot()
-        this.source.html!.innerHTML = ''
         /**
          * TODO: Some UI frameworks insert and record container elements to micro-app-body, such as modal and notification. The DOM remounted is a cloned element, so the cached elements of UI frameworks are invalid, this may cause bug when remount app
          */
-        cloneNode(this.container!, this.source.html!)
+        cloneNode(this.container! as Element, this.source.html!)
         formatHTMLStyleAfterUmdInit(this.source.html!, this.name)
         this.umdHookMount()
       }
