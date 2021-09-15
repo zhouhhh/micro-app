@@ -110,7 +110,7 @@ export function getEffectivePath (url: string): string {
  * @param baseURI base url(app.url)
  */
 export function CompletionPath (path: string, baseURI: string): string {
-  if (/^((((ht|f)tps?)|file):)?\/\//.test(path)) return path
+  if (/^((((ht|f)tps?)|file):)?\/\//.test(path) || /^(data|blob):/.test(path)) return path
 
   return new URL(path, getEffectivePath(addProtocol(baseURI))).toString()
 }
