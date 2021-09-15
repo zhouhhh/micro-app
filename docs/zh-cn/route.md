@@ -274,7 +274,11 @@ export default (props) => {
 
 ```html
 <template>
-  <micro-app name='子应用名称' url='...' :data='microAppData'></micro-app>
+  <micro-app
+    name='子应用名称' 
+    url='url'
+    :data='microAppData'
+  ></micro-app>
 </template>
 
 <script>

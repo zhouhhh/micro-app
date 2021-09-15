@@ -99,7 +99,7 @@ function handleNewNode (parent: Node, child: Node, app: AppInterface): Node {
       parent,
       app,
       true,
-    )
+    ) || {}
 
     if (url && info) {
       if (info.code) { // inline script
@@ -111,10 +111,12 @@ function handleNewNode (parent: Node, child: Node, app: AppInterface): Node {
         dynamicElementInMicroAppMap.set(child, replaceElement)
         return replaceElement
       }
-    } else {
+    } else if (replaceComment) {
       dynamicElementInMicroAppMap.set(child, replaceComment)
       return replaceComment
     }
+
+    return child
   }
 
   return child

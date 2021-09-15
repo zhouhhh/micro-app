@@ -41,6 +41,8 @@ export function extractScriptElement (
   let src: string | null = script.getAttribute('src')
   if (script.hasAttribute('exclude')) {
     replaceComment = document.createComment('script element with exclude attribute ignored by micro-app')
+  } else if (script.type && !['text/javascript', 'text/ecmascript', 'application/javascript', 'application/ecmascript', 'module'].includes(script.type)) {
+    return null
   } else if (
     (supportModuleScript && script.noModule) ||
     (!supportModuleScript && script.type === 'module')
@@ -85,7 +87,7 @@ export function extractScriptElement (
 
   if (isDynamic) {
     return { replaceComment }
-  } else {
+  } else if (replaceComment) {
     return parent.replaceChild(replaceComment, script)
   }
 }
