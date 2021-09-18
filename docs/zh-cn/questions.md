@@ -99,11 +99,17 @@ vue3中需要配置publicPath补全资源地址，详情请查看[public-path](/
 ## 13、错误信息 `ReferenceError: xxxx is not defined`
 在微前端的沙箱环境中，顶层变量不会泄漏为全局变量。
 
-例如在正常情况下，通过 var name 或 function name () {} 定义的顶层变量会泄漏为全局变量，通过window.name或name就可以全局访问。但是在微前端环境下，所有js都会放入一个沙箱函数中运行，导致这些顶层变量无法泄漏为全局变量，从而导致上述问题。
+例如在正常情况下，通过 var name 或 function name () {} 定义的顶层变量会泄漏为全局变量，通过window.name或name就可以全局访问。
 
-**解决方式**：通过 window.name = xx，明确声明全局变量。
+但是在沙箱环境下这些顶层变量无法泄漏为全局变量，window.name或name为undefined，导致出现问题。
 
-这个问题常见于通过webpack打包的dll文件，因为dll文件的内容和js地址相对固定，可以通过插件系统进行修改。
+**解决方式**：
+
+方式一：将 var name 或 function name () {} 修改为 window.name = xx
+
+方式二：通过插件系统进行修改子应用代码
+
+比如常见的加载webpack打包的dll文件失败的问题，因为dll文件的内容和js地址相对固定，可以直接进行全局查找和修改。
 ```js
 microApp.start({
   plugins: {
