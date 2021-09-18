@@ -37,16 +37,15 @@ micro-app依赖于CustomElements和Proxy两个较新的API。
 - 移动端：ios10+、android5+
 
 ## 4、微应用无法渲染但没有报错
-请检查路由配置是否正确，详情查看[路由](/zh-cn/route)一章，或者[jsonpFunction是否冲突](/zh-cn/questions?id=_5、webpack-jsonpfunction-冲突导致渲染失败)
+请检查路由配置是否正确，详情查看[路由](/zh-cn/route)一章，或者[下面第5条：jsonpFunction是否冲突](/zh-cn/questions?id=_5、webpack-jsonpfunction-冲突导致渲染失败)
 
-## 5、webpack jsonpFunction 冲突导致渲染失败
-这种情况常见于基座应用和子应用都是通过create-react-app等类似脚手架创建的项目。
+## 5、webpack-jsonpfunction-冲突导致渲染失败
+这种情况常见于多个应用都是通过create-react-app等类似脚手架创建的项目，或一个应用多次重复渲染。
 
-如果基座应用和子应用在配置webapck时具有相同的jsonpFunction名称，会导致资源加载混乱。
+因为相同的jsonpFunction名称会导致资源加载混乱。
 
-解决方式：这种方式通常可以通过修改基座应用或子应用的package.json中的name值解决。
+解决方式：
 
-如果上述方法无法解决，需要手动修改webpack配置。
 ```js
 // webpack.config.js
 module.exports = {
@@ -54,6 +53,7 @@ module.exports = {
   output: {
     ...
     jsonpFunction: `webpackJsonp_自定义名称`,
+    globalObject: 'window',
   },
 }
 ```

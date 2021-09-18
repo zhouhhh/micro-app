@@ -15,7 +15,7 @@
   - [静态资源](zh-cn/static-source)
   - [预加载](zh-cn/prefetch)
   - [插件系统](zh-cn/plugins)
-  - [多层嵌套](zh-cn/qiantao)
+  - [多层嵌套](zh-cn/nest)
   - [查看版本](zh-cn/version)
   - [高级功能](zh-cn/advanced)
   - [路由](zh-cn/route)

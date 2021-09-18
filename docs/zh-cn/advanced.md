@@ -147,7 +147,7 @@ microApp.start({
 ## 3、内存优化
 虽然我们在卸载子应用时对变量和事件进行了清除，但仍有一些变量无法回收。如果子应用渲染和卸载非常频繁，建议通过下面方式进行内存优化。
 
-### 方式一、将子应用修改为umd格式（推荐）
+### 将子应用修改为umd格式
 ##### 步骤1：在子应用入口文件导出相应的生命周期钩子
 
 <!-- tabs:start -->
@@ -156,6 +156,13 @@ microApp.start({
 ```js
 // index.js
 ...
+// 将渲染和卸载的操作移动到mount和unmount函数中
+// ReactDOM.render(<App />, document.getElementById("root"))
+
+// window.addEventListener('unmount', function () {
+//   ReactDOM.unmountComponentAtNode(document.getElementById('root'))
+// })
+
 // 应用每次渲染时都会执行 mount 方法，在此处可以执行初始化相关操作（必传)
 export function mount () {
   ReactDOM.render(<App />, document.getElementById("root"))
@@ -177,6 +184,16 @@ if (!window.__MICRO_APP_ENVIRONMENT__) {
 ```js
 // main.js
 ...
+// 将渲染和卸载的操作移动到mount和unmount函数中
+// const app = new Vue({
+//   router,
+//   render: h => h(App),
+// }).$mount('#app')
+
+// window.addEventListener('unmount', function () {
+//   app.$destroy()
+// })
+
 let app
 // 应用每次渲染时都会执行 mount 方法，在此处可以执行初始化相关操作（必传)
 export function mount () {
@@ -234,10 +251,3 @@ module.exports = {
   library='自定义的library名称'
 ></micro-app>
 ```
-
-### 方式二、使用inline内联模式（不推荐）
-```html
-<!-- 基座应用 -->
-<micro-app name='xx' url='xx' inline></micro-app>
-```
-默认情况下，子应用的js会被提取并在后台运行。开启inline后，被提取的js会作为script标签插入应用中运行，这会稍微损耗性能。
