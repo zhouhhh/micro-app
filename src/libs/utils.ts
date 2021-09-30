@@ -19,6 +19,7 @@ declare global {
     _babelPolyfill: boolean
     proxyWindow: WindowProxy
     __MICRO_APP_ENVIRONMENT__: boolean
+    __MICRO_APP_UMD_MODE__: boolean
   }
 }
 

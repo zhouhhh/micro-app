@@ -1,4 +1,4 @@
-import { listenUmountAppInline, replaseUnmountAppInline } from '../../libs/additional'
+import { listenUmountOfNestedApp, replaseUnmountOfNestedApp } from '../../libs/additional'
 import CreateApp, { appInstanceMap } from '../../create_app'
 
 describe('test additional', () => {
@@ -38,17 +38,16 @@ describe('test additional', () => {
 
     expect(appInstanceMap.size).toBe(3)
 
-    listenUmountAppInline()
-    replaseUnmountAppInline()
+    replaseUnmountOfNestedApp()
+    listenUmountOfNestedApp()
 
     window.__MICRO_APP_ENVIRONMENT__ = true
-    listenUmountAppInline()
+    replaseUnmountOfNestedApp()
+    listenUmountOfNestedApp()
     const event = new CustomEvent('unmount')
     window.dispatchEvent(event)
 
     expect(appInstanceMap.size).toBe(0)
-
-    replaseUnmountAppInline()
 
     window.__MICRO_APP_ENVIRONMENT__ = false
   })

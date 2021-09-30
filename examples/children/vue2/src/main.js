@@ -33,6 +33,7 @@ let app
 // })
 
 export function mount () {
+  console.log("微应用vue2渲染了 -- 来自umd-mount");
   app = new Vue({
     router,
     render: h => h(App),

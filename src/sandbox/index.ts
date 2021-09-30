@@ -24,6 +24,7 @@ type injectDataType = {
   __MICRO_APP_PUBLIC_PATH__: string
   __MICRO_APP_BASE_URL__: string
   __MICRO_APP_BASE_ROUTE__: string
+  __MICRO_APP_UMDMODE__: boolean
   microApp: EventCenterForMicroApp
   rawWindow: Window
   rawDocument: Document
@@ -253,6 +254,7 @@ export default class SandBox implements SandBoxInterface {
 
   // record umd snapshot before the first execution of umdHookMount
   recordUmdSnapshot (): void {
+    this.microWindow.__MICRO_APP_UMD_MODE__ = true
     this.recordUmdEffect()
     recordDataCenterSnapshot(this.microWindow.microApp)
 

@@ -32,7 +32,7 @@ function Vue2 () {
         // onBeforemount={() => hideLoading(false)}
         onMounted={() => hideLoading(false)}
         // shadowDOM
-        // destory
+        destory
         // inline
         // disableScopecss
         // disableSandbox

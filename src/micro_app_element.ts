@@ -9,10 +9,10 @@ import {
 } from './source/patch'
 import microApp from './micro_app'
 import dispatchLifecyclesEvent from './interact/lifecycles_event'
-import { listenUmountAppInline, replaseUnmountAppInline } from './libs/additional'
+import { listenUmountOfNestedApp, replaseUnmountOfNestedApp } from './libs/additional'
 
 // record all micro-app elements
-const elementInstanceMap = new Map<Element, boolean>()
+export const elementInstanceMap = new Map<Element, boolean>()
 export default class MicroAppElement extends HTMLElement implements MicroAppElementType {
   static get observedAttributes (): string[] {
     return ['name', 'url']
@@ -82,7 +82,6 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
     this.handleUnmount(this.getDisposeResult('destory'))
     if (elementInstanceMap.size === 0) {
       releasePatches()
-      replaseUnmountAppInline()
     }
   }
 
@@ -115,7 +114,8 @@ export default class MicroAppElement extends HTMLElement implements MicroAppElem
     if (elementInstanceMap.set(this, true).size === 1) {
       patchElementPrototypeMethods()
       rejectMicroAppStyle()
-      listenUmountAppInline()
+      replaseUnmountOfNestedApp()
+      listenUmountOfNestedApp()
     }
   }
 
