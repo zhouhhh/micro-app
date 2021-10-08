@@ -1,6 +1,7 @@
 import { appInstanceMap } from '../create_app'
-import { CompletionPath, isSafari, pureCreateElement, getLinkFileDir, rawDocument } from '../libs/utils'
+import { CompletionPath, isSafari, pureCreateElement, getLinkFileDir } from '../libs/utils'
 import microApp from '../micro_app'
+import globalEnv from '../libs/global_env'
 
 // https://developer.mozilla.org/zh-CN/docs/Web/API/CSSRule
 enum CSSRuleType {
@@ -157,8 +158,6 @@ function commonAction (
   styleElement.textContent = result
 }
 
-let templateStyle: HTMLStyleElement = rawDocument.body.querySelector('#micro-app-template-style')
-
 /**
  * scopedCSS
  * @param styleElement target style element
@@ -168,10 +167,11 @@ export default function scopedCSS (styleElement: HTMLStyleElement, appName: stri
   const app = appInstanceMap.get(appName)
   if (app?.scopecss) {
     const prefix = `${microApp.tagName}[name=${appName}]`
+    let templateStyle = globalEnv.templateStyle
     if (!templateStyle) {
-      templateStyle = pureCreateElement('style')
+      globalEnv.templateStyle = templateStyle = pureCreateElement('style')
       templateStyle.setAttribute('id', 'micro-app-template-style')
-      rawDocument.body.appendChild(templateStyle)
+      globalEnv.rawDocument.body.appendChild(templateStyle)
       templateStyle.sheet!.disabled = true
     }
 

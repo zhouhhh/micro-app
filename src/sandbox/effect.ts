@@ -1,19 +1,13 @@
 import type { microWindowType } from '@micro-app/types'
 import { getCurrentAppName, setCurrentAppName, logWarn } from '../libs/utils'
+import globalEnv from '../libs/global_env'
 
 type MicroEventListener = EventListenerOrEventListenerObject & Record<string, any>
-type timeInfo = {handler: TimerHandler, timeout: number | undefined, args: any[]}
-
-// save raw methods
-const rawWindowAddEventListener = window.addEventListener
-const rawWindowRemoveEventListener = window.removeEventListener
-const rawSetInterval = window.setInterval
-const rawSetTimeout = window.setTimeout
-const rawClearInterval = window.clearInterval
-const rawClearTimeout = window.clearTimeout
-
-const rawDocumentAddEventListener = document.addEventListener
-const rawDocumentRemoveEventListener = document.removeEventListener
+type timeInfo = {
+  handler: TimerHandler,
+  timeout: number | undefined,
+  args: any[],
+}
 
 // document.onclick binding list, the binding function of each application is unique
 const documentClickListMap = new Map<string, unknown>()
@@ -54,7 +48,7 @@ function overwriteDocumentOnClick (): void {
 
       if (!hasDocumentClickInited && typeof f === 'function') {
         hasDocumentClickInited = true
-        rawDocumentAddEventListener.call(document, 'click', onClickHandler, false)
+        globalEnv.rawDocumentAddEventListener.call(globalEnv.rawDocument, 'click', onClickHandler, false)
       }
     }
   })
@@ -69,6 +63,12 @@ function overwriteDocumentOnClick (): void {
  */
 const documentEventListenerMap = new Map<string, Map<string, Set<MicroEventListener>>>()
 export function effectDocumentEvent (): void {
+  const {
+    rawDocument,
+    rawDocumentAddEventListener,
+    rawDocumentRemoveEventListener,
+  } = globalEnv
+
   if (!hasRewriteDocumentOnClick) {
     overwriteDocumentOnClick()
   }
@@ -93,7 +93,7 @@ export function effectDocumentEvent (): void {
       }
       listener && (listener.__MICRO_MARK_OPTIONS__ = options)
     }
-    rawDocumentAddEventListener.call(document, type, listener, options)
+    rawDocumentAddEventListener.call(rawDocument, type, listener, options)
   }
 
   document.removeEventListener = function (
@@ -111,14 +111,14 @@ export function effectDocumentEvent (): void {
         }
       }
     }
-    rawDocumentRemoveEventListener.call(document, type, listener, options)
+    rawDocumentRemoveEventListener.call(rawDocument, type, listener, options)
   }
 }
 
 // Clear the document event agent
 export function releaseEffectDocumentEvent (): void {
-  document.addEventListener = rawDocumentAddEventListener
-  document.removeEventListener = rawDocumentRemoveEventListener
+  document.addEventListener = globalEnv.rawDocumentAddEventListener
+  document.removeEventListener = globalEnv.rawDocumentRemoveEventListener
 }
 
 /**
@@ -142,6 +142,17 @@ export default function effect (microWindow: microWindowType): Record<string, Ca
   const eventListenerMap = new Map<string, Set<MicroEventListener>>()
   const intervalIdMap = new Map<number, timeInfo>()
   const timeoutIdMap = new Map<number, timeInfo>()
+  const {
+    rawWindow,
+    rawDocument,
+    rawWindowAddEventListener,
+    rawWindowRemoveEventListener,
+    rawSetInterval,
+    rawSetTimeout,
+    rawClearInterval,
+    rawClearTimeout,
+    rawDocumentRemoveEventListener,
+  } = globalEnv
 
   // listener may be null, e.g test-passive
   microWindow.addEventListener = function (
@@ -157,7 +168,7 @@ export default function effect (microWindow: microWindowType): Record<string, Ca
       eventListenerMap.set(type, new Set([listener]))
     }
     listener && (listener.__MICRO_MARK_OPTIONS__ = options)
-    rawWindowAddEventListener.call(window, type, listener, options)
+    rawWindowAddEventListener.call(rawWindow, type, listener, options)
   }
 
   microWindow.removeEventListener = function (
@@ -170,7 +181,7 @@ export default function effect (microWindow: microWindowType): Record<string, Ca
     if (listenerList?.size && listenerList.has(listener)) {
       listenerList.delete(listener)
     }
-    rawWindowRemoveEventListener.call(window, type, listener, options)
+    rawWindowRemoveEventListener.call(rawWindow, type, listener, options)
   }
 
   microWindow.setInterval = function (
@@ -178,7 +189,7 @@ export default function effect (microWindow: microWindowType): Record<string, Ca
     timeout?: number,
     ...args: any[]
   ): number {
-    const intervalId = rawSetInterval(handler, timeout, ...args)
+    const intervalId = rawSetInterval.call(rawWindow, handler, timeout, ...args)
     intervalIdMap.set(intervalId, { handler, timeout, args })
     return intervalId
   }
@@ -188,19 +199,19 @@ export default function effect (microWindow: microWindowType): Record<string, Ca
     timeout?: number,
     ...args: any[]
   ): number {
-    const timeoutId = rawSetTimeout(handler, timeout, ...args)
+    const timeoutId = rawSetTimeout.call(rawWindow, handler, timeout, ...args)
     timeoutIdMap.set(timeoutId, { handler, timeout, args })
     return timeoutId
   }
 
   microWindow.clearInterval = function (intervalId: number) {
     intervalIdMap.delete(intervalId)
-    rawClearInterval(intervalId)
+    rawClearInterval.call(rawWindow, intervalId)
   }
 
   microWindow.clearTimeout = function (timeoutId: number) {
     timeoutIdMap.delete(timeoutId)
-    rawClearTimeout(timeoutId)
+    rawClearTimeout.call(rawWindow, timeoutId)
   }
 
   const umdWindowListenerMap = new Map<string, Set<MicroEventListener>>()
@@ -278,7 +289,7 @@ export default function effect (microWindow: microWindowType): Record<string, Ca
     if (eventListenerMap.size) {
       eventListenerMap.forEach((listenerList, type) => {
         for (const listener of listenerList) {
-          rawWindowRemoveEventListener.call(window, type, listener)
+          rawWindowRemoveEventListener.call(rawWindow, type, listener)
         }
       })
       eventListenerMap.clear()
@@ -287,14 +298,14 @@ export default function effect (microWindow: microWindowType): Record<string, Ca
     // Clear timers
     if (intervalIdMap.size) {
       intervalIdMap.forEach((_, intervalId: number) => {
-        rawClearInterval(intervalId)
+        rawClearInterval.call(rawWindow, intervalId)
       })
       intervalIdMap.clear()
     }
 
     if (timeoutIdMap.size) {
       timeoutIdMap.forEach((_, timeoutId: number) => {
-        rawClearTimeout(timeoutId)
+        rawClearTimeout.call(rawWindow, timeoutId)
       })
       timeoutIdMap.clear()
     }
@@ -307,7 +318,7 @@ export default function effect (microWindow: microWindowType): Record<string, Ca
     if (documentAppListenersMap) {
       documentAppListenersMap.forEach((listenerList, type) => {
         for (const listener of listenerList) {
-          rawDocumentRemoveEventListener.call(document, type, listener)
+          rawDocumentRemoveEventListener.call(rawDocument, type, listener)
         }
       })
       documentAppListenersMap.clear()

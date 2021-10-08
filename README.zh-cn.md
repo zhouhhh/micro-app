@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://micro-zoe.github.io/micro-app/">
-    <img src="./docs/media/logo.png" alt="logo" width="200"/>
+    <img src="https://zeroing.jd.com/micro-app/media/logo.png" alt="logo" width="200"/>
   </a>
 </p>
 

@@ -1,31 +1,25 @@
 /* eslint-disable no-new-func */
 import type { Func } from '@micro-app/types'
 
-type RequestIdleCallbackOptions = {
-  timeout: number
-}
-
-type RequestIdleCallbackInfo = {
-  readonly didTimeout: boolean
-  timeRemaining: () => number
-}
-
-declare global {
-  interface Window {
-    requestIdleCallback (
-      callback: (info: RequestIdleCallbackInfo) => void,
-      opts?: RequestIdleCallbackOptions,
-    ): number
-    _babelPolyfill: boolean
-    proxyWindow: WindowProxy
-    __MICRO_APP_ENVIRONMENT__: boolean
-    __MICRO_APP_UMD_MODE__: boolean
-  }
-}
-
-export const rawWindow = new Function('return window')()
-export const rawDocument = new Function('return document')()
 export const version = '__VERSION__'
+
+export const isBrowser = typeof window !== 'undefined'
+
+export const globalThis: Window = (function () {
+  let gt
+  if (typeof global !== 'undefined') {
+    gt = global
+  } else if (typeof self !== 'undefined') {
+    gt = self
+  } else {
+    try {
+      gt = Function('return this')()
+    } catch (e) {
+      throw new Error('global object is unavailable in this environment')
+    }
+  }
+  return gt
+})()
 
 /**
  * format error log
@@ -190,7 +184,7 @@ export function unique (array: any[]): any[] {
 }
 
 // requestIdleCallback polyfill
-export const requestIdleCallback = window.requestIdleCallback ||
+export const requestIdleCallback = globalThis.requestIdleCallback ||
   function (fn: CallableFunction) {
     const lastTime = Date.now()
     return setTimeout(function () {
@@ -235,7 +229,7 @@ export function isFunction (target: unknown): boolean {
  * Create pure elements
  */
 export function pureCreateElement<K extends keyof HTMLElementTagNameMap> (tagName: K, options?: ElementCreationOptions): HTMLElementTagNameMap[K] {
-  const element = rawDocument.createElement(tagName, options)
+  const element = document.createElement(tagName, options)
   if (element.__MICRO_APP_NAME__) delete element.__MICRO_APP_NAME__
   return element
 }

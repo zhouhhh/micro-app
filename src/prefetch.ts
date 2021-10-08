@@ -1,6 +1,6 @@
 import type { prefetchParamList, prefetchParam, globalAssetsType } from '@micro-app/types'
 import CreateApp, { appInstanceMap } from './create_app'
-import { requestIdleCallback, formatURL, promiseStream, logError } from './libs/utils'
+import { requestIdleCallback, formatURL, promiseStream, logError, isBrowser } from './libs/utils'
 import { fetchSource } from './source/fetch'
 import { globalLinks } from './source/links'
 import { globalScripts } from './source/scripts'
@@ -43,6 +43,9 @@ function filterPreFetchTarget<T extends prefetchParam> (apps: T[]): T[] {
  * @param apps micro apps
  */
 export default function preFetch (apps: prefetchParamList): void {
+  if (!isBrowser) {
+    return logError('preFetch is only supported in browser environment')
+  }
   requestIdleCallback(() => {
     if (typeof apps === 'function') apps = apps()
 

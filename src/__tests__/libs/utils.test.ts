@@ -10,11 +10,6 @@ afterAll(() => {
   releaseConsole()
 })
 
-test('get native window and document', () => {
-  expect(Utils.rawWindow).toBe(window)
-  expect(Utils.rawDocument).toBe(document)
-})
-
 test('uitls ==> logError & logWarn', () => {
   Utils.logError('msg')
   expect(console.error).toBeCalledWith('[micro-app] msg')

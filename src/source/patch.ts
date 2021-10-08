@@ -5,45 +5,13 @@ import {
   getCurrentAppName,
   pureCreateElement,
   setCurrentAppName,
-  rawDocument,
   logWarn,
 } from '../libs/utils'
 import scopedCSS from './scoped_css'
 import { extractLinkFromHtml, foramtDynamicLink } from './links'
 import { extractScriptElement, runScript, runDynamicScript } from './scripts'
 import microApp from '../micro_app'
-
-declare global {
-  interface Element {
-    __MICRO_APP_NAME__: string
-    data: any
-  }
-  interface Node {
-    __MICRO_APP_NAME__: string
-  }
-  interface HTMLStyleElement {
-    linkpath: string
-  }
-}
-
-// save raw methods
-const rawSetAttribute = Element.prototype.setAttribute
-const rawAppendChild = Node.prototype.appendChild
-const rawInsertBefore = Node.prototype.insertBefore
-const rawReplaceChild = Node.prototype.replaceChild
-const rawRemoveChild = Node.prototype.removeChild
-const rawAppend = Element.prototype.append
-const rawPrepend = Element.prototype.prepend
-
-const rawCreateElement = Document.prototype.createElement
-const rawCreateElementNS = Document.prototype.createElementNS
-const rawCreateDocumentFragment = Document.prototype.createDocumentFragment
-const rawQuerySelector = Document.prototype.querySelector
-const rawQuerySelectorAll = Document.prototype.querySelectorAll
-const rawGetElementById = Document.prototype.getElementById
-const rawGetElementsByClassName = Document.prototype.getElementsByClassName
-const rawGetElementsByTagName = Document.prototype.getElementsByTagName
-const rawGetElementsByName = Document.prototype.getElementsByName
+import globalEnv from '../libs/global_env'
 
 // Record element and map element
 const dynamicElementInMicroAppMap = new WeakMap<Node, Element | Comment>()
@@ -148,30 +116,30 @@ function invokePrototypeMethod (
      * 2. When removeChild, targetChild may not be in microAppHead or head
      */
     if (passiveChild && !microAppHead.contains(passiveChild)) {
-      return rawAppendChild.call(microAppHead, targetChild)
-    } else if (rawMethod === rawRemoveChild && !microAppHead.contains(targetChild)) {
+      return globalEnv.rawAppendChild.call(microAppHead, targetChild)
+    } else if (rawMethod === globalEnv.rawRemoveChild && !microAppHead.contains(targetChild)) {
       if (parent.contains(targetChild)) {
         return rawMethod.call(parent, targetChild)
       }
       return targetChild
-    } else if (rawMethod === rawAppend || rawMethod === rawPrepend) {
+    } else if (rawMethod === globalEnv.rawAppend || rawMethod === globalEnv.rawPrepend) {
       return rawMethod.call(microAppHead, targetChild)
     }
     return rawMethod.call(microAppHead, targetChild, passiveChild)
   } else if (parent === document.body) {
     const microAppBody = app.container!.querySelector('micro-app-body')!
     if (passiveChild && !microAppBody.contains(passiveChild)) {
-      return rawAppendChild.call(microAppBody, targetChild)
-    } else if (rawMethod === rawRemoveChild && !microAppBody.contains(targetChild)) {
+      return globalEnv.rawAppendChild.call(microAppBody, targetChild)
+    } else if (rawMethod === globalEnv.rawRemoveChild && !microAppBody.contains(targetChild)) {
       if (parent.contains(targetChild)) {
         return rawMethod.call(parent, targetChild)
       }
       return targetChild
-    } else if (rawMethod === rawAppend || rawMethod === rawPrepend) {
+    } else if (rawMethod === globalEnv.rawAppend || rawMethod === globalEnv.rawPrepend) {
       return rawMethod.call(microAppBody, targetChild)
     }
     return rawMethod.call(microAppBody, targetChild, passiveChild)
-  } else if (rawMethod === rawAppend || rawMethod === rawPrepend) {
+  } else if (rawMethod === globalEnv.rawAppend || rawMethod === globalEnv.rawPrepend) {
     return rawMethod.call(parent, targetChild)
   }
 
@@ -188,7 +156,7 @@ function getMappingNode (node: Node): Node {
  * @param parent parent node
  * @param newChild new node
  * @param passiveChild passive node
- * @param rawMethod raw method
+ * @param rawMethodraw method
  */
 function commonElementHander (
   parent: Node,
@@ -206,11 +174,11 @@ function commonElementHander (
         handleNewNode(parent, newChild, app),
         passiveChild && getMappingNode(passiveChild),
       )
-    } else if (rawMethod === rawAppend || rawMethod === rawPrepend) {
+    } else if (rawMethod === globalEnv.rawAppend || rawMethod === globalEnv.rawPrepend) {
       return rawMethod.call(parent, newChild)
     }
     return rawMethod.call(parent, newChild, passiveChild)
-  } else if (rawMethod === rawAppend || rawMethod === rawPrepend) {
+  } else if (rawMethod === globalEnv.rawAppend || rawMethod === globalEnv.rawPrepend) {
     const appName = getCurrentAppName()
     if (!(newChild instanceof Node) && appName) {
       const app = appInstanceMap.get(appName)
@@ -258,30 +226,30 @@ export function patchElementPrototypeMethods (): void {
       appInstanceMap.has(this.__MICRO_APP_NAME__)
     ) {
       const app = appInstanceMap.get(this.__MICRO_APP_NAME__)
-      rawSetAttribute.call(this, key, CompletionPath(value, app!.url))
+      globalEnv.rawSetAttribute.call(this, key, CompletionPath(value, app!.url))
     } else {
-      rawSetAttribute.call(this, key, value)
+      globalEnv.rawSetAttribute.call(this, key, value)
     }
   }
 
   // prototype methods of add element👇
   Node.prototype.appendChild = function appendChild<T extends Node> (newChild: T): T {
-    return commonElementHander(this, newChild, null, rawAppendChild)
+    return commonElementHander(this, newChild, null, globalEnv.rawAppendChild)
   }
 
   Node.prototype.insertBefore = function insertBefore<T extends Node> (newChild: T, refChild: Node | null): T {
-    return commonElementHander(this, newChild, refChild, rawInsertBefore)
+    return commonElementHander(this, newChild, refChild, globalEnv.rawInsertBefore)
   }
 
   Node.prototype.replaceChild = function replaceChild<T extends Node> (newChild: Node, oldChild: T): T {
-    return commonElementHander(this, newChild, oldChild, rawReplaceChild)
+    return commonElementHander(this, newChild, oldChild, globalEnv.rawReplaceChild)
   }
 
   Element.prototype.append = function append (...nodes: (Node | string)[]): void {
     let i = 0
     const length = nodes.length
     while (i < length) {
-      commonElementHander(this, nodes[i] as Node, null, rawAppend)
+      commonElementHander(this, nodes[i] as Node, null, globalEnv.rawAppend)
       i++
     }
   }
@@ -289,7 +257,7 @@ export function patchElementPrototypeMethods (): void {
   Element.prototype.prepend = function prepend (...nodes: (Node | string)[]): void {
     let i = nodes.length
     while (i > 0) {
-      commonElementHander(this, nodes[i - 1] as Node, null, rawPrepend)
+      commonElementHander(this, nodes[i - 1] as Node, null, globalEnv.rawPrepend)
       i--
     }
   }
@@ -301,15 +269,15 @@ export function patchElementPrototypeMethods (): void {
       if (app?.container) {
         return invokePrototypeMethod(
           app,
-          rawRemoveChild,
+          globalEnv.rawRemoveChild,
           this,
           getMappingNode(oldChild),
         )
       }
-      return rawRemoveChild.call(this, oldChild) as T
+      return globalEnv.rawRemoveChild.call(this, oldChild) as T
     }
 
-    return rawRemoveChild.call(this, oldChild) as T
+    return globalEnv.rawRemoveChild.call(this, oldChild) as T
   }
 }
 
@@ -327,12 +295,14 @@ function markElement <T extends { __MICRO_APP_NAME__: string }> (element: T): T 
 
 // methods of document
 function patchDocument () {
+  const rawDocument = globalEnv.rawDocument
+
   // create element 👇
   Document.prototype.createElement = function createElement (
     tagName: string,
     options?: ElementCreationOptions,
   ): HTMLElement {
-    const element = rawCreateElement.call(rawDocument, tagName, options)
+    const element = globalEnv.rawCreateElement.call(rawDocument, tagName, options)
     return markElement(element)
   }
 
@@ -341,12 +311,12 @@ function patchDocument () {
     name: string,
     options?: string | ElementCreationOptions,
   ): any {
-    const element = rawCreateElementNS.call(rawDocument, namespaceURI, name, options)
+    const element = globalEnv.rawCreateElementNS.call(rawDocument, namespaceURI, name, options)
     return markElement(element)
   }
 
   Document.prototype.createDocumentFragment = function createDocumentFragment (): DocumentFragment {
-    const element = rawCreateDocumentFragment.call(rawDocument)
+    const element = globalEnv.rawCreateDocumentFragment.call(rawDocument)
     return markElement(element)
   }
 
@@ -354,7 +324,7 @@ function patchDocument () {
   function querySelector (selectors: string): any {
     const appName = getCurrentAppName()
     if (!appName || selectors === 'head' || selectors === 'body' || selectors === 'html') {
-      return rawQuerySelector.call(rawDocument, selectors)
+      return globalEnv.rawQuerySelector.call(rawDocument, selectors)
     }
     return appInstanceMap.get(appName)?.container?.querySelector(selectors) ?? null
   }
@@ -362,7 +332,7 @@ function patchDocument () {
   function querySelectorAll (selectors: string): any {
     const appName = getCurrentAppName()
     if (!appName || selectors === 'head' || selectors === 'body' || selectors === 'html') {
-      return rawQuerySelectorAll.call(rawDocument, selectors)
+      return globalEnv.rawQuerySelectorAll.call(rawDocument, selectors)
     }
     return appInstanceMap.get(appName)?.container?.querySelectorAll(selectors) ?? []
   }
@@ -374,7 +344,7 @@ function patchDocument () {
   Document.prototype.getElementById = function getElementById (key: string): HTMLElement | null {
     const appName = getCurrentAppName()
     if (!appName || /^\d/.test(key)) {
-      return rawGetElementById.call(rawDocument, key)
+      return globalEnv.rawGetElementById.call(rawDocument, key)
     }
     return querySelector(`#${key}`)
   }
@@ -382,7 +352,7 @@ function patchDocument () {
   Document.prototype.getElementsByClassName = function getElementsByClassName (key: string): HTMLCollectionOf<Element> {
     const appName = getCurrentAppName()
     if (!appName || /^\d/.test(key)) {
-      return rawGetElementsByClassName.call(rawDocument, key)
+      return globalEnv.rawGetElementsByClassName.call(rawDocument, key)
     }
     return querySelectorAll(`.${key}`)
   }
@@ -396,7 +366,7 @@ function patchDocument () {
       /^html$/i.test(key) ||
       (!appInstanceMap.get(appName)?.inline && /^script$/i.test(key))
     ) {
-      return rawGetElementsByTagName.call(rawDocument, key)
+      return globalEnv.rawGetElementsByTagName.call(rawDocument, key)
     }
     return querySelectorAll(key)
   }
@@ -404,35 +374,35 @@ function patchDocument () {
   Document.prototype.getElementsByName = function getElementsByName (key: string): NodeListOf<HTMLElement> {
     const appName = getCurrentAppName()
     if (!appName || /^\d/.test(key)) {
-      return rawGetElementsByName.call(rawDocument, key)
+      return globalEnv.rawGetElementsByName.call(rawDocument, key)
     }
     return querySelectorAll(`[name=${key}]`)
   }
 }
 
 function releasePatchDocument (): void {
-  Document.prototype.createElement = rawCreateElement
-  Document.prototype.createElementNS = rawCreateElementNS
-  Document.prototype.createDocumentFragment = rawCreateDocumentFragment
-  Document.prototype.querySelector = rawQuerySelector
-  Document.prototype.querySelectorAll = rawQuerySelectorAll
-  Document.prototype.getElementById = rawGetElementById
-  Document.prototype.getElementsByClassName = rawGetElementsByClassName
-  Document.prototype.getElementsByTagName = rawGetElementsByTagName
-  Document.prototype.getElementsByName = rawGetElementsByName
+  Document.prototype.createElement = globalEnv.rawCreateElement
+  Document.prototype.createElementNS = globalEnv.rawCreateElementNS
+  Document.prototype.createDocumentFragment = globalEnv.rawCreateDocumentFragment
+  Document.prototype.querySelector = globalEnv.rawQuerySelector
+  Document.prototype.querySelectorAll = globalEnv.rawQuerySelectorAll
+  Document.prototype.getElementById = globalEnv.rawGetElementById
+  Document.prototype.getElementsByClassName = globalEnv.rawGetElementsByClassName
+  Document.prototype.getElementsByTagName = globalEnv.rawGetElementsByTagName
+  Document.prototype.getElementsByName = globalEnv.rawGetElementsByName
 }
 
 // release patch
 export function releasePatches (): void {
   setCurrentAppName(null)
   releasePatchDocument()
-  Element.prototype.setAttribute = rawSetAttribute
-  Node.prototype.appendChild = rawAppendChild
-  Node.prototype.insertBefore = rawInsertBefore
-  Node.prototype.replaceChild = rawReplaceChild
-  Node.prototype.removeChild = rawRemoveChild
-  Element.prototype.append = rawAppend
-  Element.prototype.prepend = rawPrepend
+  Element.prototype.setAttribute = globalEnv.rawSetAttribute
+  Node.prototype.appendChild = globalEnv.rawAppendChild
+  Node.prototype.insertBefore = globalEnv.rawInsertBefore
+  Node.prototype.replaceChild = globalEnv.rawReplaceChild
+  Node.prototype.removeChild = globalEnv.rawRemoveChild
+  Element.prototype.append = globalEnv.rawAppend
+  Element.prototype.prepend = globalEnv.rawPrepend
 }
 
 // Set the style of micro-app-head and micro-app-body
@@ -443,6 +413,6 @@ export function rejectMicroAppStyle (): void {
     const style = pureCreateElement('style')
     style.setAttribute('type', 'text/css')
     style.textContent = `\n${microApp.tagName}, micro-app-body { display: block; } \nmicro-app-head { display: none; }`
-    rawDocument.head.appendChild(style)
+    globalEnv.rawDocument.head.appendChild(style)
   }
 }

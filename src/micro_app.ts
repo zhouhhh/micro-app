@@ -3,6 +3,7 @@ import { defineElement } from './micro_app_element'
 import preFetch, { getGlobalAssets } from './prefetch'
 import { logError, isFunction } from './libs/utils'
 import { EventCenterForBaseApp } from './interact'
+import { initGloalEnv } from './libs/global_env'
 
 class MicroApp extends EventCenterForBaseApp implements MicroAppConfigType {
   tagName = 'micro-app'
@@ -17,8 +18,8 @@ class MicroApp extends EventCenterForBaseApp implements MicroAppConfigType {
   fetch?: fetchType
   preFetch = preFetch
   start (options?: OptionsType) {
-    if (!window?.customElements) {
-      return logError('customElements is not supported in this environment')
+    if (!initGloalEnv() || !window.customElements) {
+      return logError('micro-app is not supported in this environment')
     }
 
     if (options?.tagName) {

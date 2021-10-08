@@ -5,8 +5,6 @@ import {
   setCurrentAppName,
   defer,
   getEffectivePath,
-  rawWindow,
-  rawDocument,
   removeDomScope,
 } from '../libs/utils'
 import effect, { effectDocumentEvent, releaseEffectDocumentEvent } from './effect'
@@ -16,6 +14,7 @@ import {
   rebuildDataCenterSnapshot,
 } from '../interact'
 import microApp from '../micro_app'
+import globalEnv from '../libs/global_env'
 
 /* eslint-disable camelcase */
 type injectDataType = {
@@ -85,6 +84,8 @@ export default class SandBox implements SandBoxInterface {
   recordUmdinjectedValues?: Map<PropertyKey, unknown>// record injected values before the first execution of umdHookMount and rebuild before remount umd app
 
   constructor (appName: string, url: string, macro: boolean) {
+    const rawWindow = globalEnv.rawWindow
+    const rawDocument = globalEnv.rawDocument
     const descriptorTargetMap = new Map<PropertyKey, 'target' | 'rawWindow'>()
     const hasOwnProperty = (key: PropertyKey) => this.microWindow.hasOwnProperty(key) || rawWindow.hasOwnProperty(key)
     // get scopeProperties and escapeProperties from plugins
@@ -222,7 +223,7 @@ export default class SandBox implements SandBoxInterface {
     if (!this.active) {
       this.active = true
       this.microWindow.__MICRO_APP_BASE_ROUTE__ = this.microWindow.__MICRO_APP_BASE_URL__ = baseroute
-      if (rawWindow._babelPolyfill) rawWindow._babelPolyfill = false
+      if (globalEnv.rawWindow._babelPolyfill) globalEnv.rawWindow._babelPolyfill = false
       if (++SandBox.activeCount === 1) {
         effectDocumentEvent()
       }
@@ -242,7 +243,7 @@ export default class SandBox implements SandBoxInterface {
       this.injectedKeys.clear()
 
       this.escapeKeys.forEach((key: PropertyKey) => {
-        Reflect.deleteProperty(rawWindow, key)
+        Reflect.deleteProperty(globalEnv.rawWindow, key)
       })
       this.escapeKeys.clear()
 
@@ -318,8 +319,8 @@ export default class SandBox implements SandBoxInterface {
     microWindow.__MICRO_APP_NAME__ = appName
     microWindow.__MICRO_APP_PUBLIC_PATH__ = getEffectivePath(url)
     microWindow.microApp = new EventCenterForMicroApp(appName)
-    microWindow.rawWindow = rawWindow
-    microWindow.rawDocument = rawDocument
+    microWindow.rawWindow = globalEnv.rawWindow
+    microWindow.rawDocument = globalEnv.rawDocument
     microWindow.removeDomScope = removeDomScope
   }
 }

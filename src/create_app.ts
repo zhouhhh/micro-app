@@ -11,8 +11,9 @@ import { execScripts } from './source/scripts'
 import { formatHTMLStyleAfterUmdInit } from './source/links'
 import { appStatus, lifeCycles } from './constants'
 import SandBox from './sandbox'
-import { defer, isFunction, cloneNode, rawWindow } from './libs/utils'
+import { defer, isFunction, cloneNode } from './libs/utils'
 import dispatchLifecyclesEvent, { dispatchUnmountToMicroApp } from './interact/lifecycles_event'
+import globalEnv from './libs/global_env'
 
 // micro app instances
 export const appInstanceMap = new Map<string, AppInterface>()
@@ -215,7 +216,7 @@ export default class CreateApp implements AppInterface {
   private getUmdLibraryHooks (): any {
     // after execScripts, the app maybe unmounted
     if (appStatus.UNMOUNT !== this.status) {
-      const global = (this.sandBox?.proxyWindow ?? rawWindow) as any
+      const global = (this.sandBox?.proxyWindow ?? globalEnv.rawWindow) as any
       const libraryName = (this.container instanceof ShadowRoot ? this.container.host : this.container)!.getAttribute('library') || `micro-app-${this.name}`
       return typeof global[libraryName] === 'object' ? global[libraryName] : {}
     }

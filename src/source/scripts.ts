@@ -7,10 +7,8 @@ import { fetchSource } from './fetch'
 import {
   CompletionPath,
   promiseStream,
-  isSupportModuleScript,
   createNonceStr,
   pureCreateElement,
-  rawWindow,
   defer,
   logError,
 } from '../libs/utils'
@@ -19,10 +17,10 @@ import {
   dispatchOnErrorEvent,
 } from './load_event'
 import microApp from '../micro_app'
+import globalEnv from '../libs/global_env'
 
 // Global scripts, reuse across apps
 export const globalScripts = new Map<string, string>()
-const supportModuleScript = isSupportModuleScript()
 
 /**
  * Extract script elements
@@ -44,8 +42,8 @@ export function extractScriptElement (
   } else if (script.type && !['text/javascript', 'text/ecmascript', 'application/javascript', 'application/ecmascript', 'module'].includes(script.type)) {
     return null
   } else if (
-    (supportModuleScript && script.noModule) ||
-    (!supportModuleScript && script.type === 'module')
+    (globalEnv.supportModuleScript && script.noModule) ||
+    (!globalEnv.supportModuleScript && script.type === 'module')
   ) {
     replaceComment = document.createComment(`${script.noModule ? 'noModule' : 'module'} script ignored by micro-app`)
   } else if (src) { // remote script
@@ -292,7 +290,7 @@ function bindScope (
     code = usePlugins(url, code, app.name, microApp.plugins)
   }
   if (app.sandBox) {
-    rawWindow.__MICRO_APP_PROXY_WINDOW__ = app.sandBox.proxyWindow
+    globalEnv.rawWindow.__MICRO_APP_PROXY_WINDOW__ = app.sandBox.proxyWindow
     return `;(function(window, self){with(window){;${code}\n}}).call(window.__MICRO_APP_PROXY_WINDOW__, window.__MICRO_APP_PROXY_WINDOW__, window.__MICRO_APP_PROXY_WINDOW__);`
   }
   return code
