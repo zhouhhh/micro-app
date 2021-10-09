@@ -135,21 +135,23 @@ export default class CreateApp implements AppInterface {
 
     this.sandBox?.start(this.baseroute)
     if (!this.umdHookMount) {
-      execScripts(this.source.scripts, this)
-
-      const { mount, unmount } = this.getUmdLibraryHooks()
-      // if mount & unmount is function, the sub app is umd mode
-      if (isFunction(mount) && isFunction(unmount)) {
-        this.umdHookMount = mount as Func
-        this.umdHookunMount = unmount as Func
-        this.sandBox?.recordUmdSnapshot()
-        /**
-         * TODO: Some UI frameworks insert and record container elements to micro-app-body, such as modal and notification. The DOM remounted is a cloned element, so the cached elements of UI frameworks are invalid, this may cause bug when remount app
-         */
-        cloneNode(this.container! as Element, this.source.html!)
-        formatHTMLStyleAfterUmdInit(this.source.html!, this.name)
-        this.umdHookMount()
-      }
+      execScripts(this.source.scripts, this, () => {
+        if (this.umdHookMount === null) {
+          const { mount, unmount } = this.getUmdLibraryHooks()
+          // if mount & unmount is function, the sub app is umd mode
+          if (isFunction(mount) && isFunction(unmount)) {
+            this.umdHookMount = mount as Func
+            this.umdHookunMount = unmount as Func
+            this.sandBox?.recordUmdSnapshot()
+            /**
+             * TODO: Some UI frameworks insert and record container elements to micro-app-body, such as modal and notification. The DOM remounted is a cloned element, so the cached elements of UI frameworks are invalid, this may cause bug when remount app
+             */
+            cloneNode(this.container! as Element, this.source.html!)
+            formatHTMLStyleAfterUmdInit(this.source.html!, this.name)
+            this.umdHookMount()
+          }
+        }
+      })
     } else {
       this.sandBox?.rebuildUmdSnapshot()
       this.umdHookMount()

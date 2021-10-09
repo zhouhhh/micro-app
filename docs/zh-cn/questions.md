@@ -96,7 +96,7 @@ vue3中需要配置publicPath补全资源地址，详情请查看[public-path](/
   - 2、(0, eval)('window')
   - 3、window.rawWindow
 
-## 13、错误信息 `ReferenceError: xxxx is not defined`
+## 13、错误信息 `ReferenceError: xxx is not defined` 或 `xxx is not a function` 等等
 在微前端的沙箱环境中，顶层变量不会泄漏为全局变量。
 
 例如在正常情况下，通过 var name 或 function name () {} 定义的顶层变量会泄漏为全局变量，通过window.name或name就可以全局访问。
@@ -162,3 +162,6 @@ microApp.start({
 
 ## 16、子应用之间如何跳转
   参考[应用之间如何跳转](/zh-cn/route?id=应用之间如何跳转)一章
+
+## 17、jsonp请求如何处理？
+ 参考[ignore](/zh-cn/configure?id=ignore忽略元素)

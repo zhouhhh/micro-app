@@ -39,7 +39,10 @@ export function extractScriptElement (
   let src: string | null = script.getAttribute('src')
   if (script.hasAttribute('exclude')) {
     replaceComment = document.createComment('script element with exclude attribute ignored by micro-app')
-  } else if (script.type && !['text/javascript', 'text/ecmascript', 'application/javascript', 'application/ecmascript', 'module'].includes(script.type)) {
+  } else if (
+    (script.type && !['text/javascript', 'text/ecmascript', 'application/javascript', 'application/ecmascript', 'module'].includes(script.type)) ||
+    script.hasAttribute('ignore')
+  ) {
     return null
   } else if (
     (globalEnv.supportModuleScript && script.noModule) ||
@@ -154,7 +157,11 @@ export function fetchScriptSuccess (
  * @param scriptList script list
  * @param app app
  */
-export function execScripts (scriptList: Map<string, sourceScriptInfo>, app: AppInterface): void {
+export function execScripts (
+  scriptList: Map<string, sourceScriptInfo>,
+  app: AppInterface,
+  callback: CallableFunction,
+): void {
   const scriptListEntries: Array<[string, sourceScriptInfo]> = Array.from(scriptList.entries())
   const deferScriptPromise: Array<Promise<string>|string> = []
   const deferScriptInfo: Array<[string, sourceScriptInfo]> = []
@@ -179,9 +186,13 @@ export function execScripts (scriptList: Map<string, sourceScriptInfo>, app: App
         const [url, info] = deferScriptInfo[index]
         runScript(url, info.code = info.code || code, app, info.module, false)
       })
+      callback()
     }).catch((err) => {
       logError(err)
+      callback()
     })
+  } else {
+    callback()
   }
 }
 

@@ -34,7 +34,7 @@ declare global {
 
 const globalEnv: Record<string, any> = {}
 
-export function initGloalEnv (): boolean {
+export function initGloalEnv (): void {
   if (isBrowser) {
     /**
      * save patch raw methods
@@ -112,11 +112,7 @@ export function initGloalEnv (): boolean {
       rawDocumentAddEventListener,
       rawDocumentRemoveEventListener,
     })
-
-    return true
   }
-
-  return false
 }
 
 export default globalEnv

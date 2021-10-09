@@ -28,7 +28,7 @@ function handleNewNode (parent: Node, child: Node, app: AppInterface): Node {
       const replaceComment = document.createComment('style element with exclude attribute ignored by micro-app')
       dynamicElementInMicroAppMap.set(child, replaceComment)
       return replaceComment
-    } else if (app.scopecss) {
+    } else if (app.scopecss && !child.hasAttribute('ignore')) {
       return scopedCSS(child, app.name)
     }
     return child
@@ -37,7 +37,7 @@ function handleNewNode (parent: Node, child: Node, app: AppInterface): Node {
       const linkReplaceComment = document.createComment('link element with exclude attribute ignored by micro-app')
       dynamicElementInMicroAppMap.set(child, linkReplaceComment)
       return linkReplaceComment
-    } else if (!app.scopecss) {
+    } else if (!app.scopecss || child.hasAttribute('ignore')) {
       return child
     }
 

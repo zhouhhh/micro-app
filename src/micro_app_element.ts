@@ -1,5 +1,5 @@
 import type { AttrType, MicroAppElementType, AppInterface } from '@micro-app/types'
-import { defer, formatURL, version, logError, logWarn } from './libs/utils'
+import { defer, formatURL, version, logError } from './libs/utils'
 import { ObservedAttrName, appStatus, lifeCycles } from './constants'
 import CreateApp, { appInstanceMap } from './create_app'
 import {
@@ -18,12 +18,7 @@ export const elementInstanceMap = new Map<Element, boolean>()
  * define element
  * @param tagName element name
  */
-export function defineElement (tagName: string): boolean {
-  if (window.customElements.get(tagName)) {
-    logWarn(`element ${tagName} is already defined`)
-    return false
-  }
-
+export function defineElement (tagName: string): void {
   class MicroAppElement extends HTMLElement implements MicroAppElementType {
     static get observedAttributes (): string[] {
       return ['name', 'url']
@@ -269,6 +264,4 @@ export function defineElement (tagName: string): boolean {
   }
 
   window.customElements.define(tagName, MicroAppElement)
-
-  return true
 }

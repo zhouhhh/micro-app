@@ -149,16 +149,6 @@ microApp.start({
 ```
 
 ## 其它配置
-### exclude(过滤资源)
-当子应用不需要加载某个js或css，可以通过在link、script、style设置exclude属性过滤这些资源，当micro-app遇到带有exclude属性的元素会进行删除。
-
-**使用方式**
-```html
-<link rel="stylesheet" href="xx.css" exclude>
-<script src="xx.js" exclude></script>
-<style exclude></style>
-```
-
 ### global
 当多个子应用使用相同的js或css资源，在link、script设置`global`属性会将文件提取为公共文件，共享给其它应用。
 
@@ -186,4 +176,28 @@ microApp.start({
     css: ['css地址1', 'css地址2', ...], // css地址
   }
 })
+```
+
+### exclude(过滤元素)
+当子应用不需要加载某个js或css，可以通过在link、script、style设置exclude属性，当micro-app遇到带有exclude属性的元素会进行删除。
+
+**使用方式**
+```html
+<link rel="stylesheet" href="xx.css" exclude>
+<script src="xx.js" exclude></script>
+<style exclude></style>
+```
+
+### ignore(忽略元素)
+当link、script、style元素具有ignore属性，micro-app不会处理它，元素将原封不动进行渲染。
+
+使用场景例如：jsonp
+
+jsonp会创建一个script元素加载数据，正常情况script会被拦截导致jsonp请求失败，此时可以给script元素添加ignore属性，跳过拦截。
+
+```js
+// 修改jsonp方法，在创建script元素后添加ignore属性
+const script = document.createElement('script')
+script.setAttribute('ignore', 'true')
+...
 ```

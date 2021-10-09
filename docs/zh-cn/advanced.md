@@ -148,7 +148,7 @@ microApp.start({
 虽然我们在卸载子应用时对变量和事件进行了清除，但仍有一些变量无法回收。如果子应用渲染和卸载非常频繁，建议通过下面方式进行内存优化。
 
 ### 将子应用修改为umd格式
-##### 步骤1：在子应用入口文件导出相应的生命周期钩子
+#### 步骤1：在子应用入口文件导出相应的生命周期钩子
 
 <!-- tabs:start -->
 
@@ -216,7 +216,11 @@ if (!window.__MICRO_APP_ENVIRONMENT__) {
 ```
 <!-- tabs:end -->
 
-##### 步骤2：修改子应用的webpack配置
+#### 步骤2：修改子应用的webpack配置
+
+<!-- tabs:start -->
+
+#### ** webpack4 **
 ```js
 // webpack.config.js
 module.exports = {
@@ -229,25 +233,65 @@ module.exports = {
 }
 ```
 
-通常`library`的值固定为`micro-app-子应用的name`，但也可以自定义，自定义的值需要在`<micro-app>`标签中通过`library`属性指定。
-
+#### ** webpack5 **
 ```js
 // webpack.config.js
 module.exports = {
   ...
   output: {
-    library: '自定义的library名称',
+    library: {
+      name: `micro-app-子应用的name`, // 子应用的name就是<micro-app name='子应用的name'></micro-app>中name属性的值
+      type: 'umd',
+    },
+  },
+  devServer: {
+    ...
+    // injectClient: false, 当`webpack-dev-server`版本为3.x，需设置injectClient
+  }
+}
+```
+<!-- tabs:end -->
+
+通常`library`的值固定为`micro-app-子应用的name`，但也可以自定义。
+
+自定义的值需要在`<micro-app>`标签中通过`library`属性指定。
+
+<!-- tabs:start -->
+
+#### ** webpack4 **
+```js
+// webpack.config.js
+module.exports = {
+  ...
+  output: {
+    library: '自定义的library名称', 👈
     libraryTarget: 'umd',
     jsonpFunction: `webpackJsonp_${packageName}`,
   },
 }
 ```
 
+#### ** webpack5 **
+```js
+// webpack.config.js
+module.exports = {
+  ...
+  output: {
+    library: {
+      name: `自定义的library名称`, 👈
+      type: 'umd',
+    },
+  },
+}
+```
+<!-- tabs:end -->
+
+
 ```html
-<!-- 基座应用 -->
+<!-- 同时基座应用中通过library属性设置自定义的名称 -->
 <micro-app
   name='xxx'
   url='xxx'
-  library='自定义的library名称'
+  library='自定义的library名称' 👈
 ></micro-app>
 ```

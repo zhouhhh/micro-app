@@ -1,7 +1,7 @@
 import type { OptionsType, MicroAppConfigType, lifeCyclesType, plugins, fetchType } from '@micro-app/types'
 import { defineElement } from './micro_app_element'
 import preFetch, { getGlobalAssets } from './prefetch'
-import { logError, isFunction } from './libs/utils'
+import { logError, logWarn, isFunction, isBrowser } from './libs/utils'
 import { EventCenterForBaseApp } from './interact'
 import { initGloalEnv } from './libs/global_env'
 
@@ -18,7 +18,7 @@ class MicroApp extends EventCenterForBaseApp implements MicroAppConfigType {
   fetch?: fetchType
   preFetch = preFetch
   start (options?: OptionsType) {
-    if (!initGloalEnv() || !window.customElements) {
+    if (!isBrowser || !window.customElements) {
       return logError('micro-app is not supported in this environment')
     }
 
@@ -29,6 +29,12 @@ class MicroApp extends EventCenterForBaseApp implements MicroAppConfigType {
         return logError(`${options.tagName} is invalid tagName`)
       }
     }
+
+    if (window.customElements.get(this.tagName)) {
+      return logWarn(`element ${this.tagName} is already defined`)
+    }
+
+    initGloalEnv()
 
     if (options && toString.call(options) === '[object Object]') {
       this.shadowDOM = options.shadowDOM
