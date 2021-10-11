@@ -37,6 +37,7 @@ export function defineElement (tagName: string): void {
     version = version
     isWating = false
     cacheData: Record<PropertyKey, unknown> | null = null
+    hasConnected = false
 
     // 👇 Configuration
     // shadowDom: use shadowDOM, default is false
@@ -48,6 +49,7 @@ export function defineElement (tagName: string): void {
     // baseRoute: route prefix, default is ''
 
     connectedCallback (): void {
+      this.hasConnected = true
       if (!elementInstanceMap.has(this)) {
         this.performWhenFirstCreated()
       }
@@ -58,6 +60,65 @@ export function defineElement (tagName: string): void {
         lifeCycles.CREATED,
       ))
 
+      this.initialMount()
+    }
+
+    disconnectedCallback (): void {
+      this.hasConnected = false
+      elementInstanceMap.delete(this)
+      this.handleUnmount(this.getDisposeResult('destory'))
+      if (elementInstanceMap.size === 0) {
+        releasePatches()
+      }
+    }
+
+    attributeChangedCallback (attr: ObservedAttrName, _oldVal: string, newVal: string): void {
+      if (
+        this.legalAttribute(attr, newVal) &&
+        this[attr === ObservedAttrName.NAME ? 'appName' : 'appUrl'] !== newVal
+      ) {
+        if (attr === ObservedAttrName.URL && !this.appUrl) {
+          newVal = formatURL(newVal)
+          if (!newVal) {
+            return logError('Invalid attribute url')
+          }
+          this.appUrl = newVal
+          this.handleInitialNameAndUrl()
+        } else if (attr === ObservedAttrName.NAME && !this.appName) {
+          if (this.cacheData) {
+            microApp.setData(newVal, this.cacheData)
+            this.cacheData = null
+          }
+          this.appName = newVal
+          this.handleInitialNameAndUrl()
+        } else if (!this.isWating) {
+          this.isWating = true
+          defer(this.handleAttributeUpdate)
+        }
+      }
+    }
+
+    // handle for connectedCallback run before attributeChangedCallback
+    handleInitialNameAndUrl (): void {
+      if (this.hasConnected) {
+        this.initialMount()
+      }
+    }
+
+    // Perform global initialization when the element count is 1
+    performWhenFirstCreated (): void {
+      if (elementInstanceMap.set(this, true).size === 1) {
+        patchElementPrototypeMethods()
+        rejectMicroAppStyle()
+        replaseUnmountOfNestedApp()
+        listenUmountOfNestedApp()
+      }
+    }
+
+    /**
+     * first mount of this app
+     */
+    initialMount (): void {
       if (!this.appName || !this.appUrl) return
 
       if (this.getDisposeResult('shadowDOM') && !this.shadowRoot) {
@@ -80,48 +141,6 @@ export function defineElement (tagName: string): void {
         }
       } else {
         this.handleCreate()
-      }
-    }
-
-    disconnectedCallback (): void {
-      elementInstanceMap.delete(this)
-      this.handleUnmount(this.getDisposeResult('destory'))
-      if (elementInstanceMap.size === 0) {
-        releasePatches()
-      }
-    }
-
-    attributeChangedCallback (attr: ObservedAttrName, _oldVal: string, newVal: string): void {
-      if (
-        this.legalAttribute(attr, newVal) &&
-        this[attr === ObservedAttrName.NAME ? 'appName' : 'appUrl'] !== newVal
-      ) {
-        if (attr === ObservedAttrName.URL && !this.appUrl) {
-          newVal = formatURL(newVal)
-          if (!newVal) {
-            return logError('Invalid attribute url')
-          }
-          this.appUrl = newVal
-        } else if (attr === ObservedAttrName.NAME && !this.appName) {
-          if (this.cacheData) {
-            microApp.setData(newVal, this.cacheData)
-            this.cacheData = null
-          }
-          this.appName = newVal
-        } else if (!this.isWating) {
-          this.isWating = true
-          defer(this.handleAttributeUpdate)
-        }
-      }
-    }
-
-    // Perform global initialization when the element count is 1
-    performWhenFirstCreated (): void {
-      if (elementInstanceMap.set(this, true).size === 1) {
-        patchElementPrototypeMethods()
-        rejectMicroAppStyle()
-        replaseUnmountOfNestedApp()
-        listenUmountOfNestedApp()
       }
     }
 

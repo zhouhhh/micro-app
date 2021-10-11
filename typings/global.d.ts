@@ -78,6 +78,7 @@ declare module '@micro-app/types' {
     appUrl: AttrType // app url
     isWating: boolean // combine action of set attribute name, url
     cacheData: Record<PropertyKey, unknown> | null // Cache data
+    hasConnected: boolean // element has run connectedCallback
     connectedCallback(): void // Hooks for element append to documents
     disconnectedCallback(): void // Hooks for element delete from documents
     attributeChangedCallback(a: 'name' | 'url', o: string, n: string): void // Hooks for element attributes change

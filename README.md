@@ -129,8 +129,6 @@ More detailed configuration can be viewed [Documentation](https://micro-zoe.gith
 # 🤝 Contribution
 If you're interested in this project, you're welcome to mention pull request, and also welcome your "Star" ^_^
 
-If you are using it, please [tell us](https://github.com/micro-zoe/micro-app/issues/35)
-
 ### development
 1、Clone
 ```
