@@ -125,11 +125,14 @@ export default class SandBox implements SandBoxInterface {
           }
         }
 
-        if (this.scopeProperties.includes(key)) {
+        if (Reflect.has(target, key)) {
           return Reflect.get(target, key)
         }
 
-        if (Reflect.has(target, key)) {
+        if (
+          this.scopeProperties.includes(key) ||
+          (typeof key === 'string' && /^__MICRO_APP_/.test(key))
+        ) {
           return Reflect.get(target, key)
         }
 

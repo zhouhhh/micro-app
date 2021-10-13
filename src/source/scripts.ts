@@ -2,6 +2,7 @@ import type {
   AppInterface,
   sourceScriptInfo,
   plugins,
+  Func,
 } from '@micro-app/types'
 import { fetchSource } from './fetch'
 import {
@@ -156,11 +157,12 @@ export function fetchScriptSuccess (
  * Execute js in the mount lifecycle
  * @param scriptList script list
  * @param app app
+ * @param callback callback for umd mode
  */
 export function execScripts (
   scriptList: Map<string, sourceScriptInfo>,
   app: AppInterface,
-  callback: CallableFunction,
+  callback: Func,
 ): void {
   const scriptListEntries: Array<[string, sourceScriptInfo]> = Array.from(scriptList.entries())
   const deferScriptPromise: Array<Promise<string>|string> = []
@@ -184,7 +186,7 @@ export function execScripts (
     Promise.all(deferScriptPromise).then((res: string[]) => {
       res.forEach((code, index) => {
         const [url, info] = deferScriptInfo[index]
-        runScript(url, info.code = info.code || code, app, info.module, false)
+        runScript(url, info.code = info.code || code, app, info.module, false, callback)
       })
       callback()
     }).catch((err) => {
@@ -261,6 +263,7 @@ export function runDynamicScript (
  * @param app app
  * @param module type='module' of script
  * @param isDynamic dynamically created script
+ * @param callback callback from execScripts for first exec
  */
 export function runScript (
   url: string,
@@ -268,13 +271,22 @@ export function runScript (
   app: AppInterface,
   module: boolean,
   isDynamic: boolean,
+  callback?: Func,
 ): any {
   try {
     code = bindScope(url, code, app)
     if (app.inline) {
       const script = pureCreateElement('script')
-      if (module) script.setAttribute('type', 'module')
-      script.textContent = code
+      if (module) {
+        // module script is async, transform it to a blob for subsequent operations
+        const blob = new Blob([code], { type: 'text/javascript;charset=utf-8' })
+        script.src = URL.createObjectURL(blob)
+        script.setAttribute('type', 'module')
+        script.setAttribute('originSrc', url)
+        callback && (script.onload = callback)
+      } else {
+        script.textContent = code
+      }
       if (isDynamic) return script
       app.container?.querySelector('micro-app-body')!.appendChild(script)
     } else {

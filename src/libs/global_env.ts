@@ -19,6 +19,7 @@ declare global {
     proxyWindow?: WindowProxy
     __MICRO_APP_ENVIRONMENT__?: boolean
     __MICRO_APP_UMD_MODE__?: boolean
+    __MICRO_APP_BASE_APPLICATION__?: boolean
   }
   interface Element {
     __MICRO_APP_NAME__?: string
@@ -76,6 +77,9 @@ export function initGloalEnv (): void {
 
     const rawDocumentAddEventListener = rawDocument.addEventListener
     const rawDocumentRemoveEventListener = rawDocument.removeEventListener
+
+    // mark current application as base application
+    window.__MICRO_APP_BASE_APPLICATION__ = true
 
     Object.assign(globalEnv, {
       // source/patch

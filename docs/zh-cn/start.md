@@ -28,7 +28,7 @@ export default function AppRoute () {
   return (
     <BrowserRouter>
       <Switch>
-        // 👇👇 非严格匹配，/my-page/* 都将匹配到 MyPage 组件
+        // 👇👇 非严格匹配，/my-page/* 都将匹配到 MyPage 页面
         <Route path='/my-page'>
           <MyPage />
         </Route>
@@ -53,7 +53,7 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    // 👇👇 非严格匹配，/my-page/* 都将匹配到 MyPage 组件
+    // 👇👇 非严格匹配，/my-page/* 都将匹配到 MyPage 页面
     path: '/my-page/*', // vue-router@4.x path的写法为：'/my-page/:page*'
     name: 'my-page',
     component: MyPage,
@@ -64,7 +64,7 @@ export default routes
 ```
 <!-- tabs:end -->
 
-4、在`my-page`页面中使用组件
+4、在`MyPage`页面中嵌入微前端应用
 <!-- tabs:start -->
 
 #### ** React **
@@ -76,7 +76,7 @@ export function MyPage () {
       <h1>子应用</h1>
       // name(必传)：应用名称，每个`name`都对应一个应用，必须以字母开头，且不可以带有 `.`、`#` 等特殊符号
       // url(必传)：页面html的地址
-      // baseroute(可选)：基座应用分配给子应用的路由前缀，就是上面的my-page
+      // baseroute(可选)：基座应用分配给子应用的基础路由，就是上面的my-page
       <micro-app name='app1' url='http://localhost:3000/' baseroute='/my-page'></micro-app>
     </div>
   )
@@ -92,7 +92,7 @@ export function MyPage () {
     <!-- 
       name(必传)：应用名称，每个`name`都对应一个应用，必须以字母开头，且不可以带有 `.`、`#` 等特殊符号
       url(必传)：页面html的地址
-      baseroute(可选)：基座应用分配给子应用的路由前缀，就是上面的my-page
+      baseroute(可选)：基座应用分配给子应用的基础路由，就是上面的my-page
      -->
     <micro-app name='app1' url='http://localhost:3000/' baseroute='/my-page'></micro-app>
   </div>
@@ -102,7 +102,7 @@ export function MyPage () {
 
 ### 子应用
 
-1、添加路由前缀`(如果基座应用是history路由，子应用是hash路由，不需要设置路由前缀，这一步可以省略)`
+1、设置基础路由`(如果基座应用是history路由，子应用是hash路由，不需要设置基础路由，这一步可以省略)`
 
 <!-- tabs:start -->
 
@@ -113,7 +113,7 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom'
 
 export default function AppRoute () {
   return (
-    // 👇👇 添加路由前缀，子应用可以通过window.__MICRO_APP_BASE_ROUTE__获取基座下发的baseroute，如果没有设置baseroute属性，则此值默认为空字符串
+    // 👇👇 设置基础路由，子应用可以通过window.__MICRO_APP_BASE_ROUTE__获取基座下发的baseroute，如果没有设置baseroute属性，则此值默认为空字符串
     <BrowserRouter basename={window.__MICRO_APP_BASE_ROUTE__ || '/'}>
       <Switch>
         ...
@@ -131,7 +131,7 @@ import VueRouter from 'vue-router'
 import routes from './router'
 
 const router = new VueRouter({
-  // 👇👇 添加路由前缀，子应用可以通过window.__MICRO_APP_BASE_ROUTE__获取基座下发的baseroute，如果没有设置baseroute属性，则此值默认为空字符串
+  // 👇👇 设置基础路由，子应用可以通过window.__MICRO_APP_BASE_ROUTE__获取基座下发的baseroute，如果没有设置baseroute属性，则此值默认为空字符串
   base: window.__MICRO_APP_BASE_ROUTE__ || '/',
   routes,
 })

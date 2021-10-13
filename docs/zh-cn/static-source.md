@@ -35,6 +35,8 @@ import './public-path'
 ...
 ```
 
+将子应用的静态资源补全为 http 开头的绝对地址。
+
 更多详细配置请查看webpack文档 [public-path](https://webpack.docschina.org/guides/public-path/#on-the-fly)
 
 ## 资源共享

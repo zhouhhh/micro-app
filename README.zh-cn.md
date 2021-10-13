@@ -62,7 +62,7 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    // 👇 非严格匹配，/my-page/xxx 都将匹配到 MyPage 组件
+    // 👇 非严格匹配，/my-page/xxx 都将匹配到 MyPage 页面
     path: '/my-page/*', 
     name: 'my-page',
     component: MyPage,
@@ -72,7 +72,7 @@ const routes = [
 export default routes
 ```
 
-4、在`my-page`页面中使用组件
+4、在`MyPage`页面中嵌入微前端应用
 ```html
 <!-- my-page.vue -->
 <template>
@@ -89,7 +89,7 @@ export default routes
 ## 子应用
 > 子应用以react框架为例
 
-1、添加路由前缀(如果基座应用是history路由，子应用是hash路由，不需要设置路由前缀，这一步可以省略)
+1、设置基础路由(如果基座应用是history路由，子应用是hash路由，不需要设置基础路由，这一步可以省略)
 
 ```js
 // router.js
@@ -97,7 +97,7 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom'
 
 export default function AppRoute () {
   return (
-    // 👇 添加路由前缀，子应用可以通过window.__MICRO_APP_BASE_ROUTE__获取基座应用下发的baseroute
+    // 👇 设置基础路由，子应用可以通过window.__MICRO_APP_BASE_ROUTE__获取基座应用下发的baseroute
     <BrowserRouter basename={window.__MICRO_APP_BASE_ROUTE__ || '/'}>
       <Switch>
         ...

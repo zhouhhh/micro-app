@@ -137,7 +137,7 @@ window.addEventListener('unmount', function () {
 ```js
 // main.js
 ...
-const app = new Vue({
+let app = new Vue({
   router,
   render: h => h(App),
 }).$mount('#app')
@@ -146,6 +146,23 @@ const app = new Vue({
 window.addEventListener('unmount', function () {
   // 卸载应用
   app.$destroy()
+  app = null
+})
+```
+
+#### ** Vue3 **
+```js
+// main.js
+...
+let app = createApp(App)
+
+app.use(router).mount('#app')
+
+// 监听卸载
+window.addEventListener('unmount', function () {
+  // 卸载应用
+  app.unmount()
+  app = null
 })
 ```
 <!-- tabs:end -->
