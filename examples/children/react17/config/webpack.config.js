@@ -225,7 +225,7 @@ module.exports = function (webpackEnv) {
       // jsonpFunction: `webpackJsonp${appPackageJson.name}`,
       // this defaults to 'window', but by setting it to 'this' then
       // module chunks which are built will work in web workers as well.
-      // globalObject: 'this', // micro-app 注释
+      // globalObject: 'window', // micro-app 注释
     },
     optimization: {
       minimize: isEnvProduction,

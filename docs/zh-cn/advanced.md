@@ -147,8 +147,7 @@ microApp.start({
 ## 3、内存优化
 虽然我们在卸载子应用时对变量和事件进行了清除，但仍有一些变量无法回收。如果子应用渲染和卸载非常频繁，建议通过下面方式进行内存优化。
 
-### 将子应用修改为umd格式
-#### 步骤1：在子应用入口文件导出相应的生命周期钩子
+#### 在window上注册mount和unmount方法
 
 <!-- tabs:start -->
 
@@ -156,142 +155,161 @@ microApp.start({
 ```js
 // index.js
 ...
-// 将渲染和卸载的操作移动到mount和unmount函数中
-// ReactDOM.render(<App />, document.getElementById("root"))
-
-// window.addEventListener('unmount', function () {
-//   ReactDOM.unmountComponentAtNode(document.getElementById('root'))
-// })
-
-// 应用每次渲染时都会执行 mount 方法，在此处可以执行初始化相关操作（必传)
+// 👇 将渲染操作放入 mount 函数
 export function mount () {
   ReactDOM.render(<App />, document.getElementById("root"))
 }
 
-// 应用每次卸载时都会执行 unmount 方法，在此处可以执行卸载相关操作（必传)
+// 👇 将卸载操作放入 unmount 函数
 export function unmount () {
-  // 卸载应用
   ReactDOM.unmountComponentAtNode(document.getElementById("root"));
 }
 
-// 非微前端环境直接运行
-if (!window.__MICRO_APP_ENVIRONMENT__) {
-  mount()
+// 微前端环境下，注册mount和unmount方法
+if (window.__MICRO_APP_ENVIRONMENT__) {
+  window[`micro-app-${window.__MICRO_APP_NAME__}`] = { mount, unmount }
+} else {
+  // 非微前端环境直接渲染
+  mount();
 }
 ```
 
-#### ** Vue **
+#### ** Vue2 **
 ```js
 // main.js
 ...
-// 将渲染和卸载的操作移动到mount和unmount函数中
-// const app = new Vue({
-//   router,
-//   render: h => h(App),
-// }).$mount('#app')
-
-// window.addEventListener('unmount', function () {
-//   app.$destroy()
-// })
-
-let app
-// 应用每次渲染时都会执行 mount 方法，在此处可以执行初始化相关操作（必传)
-export function mount () {
-  app = new Vue({
-    router,
-    render: h => h(App),
-  }).$mount('#app')
+let app = null
+// 👇 将渲染操作放入 mount 函数
+function mount () {
+  app = new Vue(...).$mount('#app')
 }
 
-// 应用每次卸载时都会执行 unmount 方法，在此处可以执行卸载相关操作（必传)
-export function unmount () {
-  // 卸载应用
+// 👇 将卸载操作放入 unmount 函数
+function unmount () {
   app.$destroy()
+  app = null
 }
 
-// 非微前端环境直接运行
-if (!window.__MICRO_APP_ENVIRONMENT__) {
+// 微前端环境下，注册mount和unmount方法
+if (window.__MICRO_APP_ENVIRONMENT__) {
+  window[`micro-app-${window.__MICRO_APP_NAME__}`] = { mount, unmount }
+} else {
+  // 非微前端环境直接渲染
+  mount()
+}
+```
+
+#### ** Vue3 **
+```js
+// main.js
+...
+let app = null
+// 👇 将渲染操作放入 mount 函数
+function mount () {
+  app = createApp(App)
+  app.use(router)
+  app.mount('#app')
+}
+
+// 👇 将卸载操作放入 unmount 函数
+function unmount () {
+  app.unmount()
+  app = null
+}
+
+// 微前端环境下，注册mount和unmount方法
+if (window.__MICRO_APP_ENVIRONMENT__) {
+  window[`micro-app-${window.__MICRO_APP_NAME__}`] = { mount, unmount }
+} else {
+  // 非微前端环境直接渲染
+  mount()
+}
+```
+
+#### ** Angular **
+以`angular11`为例。
+
+```js
+// main.ts
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { AppModule } from './app/app.module';
+
+declare global {
+  interface Window {
+    microApp: any
+    __MICRO_APP_NAME__: string
+    __MICRO_APP_ENVIRONMENT__: string
+  }
+}
+
+let app = null;
+// 👇 将渲染操作放入 mount 函数
+function mount () {
+  platformBrowserDynamic().bootstrapModule(AppModule)
+  .then((ngModuleRef: any) => {
+    app = ngModuleRef
+  })
+  .catch(err => console.error(err))
+}
+
+// 👇 将卸载操作放入 unmount 函数
+function unmount () {
+  app?.destroy();
+  app = null;
+}
+
+// 微前端环境下，注册mount和unmount方法
+if (window.__MICRO_APP_ENVIRONMENT__) {
+  window[`micro-app-${window.__MICRO_APP_NAME__}`] = { mount, unmount }
+} else {
+  // 非微前端环境直接渲染
+  mount();
+}
+```
+
+
+#### ** Vite **
+因为vite作为子应用时关闭了沙箱，导致`__MICRO_APP_ENVIRONMENT__`和`__MICRO_APP_NAME__`两个变量失效，所以需要自行判断是否微前端环境以及手动填写应用name值。
+
+```js
+// main.js
+...
+let app = null
+// 👇 将渲染操作放入 mount 函数
+function mount () {
+  app = createApp(App)
+  app.use(router)
+  app.mount('#app')
+}
+
+// 👇 将卸载操作放入 unmount 函数
+function unmount () {
+  app.unmount()
+  app = null
+}
+
+// 微前端环境下，注册mount和unmount方法
+if (我在微前端环境) {
+  // 应用的name值，即 <micro-app> 元素的name属性值
+  window[`micro-app-${应用的name值}`] = { mount, unmount }
+} else {
+  // 非微前端环境直接渲染
   mount()
 }
 ```
 <!-- tabs:end -->
 
-#### 步骤2：修改子应用的webpack配置
 
-<!-- tabs:start -->
-
-#### ** webpack4 **
-```js
-// webpack.config.js
-module.exports = {
-  ...
-  output: {
-    library: 'micro-app-子应用的name', // 子应用的name就是<micro-app name='子应用的name'></micro-app>中name属性的值
-    libraryTarget: 'umd',
-    jsonpFunction: `webpackJsonp_${packageName}`,
-  },
-}
-```
-
-#### ** webpack5 **
-```js
-// webpack.config.js
-module.exports = {
-  ...
-  output: {
-    library: {
-      name: `micro-app-子应用的name`, // 子应用的name就是<micro-app name='子应用的name'></micro-app>中name属性的值
-      type: 'umd',
-    },
-  },
-  devServer: {
-    ...
-    // injectClient: false, 当`webpack-dev-server`版本为3.x，需设置injectClient
-  }
-}
-```
-<!-- tabs:end -->
-
-通常`library`的值固定为`micro-app-子应用的name`，但也可以自定义。
+通常注册的形式为`window['micro-app-${window.__MICRO_APP_NAME__}'] = {...}`，但也支持自定义名称，`window['自定义的名称'] = {...}`
 
 自定义的值需要在`<micro-app>`标签中通过`library`属性指定。
 
-<!-- tabs:start -->
-
-#### ** webpack4 **
-```js
-// webpack.config.js
-module.exports = {
-  ...
-  output: {
-    library: '自定义的library名称', 👈
-    libraryTarget: 'umd',
-    jsonpFunction: `webpackJsonp_${packageName}`,
-  },
-}
-```
-
-#### ** webpack5 **
-```js
-// webpack.config.js
-module.exports = {
-  ...
-  output: {
-    library: {
-      name: `自定义的library名称`, 👈
-      type: 'umd',
-    },
-  },
-}
-```
-<!-- tabs:end -->
-
-
 ```html
-<!-- 同时基座应用中通过library属性设置自定义的名称 -->
 <micro-app
   name='xxx'
   url='xxx'
-  library='自定义的library名称' 👈
+  library='自定义的名称' 👈
 ></micro-app>
 ```
+
+在沙箱关闭时`__MICRO_APP_NAME__`变量失效(如：vite子应用)，此时可以使用自定义名称的方式进行注册，也可以通过 `window['micro-app-${应用的name值}']`的方式注册。

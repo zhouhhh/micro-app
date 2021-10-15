@@ -36,7 +36,6 @@ function vite () {
         // destory
         inline
         disableSandbox
-
       >
       </micro-app>
     </div>

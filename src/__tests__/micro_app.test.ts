@@ -33,7 +33,7 @@ test('log error message if customElements is not supported in this environment',
   })
 
   microApp.start()
-  expect(console.error).toBeCalledWith('[micro-app] customElements is not supported in this environment')
+  expect(console.error).toBeCalledWith('[micro-app] micro-app is not supported in this environment')
 
   window.customElements = rawcustomElements
 })

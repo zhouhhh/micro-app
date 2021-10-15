@@ -171,7 +171,6 @@ export default class App extends React.Component {
               name='modal-app1'
               url={this.state.url}
               baseRoute='/micro-app/demo/react16'
-              library='micro-app-react16'
               // disableSandbox
               // macro
             />

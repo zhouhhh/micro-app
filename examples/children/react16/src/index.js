@@ -58,7 +58,7 @@ window.microApp?.addGlobalDataListener(handleGlobalData);
 // })
 
 
-export function mount () {
+function mount () {
   ReactDOM.render(
     <React.StrictMode>
       <Router />
@@ -68,15 +68,18 @@ export function mount () {
   console.timeEnd("react16");
 }
 
-export function unmount () {
+function unmount () {
   console.log("微应用react16卸载了 -- 来自umd-unmount");
   // 卸载应用
   ReactDOM.unmountComponentAtNode(document.getElementById("root"));
 }
 
-// 非微前端环境直接运行
-if (!window.__MICRO_APP_ENVIRONMENT__) {
-  mount()
+// 微前端环境下，注册mount和unmount方法
+if (window.__MICRO_APP_ENVIRONMENT__) {
+  window[`micro-app-${window.__MICRO_APP_NAME__}`] = { mount, unmount }
+} else {
+  // 非微前端环境直接渲染
+  mount();
 }
 
 // document.addEventListener('click', function () {

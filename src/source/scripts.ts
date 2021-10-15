@@ -199,6 +199,39 @@ export function execScripts (
 }
 
 /**
+ * run code
+ * @param url script address
+ * @param code js code
+ * @param app app
+ * @param module type='module' of script
+ * @param isDynamic dynamically created script
+ * @param callback callback from execScripts for first exec
+ */
+export function runScript (
+  url: string,
+  code: string,
+  app: AppInterface,
+  module: boolean,
+  isDynamic: boolean,
+  callback?: Func,
+): any {
+  try {
+    code = bindScope(url, code, app)
+    if (app.inline) {
+      const scriptElement = pureCreateElement('script')
+      setInlinScriptContent(url, code, module, scriptElement, callback)
+      if (isDynamic) return scriptElement
+      app.container?.querySelector('micro-app-body')!.appendChild(scriptElement)
+    } else {
+      Function(code)()
+      if (isDynamic) return document.createComment('dynamic script extract by micro-app')
+    }
+  } catch (e) {
+    console.error('[micro-app from runScript]', e)
+  }
+}
+
+/**
  * Get dynamically created remote script
  * @param url script address
  * @param info info
@@ -232,17 +265,16 @@ export function runDynamicScript (
     replaceElement = document.createComment(`dynamic script with src='${url}' extract by micro-app`)
   }
 
-  fetchSource(url, app.name).then((data: string) => {
-    info.code = data
+  fetchSource(url, app.name).then((code: string) => {
+    info.code = code
     app.source.scripts.set(url, info)
-    if (info.isGlobal) globalScripts.set(url, data)
+    if (info.isGlobal) globalScripts.set(url, code)
     try {
-      data = bindScope(url, data, app)
+      code = bindScope(url, code, app)
       if (app.inline) {
-        if (info.module) (replaceElement as HTMLScriptElement).setAttribute('type', 'module')
-        replaceElement.textContent = data
+        setInlinScriptContent(url, code, info.module, replaceElement as HTMLScriptElement)
       } else {
-        Function(data)()
+        Function(code)()
       }
     } catch (e) {
       console.error('[micro-app from runDynamicScript]', e, url)
@@ -257,44 +289,29 @@ export function runDynamicScript (
 }
 
 /**
- * run code
+ * common handle for inline script
  * @param url script address
  * @param code js code
- * @param app app
  * @param module type='module' of script
- * @param isDynamic dynamically created script
+ * @param scriptElement target script element
  * @param callback callback from execScripts for first exec
  */
-export function runScript (
+function setInlinScriptContent (
   url: string,
   code: string,
-  app: AppInterface,
   module: boolean,
-  isDynamic: boolean,
+  scriptElement: HTMLScriptElement,
   callback?: Func,
-): any {
-  try {
-    code = bindScope(url, code, app)
-    if (app.inline) {
-      const script = pureCreateElement('script')
-      if (module) {
-        // module script is async, transform it to a blob for subsequent operations
-        const blob = new Blob([code], { type: 'text/javascript;charset=utf-8' })
-        script.src = URL.createObjectURL(blob)
-        script.setAttribute('type', 'module')
-        script.setAttribute('originSrc', url)
-        callback && (script.onload = callback)
-      } else {
-        script.textContent = code
-      }
-      if (isDynamic) return script
-      app.container?.querySelector('micro-app-body')!.appendChild(script)
-    } else {
-      Function(code)()
-      if (isDynamic) return document.createComment('dynamic script extract by micro-app')
-    }
-  } catch (e) {
-    console.error('[micro-app from runScript]', e)
+): void {
+  if (module) {
+    // module script is async, transform it to a blob for subsequent operations
+    const blob = new Blob([code], { type: 'text/javascript;charset=utf-8' })
+    scriptElement.src = URL.createObjectURL(blob)
+    scriptElement.setAttribute('type', 'module')
+    scriptElement.setAttribute('originSrc', url)
+    callback && (scriptElement.onload = callback)
+  } else {
+    scriptElement.textContent = code
   }
 }
 

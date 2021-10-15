@@ -18,7 +18,7 @@ const router = new VueRouter({
   routes,
 })
 
-let app
+let app = null
 
 // app = new Vue({
 //   router,
@@ -32,7 +32,7 @@ let app
 //   app.$destroy()
 // })
 
-export function mount () {
+function mount () {
   console.log("微应用vue2渲染了 -- 来自umd-mount");
   app = new Vue({
     router,
@@ -41,13 +41,17 @@ export function mount () {
   console.timeEnd('vue2')
 }
 
-export function unmount () {
+function unmount () {
   console.log("微应用vue2卸载了 -- 来自umd-unmount");
   // 卸载应用
   app.$destroy()
+  app = null
 }
 
-// 非微前端环境直接运行
-if (!window.__MICRO_APP_ENVIRONMENT__) {
+// 微前端环境下，注册mount和unmount方法
+if (window.__MICRO_APP_ENVIRONMENT__) {
+  window[`micro-app-${window.__MICRO_APP_NAME__}`] = { mount, unmount }
+} else {
+  // 非微前端环境直接渲染
   mount()
 }
