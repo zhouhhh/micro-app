@@ -1,5 +1,5 @@
 /* eslint-disable promise/param-names */
-import { commonStartEffect, releaseAllEffect, ports } from '../common'
+import { commonStartEffect, releaseAllEffect, ports } from '../common/initial'
 import microApp from '../..'
 
 describe('lifecycles_event', () => {

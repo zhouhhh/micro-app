@@ -9,7 +9,7 @@ import {
 } from '../libs/utils'
 import scopedCSS from './scoped_css'
 import { extractLinkFromHtml, foramtDynamicLink } from './links'
-import { extractScriptElement, runScript, runDynamicScript } from './scripts'
+import { extractScriptElement, runScript, runDynamicRemoteScript } from './scripts'
 import microApp from '../micro_app'
 import globalEnv from '../libs/global_env'
 
@@ -75,7 +75,7 @@ function handleNewNode (parent: Node, child: Node, app: AppInterface): Node {
         dynamicElementInMicroAppMap.set(child, replaceElement)
         return replaceElement
       } else { // remote script
-        const replaceElement = runDynamicScript(url, info, app, child)
+        const replaceElement = runDynamicRemoteScript(url, info, app, child)
         dynamicElementInMicroAppMap.set(child, replaceElement)
         return replaceElement
       }

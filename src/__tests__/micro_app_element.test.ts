@@ -1,5 +1,5 @@
 /* eslint-disable promise/param-names */
-import { commonStartEffect, releaseAllEffect, ports } from './common'
+import { commonStartEffect, releaseAllEffect, ports } from './common/initial'
 import { appInstanceMap } from '../create_app'
 import microApp from '..'
 import { defer } from '../libs/utils'
@@ -242,6 +242,21 @@ describe('micro_app_element', () => {
     appCon.appendChild(microappElement14)
     await new Promise((reslove) => {
       microappElement14.addEventListener('mounted', () => {
+        reslove(true)
+      }, false)
+    })
+  })
+
+  // 先插入micro-app元素，后设置name、url属性
+  test('set name & url after connectedCallback', async () => {
+    const microappElement15 = document.createElement('micro-app')
+    appCon.appendChild(microappElement15)
+
+    microappElement15.setAttribute('name', 'test-app15')
+    microappElement15.setAttribute('url', `http://127.0.0.1:${ports.micro_app_element}/common/`)
+
+    await new Promise((reslove) => {
+      microappElement15.addEventListener('mounted', () => {
         reslove(true)
       }, false)
     })

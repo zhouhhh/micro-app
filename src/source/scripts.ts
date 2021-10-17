@@ -89,7 +89,7 @@ export function extractScriptElement (
 
   if (isDynamic) {
     return { replaceComment }
-  } else if (replaceComment) {
+  } else {
     return parent.replaceChild(replaceComment, script)
   }
 }
@@ -238,7 +238,7 @@ export function runScript (
  * @param app app
  * @param originScript origin script element
  */
-export function runDynamicScript (
+export function runDynamicRemoteScript (
   url: string,
   info: sourceScriptInfo,
   app: AppInterface,

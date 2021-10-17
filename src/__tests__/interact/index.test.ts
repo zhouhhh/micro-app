@@ -7,7 +7,7 @@ import {
   rebuildDataCenterSnapshot,
 } from '../../interact'
 import { defer } from '../../libs/utils'
-import { rewriteConsole, releaseConsole } from '../common'
+import { rewriteConsole, releaseConsole } from '../common/initial'
 import CreateApp, { appInstanceMap } from '../../create_app'
 
 describe('data center', () => {

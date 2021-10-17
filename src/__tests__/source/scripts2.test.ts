@@ -1,11 +1,13 @@
 /* eslint-disable promise/param-names */
 import { rawDocumentCreateElement, rawSetAttribute } from './support_module'
-import { commonStartEffect, releaseAllEffect, ports, setAppName } from '../common'
+import { commonStartEffect, releaseAllEffect, ports, setAppName } from '../common/initial'
 import microApp from '../..'
 
 describe('source scripts2', () => {
   let appCon: Element
   beforeAll(() => {
+    // URL.createObjectURL is undefined in jest env
+    global.URL.createObjectURL = jest.fn()
     commonStartEffect(ports.source_scripts2)
     microApp.start({
       plugins: {}
@@ -53,6 +55,7 @@ describe('source scripts2', () => {
     microappElement2.setAttribute('name', 'test-app2')
     microappElement2.setAttribute('url', `http://127.0.0.1:${ports.source_scripts2}/dynamic/`)
     microappElement2.setAttribute('inline', 'true')
+    microappElement2.setAttribute('disablesandbox', 'true')
 
     appCon.appendChild(microappElement2)
     await new Promise((reslove) => {

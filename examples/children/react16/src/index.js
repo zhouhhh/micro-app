@@ -97,3 +97,8 @@ if (window.__MICRO_APP_ENVIRONMENT__) {
 // setInterval(() => {
 //   console.log(`子应用${window.__MICRO_APP_NAME__}的setInterval`)
 // }, 1000)
+
+// const dynamicScript1 = document.createElement('script')
+// dynamicScript1.setAttribute('type', 'module')
+// dynamicScript1.textContent = 'console.warn("inline module")'
+// document.head.appendChild(dynamicScript1)

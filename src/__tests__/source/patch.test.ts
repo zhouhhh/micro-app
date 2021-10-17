@@ -1,5 +1,5 @@
 /* eslint-disable promise/param-names, no-extend-native */
-import { commonStartEffect, releaseAllEffect, ports, setAppName, clearAppName } from '../common'
+import { commonStartEffect, releaseAllEffect, ports, setAppName, clearAppName } from '../common/initial'
 import { appInstanceMap } from '../../create_app'
 import microApp from '../..'
 

@@ -1,25 +1,19 @@
-/* eslint-disable no-new-func */
+/* eslint-disable no-new-func, indent */
 import type { Func } from '@micro-app/types'
 
 export const version = '__VERSION__'
 
 export const isBrowser = typeof window !== 'undefined'
 
-export const globalThis: Window = (function () {
-  let gt
-  if (typeof global !== 'undefined') {
-    gt = global
-  } else if (typeof self !== 'undefined') {
-    gt = self
-  } else {
-    try {
-      gt = Function('return this')()
-    } catch (e) {
-      throw new Error('global object is unavailable in this environment')
-    }
-  }
-  return gt
-})()
+export const globalThis = (typeof global !== 'undefined')
+  ? global
+  : (
+    (typeof window !== 'undefined')
+      ? window
+      : (
+        (typeof self !== 'undefined') ? self : Function('return this')()
+      )
+  )
 
 /**
  * format error log

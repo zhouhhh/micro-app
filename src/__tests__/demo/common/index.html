@@ -24,6 +24,11 @@
   <script>
     console.warn('common-内联script')
   </script>
+  <!-- 忽略，不做任何处理，但因为模版script不会被浏览器解析，也导致它无法执行 -->
+  <script ignore>console.log('ignore')</script>
+  <script type='application/json'>
+    window.abc = {}
+  </script>
   <title>common</title>
 </head>
 <body>

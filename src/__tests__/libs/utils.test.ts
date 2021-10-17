@@ -1,6 +1,6 @@
 /* eslint-disable promise/param-names */
 import * as Utils from '../../libs/utils'
-import { rewriteConsole, releaseConsole } from '../common'
+import { rewriteConsole, releaseConsole } from '../common/initial'
 
 beforeAll(() => {
   rewriteConsole()
@@ -134,7 +134,7 @@ test('polyfill for requestIdleCallback', async () => {
 
   // polyfill
   const mockFn2 = jest.fn()
-  Utils.requestIdleCallback((param) => {
+  Utils.requestIdleCallback((param: any) => {
     mockFn2()
     expect(param.didTimeout).toBeFalsy()
     expect(param.timeRemaining()).toBeLessThan(51)
