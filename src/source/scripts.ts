@@ -1,3 +1,4 @@
+/* eslint-disable node/no-callback-literal */
 import type {
   AppInterface,
   sourceScriptInfo,
@@ -188,13 +189,13 @@ export function execScripts (
         const [url, info] = deferScriptInfo[index]
         runScript(url, info.code = info.code || code, app, info.module, false, callback)
       })
-      callback()
+      callback(true)
     }).catch((err) => {
       logError(err)
-      callback()
+      callback(true)
     })
   } else {
-    callback()
+    callback(true)
   }
 }
 

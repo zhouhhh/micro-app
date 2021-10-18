@@ -135,7 +135,7 @@ export default class CreateApp implements AppInterface {
 
     this.sandBox?.start(this.baseroute)
     if (!this.umdHookMount) {
-      execScripts(this.source.scripts, this, () => {
+      execScripts(this.source.scripts, this, (isFinished: boolean) => {
         if (this.umdHookMount === null) {
           const { mount, unmount } = this.getUmdLibraryHooks()
           // if mount & unmount is function, the sub app is umd mode
@@ -151,12 +151,21 @@ export default class CreateApp implements AppInterface {
             this.umdHookMount()
           }
         }
+        if (isFinished === true) {
+          this.dispatchMountedEvent()
+        }
       })
     } else {
       this.sandBox?.rebuildUmdSnapshot()
       this.umdHookMount()
+      this.dispatchMountedEvent()
     }
+  }
 
+  /**
+   * dispatch mounted event when app run finished
+   */
+  dispatchMountedEvent (): void {
     if (appStatus.UNMOUNT !== this.status) {
       this.status = appStatus.MOUNTED
       defer(() => {

@@ -19,16 +19,17 @@ app: {
 ```js
 import microApp from '@micro-zoe/micro-app'
 
+// 方式一
 microApp.preFetch([
   { name: 'my-app', url: 'xxx' }
 ])
 
-// 或者
+// 方式二
 microApp.preFetch(() => [
   { name: 'my-app', url: 'xxx' }
 ])
 
-// 或者
+// 方式三
 microApp.start({
   preFetchApps: [
     { name: 'my-app', url: 'xxx' }

@@ -68,6 +68,7 @@ declare module '@micro-app/types' {
       inline?: boolean,
       baseroute?: string,
     ): void // mount app
+    dispatchMountedEvent(): void // dispatch mounted event when app run finished
     unmount(destory: boolean): void // unmount app
     onerror(e: Error): void // app rendering error
     getAppStatus(): string // get app status

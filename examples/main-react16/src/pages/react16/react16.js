@@ -25,26 +25,26 @@ export default class App extends React.Component {
   }
 
   handleCreated = () => {
-    console.log('生命周期：created')
+    console.log('生命周期：created -- react16')
   }
 
   beforemount = (e) => {
-    console.log('生命周期：beforemount', e)
+    console.log('生命周期：beforemount -- react16', e)
   }
 
   mounted = () => {
-    console.log('生命周期：mounted', document.querySelector('micro-app'))
+    console.log('生命周期：mounted -- react16', document.querySelector('micro-app'))
     this.setState({
       showLoading: false
     })
   }
 
   unmount = () => {
-    console.log('生命周期：unmount', document.querySelector('#template-style'))
+    console.log('生命周期：unmount -- react16', document.querySelector('#template-style'))
   }
 
   error = (e) => {
-    console.log('生命周期：error', e)
+    console.log('生命周期：error -- react16', e)
   }
 
   changeData = () => {
@@ -147,8 +147,8 @@ export default class App extends React.Component {
                 onUnmount={this.unmount}
                 onError={this.error}
                 onDataChange={this.handleDataChange}
-                // destory
                 baseRoute='/micro-app/demo/react16'
+                // destory
                 // inline
                 // disableSandbox
                 // disableScopecss
