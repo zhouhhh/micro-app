@@ -47,6 +47,7 @@
     <router-link to="/">
       <el-button type="primary" plain>返回首页</el-button>
     </router-link>
+    <div class="test-btn">test</div>
   </div>
 </template>
 
@@ -80,5 +81,18 @@
     margin: 0 auto;
     background: #fff;
     padding: 40px;
+  }
+
+  .test-btn {
+    height: 50px;
+    width: 100px;
+    background-color: red;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-size: 20px;
+    font-weight: bolder;
   }
 </style>

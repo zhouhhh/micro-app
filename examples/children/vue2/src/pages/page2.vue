@@ -58,6 +58,7 @@
         <el-button type="primary" @click="centerDialogVisible = false">确 定</el-button>
       </span>
     </el-dialog>
+    <div class="test-btn">test</div>
   </div>
 </template>
 
@@ -125,5 +126,18 @@ export default {
 <style>
 .page2 {
   width: 500px;
+}
+
+.test-btn {
+  height: 50px;
+  width: 100px;
+  background-color: red;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  font-size: 20px;
+  font-weight: bolder;
 }
 </style>

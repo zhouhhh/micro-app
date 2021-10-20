@@ -22,10 +22,12 @@ import App from './App.vue'
 
 let app = null
 let router = null
+let history = null
 // 将渲染操作放入 mount 函数
 function mount () {
+  history = createWebHistory(window.__MICRO_APP_BASE_ROUTE__ || '/micro-app/vue3/')
   router = createRouter({
-    history: createWebHistory(window.__MICRO_APP_BASE_ROUTE__ || '/micro-app/vue3/'),
+    history,
     routes,
   })
 
@@ -40,8 +42,10 @@ function mount () {
 // 将卸载操作放入 unmount 函数
 function unmount () {
   app.unmount()
+  history.destroy()
   app = null
   router = null
+  history = null
   console.log('微应用child-vue3卸载了')
 }
 
