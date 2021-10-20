@@ -35,6 +35,8 @@ export default class CreateApp implements AppInterface {
   private loadSourceLevel: -1|0|1|2 = 0
   private umdHookMount: Func | null = null
   private umdHookunMount: Func | null = null
+  private libraryName: string | null = null
+  private umdMode = false
   isPrefetch = false
   name: string
   url: string
@@ -134,7 +136,7 @@ export default class CreateApp implements AppInterface {
     cloneNode(this.source.html!, this.container! as Element)
 
     this.sandBox?.start(this.baseroute)
-    if (!this.umdHookMount) {
+    if (!this.umdMode) {
       execScripts(this.source.scripts, this, (isFinished: boolean) => {
         if (this.umdHookMount === null) {
           const { mount, unmount } = this.getUmdLibraryHooks()
@@ -142,6 +144,7 @@ export default class CreateApp implements AppInterface {
           if (isFunction(mount) && isFunction(unmount)) {
             this.umdHookMount = mount as Func
             this.umdHookunMount = unmount as Func
+            this.umdMode = true
             this.sandBox?.recordUmdSnapshot()
             /**
              * TODO: Some UI frameworks insert and record container elements to micro-app-body, such as modal and notification. The DOM remounted is a cloned element, so the cached elements of UI frameworks are invalid, this may cause bug when remount app
@@ -157,7 +160,7 @@ export default class CreateApp implements AppInterface {
       })
     } else {
       this.sandBox?.rebuildUmdSnapshot()
-      this.umdHookMount()
+      this.umdHookMount!()
       this.dispatchMountedEvent()
     }
   }
@@ -182,7 +185,7 @@ export default class CreateApp implements AppInterface {
 
   /**
    * unmount app
-   * @param destory completely destroyed, delete cache resources
+   * @param destory completely destroy, delete cache resources
    */
   unmount (destory: boolean): void {
     if (this.status === appStatus.LOAD_SOURCE_ERROR) {
@@ -200,8 +203,12 @@ export default class CreateApp implements AppInterface {
     dispatchUnmountToMicroApp(this.name)
     this.sandBox?.stop()
     this.container = null
+    // actions for completely destroy
     if (destory) {
       appInstanceMap.delete(this.name)
+      if (!this.useSandbox && this.umdMode) {
+        delete window[this.libraryName as any]
+      }
     }
   }
 
@@ -224,12 +231,12 @@ export default class CreateApp implements AppInterface {
   }
 
   // get umd library, if it not exist, return empty object
-  private getUmdLibraryHooks (): any {
+  private getUmdLibraryHooks (): Record<string, unknown> {
     // after execScripts, the app maybe unmounted
     if (appStatus.UNMOUNT !== this.status) {
       const global = (this.sandBox?.proxyWindow ?? globalEnv.rawWindow) as any
-      const libraryName = (this.container instanceof ShadowRoot ? this.container.host : this.container)!.getAttribute('library') || `micro-app-${this.name}`
-      return typeof global[libraryName] === 'object' ? global[libraryName] : {}
+      this.libraryName = (this.container instanceof ShadowRoot ? this.container.host : this.container)!.getAttribute('library') || `micro-app-${this.name}`
+      return typeof global[this.libraryName] === 'object' ? global[this.libraryName] : {}
     }
 
     return {}
