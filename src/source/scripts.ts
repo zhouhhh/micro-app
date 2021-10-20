@@ -217,8 +217,8 @@ export function runScript (
   callback?: Func,
 ): any {
   try {
-    code = bindScope(url, code, app)
-    if (app.inline) {
+    code = bindScope(url, code, app, module)
+    if (app.inline || module) {
       const scriptElement = pureCreateElement('script')
       setInlinScriptContent(url, code, module, scriptElement, callback)
       if (isDynamic) return scriptElement
@@ -260,7 +260,7 @@ export function runDynamicRemoteScript (
   }
 
   let replaceElement: Comment | HTMLScriptElement
-  if (app.inline) {
+  if (app.inline || info.module) {
     replaceElement = pureCreateElement('script')
   } else {
     replaceElement = document.createComment(`dynamic script with src='${url}' extract by micro-app`)
@@ -271,8 +271,8 @@ export function runDynamicRemoteScript (
     app.source.scripts.set(url, info)
     if (info.isGlobal) globalScripts.set(url, code)
     try {
-      code = bindScope(url, code, app)
-      if (app.inline) {
+      code = bindScope(url, code, app, info.module)
+      if (app.inline || info.module) {
         setInlinScriptContent(url, code, info.module, replaceElement as HTMLScriptElement)
       } else {
         Function(code)()
@@ -321,16 +321,18 @@ function setInlinScriptContent (
  * @param url script address
  * @param code code
  * @param app app
+ * @param module type='module' of script
  */
 function bindScope (
   url: string,
   code: string,
   app: AppInterface,
+  module: boolean,
 ): string {
   if (typeof microApp.plugins === 'object') {
     code = usePlugins(url, code, app.name, microApp.plugins)
   }
-  if (app.sandBox) {
+  if (app.sandBox && !module) {
     globalEnv.rawWindow.__MICRO_APP_PROXY_WINDOW__ = app.sandBox.proxyWindow
     return `;(function(window, self){with(window){;${code}\n}}).call(window.__MICRO_APP_PROXY_WINDOW__, window.__MICRO_APP_PROXY_WINDOW__, window.__MICRO_APP_PROXY_WINDOW__);`
   }

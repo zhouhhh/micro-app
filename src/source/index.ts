@@ -53,10 +53,8 @@ function flatChildren (
       extractScriptElement(dom, parent, app)
     } else if (dom instanceof HTMLMetaElement || dom instanceof HTMLTitleElement) {
       parent.removeChild(dom)
-    } else {
-      if (/^(img|iframe)$/i.test(dom.tagName) && dom.hasAttribute('src')) {
-        dom.setAttribute('src', CompletionPath(dom.getAttribute('src')!, app.url))
-      }
+    } else if (dom instanceof HTMLImageElement && dom.hasAttribute('src')) {
+      dom.setAttribute('src', CompletionPath(dom.getAttribute('src')!, app.url))
     }
   }
 }

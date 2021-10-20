@@ -219,7 +219,7 @@ export function patchElementPrototypeMethods (): void {
       }
     } else if (
       (
-        (key === 'src' && /^(img|iframe|script)$/i.test(this.tagName)) ||
+        (key === 'src' && /^(img|script)$/i.test(this.tagName)) ||
         (key === 'href' && /^link$/i.test(this.tagName))
       ) &&
       this.__MICRO_APP_NAME__ &&
