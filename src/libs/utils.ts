@@ -18,24 +18,36 @@ export const globalThis = (typeof global !== 'undefined')
 /**
  * format error log
  * @param msg message
+ * @param appName app name, default is null
  */
-export function logError (msg: unknown, ...rest: any[]): void {
+export function logError (
+  msg: unknown,
+  appName: string | null = null,
+  ...rest: any[]
+): void {
+  const appNameTip = appName && typeof appName === 'string' ? ` app ${appName}:` : ''
   if (typeof msg === 'string') {
-    console.error(`[micro-app] ${msg}`, ...rest)
+    console.error(`[micro-app]${appNameTip} ${msg}`, ...rest)
   } else {
-    console.error('[micro-app]', msg, ...rest)
+    console.error(`[micro-app]${appNameTip}`, msg, ...rest)
   }
 }
 
 /**
  * format warn log
  * @param msg message
+ * @param appName app name, default is null
  */
-export function logWarn (msg: unknown, ...rest: any[]): void {
+export function logWarn (
+  msg: unknown,
+  appName: string | null = null,
+  ...rest: any[]
+): void {
+  const appNameTip = appName && typeof appName === 'string' ? ` app ${appName}:` : ''
   if (typeof msg === 'string') {
-    console.warn(`[micro-app] ${msg}`, ...rest)
+    console.warn(`[micro-app]${appNameTip} ${msg}`, ...rest)
   } else {
-    console.warn('[micro-app]', msg, ...rest)
+    console.warn(`[micro-app]${appNameTip}`, msg, ...rest)
   }
 }
 
@@ -60,7 +72,7 @@ export function addProtocol (url: string): string {
  * Format URL address
  * @param url address
  */
-export function formatURL (url: string | null): string {
+export function formatURL (url: string | null, appName: string): string {
   if (typeof url !== 'string' || !url) return ''
 
   try {
@@ -72,7 +84,7 @@ export function formatURL (url: string | null): string {
     const fullPath = `${origin}${pathname}/`.replace(/\/\/$/, '/')
     return /^https?:\/\//.test(fullPath) ? `${fullPath}${search}` : ''
   } catch (e) {
-    logError(e)
+    logError(e, appName)
     return ''
   }
 }

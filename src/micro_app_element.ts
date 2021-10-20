@@ -7,9 +7,12 @@ import {
   releasePatches,
   rejectMicroAppStyle,
 } from './source/patch'
+import {
+  listenUmountOfNestedApp,
+  replaseUnmountOfNestedApp,
+} from './libs/additional'
 import microApp from './micro_app'
 import dispatchLifecyclesEvent from './interact/lifecycles_event'
-import { listenUmountOfNestedApp, replaseUnmountOfNestedApp } from './libs/additional'
 
 // record all micro-app elements
 export const elementInstanceMap = new Map<Element, boolean>()
@@ -78,9 +81,9 @@ export function defineElement (tagName: string): void {
         this[attr === ObservedAttrName.NAME ? 'appName' : 'appUrl'] !== newVal
       ) {
         if (attr === ObservedAttrName.URL && !this.appUrl) {
-          newVal = formatURL(newVal)
+          newVal = formatURL(newVal, this.appName)
           if (!newVal) {
-            return logError('Invalid attribute url')
+            return logError('Invalid attribute url', this.appName)
           }
           this.appUrl = newVal
           this.handleInitialNameAndUrl()
@@ -135,9 +138,9 @@ export function defineElement (tagName: string): void {
         ) {
           this.handleAppMount(app)
         } else if (app.isPrefetch) {
-          logError(`the url: ${this.appUrl} is different from prefetch url: ${app.url}`)
+          logError(`the url ${this.appUrl} is different from prefetch url ${app.url}`, this.appName)
         } else {
-          logError(`an app named ${this.appName} already exists`)
+          logError(`an app named ${this.appName} already exists`, this.appName)
         }
       } else {
         this.handleCreate()
@@ -150,14 +153,14 @@ export function defineElement (tagName: string): void {
     handleAttributeUpdate = (): void => {
       this.isWating = false
       const attrName = this.getAttribute('name')
-      const attrUrl = formatURL(this.getAttribute('url'))
+      const attrUrl = formatURL(this.getAttribute('url'), this.appName)
       if (this.legalAttribute('name', attrName) && this.legalAttribute('url', attrUrl)) {
         const existApp = appInstanceMap.get(attrName!)
         if (attrName !== this.appName && existApp) {
           // handling of cached and non-prefetch apps
           if (appStatus.UNMOUNT !== existApp.getAppStatus() && !existApp.isPrefetch) {
             this.setAttribute('name', this.appName)
-            return logError(`an app named ${attrName} already exists`)
+            return logError(`an app named ${attrName} already exists`, this.appName)
           }
         }
 
@@ -190,7 +193,7 @@ export function defineElement (tagName: string): void {
      */
     legalAttribute (name: string, val: AttrType): boolean {
       if (typeof val !== 'string' || !val) {
-        logError(`unexpected attribute ${name}, please check again`)
+        logError(`unexpected attribute ${name}, please check again`, this.appName)
 
         return false
       }

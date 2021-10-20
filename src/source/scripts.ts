@@ -129,7 +129,7 @@ export function fetchScriptsFromHtml (
         res.data,
       )
     }, (err: {error: Error, index: number}) => {
-      logError(err)
+      logError(err, app.name)
     }, () => {
       app.onLoad(wrapElement)
     })
@@ -195,7 +195,7 @@ export function execScripts (
       })
       initedHook(typeof initedHook.moduleCount === 'undefined')
     }).catch((err) => {
-      logError(err)
+      logError(err, app.name)
       initedHook(true)
     })
   } else {
@@ -232,7 +232,7 @@ export function runScript (
       if (isDynamic) return document.createComment('dynamic script extract by micro-app')
     }
   } catch (e) {
-    console.error('[micro-app from runScript]', e)
+    console.error(`[micro-app from runScript] app ${app.name}`, e)
   }
 }
 
@@ -284,11 +284,11 @@ export function runDynamicRemoteScript (
         Function(code)()
       }
     } catch (e) {
-      console.error('[micro-app from runDynamicScript]', e, url)
+      console.error(`[micro-app from runDynamicScript] app ${app.name}`, e, url)
     }
     if (!info.module) dispatchOnLoadEvent(originScript)
   }).catch((err) => {
-    logError(err)
+    logError(err, app.name)
     dispatchOnErrorEvent(originScript)
   })
 

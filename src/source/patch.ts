@@ -215,7 +215,7 @@ export function patchElementPrototypeMethods (): void {
         })
         this.data = cloneValue
       } else if (value !== '[object Object]') {
-        logWarn('property data must be an object')
+        logWarn('property data must be an object', this.getAttribute('name'))
       }
     } else if (
       (

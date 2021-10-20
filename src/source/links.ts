@@ -99,7 +99,7 @@ export function fetchLinksFromHtml (
       app,
     )
   }, (err: {error: Error, index: number}) => {
-    logError(err)
+    logError(err, app.name)
   }, () => {
     app.onLoad(wrapElement)
   })
@@ -174,7 +174,7 @@ export function foramtDynamicLink (
     scopedCSS(replaceStyle, app.name)
     dispatchOnLoadEvent(originLink)
   }).catch((err) => {
-    logError(err)
+    logError(err, app.name)
     dispatchOnErrorEvent(originLink)
   })
 }

@@ -30,7 +30,7 @@ export default function dispatchLifecyclesEvent (
   error?: Error,
 ): void {
   if (!element) {
-    return logError(`element does not exist in lifecycle ${lifecycleName}，it seems the app has unmounted`)
+    return logError(`element does not exist in lifecycle ${lifecycleName}，it seems the app has unmounted`, appName)
   } else if (element instanceof ShadowRoot) {
     element = element.host as HTMLElement
   }

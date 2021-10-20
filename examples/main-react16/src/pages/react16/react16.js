@@ -138,9 +138,9 @@ export default class App extends React.Component {
           {
             this.state.showMicroApp && (
               <micro-app
-                data={this.state.data}
                 name={this.state.name}
                 url={this.state.url}
+                data={this.state.data}
                 onCreated={this.handleCreated}
                 onBeforemount={this.beforemount}
                 onMounted={this.mounted}

@@ -72,7 +72,7 @@ function extractSourceDom (htmlStr: string, app: AppInterface) {
   if (!microAppHead || !microAppBody) {
     const msg = `element ${microAppHead ? 'body' : 'head'} is missing`
     app.onerror(new Error(msg))
-    return logError(msg)
+    return logError(msg, app.name)
   }
 
   flatChildren(wrapElement, app, microAppHead)
@@ -99,7 +99,7 @@ export default function extractHtml (app: AppInterface): void {
     if (!htmlStr) {
       const msg = 'html is empty, please check in detail'
       app.onerror(new Error(msg))
-      return logError(msg)
+      return logError(msg, app.name)
     }
     htmlStr = htmlStr
       .replace(/<head[^>]*>[\s\S]*?<\/head>/i, (match) => {
@@ -115,7 +115,7 @@ export default function extractHtml (app: AppInterface): void {
 
     extractSourceDom(htmlStr, app)
   }).catch((e) => {
-    logError(`Failed to fetch data from ${app.url}, micro-app stop rendering`, e)
+    logError(`Failed to fetch data from ${app.url}, micro-app stop rendering`, app.name, e)
     app.onLoadError(e)
   })
 }

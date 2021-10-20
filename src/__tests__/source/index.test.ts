@@ -106,7 +106,7 @@ describe('source index', () => {
     expect(nobodyErrorHandle).toBeCalledWith(expect.any(CustomEvent))
   })
 
-  // 补全html中的img/iframe/a地址
+  // 补全html中的img, 但iframe、a不做处理
   test('completion path of img/iframe/a in html', async () => {
     const microappElement6 = document.createElement('micro-app')
     microappElement6.setAttribute('name', 'test-app6')
@@ -116,8 +116,9 @@ describe('source index', () => {
 
     await new Promise((reslove) => {
       microappElement6.addEventListener('mounted', () => {
-        expect(document.getElementById('app2-img1')?.src).toBe(`http://127.0.0.1:${ports.source_index}/path-a/img.jpg`)
-        expect(document.getElementById('app2-iframe1')?.src).toBe(`http://127.0.0.1:${ports.source_index}/path-b/`)
+        expect(document.getElementById('app2-img1')?.getAttribute('src')).toBe(`http://127.0.0.1:${ports.source_index}/path-a/img.jpg`)
+        expect(document.getElementById('app2-iframe1')?.getAttribute('src')).toBe('/path-b/')
+        expect(document.getElementById('app2-a1')?.getAttribute('href')).toBe('/abc/')
         reslove(true)
       }, false)
     })

@@ -11,7 +11,7 @@ function filterPreFetchTarget<T extends prefetchParam> (apps: T[]): T[] {
 
   if (toString.call(apps) === '[object Array]') {
     apps.forEach((item) => {
-      item.url = formatURL(item.url)
+      item.url = formatURL(item.url, item.name)
       if (
         toString.call(item) === '[object Object]' &&
         (item.name && typeof item.name === 'string') &&
