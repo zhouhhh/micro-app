@@ -100,5 +100,14 @@ if (window.__MICRO_APP_ENVIRONMENT__) {
 
 // const dynamicScript1 = document.createElement('script')
 // dynamicScript1.setAttribute('type', 'module')
-// dynamicScript1.textContent = 'console.warn("inline module")'
-// document.head.appendChild(dynamicScript1)
+// // dynamicScript1.textContent = 'console.warn("inline module")'
+// dynamicScript1.setAttribute('src', 'http://127.0.0.1:8080/test.js')
+// dynamicScript1.onload = () => {
+//   console.log('动态module加载完成了')
+// }
+// document.body.appendChild(dynamicScript1)
+
+console.log('__micro_app_environment__', window.__micro_app_environment__)
+console.log('__micro_app_name__', window.__micro_app_name__)
+console.log('__full_public_path__', window.__full_public_path__)
+console.log('baseurl', window.baseurl)

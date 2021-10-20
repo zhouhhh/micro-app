@@ -170,8 +170,8 @@ export function isSupportModuleScript (): boolean {
 }
 
 // Create a random symbol string
-export function createNonceStr (): string {
-  return Math.random().toString(36).substr(2, 15)
+export function createNonceSrc (): string {
+  return 'inline-' + Math.random().toString(36).substr(2, 15)
 }
 
 // Array deduplication

@@ -9,7 +9,7 @@ import { fetchSource } from './fetch'
 import {
   CompletionPath,
   promiseStream,
-  createNonceStr,
+  createNonceSrc,
   pureCreateElement,
   defer,
   logError,
@@ -20,6 +20,8 @@ import {
 } from './load_event'
 import microApp from '../micro_app'
 import globalEnv from '../libs/global_env'
+
+type moduleCallBack = Func & { moduleCount?: number }
 
 // Global scripts, reuse across apps
 export const globalScripts = new Map<string, string>()
@@ -69,7 +71,7 @@ export function extractScriptElement (
       return { url: src, info }
     }
   } else if (script.textContent) { // inline script
-    const nonceStr: string = createNonceStr()
+    const nonceStr: string = createNonceSrc()
     const info = {
       code: script.textContent,
       isExternal: false,
@@ -158,12 +160,12 @@ export function fetchScriptSuccess (
  * Execute js in the mount lifecycle
  * @param scriptList script list
  * @param app app
- * @param callback callback for umd mode
+ * @param initedHook callback for umd mode
  */
 export function execScripts (
   scriptList: Map<string, sourceScriptInfo>,
   app: AppInterface,
-  callback: Func,
+  initedHook: moduleCallBack,
 ): void {
   const scriptListEntries: Array<[string, sourceScriptInfo]> = Array.from(scriptList.entries())
   const deferScriptPromise: Array<Promise<string>|string> = []
@@ -177,6 +179,8 @@ export function execScripts (
           deferScriptPromise.push(info.code)
         }
         deferScriptInfo.push([url, info])
+
+        if (info.module) initedHook.moduleCount = initedHook.moduleCount ? ++initedHook.moduleCount : 1
       } else {
         runScript(url, info.code, app, info.module, false)
       }
@@ -187,15 +191,15 @@ export function execScripts (
     Promise.all(deferScriptPromise).then((res: string[]) => {
       res.forEach((code, index) => {
         const [url, info] = deferScriptInfo[index]
-        runScript(url, info.code = info.code || code, app, info.module, false, callback)
+        runScript(url, info.code = info.code || code, app, info.module, false, initedHook)
       })
-      callback(true)
+      initedHook(typeof initedHook.moduleCount === 'undefined')
     }).catch((err) => {
       logError(err)
-      callback(true)
+      initedHook(true)
     })
   } else {
-    callback(true)
+    initedHook(true)
   }
 }
 
@@ -206,7 +210,7 @@ export function execScripts (
  * @param app app
  * @param module type='module' of script
  * @param isDynamic dynamically created script
- * @param callback callback from execScripts for first exec
+ * @param callback callback of module script
  */
 export function runScript (
   url: string,
@@ -214,7 +218,7 @@ export function runScript (
   app: AppInterface,
   module: boolean,
   isDynamic: boolean,
-  callback?: Func,
+  callback?: moduleCallBack,
 ): any {
   try {
     code = bindScope(url, code, app, module)
@@ -245,18 +249,20 @@ export function runDynamicRemoteScript (
   app: AppInterface,
   originScript: HTMLScriptElement,
 ): HTMLScriptElement | Comment {
+  const dispatchScriptOnLoadEvent = () => dispatchOnLoadEvent(originScript)
+
   if (app.source.scripts.has(url)) {
     const existInfo: sourceScriptInfo = app.source.scripts.get(url)!
-    defer(() => dispatchOnLoadEvent(originScript))
-    return runScript(url, existInfo.code, app, info.module, true)
+    if (!info.module) defer(dispatchScriptOnLoadEvent)
+    return runScript(url, existInfo.code, app, info.module, true, dispatchScriptOnLoadEvent)
   }
 
   if (globalScripts.has(url)) {
     const code = globalScripts.get(url)!
     info.code = code
     app.source.scripts.set(url, info)
-    defer(() => dispatchOnLoadEvent(originScript))
-    return runScript(url, code, app, info.module, true)
+    if (!info.module) defer(dispatchScriptOnLoadEvent)
+    return runScript(url, code, app, info.module, true, dispatchScriptOnLoadEvent)
   }
 
   let replaceElement: Comment | HTMLScriptElement
@@ -273,14 +279,14 @@ export function runDynamicRemoteScript (
     try {
       code = bindScope(url, code, app, info.module)
       if (app.inline || info.module) {
-        setInlinScriptContent(url, code, info.module, replaceElement as HTMLScriptElement)
+        setInlinScriptContent(url, code, info.module, replaceElement as HTMLScriptElement, dispatchScriptOnLoadEvent)
       } else {
         Function(code)()
       }
     } catch (e) {
       console.error('[micro-app from runDynamicScript]', e, url)
     }
-    dispatchOnLoadEvent(originScript)
+    if (!info.module) dispatchOnLoadEvent(originScript)
   }).catch((err) => {
     logError(err)
     dispatchOnErrorEvent(originScript)
@@ -295,22 +301,27 @@ export function runDynamicRemoteScript (
  * @param code js code
  * @param module type='module' of script
  * @param scriptElement target script element
- * @param callback callback from execScripts for first exec
+ * @param callback callback of module script
  */
 function setInlinScriptContent (
   url: string,
   code: string,
   module: boolean,
   scriptElement: HTMLScriptElement,
-  callback?: Func,
+  callback?: moduleCallBack,
 ): void {
   if (module) {
     // module script is async, transform it to a blob for subsequent operations
     const blob = new Blob([code], { type: 'text/javascript;charset=utf-8' })
     scriptElement.src = URL.createObjectURL(blob)
     scriptElement.setAttribute('type', 'module')
-    scriptElement.setAttribute('originSrc', url)
-    callback && (scriptElement.onload = callback)
+    if (!url.startsWith('inline-')) {
+      scriptElement.setAttribute('originSrc', url)
+    }
+    if (callback) {
+      callback.moduleCount && callback.moduleCount--
+      scriptElement.onload = callback.bind(scriptElement, callback.moduleCount === 0)
+    }
   } else {
     scriptElement.textContent = code
   }

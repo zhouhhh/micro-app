@@ -12,6 +12,12 @@ const antIcon = <LoadingOutlined style={{ fontSize: 30 }} spin />
 function vite () {
   const [data, changeData] = useState({from: '来自基座的初始化数据'})
   const [showLoading, hideLoading] = useState(true)
+
+  function handleMounted () {
+    hideLoading(false)
+    console.log('生命周期: vite 渲染完成了')
+  }
+
   return (
     <div>
       {/* <div className='btn-con'>
@@ -32,9 +38,9 @@ function vite () {
         // url={`http://127.0.0.1:8080/micro-app/vite/`}
         data={data}
         // onBeforemount={() => hideLoading(false)}
-        onMounted={() => hideLoading(false)}
+        onMounted={handleMounted}
         // destory
-        inline
+        // inline
         disableSandbox
       >
       </micro-app>
