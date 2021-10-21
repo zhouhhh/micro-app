@@ -218,7 +218,7 @@ export default function effect (microWindow: microWindowType): Record<string, Ca
   const umdDocumentListenerMap = new Map<string, Set<MicroEventListener>>()
   let umdIntervalIdMap = new Map<number, timeInfo>()
   let umdTimeoutIdMap = new Map<number, timeInfo>()
-  let umdonClickHander: unknown
+  let umdOnClickHandler: unknown
 
   // record event and timer before exec umdMountHook
   const recordUmdEffect = () => {
@@ -238,8 +238,8 @@ export default function effect (microWindow: microWindowType): Record<string, Ca
       umdTimeoutIdMap = new Map(timeoutIdMap)
     }
 
-    // record onclick hander
-    umdonClickHander = documentClickListMap.get(appName)
+    // record onclick handler
+    umdOnClickHandler = documentClickListMap.get(appName)
 
     // record document event
     const documentAppListenersMap = documentEventListenerMap.get(appName)
@@ -271,7 +271,7 @@ export default function effect (microWindow: microWindowType): Record<string, Ca
     })
 
     // rebuild onclick event
-    umdonClickHander && documentClickListMap.set(appName, umdonClickHander)
+    umdOnClickHandler && documentClickListMap.set(appName, umdOnClickHandler)
 
     // rebuild document event
     setCurrentAppName(appName)

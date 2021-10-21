@@ -312,7 +312,7 @@ export default class SandBox implements SandBoxInterface {
   }
 
   /**
-   * nject global properties to microWindow
+   * inject global properties to microWindow
    * @param microWindow micro window
    * @param appName app name
    * @param url app url
