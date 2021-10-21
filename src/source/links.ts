@@ -9,14 +9,12 @@ import {
   pureCreateElement,
   defer,
   logError,
-  requestIdleCallback,
 } from '../libs/utils'
 import scopedCSS from './scoped_css'
 import {
   dispatchOnLoadEvent,
   dispatchOnErrorEvent,
 } from './load_event'
-import microApp from '../micro_app'
 
 // Global links, reuse across apps
 export const globalLinks = new Map<string, string>()
@@ -176,21 +174,5 @@ export function foramtDynamicLink (
   }).catch((err) => {
     logError(err, app.name)
     dispatchOnErrorEvent(originLink)
-  })
-}
-
-/**
- * In umd mode, source.html needs to clone container before umdHookMount is executed. Since MutationObserver is asynchronous, the style element in container may not be scoped css yet.
- * @param tempHTML source.html
- * @param appName app.name
- */
-export function formatHTMLStyleAfterUmdInit (tempHTML: HTMLElement, appName: string): void {
-  requestIdleCallback(() => {
-    const styleList = Array.from(tempHTML.querySelectorAll('style'))
-    for (const styleElement of styleList) {
-      if (styleElement.textContent?.indexOf(`${microApp.tagName}[name=${appName}]`) === -1) {
-        scopedCSS(styleElement, appName)
-      }
-    }
   })
 }

@@ -59,6 +59,7 @@ const Page2 = () => {
         <p>styled-component👇</p>
         <StyledButton>按钮</StyledButton>
       </div> */}
+      <div className="test-btn">test</div>
       <Form
         name="validate_other"
         {...formItemLayout}
@@ -263,7 +264,6 @@ const Page2 = () => {
           </Button>
         </Form.Item>
       </Form>
-      <div className="test-btn">test</div>
     </div>
   );
 };

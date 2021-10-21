@@ -1,5 +1,5 @@
 <template>
-  <div id="app-child-vue2">
+  <div id="app">
     <div class='tab-con'>
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="home" name="/"></el-tab-pane>
@@ -34,7 +34,7 @@ export default {
 </script>
 
 <style>
-#app-child-vue2 {
+#app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

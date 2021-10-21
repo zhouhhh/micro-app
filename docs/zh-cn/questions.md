@@ -64,11 +64,11 @@ module.exports = {
 ## 7、vue3的问题
 **1、样式失效**
 
-vue3中样式失效的问题可以尝试配置[macro](/zh-cn/configure?id=macro)解决，如果依然有问题，可以通过[关闭样式隔离](/zh-cn/configure?id=disablescopecss)解决。
+通过[禁用样式隔离](/zh-cn/configure?id=disablescopecss)解决。
 
 **2、图片等静态资源无法正常加载**
 
-vue3中需要配置publicPath补全资源地址，详情请查看[public-path](/zh-cn/static-source?id=手动补全)
+vue3中需要配置publicPath补全资源地址，详情请查看[publicPath](/zh-cn/static-source?id=publicpath)
 
 
 ## 8、开发环境中渲染angular子应用报错
@@ -96,7 +96,15 @@ vue3中需要配置publicPath补全资源地址，详情请查看[public-path](/
   - 2、(0, eval)('window')
   - 3、window.rawWindow
 
-## 13、错误信息 `ReferenceError: xxx is not defined` 或 `xxx is not a function` 等等
+## 13、错误信息：xxx 未定义
+
+**包括：**
+- `xxx is not defined`
+- `xxx is not a function`
+- `Cannot read properties of undefined`
+
+**原因：**
+
 在微前端的沙箱环境中，顶层变量不会泄漏为全局变量。
 
 例如在正常情况下，通过 var name 或 function name () {} 定义的顶层变量会泄漏为全局变量，通过window.name或name就可以全局访问。
@@ -105,9 +113,11 @@ vue3中需要配置publicPath补全资源地址，详情请查看[public-path](/
 
 **解决方式**：
 
-方式一：将 var name 或 function name () {} 修改为 window.name = xx
+*方式一：手动修改*
 
-方式二：通过插件系统进行修改子应用代码
+将 var name 或 function name () {} 修改为 window.name = xx
+
+*方式二：通过插件系统修改子应用代码*
 
 比如常见的加载webpack打包的dll文件失败的问题，因为dll文件的内容和js地址相对固定，可以直接进行全局查找和修改。
 ```js

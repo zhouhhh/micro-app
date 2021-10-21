@@ -24,7 +24,7 @@
 - Desc: `子应用的基础路由`
 - Type: `string`
 - Default: `''`
-- 使用方式: `<micro-app name='xx' url='xx' baseroute='/my-page/'></micro-app>`
+- 使用方式: `<micro-app baseroute='/my-page/' name='xx' url='xx'></micro-app>`
 
 在微前端环境下，子应用可以从window上获取baseroute的值，用于设置基础路由。
 
@@ -41,7 +41,7 @@
 - Desc: `是否使用内联script`
 - Type: `string(boolean)`
 - Default: `'false'`
-- 使用方式: `<micro-app name='xx' url='xx' inline></micro-app>`
+- 使用方式: `<micro-app inline name='xx' url='xx'></micro-app>`
 
 默认情况下，子应用的js会被提取并在后台运行。
 
@@ -54,7 +54,7 @@
 - Desc: `卸载时是否强制删除缓存资源`
 - Type: `string(boolean)`
 - Default: `'false'`
-- 使用方式: `<micro-app name='xx' url='xx' destory></micro-app>`
+- 使用方式: `<micro-app destory name='xx' url='xx'></micro-app>`
 
 默认情况下，子应用被卸载后会缓存静态资源，以便在重新渲染时获得更好的性能。
 
@@ -64,7 +64,7 @@
 - Desc: `禁用样式隔离`
 - Type: `string(boolean)`
 - Default: `'false'`
-- 使用方式: `<micro-app name='xx' url='xx' disableScopecss></micro-app>`
+- 使用方式: `<micro-app disableScopecss name='xx' url='xx'></micro-app>`
 
 在禁用样式隔离前，请确保基座应用和子应用，以及子应用之间样式不会相互污染。
 
@@ -75,7 +75,7 @@
 - Desc: `禁用js沙箱`
 - Type: `string(boolean)`
 - Default: `'false'`
-- 使用方式: `<micro-app name='xx' url='xx' disableSandbox></micro-app>`
+- 使用方式: `<micro-app disableSandbox name='xx' url='xx'></micro-app>`
 
 禁用沙箱可能会导致一些不可预料的问题，通常情况不建议这样做。
 
@@ -94,26 +94,16 @@
 >
 > 6、baseroute失效
 
-## macro
-- Desc: `以宏任务方式绑定元素作用域`
-- Type: `string(boolean)`
-- Default: `'false'`
-- 使用方式: `<micro-app name='xx' url='xx' macro></micro-app>`
-
-在一些场景下(如react-router生产环境、vue3)，可能出现元素无法绑定当前子应用的现象，导致样式丢失和资源补全功能失效。
-
-开启macro可以有效避免这个问题，但macro在解绑作用域是高延迟的，有可能导致基座应用频繁切换路由时产生问题，此时可以在路由跳转前[主动解除元素作用域绑定](/zh-cn/dom-scope?id=主动解除元素作用域绑定)。
 
 ## shadowDOM
 - Desc: `是否开启shadowDOM`
 - Type: `string(boolean)`
 - Default: `'false'`
-- 使用方式: `<micro-app name='xx' url='xx' shadowDOM></micro-app>`
+- 使用方式: `<micro-app shadowDOM name='xx' url='xx'></micro-app>`
 
 shadowDOM具有更强的样式隔离能力，开启后，`<micro-app>`标签会成为一个真正的WebComponent。
 
-但shadowDOM在React16及以下、vue3中的兼容不是很好，请谨慎使用。
-
+但shadowDOM在React框架及一些UI库中的兼容不是很好，请谨慎使用。
 
 ## 全局配置
 全局配置会影响每一个子应用，上述几个选项都可以配置到全局。
@@ -129,7 +119,6 @@ microApp.start({
   destory: true, // 默认值false
   disableScopecss: true, // 默认值false
   disableSandbox: true, // 默认值false
-  macro: true, // 默认值false
   shadowDOM: true, // 默认值false
 })
 ```
@@ -143,7 +132,6 @@ microApp.start({
   destory='false'
   disableScopecss='false'
   disableSandbox='false'
-  macro='false'
   shadowDOM='false'
 ></micro-app>
 ```

@@ -23,12 +23,11 @@ function Vue3 () {
         data={data}
         onMounted={() => hideLoading(false)}
         baseRoute='/micro-app/demo/vue3'
-        // shadowDOM
-        // destory
-        inline
         disableScopecss
+        // inline
+        // destory
         // disableSandbox
-        // macro
+        // shadowDOM
       >
       </micro-app>
     </div>

@@ -72,7 +72,7 @@ export function addProtocol (url: string): string {
  * Format URL address
  * @param url address
  */
-export function formatURL (url: string | null, appName: string): string {
+export function formatURL (url: string | null, appName: string | null = null): string {
   if (typeof url !== 'string' || !url) return ''
 
   try {
@@ -248,13 +248,24 @@ export function pureCreateElement<K extends keyof HTMLElementTagNameMap> (tagNam
  * clone origin elements to target
  * @param origin Cloned element
  * @param target Accept cloned elements
+ * @param deep deep clone or transfer dom
  */
-export function cloneNode <T extends Element, Q extends Element> (origin: T, target: Q): void {
+export function cloneNode <T extends Element, Q extends Element> (
+  origin: T,
+  target: Q,
+  deep = true,
+): void {
   target.innerHTML = ''
-  const clonedNode = origin.cloneNode(true)
-  const fragment = document.createDocumentFragment()
-  Array.from(clonedNode.childNodes).forEach((node: Node) => {
-    fragment.appendChild(node)
-  })
-  target.appendChild(fragment)
+  if (deep) {
+    const clonedNode = origin.cloneNode(true)
+    const fragment = document.createDocumentFragment()
+    Array.from(clonedNode.childNodes).forEach((node: Node | Element) => {
+      fragment.appendChild(node)
+    })
+    target.appendChild(fragment)
+  } else {
+    Array.from(origin.childNodes).forEach((node: Node | Element) => {
+      target.appendChild(node)
+    })
+  }
 }

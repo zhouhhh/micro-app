@@ -107,7 +107,11 @@ if (window.__MICRO_APP_ENVIRONMENT__) {
 // }
 // document.body.appendChild(dynamicScript1)
 
-console.log('__micro_app_environment__', window.__micro_app_environment__)
-console.log('__micro_app_name__', window.__micro_app_name__)
-console.log('__full_public_path__', window.__full_public_path__)
-console.log('baseurl', window.baseurl)
+// console.log('__micro_app_environment__', window.__micro_app_environment__)
+// console.log('__micro_app_name__', window.__micro_app_name__)
+// console.log('__full_public_path__', window.__full_public_path__)
+// console.log('baseurl', window.baseurl)
+
+// const dynamicStyle = document.createElement('style')
+// document.head.appendChild(dynamicStyle)
+// dynamicStyle.textContent = '.test-class { color: red } '

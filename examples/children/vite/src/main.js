@@ -9,10 +9,10 @@ const routes = [
   { path: '/page2', component: Page2 },
 ]
 
-const router = VueRouter.createRouter({
-  history: VueRouter.createWebHashHistory('/micro-app/vite/'),
-  routes,
-})
+// const router = VueRouter.createRouter({
+//   history: VueRouter.createWebHashHistory('/micro-app/vite/'),
+//   routes,
+// })
 
 // const app = createApp(App)
 // app.use(router)
@@ -20,8 +20,16 @@ const router = VueRouter.createRouter({
 
 
 let app = null
+let router = null
+let history = null
 // 将渲染操作放入 mount 函数
 function mount () {
+  history = VueRouter.createWebHashHistory('/micro-app/vite/')
+  router = VueRouter.createRouter({
+    history,
+    routes,
+  })
+
   app = createApp(App)
   app.use(router)
   app.mount('#vite-app')
@@ -32,7 +40,10 @@ function mount () {
 // 将卸载操作放入 unmount 函数
 function unmount () {
   app.unmount()
+  history.destroy()
   app = null
+  router = null
+  history = null
   console.log('微应用child-vite卸载了')
 }
 

@@ -1,5 +1,6 @@
 <template>
   <div class='page2'>
+    <div class="test-btn">test</div>
     <el-form ref="form" :model="form" label-width="80px">
       <el-form-item label="活动名称">
         <el-input v-model="form.name"></el-input>
@@ -47,7 +48,6 @@
     <router-link to="/">
       <el-button type="primary" plain>返回首页</el-button>
     </router-link>
-    <div class="test-btn">test</div>
   </div>
 </template>
 
@@ -84,7 +84,7 @@
   }
 
   .test-btn {
-    height: 50px;
+    height: 40px;
     width: 100px;
     background-color: red;
     border-radius: 10px;
@@ -94,5 +94,6 @@
     color: #fff;
     font-size: 20px;
     font-weight: bolder;
+    margin-bottom: 20px;
   }
 </style>

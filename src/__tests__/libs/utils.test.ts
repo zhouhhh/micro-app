@@ -13,13 +13,13 @@ afterAll(() => {
 test('uitls ==> logError & logWarn', () => {
   Utils.logError('msg')
   expect(console.error).toBeCalledWith('[micro-app] msg')
-  Utils.logError(new Error('123'), 111)
-  expect(console.error).toBeCalledWith('[micro-app]', expect.any(Error), 111)
+  Utils.logError(new Error('123'), 'appName', 111)
+  expect(console.error).toBeCalledWith('[micro-app] app appName', expect.any(Error), 111)
 
   Utils.logWarn('msg')
   expect(console.warn).toBeCalledWith('[micro-app] msg')
-  Utils.logWarn(new Error('123'), 111)
-  expect(console.warn).toBeCalledWith('[micro-app]', expect.any(Error), 111)
+  Utils.logWarn(new Error('123'), 'appName', 111)
+  expect(console.warn).toBeCalledWith('[micro-app] app appName', expect.any(Error), 111)
 })
 
 test('call function in micro task', () => {
@@ -107,7 +107,7 @@ test('check if browser support module script', () => {
 })
 
 test('create random string', () => {
-  expect(Utils.createNonceStr()).not.toHaveLength(15)
+  expect(Utils.createNonceSrc()).not.toHaveLength(21)
 })
 
 test('the fastest remove array duplication method', () => {

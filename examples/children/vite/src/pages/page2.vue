@@ -8,7 +8,7 @@
 
 <style>
 .test-btn-vite {
-  height: 50px;
+  height: 40px;
   width: 100px;
   background-color: red;
   border-radius: 10px;
@@ -19,5 +19,6 @@
   font-size: 20px;
   font-weight: bolder;
   margin: 0 auto;
+  margin-bottom: 20px;
 }
 </style>

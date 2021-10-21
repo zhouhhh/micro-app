@@ -8,7 +8,6 @@ import type {
 } from '@micro-app/types'
 import extractHtml from './source'
 import { execScripts } from './source/scripts'
-import { formatHTMLStyleAfterUmdInit } from './source/links'
 import { appStatus, lifeCycles } from './constants'
 import SandBox from './sandbox'
 import { defer, isFunction, cloneNode } from './libs/utils'
@@ -133,7 +132,7 @@ export default class CreateApp implements AppInterface {
 
     this.status = appStatus.MOUNTING
 
-    cloneNode(this.source.html!, this.container! as Element)
+    cloneNode(this.source.html as Element, this.container as Element, !this.umdMode)
 
     this.sandBox?.start(this.baseroute)
     if (!this.umdMode) {
@@ -146,11 +145,6 @@ export default class CreateApp implements AppInterface {
             this.umdHookunMount = unmount as Func
             this.umdMode = true
             this.sandBox?.recordUmdSnapshot()
-            /**
-             * TODO: Some UI frameworks insert and record container elements to micro-app-body, such as modal and notification. The DOM remounted is a cloned element, so the cached elements of UI frameworks are invalid, this may cause bug when remount app
-             */
-            cloneNode(this.container! as Element, this.source.html!)
-            formatHTMLStyleAfterUmdInit(this.source.html!, this.name)
             this.umdHookMount()
           }
         }
@@ -202,14 +196,21 @@ export default class CreateApp implements AppInterface {
     this.umdHookunMount && this.umdHookunMount()
     dispatchUnmountToMicroApp(this.name)
     this.sandBox?.stop()
-    this.container = null
+
     // actions for completely destroy
     if (destory) {
-      appInstanceMap.delete(this.name)
       if (!this.useSandbox && this.umdMode) {
         delete window[this.libraryName as any]
       }
+      appInstanceMap.delete(this.name)
+    } else if (this.umdMode) {
+      /**
+      * In umd mode, ui frameworks will no longer create style elements to head in lazy load page when render again, so we should save container to keep these elements
+      */
+      cloneNode(this.container as Element, this.source.html as Element, false)
     }
+
+    this.container = null
   }
 
   /**

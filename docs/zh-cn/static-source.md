@@ -8,36 +8,43 @@
 
 **1、针对资源标签**
 
-如 `link、script、img、a`
+如 `link、script、img`
 
 **2、针对css的远程资源**
 
 如 `background-image、@font-face`
 
-资源地址补全功能和沙箱、样式隔离绑定，当这两个功能被关闭时会受到影响。
+<!-- 资源地址补全功能和沙箱、样式隔离绑定，当这两个功能被关闭时会受到影响。
 
-当关闭样式隔离时，针对css的远程资源会失效，当关闭沙盒时，所有资源地址补全功能都将失效。
+当关闭样式隔离或沙箱时，所有资源地址补全功能都将失效。 -->
+
+自动补全有时会失效，因为一些框架和库在特定场景下创建的元素无法被拦截和处理，或者当关闭样式隔离和沙箱时，也会导致自动补全失效。
+
+此时推荐使用下面`publicPath`方案解决。
 
 
-## 手动补全
-如果自动补全功能失效时，可以采用手动补全作为兜底方案。
+## publicPath
+**如果自动补全失败，可以采用运行时publicPath方案解决。**
+
+这是由webpack提供的功能，会在运行时动态设置webpack.publicPath，详细配置参考webpack文档 [publicPath](https://webpack.docschina.org/guides/public-path/#on-the-fly)
+
+#### 设置方式
 
 **步骤1:** 在`子应用`src目录下创建名称为`public-path.js`的文件，并添加如下内容
 ```js
+// __MICRO_APP_ENVIRONMENT__和__MICRO_APP_PUBLIC_PATH__是由micro-app注入的全局变量
 if (window.__MICRO_APP_ENVIRONMENT__) {
+  // eslint-disable-next-line
   __webpack_public_path__ = window.__MICRO_APP_PUBLIC_PATH__
 }
 ```
 
 **步骤2:** 在子应用的入口文件的`最顶部`引入`public-path.js`
 ```js
+// entry.js
 import './public-path'
 ...
 ```
-
-将子应用的静态资源补全为 http 开头的绝对地址。
-
-更多详细配置请查看webpack文档 [public-path](https://webpack.docschina.org/guides/public-path/#on-the-fly)
 
 ## 资源共享
 当多个子应用拥有相同的js或css资源，可以指定这些资源在多个子应用之间共享，在子应用加载时直接从缓存中提取数据，从而提高渲染效率和性能。
