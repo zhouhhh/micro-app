@@ -1,7 +1,7 @@
 import type { OptionsType, MicroAppConfigType, lifeCyclesType, plugins, fetchType } from '@micro-app/types'
 import { defineElement } from './micro_app_element'
 import preFetch, { getGlobalAssets } from './prefetch'
-import { logError, logWarn, isFunction, isBrowser } from './libs/utils'
+import { logError, logWarn, isFunction, isBrowser, isPlainObject } from './libs/utils'
 import { EventCenterForBaseApp } from './interact'
 import { initGloalEnv } from './libs/global_env'
 
@@ -36,7 +36,7 @@ class MicroApp extends EventCenterForBaseApp implements MicroAppConfigType {
 
     initGloalEnv()
 
-    if (options && toString.call(options) === '[object Object]') {
+    if (options && isPlainObject(options)) {
       this.shadowDOM = options.shadowDOM
       this.destory = options.destory
       this.inline = options.inline
@@ -45,11 +45,11 @@ class MicroApp extends EventCenterForBaseApp implements MicroAppConfigType {
       this.macro = options.macro
       if (isFunction(options.fetch)) this.fetch = options.fetch
 
-      if (toString.call(options.lifeCycles) === '[object Object]') {
+      if (isPlainObject(options.lifeCycles)) {
         this.lifeCycles = options.lifeCycles
       }
 
-      if (toString.call(options.plugins) === '[object Object]') {
+      if (isPlainObject(options.plugins)) {
         this.plugins = options.plugins
       }
 

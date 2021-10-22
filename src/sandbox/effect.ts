@@ -5,7 +5,7 @@ import globalEnv from '../libs/global_env'
 type MicroEventListener = EventListenerOrEventListenerObject & Record<string, any>
 type timeInfo = {
   handler: TimerHandler,
-  timeout: number | undefined,
+  timeout?: number,
   args: any[],
 }
 
@@ -25,7 +25,7 @@ function overwriteDocumentOnClick (): void {
   document.onclick = null
   let hasDocumentClickInited = false
 
-  function onClickHandler (e: Event) {
+  function onClickHandler (e: MouseEvent) {
     documentClickListMap.forEach((f) => {
       typeof f === 'function' && f.call(document, e)
     })
@@ -38,7 +38,7 @@ function overwriteDocumentOnClick (): void {
       const appName = getCurrentAppName()
       return appName ? documentClickListMap.get(appName) : documentClickListMap.get('base')
     },
-    set (f) {
+    set (f: GlobalEventHandlers['onclick']) {
       const appName = getCurrentAppName()
       if (appName) {
         documentClickListMap.set(appName, f)
