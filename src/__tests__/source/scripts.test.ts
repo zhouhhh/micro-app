@@ -56,7 +56,7 @@ describe('source scripts', () => {
         dynamicScript.setAttribute('src', 'http://www.micro-app-test.com/not-exist.js')
         document.head.appendChild(dynamicScript)
         dynamicScript.onerror = function () {
-          expect(console.error).toBeCalledWith('[micro-app]', expect.any(Error))
+          expect(console.error).toBeCalledWith('[micro-app] app test-app1:', expect.any(Error))
           reslove(true)
         }
       }, false)
@@ -174,7 +174,7 @@ describe('source scripts', () => {
     appCon.appendChild(microappElement8)
     await new Promise((reslove) => {
       microappElement8.addEventListener('mounted', () => {
-        expect(console.error).toHaveBeenLastCalledWith('[micro-app]', expect.any(Object))
+        expect(console.error).toHaveBeenLastCalledWith('[micro-app] app test-app8:', expect.any(Object))
         reslove(true)
       }, false)
     })
@@ -190,7 +190,7 @@ describe('source scripts', () => {
     await new Promise((reslove) => {
       microappElement9.addEventListener('mounted', () => {
         setTimeout(() => {
-          expect(console.error).toHaveBeenLastCalledWith('[micro-app]', expect.any(Error))
+          expect(console.error).toHaveBeenLastCalledWith('[micro-app] app test-app9:', expect.any(Error))
           reslove(true)
         }, 100)
       }, false)
@@ -231,7 +231,7 @@ describe('source scripts', () => {
         dynamicScript.setAttribute('src', '/dynamic/throw-error.js')
         document.head.appendChild(dynamicScript)
         dynamicScript.onload = () => {
-          expect(console.error).toHaveBeenLastCalledWith('[micro-app from runDynamicScript]', expect.any(Error), expect.any(String))
+          expect(console.error).toHaveBeenLastCalledWith('[micro-app from runDynamicScript] app test-app11: ', expect.any(Error), expect.any(String))
           reslove(true)
         }
       }, false)

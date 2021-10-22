@@ -253,7 +253,7 @@ export function pureCreateElement<K extends keyof HTMLElementTagNameMap> (tagNam
 export function cloneNode <T extends Element, Q extends Element> (
   origin: T,
   target: Q,
-  deep = true,
+  deep: boolean,
 ): void {
   target.innerHTML = ''
   if (deep) {

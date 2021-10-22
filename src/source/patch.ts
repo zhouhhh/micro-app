@@ -59,6 +59,7 @@ function handleNewNode (parent: Node, child: Node, app: AppInterface): Node {
       dynamicElementInMicroAppMap.set(child, replaceComment)
       return replaceComment
     }
+
     return child
   } else if (child instanceof HTMLScriptElement) {
     const { replaceComment, url, info } = extractScriptElement(

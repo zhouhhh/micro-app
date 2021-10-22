@@ -29,23 +29,30 @@ describe('source scripts2', () => {
 
     appCon.appendChild(microappElement1)
     await new Promise((reslove) => {
-      microappElement1.addEventListener('mounted', () => {
+      setTimeout(() => {
+        // module在jest环境无法执行，所以不会触发mounted事件，这里使用setTimeout代替
         setAppName('test-app1')
         // 动态创建script，noModulejs不会被执行
-        const dynamicScript = document.createElement('script')
-        dynamicScript.setAttribute('src', '/common/script2.js')
-        dynamicScript.setAttribute('noModule', 'true')
-        document.head.appendChild(dynamicScript)
+        const dynamicScript1 = document.createElement('script')
+        dynamicScript1.setAttribute('src', '/common/script2.js')
+        dynamicScript1.setAttribute('noModule', 'true')
+        document.head.appendChild(dynamicScript1)
 
         // 模拟环境下，html自带nomodule不会触发setAttribute，所以会执行，此处为特殊情况
         expect(console.warn).toBeCalledWith('nomodule')
 
-        // html自带module为异步执行，所以加上setTimeout
-        setTimeout(() => {
-          expect(console.warn).toBeCalledWith('module')
-          reslove(true)
-        }, 100)
-      }, false)
+        // // 分支覆盖
+        // const dynamicScript2 = document.createElement('script')
+        // dynamicScript2.setAttribute('type', 'module')
+        // dynamicScript2.setAttribute('src', '/common/global.js')
+        // document.head.appendChild(dynamicScript2)
+
+        // const dynamicScript3 = document.createElement('script')
+        // dynamicScript3.setAttribute('type', 'module')
+        // dynamicScript3.setAttribute('src', '/common/script3.js')
+        // document.head.appendChild(dynamicScript3)
+        reslove(true)
+      }, 200)
     })
   })
 
@@ -71,6 +78,18 @@ describe('source scripts2', () => {
         dynamicScript2.setAttribute('src', '/common/module.js')
         dynamicScript2.setAttribute('type', 'module')
         document.head.appendChild(dynamicScript2)
+
+        // 分支覆盖 -- 动态 module 为global数据下，dispatchOnLoadEvent不触发
+        const dynamicScript3 = document.createElement('script')
+        dynamicScript3.setAttribute('src', '/common/global.js')
+        dynamicScript3.setAttribute('type', 'module')
+        document.head.appendChild(dynamicScript3)
+
+        // 分支覆盖 -- 动态 module 为已缓存数据下，dispatchOnLoadEvent不触发
+        const dynamicScript4 = document.createElement('script')
+        dynamicScript4.setAttribute('src', '/common/global.js')
+        dynamicScript4.setAttribute('type', 'module')
+        document.head.appendChild(dynamicScript4)
 
         // expect(console.warn).toBeCalledWith('inline module')
         reslove(true)

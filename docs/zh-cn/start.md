@@ -37,8 +37,6 @@ export default function AppRoute () {
     </BrowserRouter>
   )
 }
-
-export default routes
 ```
 
 #### ** Vue **

@@ -232,7 +232,7 @@ export function runScript (
       if (isDynamic) return document.createComment('dynamic script extract by micro-app')
     }
   } catch (e) {
-    console.error(`[micro-app from runScript] app ${app.name}`, e)
+    console.error(`[micro-app from runScript] app ${app.name}: `, e)
   }
 }
 
@@ -284,7 +284,7 @@ export function runDynamicRemoteScript (
         Function(code)()
       }
     } catch (e) {
-      console.error(`[micro-app from runDynamicScript] app ${app.name}`, e, url)
+      console.error(`[micro-app from runDynamicScript] app ${app.name}: `, e, url)
     }
     if (!info.module) dispatchOnLoadEvent(originScript)
   }).catch((err) => {

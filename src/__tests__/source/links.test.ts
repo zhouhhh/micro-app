@@ -39,7 +39,7 @@ describe('source links', () => {
         dynamicLink.setAttribute('href', 'http://www.micro-app-test.com/not-exist.css')
         document.head.appendChild(dynamicLink)
         dynamicLink.onerror = function () {
-          expect(console.error).toBeCalledWith('[micro-app]', expect.any(Error))
+          expect(console.error).toBeCalledWith('[micro-app] app test-app1:', expect.any(Error))
         }
         reslove(true)
       }, false)
@@ -63,7 +63,7 @@ describe('source links', () => {
         dynamicLink.setAttribute('id', 'dynamic-link-preload')
         document.head.appendChild(dynamicLink)
 
-        expect(document.getElementById('dynamic-link-preload')?.getAttribute('href')).toBe(`http://127.0.0.1:${ports.source_links}/dynamic/manifest.js`)
+        expect(document.getElementById('dynamic-link-preload')).toBeNull()
         reslove(true)
       }, false)
     })
@@ -161,11 +161,23 @@ describe('source links', () => {
         setAppName('test-app8')
 
         // 动态创建全局缓存文件
-        const dynamicLink = document.createElement('link')
-        dynamicLink.setAttribute('rel', 'stylesheet')
-        dynamicLink.setAttribute('href', './link1.css')
-        dynamicLink.setAttribute('global', 'true')
-        document.head.appendChild(dynamicLink)
+        const dynamicLink1 = document.createElement('link')
+        dynamicLink1.setAttribute('rel', 'stylesheet')
+        dynamicLink1.setAttribute('href', './link1.css')
+        dynamicLink1.setAttribute('global', 'true')
+        document.head.appendChild(dynamicLink1)
+
+        // 分支覆盖 -- prefetch 且 无href
+        const dynamicLink2 = document.createElement('link')
+        dynamicLink2.setAttribute('rel', 'prefetch')
+        document.head.appendChild(dynamicLink2)
+
+        // 分支覆盖 -- 动态的 modulepreload
+        const dynamicLink3 = document.createElement('link')
+        dynamicLink3.setAttribute('rel', 'modulepreload')
+        dynamicLink1.setAttribute('href', './test.js')
+        document.head.appendChild(dynamicLink3)
+
         reslove(true)
       }, false)
     })

@@ -85,7 +85,7 @@ describe('source index', () => {
       }, 200)
     })
 
-    expect(console.error).toBeCalledWith('[micro-app] element head is missing')
+    expect(console.error).toBeCalledWith('[micro-app] app test-app4: element head is missing')
     expect(noheadErrorHandle).toBeCalledWith(expect.any(CustomEvent))
 
     const microappElement5 = document.createElement('micro-app')
@@ -102,7 +102,7 @@ describe('source index', () => {
       }, 200)
     })
 
-    expect(console.error).toBeCalledWith('[micro-app] element body is missing')
+    expect(console.error).toHaveBeenLastCalledWith('[micro-app] app test-app5: element body is missing')
     expect(nobodyErrorHandle).toBeCalledWith(expect.any(CustomEvent))
   })
 
@@ -134,7 +134,7 @@ describe('source index', () => {
 
     await new Promise((reslove) => {
       setTimeout(() => {
-        expect(console.error).toHaveBeenLastCalledWith('[micro-app] html is empty, please check in detail')
+        expect(console.error).toHaveBeenLastCalledWith('[micro-app] app test-app7: html is empty, please check in detail')
         reslove(true)
       }, 100)
     })

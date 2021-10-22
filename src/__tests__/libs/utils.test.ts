@@ -12,14 +12,14 @@ afterAll(() => {
 
 test('uitls ==> logError & logWarn', () => {
   Utils.logError('msg')
-  expect(console.error).toBeCalledWith('[micro-app] msg')
+  expect(console.error).toHaveBeenLastCalledWith('[micro-app] msg')
   Utils.logError(new Error('123'), 'appName', 111)
-  expect(console.error).toBeCalledWith('[micro-app] app appName', expect.any(Error), 111)
+  expect(console.error).toHaveBeenLastCalledWith('[micro-app] app appName:', expect.any(Error), 111)
 
   Utils.logWarn('msg')
-  expect(console.warn).toBeCalledWith('[micro-app] msg')
+  expect(console.warn).toHaveBeenLastCalledWith('[micro-app] msg')
   Utils.logWarn(new Error('123'), 'appName', 111)
-  expect(console.warn).toBeCalledWith('[micro-app] app appName', expect.any(Error), 111)
+  expect(console.warn).toHaveBeenLastCalledWith('[micro-app] app appName:', expect.any(Error), 111)
 })
 
 test('call function in micro task', () => {

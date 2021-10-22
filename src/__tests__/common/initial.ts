@@ -6,7 +6,7 @@ global.fetch = require('node-fetch')
 jest.useRealTimers()
 
 export const ports = {
-  index: 9000,
+  main: 9000,
   create_app: 9001,
   micro_app_element: 9002,
   lifecycles_event: 9003,

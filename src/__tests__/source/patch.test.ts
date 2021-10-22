@@ -163,7 +163,7 @@ describe('source patch', () => {
          * setAttribute
          */
         microappElement1.setAttribute('data', 'not object')
-        expect(console.warn).toHaveBeenLastCalledWith('[micro-app] property data must be an object')
+        expect(console.warn).toHaveBeenLastCalledWith('[micro-app] app test-app1: property data must be an object')
         // 模拟将对象类型转换为字符串
         microappElement1.setAttribute('data', '[object Object]')
         // @ts-ignore
@@ -274,6 +274,7 @@ describe('source patch', () => {
         expect(microAppHead.contains(handleNewNodeDom5)).toBeTruthy()
         app1.scopecss = true
 
+        // link 标签的 exclude
         const handleNewNodeDom4 = document.createElement('link')
         handleNewNodeDom4.setAttribute('exclude', 'true')
         document.head.appendChild(handleNewNodeDom4)

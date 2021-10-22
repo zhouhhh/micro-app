@@ -8,7 +8,7 @@ describe('main process', () => {
   // 根容器
   let appCon: Element
   beforeAll(() => {
-    commonStartEffect(ports.index)
+    commonStartEffect(ports.main)
     appCon = document.querySelector('#app-container')!
     console.log(version, pureCreateElement('div'))
 
@@ -70,7 +70,7 @@ describe('main process', () => {
         return [
           {
             name: 'test-app5',
-            url: `http://127.0.0.1:${ports.index}/ssr-render`,
+            url: `http://127.0.0.1:${ports.main}/ssr-render`,
             disableScopecss: true,
             disableSandbox: true,
             macro: true,
@@ -87,7 +87,7 @@ describe('main process', () => {
 
     preFetch([{
       name: 'test-app3',
-      url: `http://127.0.0.1:${ports.index}/common`,
+      url: `http://127.0.0.1:${ports.main}/common`,
       // disableScopecss: xx,
       // disableSandbox: xx,
       // macro: xx,
@@ -113,7 +113,7 @@ describe('main process', () => {
   test('main process of micro-app', async () => {
     const microappElement1 = document.createElement('micro-app')
     microappElement1.setAttribute('name', 'test-app1')
-    microappElement1.setAttribute('url', `http://127.0.0.1:${ports.index}/common`)
+    microappElement1.setAttribute('url', `http://127.0.0.1:${ports.main}/common`)
     microappElement1.setAttribute('inline', 'true')
 
     appCon.appendChild(microappElement1)
@@ -152,7 +152,7 @@ describe('main process', () => {
     expect(getCurrentAppName()).toBeNull()
     const microappElement2 = document.createElement('micro-app')
     microappElement2.setAttribute('name', 'test-app2')
-    microappElement2.setAttribute('url', `http://127.0.0.1:${ports.index}/ssr-render`)
+    microappElement2.setAttribute('url', `http://127.0.0.1:${ports.main}/ssr-render`)
 
     appCon.appendChild(microappElement2)
 
@@ -181,7 +181,7 @@ describe('main process', () => {
     microappElement3.setAttribute('data', { count: 'count-1' })
     expect(microappElement3.data.count).toBe('count-1')
     microappElement3.setAttribute('name', 'test-app3')
-    microappElement3.setAttribute('url', `http://127.0.0.1:${ports.index}/common`)
+    microappElement3.setAttribute('url', `http://127.0.0.1:${ports.main}/common`)
     microappElement3.setAttribute('destory', 'true')
     microappElement3.setAttribute('shadowDOM', 'true')
     microappElement3.setAttribute('inline', 'true')
@@ -203,7 +203,7 @@ describe('main process', () => {
           // 等懒加载资源执行完
           setTimeout(() => {
             microappElement3.setAttribute('name', 'test-app1')
-            microappElement3.setAttribute('url', `http://127.0.0.1:${ports.index}/ssr-render`)
+            microappElement3.setAttribute('url', `http://127.0.0.1:${ports.main}/ssr-render`)
           }, 500)
         } else {
           expect(appInstanceMap.size).toBe(prefetchAppNum + 2)
@@ -240,7 +240,7 @@ describe('main process', () => {
 
     await new Promise((reslove) => {
       microAppElement4.addEventListener('error', () => {
-        expect(console.error).toHaveBeenCalledWith('[micro-app] Failed to fetch data from http://not-exist.com/xx/, micro-app stop rendering', expect.any(Error))
+        expect(console.error).toHaveBeenCalledWith('[micro-app] app test-app4: Failed to fetch data from http://not-exist.com/xx/, micro-app stop rendering', expect.any(Error))
         reslove(true)
       }, false)
       appCon.appendChild(microAppElement4)
@@ -262,7 +262,7 @@ describe('main process', () => {
     const microAppElement6 = document.createElement('micro-app')
     microAppElement6.setAttribute('name', 'test-app6')
     microAppElement6.setAttribute('library', 'umd-app1') // 自定义umd名称
-    microAppElement6.setAttribute('url', `http://127.0.0.1:${ports.index}/umd1`)
+    microAppElement6.setAttribute('url', `http://127.0.0.1:${ports.main}/umd1`)
 
     let commonReslove: CallableFunction
     function firstMountHandler () {
@@ -311,7 +311,7 @@ describe('main process', () => {
     const microAppElement7 = document.createElement('micro-app')
     microAppElement7.setAttribute('name', 'test-app7')
     microAppElement7.setAttribute('library', 'umd-app1') // 自定义umd名称
-    microAppElement7.setAttribute('url', `http://127.0.0.1:${ports.index}/umd1`)
+    microAppElement7.setAttribute('url', `http://127.0.0.1:${ports.main}/umd1`)
     microAppElement7.setAttribute('disablesandbox', 'true')
 
     let commonReslove: CallableFunction

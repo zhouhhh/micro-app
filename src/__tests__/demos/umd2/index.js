@@ -6,11 +6,11 @@ window.removeEventListener('load', handleWindowLoad)
 let supportsPassive = false
 try {
   const opts = Object.defineProperty({}, 'passive', {
-    get: function() {
-      supportsPassive = true;
+    get: function () {
+      supportsPassive = true
     }
   })
- window.addEventListener("test", null, opts)
+  window.addEventListener('test', null, opts)
 } catch (e) {}
 
 // 不要加document事件监听 --- 单测分支覆盖！！！

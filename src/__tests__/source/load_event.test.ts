@@ -31,7 +31,7 @@ describe('source load_event', () => {
         document.head.appendChild(dynamicLink1)
         // onerror 监听
         dynamicLink1.onerror = function () {
-          expect(console.error).toBeCalledWith('[micro-app]', expect.any(Error))
+          expect(console.error).toBeCalledWith('[micro-app] app test-app1:', expect.any(Error))
         }
 
         // event 监听

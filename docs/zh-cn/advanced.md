@@ -154,7 +154,10 @@ microApp.start({
 #### ** React **
 ```js
 // index.js
-...
+import React from "react"
+import ReactDOM from "react-dom"
+import App from './App'
+
 // 👇 将渲染操作放入 mount 函数
 export function mount () {
   ReactDOM.render(<App />, document.getElementById("root"))
@@ -162,7 +165,7 @@ export function mount () {
 
 // 👇 将卸载操作放入 unmount 函数
 export function unmount () {
-  ReactDOM.unmountComponentAtNode(document.getElementById("root"));
+  ReactDOM.unmountComponentAtNode(document.getElementById("root"))
 }
 
 // 微前端环境下，注册mount和unmount方法
@@ -170,23 +173,32 @@ if (window.__MICRO_APP_ENVIRONMENT__) {
   window[`micro-app-${window.__MICRO_APP_NAME__}`] = { mount, unmount }
 } else {
   // 非微前端环境直接渲染
-  mount();
+  mount()
 }
 ```
 
 #### ** Vue2 **
+这里只介绍配合`vue-router3.x`的用法
+
 ```js
 // main.js
-...
+import Vue from 'vue'
+import router from './router'
+import App from './App.vue'
+
 let app = null
 // 👇 将渲染操作放入 mount 函数
 function mount () {
-  app = new Vue(...).$mount('#app')
+  app = new Vue({
+    router,
+    render: h => h(App),
+  }).$mount('#app')
 }
 
 // 👇 将卸载操作放入 unmount 函数
 function unmount () {
   app.$destroy()
+  app.$el.innerHTML = ''
   app = null
 }
 
@@ -200,12 +212,26 @@ if (window.__MICRO_APP_ENVIRONMENT__) {
 ```
 
 #### ** Vue3 **
+这里只介绍配合`vue-router4.x`的用法
+
 ```js
 // main.js
-...
+import { createApp } from 'vue'
+import * as VueRouter from 'vue-router'
+import routes from './router'
+import App from './App.vue'
+
 let app = null
+let router = null
+let history = null
 // 👇 将渲染操作放入 mount 函数
 function mount () {
+  history = VueRouter.createWebHistory(window.__MICRO_APP_BASE_ROUTE__ || '/')
+  router = VueRouter.createRouter({
+    history,
+    routes,
+  })
+
   app = createApp(App)
   app.use(router)
   app.mount('#app')
@@ -214,7 +240,10 @@ function mount () {
 // 👇 将卸载操作放入 unmount 函数
 function unmount () {
   app.unmount()
+  history.destroy()
   app = null
+  router = null
+  history = null
 }
 
 // 微前端环境下，注册mount和unmount方法
@@ -244,17 +273,17 @@ declare global {
 
 let app = null;
 // 👇 将渲染操作放入 mount 函数
-function mount () {
-  platformBrowserDynamic().bootstrapModule(AppModule)
-  .then((ngModuleRef: any) => {
-    app = ngModuleRef
-  })
+async function mount () {
+  app = await platformBrowserDynamic()
+  .bootstrapModule(AppModule)
   .catch(err => console.error(err))
 }
 
 // 👇 将卸载操作放入 unmount 函数
 function unmount () {
   app?.destroy();
+  // 清空根元素，如果根元素不是app-root，根据实际情况调整
+  document.querySelector('app-root').innerHTML = '';
   app = null;
 }
 
@@ -271,12 +300,25 @@ if (window.__MICRO_APP_ENVIRONMENT__) {
 #### ** Vite **
 因为vite作为子应用时关闭了沙箱，导致`__MICRO_APP_ENVIRONMENT__`和`__MICRO_APP_NAME__`两个变量失效，所以需要自行判断是否微前端环境以及手动填写应用name值。
 
+这里以 vue3 + vue-router4 为例：
 ```js
 // main.js
-...
+import { createApp } from 'vue'
+import * as VueRouter from 'vue-router'
+import routes from './router'
+import App from './App.vue'
+
 let app = null
+let router = null
+let history = null
 // 👇 将渲染操作放入 mount 函数
 function mount () {
+  history = VueRouter.createWebHashHistory(import.meta.env.BASE_URL)
+  router = VueRouter.createRouter({
+    history,
+    routes,
+  })
+
   app = createApp(App)
   app.use(router)
   app.mount('#app')
@@ -285,11 +327,14 @@ function mount () {
 // 👇 将卸载操作放入 unmount 函数
 function unmount () {
   app.unmount()
+  history.destroy()
   app = null
+  router = null
+  history = null
 }
 
 // 微前端环境下，注册mount和unmount方法
-if (我在微前端环境) {
+if (如果是微前端环境) {
   // 应用的name值，即 <micro-app> 元素的name属性值
   window[`micro-app-${应用的name值}`] = { mount, unmount }
 } else {
@@ -299,8 +344,9 @@ if (我在微前端环境) {
 ```
 <!-- tabs:end -->
 
+#### 自定义名称
 
-通常注册的形式为`window['micro-app-${window.__MICRO_APP_NAME__}'] = {...}`，但也支持自定义名称，`window['自定义的名称'] = {...}`
+通常注册函数的形式为 `window['micro-app-${window.__MICRO_APP_NAME__}'] = {}`，但也支持自定义名称，`window['自定义的名称'] = {}`
 
 自定义的值需要在`<micro-app>`标签中通过`library`属性指定。
 

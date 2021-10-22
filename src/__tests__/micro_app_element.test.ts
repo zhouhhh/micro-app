@@ -53,7 +53,7 @@ describe('micro_app_element', () => {
 
     appCon.appendChild(microappElement3)
 
-    expect(console.error).toHaveBeenCalledWith(`[micro-app] the url: http://127.0.0.1:${ports.micro_app_element}/ssr-render/ is different from prefetch url: http://127.0.0.1:${ports.micro_app_element}/common/`)
+    expect(console.error).toHaveBeenCalledWith(`[micro-app] app test-app1: the url http://127.0.0.1:${ports.micro_app_element}/ssr-render/ is different from prefetch url http://127.0.0.1:${ports.micro_app_element}/common/`)
   })
 
   // name冲突
@@ -64,7 +64,7 @@ describe('micro_app_element', () => {
 
     appCon.appendChild(microappElement4)
 
-    expect(console.error).toHaveBeenCalledWith('[micro-app] an app named test-app2 already exists')
+    expect(console.error).toHaveBeenCalledWith('[micro-app] app test-app2: an app named test-app2 already exists')
   })
 
   // 非法url
@@ -88,7 +88,7 @@ describe('micro_app_element', () => {
 
     await new Promise((reslove) => {
       defer(() => {
-        expect(console.error).toBeCalledWith('[micro-app] an app named test-app2 already exists')
+        expect(console.error).toBeCalledWith('[micro-app] app test-app6: an app named test-app2 already exists')
         expect(microappElement6.getAttribute('name')).toBe('test-app6')
         reslove(true)
       })
@@ -187,7 +187,7 @@ describe('micro_app_element', () => {
       setTimeout(() => {
         expect(mountCount).toBe(2) // 渲染2次
         reslove(true)
-      }, 4)
+      }, 200)
     })
 
     // 分支覆盖

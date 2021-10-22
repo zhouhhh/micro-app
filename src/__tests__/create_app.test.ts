@@ -146,4 +146,27 @@ describe('create_app', () => {
       }, 200)
     })
   })
+
+  // 非沙箱环境的umd，在destory卸载时，注册在window的函数应该删除
+  test('render umd app with disablesandbox & destory', async () => {
+    const microAppElement6 = document.createElement('micro-app')
+    microAppElement6.setAttribute('name', 'test-app6')
+    microAppElement6.setAttribute('library', 'umd-app1') // 自定义umd名称
+    microAppElement6.setAttribute('url', `http://127.0.0.1:${ports.create_app}/umd1`)
+    microAppElement6.setAttribute('disablesandbox', 'true')
+    microAppElement6.setAttribute('destory', 'true')
+
+    appCon.appendChild(microAppElement6)
+
+    await new Promise((reslove) => {
+      microAppElement6.addEventListener('mounted', () => {
+        // @ts-ignore
+        expect(window['umd-app1']).not.toBeUndefined()
+        appCon.removeChild(microAppElement6)
+        // @ts-ignore
+        expect(window['umd-app1']).toBeUndefined()
+        reslove(true)
+      })
+    })
+  })
 })
