@@ -40,7 +40,7 @@ export function extractLinkFromHtml (
   if (rel === 'stylesheet' && href) {
     href = CompletionPath(href, app.url)
     if (!isDynamic) {
-      replaceComment = document.createComment(`the link with href=${href} move to micro-app-head as style element`)
+      replaceComment = document.createComment(`link element with href=${href} move to micro-app-head as style element`)
       const placeholderComment = document.createComment(`placeholder for link with href=${href}`)
       // all style elements insert into microAppHead
       microAppHead!.appendChild(placeholderComment)
@@ -58,8 +58,15 @@ export function extractLinkFromHtml (
         }
       }
     }
+  } else if (rel && ['prefetch', 'preload', 'prerender', 'icon', 'apple-touch-icon'].includes(rel)) {
+    // preload prefetch  icon ....
+    if (isDynamic) {
+      replaceComment = document.createComment(`link element with rel=${rel}${href ? ' & href=' + href : ''} removed by micro-app`)
+    } else {
+      parent.removeChild(link)
+    }
   } else if (href) {
-    // preload prefetch modulepreload icon ....
+    // dns-prefetch preconnect modulepreload search ....
     link.setAttribute('href', CompletionPath(href, app.url))
   }
 

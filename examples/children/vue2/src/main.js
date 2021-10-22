@@ -33,19 +33,20 @@ let app = null
 // })
 
 function mount () {
-  console.log("微应用vue2渲染了 -- 来自umd-mount");
   app = new Vue({
     router,
     render: h => h(App),
   }).$mount('#app')
   console.timeEnd('vue2')
+  console.log("微应用vue2渲染了 -- 来自umd-mount")
 }
 
+// 卸载应用
 function unmount () {
-  console.log("微应用vue2卸载了 -- 来自umd-unmount");
-  // 卸载应用
   app.$destroy()
+  app.$el.innerHTML = ''
   app = null
+  console.log("微应用vue2卸载了 -- 来自umd-unmount")
 }
 
 // 微前端环境下，注册mount和unmount方法

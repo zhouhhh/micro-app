@@ -1,7 +1,7 @@
 /* eslint-disable promise/param-names */
 import { commonStartEffect, releaseAllEffect, ports, setAppName } from '../common/initial'
 import { appInstanceMap } from '../../create_app'
-import { globalLinks, formatHTMLStyleAfterUmdInit } from '../../source/links'
+import { globalLinks } from '../../source/links'
 import microApp from '../..'
 
 describe('source links', () => {
@@ -169,15 +169,5 @@ describe('source links', () => {
         reslove(true)
       }, false)
     })
-  })
-
-  // formatHTMLStyleAfterUmdInit 分支覆盖
-  test('coverage barnch of formatHTMLStyleAfterUmdInit', () => {
-    const con = document.createElement('div')
-    // @ts-ignore
-    con.querySelectorAll = function () {
-      return [{}]
-    }
-    formatHTMLStyleAfterUmdInit(con, 'not-exist')
   })
 })

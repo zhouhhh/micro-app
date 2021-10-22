@@ -18,11 +18,9 @@ declare global {
 
 let app = null;
 // 将渲染操作放入 mount 函数
-function mount () {
-  platformBrowserDynamic().bootstrapModule(AppModule)
-  .then((ngModuleRef: any) => {
-    app = ngModuleRef
-  })
+async function mount () {
+  app = await platformBrowserDynamic()
+  .bootstrapModule(AppModule)
   .catch(err => console.error(err))
 
   console.log('微应用child-angular11渲染了');
@@ -31,6 +29,7 @@ function mount () {
 // 将卸载操作放入 unmount 函数
 function unmount () {
   app?.destroy();
+  document.querySelector('app-root').innerHTML = ''
   app = null;
   console.log('微应用child-angular11卸载了');
 }

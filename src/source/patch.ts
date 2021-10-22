@@ -41,7 +41,7 @@ function handleNewNode (parent: Node, child: Node, app: AppInterface): Node {
       return child
     }
 
-    const { url, info } = extractLinkFromHtml(
+    const { url, info, replaceComment } = extractLinkFromHtml(
       child,
       parent,
       app,
@@ -55,11 +55,10 @@ function handleNewNode (parent: Node, child: Node, app: AppInterface): Node {
       foramtDynamicLink(url, info, app, child, replaceStyle)
       dynamicElementInMicroAppMap.set(child, replaceStyle)
       return replaceStyle
+    } else if (replaceComment) {
+      dynamicElementInMicroAppMap.set(child, replaceComment)
+      return replaceComment
     }
-    //  else if (replaceComment) {
-    //   dynamicElementInMicroAppMap.set(child, replaceComment)
-    //   return replaceComment
-    // }
     return child
   } else if (child instanceof HTMLScriptElement) {
     const { replaceComment, url, info } = extractScriptElement(
