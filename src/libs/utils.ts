@@ -3,17 +3,16 @@ import type { Func } from '@micro-app/types'
 
 export const version = '__VERSION__'
 
-export const isBrowser = typeof window !== 'undefined'
+export const isBrowser = !isUndefined(window)
 
-export const globalThis = (typeof global !== 'undefined')
-  ? global
-  : (
-    (typeof window !== 'undefined')
+export const globalThis =
+  !isUndefined(global)
+    ? global
+    : !isUndefined(window)
       ? window
-      : (
-        (typeof self !== 'undefined') ? self : Function('return this')()
-      )
-  )
+      : !isUndefined(self)
+        ? self
+        : Function('return this')()
 
 /**
  * format error log
@@ -25,8 +24,8 @@ export function logError (
   appName: string | null = null,
   ...rest: any[]
 ): void {
-  const appNameTip = appName && typeof appName === 'string' ? ` app ${appName}:` : ''
-  if (typeof msg === 'string') {
+  const appNameTip = appName && isString(appName) ? ` app ${appName}:` : ''
+  if (isString(msg)) {
     console.error(`[micro-app]${appNameTip} ${msg}`, ...rest)
   } else {
     console.error(`[micro-app]${appNameTip}`, msg, ...rest)
@@ -43,8 +42,8 @@ export function logWarn (
   appName: string | null = null,
   ...rest: any[]
 ): void {
-  const appNameTip = appName && typeof appName === 'string' ? ` app ${appName}:` : ''
-  if (typeof msg === 'string') {
+  const appNameTip = appName && isString(appName) ? ` app ${appName}:` : ''
+  if (isString(msg)) {
     console.warn(`[micro-app]${appNameTip} ${msg}`, ...rest)
   } else {
     console.warn(`[micro-app]${appNameTip}`, msg, ...rest)
@@ -73,7 +72,7 @@ export function addProtocol (url: string): string {
  * @param url address
  */
 export function formatURL (url: string | null, appName: string | null = null): string {
-  if (typeof url !== 'string' || !url) return ''
+  if (!isString(url) || !url) return ''
 
   try {
     const { origin, pathname, search } = new URL(addProtocol(url))
@@ -134,13 +133,13 @@ export function getLinkFileDir (linkpath: string): string {
 /**
  * promise stream
  * @param promiseList promise list
- * @param successsCb success callback
+ * @param successCb success callback
  * @param errorCb failed callback
  * @param finallyCb finally callback
  */
 export function promiseStream <T> (
   promiseList: Array<Promise<T> | T>,
-  successsCb: CallableFunction,
+  successCb: CallableFunction,
   errorCb: CallableFunction,
   finallyCb?: CallableFunction,
 ): void {
@@ -151,9 +150,9 @@ export function promiseStream <T> (
   }
 
   promiseList.forEach((p, i) => {
-    if (toString.call(p) === '[object Promise]') {
+    if (isPromise(p)) {
       (p as Promise<T>).then((res: T) => {
-        successsCb({
+        successCb({
           data: res,
           index: i,
         })
@@ -166,7 +165,7 @@ export function promiseStream <T> (
         isFinished()
       })
     } else {
-      successsCb({
+      successCb({
         data: p,
         index: i,
       })
@@ -187,8 +186,8 @@ export function createNonceSrc (): string {
 }
 
 // Array deduplication
-export function unique (array: any[]): any[] {
-  return array.filter(function (this: Record<PropertyKey, unknown>, item) {
+export function unique<T extends PropertyKey> (array: T[]): T[] {
+  return array.filter(function (this: Record<PropertyKey, boolean>, item) {
     return item in this ? false : (this[item] = true)
   }, Object.create(null))
 }
@@ -233,6 +232,43 @@ export function isSafari (): boolean {
 // is function
 export function isFunction (target: unknown): boolean {
   return typeof target === 'function'
+}
+
+// is Array
+export function isArray (target: unknown): boolean {
+  return Array.isArray(target)
+}
+
+// is PlainObject
+export function isPlainObject (target: unknown): boolean {
+  return toString.call(target) === '[object Object]'
+}
+
+// is String
+export function isString (target: unknown): boolean {
+  return (
+    typeof target === 'string' || toString.call(target) === '[object String]'
+  )
+}
+
+// is Promise
+export function isPromise (target: unknown): boolean {
+  return toString.call(target) === '[object Promise]'
+}
+
+// is Undefined
+export function isUndefined (target: unknown): boolean {
+  return target === undefined
+}
+
+// is Null
+export function isNull (target: unknown): boolean {
+  return target === null
+}
+
+// is Boolean
+export function isBoolean (target: unknown) :boolean {
+  return target === true || target === false || toString.call(target) === '[object Boolean]'
 }
 
 /**
