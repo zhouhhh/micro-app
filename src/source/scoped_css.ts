@@ -57,7 +57,7 @@ function scopedHost (
   cssText: string,
   baseURI: string,
   textContent: string,
-  linkpath: string | undefined,
+  linkpath?: string,
 ) {
   return cssText.replace(/url\(["']?([^)"']+)["']?\)/gm, (all, $1) => {
     if (/^(data|blob):/.test($1)) {
@@ -130,7 +130,7 @@ function commonAction (
   originContent: string,
   prefix: string,
   baseURI: string,
-  linkpath: string | undefined,
+  linkpath?: string,
 ) {
   const rules: CSSRule[] = Array.from(templateStyle.sheet?.cssRules ?? [])
   let result = scopedHost(
