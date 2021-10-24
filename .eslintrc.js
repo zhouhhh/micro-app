@@ -29,6 +29,7 @@ module.exports = {
     '@typescript-eslint/camelcase': 0,
     '@typescript-eslint/no-namespace': 0,
     '@typescript-eslint/ban-ts-comment': 0,
+    '@typescript-eslint/ban-types': 0,
     'standard/no-callback-literal': 0,
     'no-console': ['error', { allow: ['warn', 'error'] }],
     'prefer-spread': 0,

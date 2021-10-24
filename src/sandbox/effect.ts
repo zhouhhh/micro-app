@@ -27,7 +27,7 @@ function overwriteDocumentOnClick (): void {
 
   function onClickHandler (e: MouseEvent) {
     documentClickListMap.forEach((f) => {
-      isFunction(f) && f.call(document, e)
+      isFunction(f) && (f as Function).call(document, e)
     })
   }
 

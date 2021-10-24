@@ -51,7 +51,7 @@ export default class EventCenter {
       const eventInfo = this.eventList.get(name)
       if (eventInfo) {
         if (isFunction(f)) {
-          eventInfo.callbacks.delete(f)
+          eventInfo.callbacks.delete(f!)
         } else {
           eventInfo.callbacks.clear()
         }

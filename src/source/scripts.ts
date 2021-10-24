@@ -365,7 +365,7 @@ function usePlugins (url: string, code: string, appName: string, plugins: plugin
   if (isArray(plugins.global)) {
     for (const plugin of plugins.global) {
       if (isPlainObject(plugin) && isFunction(plugin.loader)) {
-        code = plugin.loader(code, url, plugin.options)
+        code = plugin.loader!(code, url, plugin.options)
       }
     }
   }
@@ -373,7 +373,7 @@ function usePlugins (url: string, code: string, appName: string, plugins: plugin
   if (isArray(plugins.modules?.[appName])) {
     for (const plugin of plugins.modules![appName]) {
       if (isPlainObject(plugin) && isFunction(plugin.loader)) {
-        code = plugin.loader(code, url, plugin.options)
+        code = plugin.loader!(code, url, plugin.options)
       }
     }
   }

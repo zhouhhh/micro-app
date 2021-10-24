@@ -24,7 +24,7 @@ export function dispatchOnLoadEvent (element: HTMLLinkElement | HTMLScriptElemen
   const event = new CustomEvent('load')
   eventHandler(event, element)
   if (isFunction(element.onload)) {
-    element.onload(event)
+    element.onload!(event)
   } else {
     element.dispatchEvent(event)
   }
@@ -34,7 +34,7 @@ export function dispatchOnErrorEvent (element: HTMLLinkElement | HTMLScriptEleme
   const event = new CustomEvent('error')
   eventHandler(event, element)
   if (isFunction(element.onerror)) {
-    element.onerror(event)
+    element.onerror!(event)
   } else {
     element.dispatchEvent(event)
   }
