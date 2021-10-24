@@ -1,5 +1,5 @@
 import type { AttrType, MicroAppElementType, AppInterface } from '@micro-app/types'
-import { defer, formatURL, version, logError } from './libs/utils'
+import { defer, formatURL, version, logError, isString } from './libs/utils'
 import { ObservedAttrName, appStatus, lifeCycles } from './constants'
 import CreateApp, { appInstanceMap } from './create_app'
 import {
@@ -192,7 +192,7 @@ export function defineElement (tagName: string): void {
      * @param val attribute value
      */
     legalAttribute (name: string, val: AttrType): boolean {
-      if (typeof val !== 'string' || !val) {
+      if (!isString(val) || !val) {
         logError(`unexpected attribute ${name}, please check again`, this.appName)
 
         return false

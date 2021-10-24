@@ -1,6 +1,6 @@
 import type { prefetchParamList, prefetchParam, globalAssetsType } from '@micro-app/types'
 import CreateApp, { appInstanceMap } from './create_app'
-import { requestIdleCallback, formatURL, promiseStream, logError, isBrowser, isArray, isPlainObject, isString } from './libs/utils'
+import { requestIdleCallback, formatURL, promiseStream, logError, isBrowser, isArray, isPlainObject, isString, isFunction } from './libs/utils'
 import { fetchSource } from './source/fetch'
 import { globalLinks } from './source/links'
 import { globalScripts } from './source/scripts'
@@ -47,7 +47,7 @@ export default function preFetch (apps: prefetchParamList): void {
     return logError('preFetch is only supported in browser environment')
   }
   requestIdleCallback(() => {
-    if (typeof apps === 'function') apps = apps()
+    if (isFunction(apps)) apps = apps()
 
     filterPreFetchTarget(apps).forEach((item) => {
       const app = new CreateApp({
@@ -72,7 +72,7 @@ export function getGlobalAssets (assets: globalAssetsType): void {
   if (isPlainObject(assets)) {
     requestIdleCallback(() => {
       if (isArray(assets.js)) {
-        const effectiveJs = assets.js!.filter((path) => isString(path) && path.endsWith('.js') && !globalScripts.has(path))
+        const effectiveJs = assets.js!.filter((path) => isString(path) && path.includes('.js') && !globalScripts.has(path))
 
         const fetchJSPromise: Array<Promise<string>> = []
         effectiveJs.forEach((path) => {
@@ -91,7 +91,7 @@ export function getGlobalAssets (assets: globalAssetsType): void {
       }
 
       if (isArray(assets.css)) {
-        const effectiveCss = assets.css!.filter((path) => isString(path) && path.endsWith('.css') && !globalLinks.has(path))
+        const effectiveCss = assets.css!.filter((path) => isString(path) && path.includes('.css') && !globalLinks.has(path))
 
         const fetchCssPromise: Array<Promise<string>> = []
         effectiveCss.forEach((path) => {

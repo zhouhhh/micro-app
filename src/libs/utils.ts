@@ -3,7 +3,8 @@ import type { Func } from '@micro-app/types'
 
 export const version = '__VERSION__'
 
-export const isBrowser = !isUndefined(window)
+// do not use isUndefined
+export const isBrowser = typeof window !== 'undefined'
 
 export const globalThis =
   !isUndefined(global)
@@ -13,6 +14,44 @@ export const globalThis =
       : !isUndefined(self)
         ? self
         : Function('return this')()
+
+// is Undefined
+export function isUndefined (target: unknown): target is undefined {
+  return target === undefined
+}
+
+// is Null
+export function isNull (target: unknown): target is null {
+  return target === null
+}
+
+// is String
+export function isString (target: unknown): target is string {
+  return typeof target === 'string'
+}
+
+// is Boolean
+export function isBoolean (target: unknown): target is boolean {
+  return typeof target === 'boolean'
+}
+
+// is function
+export function isFunction (target: unknown): boolean {
+  return typeof target === 'function'
+}
+
+// is Array
+export const isArray = Array.isArray
+
+// is PlainObject
+export function isPlainObject (target: unknown): boolean {
+  return toString.call(target) === '[object Object]'
+}
+
+// is Promise
+export function isPromise (target: unknown): boolean {
+  return toString.call(target) === '[object Promise]'
+}
 
 /**
  * format error log
@@ -186,7 +225,7 @@ export function createNonceSrc (): string {
 }
 
 // Array deduplication
-export function unique<T extends PropertyKey> (array: T[]): T[] {
+export function unique (array: any[]): any[] {
   return array.filter(function (this: Record<PropertyKey, boolean>, item) {
     return item in this ? false : (this[item] = true)
   }, Object.create(null))
@@ -227,48 +266,6 @@ export function removeDomScope (): void {
 // is safari browser
 export function isSafari (): boolean {
   return /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent)
-}
-
-// is function
-export function isFunction (target: unknown): boolean {
-  return typeof target === 'function'
-}
-
-// is Array
-export function isArray (target: unknown): boolean {
-  return Array.isArray(target)
-}
-
-// is PlainObject
-export function isPlainObject (target: unknown): boolean {
-  return toString.call(target) === '[object Object]'
-}
-
-// is String
-export function isString (target: unknown): boolean {
-  return (
-    typeof target === 'string' || toString.call(target) === '[object String]'
-  )
-}
-
-// is Promise
-export function isPromise (target: unknown): boolean {
-  return toString.call(target) === '[object Promise]'
-}
-
-// is Undefined
-export function isUndefined (target: unknown): boolean {
-  return target === undefined
-}
-
-// is Null
-export function isNull (target: unknown): boolean {
-  return target === null
-}
-
-// is Boolean
-export function isBoolean (target: unknown) :boolean {
-  return target === true || target === false || toString.call(target) === '[object Boolean]'
 }
 
 /**

@@ -1,7 +1,7 @@
 import { CallableFunctionForInteract } from '@micro-app/types'
 import EventCenter from './event_center'
 import { appInstanceMap } from '../create_app'
-import { removeDomScope } from '../libs/utils'
+import { removeDomScope, isString, isFunction, isPlainObject } from '../libs/utils'
 
 const eventCenter = new EventCenter()
 
@@ -11,7 +11,7 @@ const eventCenter = new EventCenter()
  * @param fromBaseApp is from base app
  */
 function formatEventName (appName: string, fromBaseApp: boolean): string {
-  if (typeof appName !== 'string' || !appName) return ''
+  if (!isString(appName) || !appName) return ''
   return fromBaseApp ? `__from_base_app_${appName}__` : `__from_micro_app_${appName}__`
 }
 
@@ -37,7 +37,7 @@ class EventCenterForGlobal {
    * @param cb listener
    */
   removeGlobalDataListener (cb: CallableFunctionForInteract): void {
-    if (typeof cb === 'function') {
+    if (isFunction(cb)) {
       eventCenter.off('global', cb)
     }
   }
@@ -89,7 +89,7 @@ export class EventCenterForBaseApp extends EventCenterForGlobal {
    * @param cb listener
    */
   removeDataListener (appName: string, cb: CallableFunction): void {
-    if (typeof cb === 'function') {
+    if (isFunction(cb)) {
       eventCenter.off(formatEventName(appName, false), cb)
     }
   }
@@ -149,7 +149,7 @@ export class EventCenterForMicroApp extends EventCenterForGlobal {
    * @param cb listener
    */
   removeDataListener (cb: CallableFunctionForInteract): void {
-    if (typeof cb === 'function') {
+    if (isFunction(cb)) {
       eventCenter.off(formatEventName(this.appName, true), cb)
     }
   }
@@ -171,7 +171,7 @@ export class EventCenterForMicroApp extends EventCenterForGlobal {
     eventCenter.dispatch(formatEventName(this.appName, false), data)
 
     const app = appInstanceMap.get(this.appName)
-    if (app?.container && toString.call(data) === '[object Object]') {
+    if (app?.container && isPlainObject(data)) {
       const event = new CustomEvent('datachange', {
         detail: {
           data,

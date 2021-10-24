@@ -13,6 +13,10 @@ import {
   pureCreateElement,
   defer,
   logError,
+  isUndefined,
+  isPlainObject,
+  isArray,
+  isFunction,
 } from '../libs/utils'
 import {
   dispatchOnLoadEvent,
@@ -193,7 +197,7 @@ export function execScripts (
         const [url, info] = deferScriptInfo[index]
         runScript(url, info.code = info.code || code, app, info.module, false, initedHook)
       })
-      initedHook(typeof initedHook.moduleCount === 'undefined')
+      initedHook(isUndefined(initedHook.moduleCount))
     }).catch((err) => {
       logError(err, app.name)
       initedHook(true)
@@ -340,8 +344,8 @@ function bindScope (
   app: AppInterface,
   module: boolean,
 ): string {
-  if (typeof microApp.plugins === 'object') {
-    code = usePlugins(url, code, app.name, microApp.plugins)
+  if (isPlainObject(microApp.plugins)) {
+    code = usePlugins(url, code, app.name, microApp.plugins!)
   }
   if (app.sandBox && !module) {
     globalEnv.rawWindow.__MICRO_APP_PROXY_WINDOW__ = app.sandBox.proxyWindow
@@ -358,17 +362,17 @@ function bindScope (
  * @param plugins plugin list
  */
 function usePlugins (url: string, code: string, appName: string, plugins: plugins): string {
-  if (toString.call(plugins.global) === '[object Array]') {
-    for (const plugin of plugins.global!) {
-      if (typeof plugin === 'object' && typeof plugin.loader === 'function') {
+  if (isArray(plugins.global)) {
+    for (const plugin of plugins.global) {
+      if (isPlainObject(plugin) && isFunction(plugin.loader)) {
         code = plugin.loader(code, url, plugin.options)
       }
     }
   }
 
-  if (toString.call(plugins.modules?.[appName]) === '[object Array]') {
+  if (isArray(plugins.modules?.[appName])) {
     for (const plugin of plugins.modules![appName]) {
-      if (typeof plugin === 'object' && typeof plugin.loader === 'function') {
+      if (isPlainObject(plugin) && isFunction(plugin.loader)) {
         code = plugin.loader(code, url, plugin.options)
       }
     }

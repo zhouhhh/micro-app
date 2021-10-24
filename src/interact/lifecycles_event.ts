@@ -1,5 +1,5 @@
 import microApp from '../micro_app'
-import { logError } from '../libs/utils'
+import { logError, isFunction } from '../libs/utils'
 
 function eventHandler (event: CustomEvent, element: HTMLElement): void {
   Object.defineProperties(event, {
@@ -49,7 +49,7 @@ export default function dispatchLifecyclesEvent (
   eventHandler(event, element)
   // global hooks
   // @ts-ignore
-  if (typeof microApp.lifeCycles?.[lifecycleName] === 'function') {
+  if (isFunction(microApp.lifeCycles?.[lifecycleName])) {
     // @ts-ignore
     microApp.lifeCycles[lifecycleName](event)
   }

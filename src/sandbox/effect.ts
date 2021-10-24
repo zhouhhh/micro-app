@@ -1,5 +1,5 @@
 import type { microWindowType } from '@micro-app/types'
-import { getCurrentAppName, setCurrentAppName, logWarn } from '../libs/utils'
+import { getCurrentAppName, setCurrentAppName, logWarn, isFunction } from '../libs/utils'
 import globalEnv from '../libs/global_env'
 
 type MicroEventListener = EventListenerOrEventListenerObject & Record<string, any>
@@ -27,7 +27,7 @@ function overwriteDocumentOnClick (): void {
 
   function onClickHandler (e: MouseEvent) {
     documentClickListMap.forEach((f) => {
-      typeof f === 'function' && f.call(document, e)
+      isFunction(f) && f.call(document, e)
     })
   }
 
@@ -46,7 +46,7 @@ function overwriteDocumentOnClick (): void {
         documentClickListMap.set('base', f)
       }
 
-      if (!hasDocumentClickInited && typeof f === 'function') {
+      if (!hasDocumentClickInited && isFunction(f)) {
         hasDocumentClickInited = true
         globalEnv.rawDocumentAddEventListener.call(globalEnv.rawDocument, 'click', onClickHandler, false)
       }

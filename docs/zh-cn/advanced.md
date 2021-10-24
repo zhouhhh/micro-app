@@ -20,16 +20,9 @@ microApp.start({
       return Promise.resolve('')
     }
     
-    let config = null
-    if (url === 'http://localhost:3001/micro-app/react16/') {
-      config = {
-        // 添加header信息
-        headers: {
-          'custom-head': 'custom-head',
-        },
-        // micro-app默认不带cookie，如果需要添加cookie需要配置credentials
-        credentials: 'include', // 请求时带上cookie
-      }
+    const config = {
+      // fetch 默认不带cookie，如果需要添加cookie需要配置credentials
+      credentials: 'include', // 请求时带上cookie
     }
 
     return fetch(url, Object.assign(options, config)).then((res) => {
@@ -40,9 +33,7 @@ microApp.start({
 ```
 
 > [!NOTE]
-> 1、micro-app默认不带cookie，如果需要添加cookie需要重写fetch，添加credentials配置
->
-> 2、如果跨域请求带cookie，那么`Access-Control-Allow-Origin`不能设置为`*`，这一点需要注意
+> 1、如果跨域请求带cookie，那么`Access-Control-Allow-Origin`不能设置为`*`，这一点需要注意
 
 ## 2、适配vite
 当子应用是vite应用时需要做特别的适配，适配vite的代价是巨大的，我们必须关闭沙箱功能，因为沙箱在`module script`下不支持，这导致大部分功能失效，包括：环境变量、样式隔离、元素隔离、数据通信、资源地址补全、baseroute 等。

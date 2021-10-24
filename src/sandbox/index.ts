@@ -6,6 +6,9 @@ import {
   defer,
   getEffectivePath,
   removeDomScope,
+  isString,
+  isPlainObject,
+  isArray,
 } from '../libs/utils'
 import effect, { effectDocumentEvent, releaseEffectDocumentEvent } from './effect'
 import {
@@ -131,7 +134,7 @@ export default class SandBox implements SandBoxInterface {
 
         if (
           this.scopeProperties.includes(key) ||
-          (typeof key === 'string' && /^__MICRO_APP_/.test(key))
+          (isString(key) && /^__MICRO_APP_/.test(key))
         ) {
           return Reflect.get(target, key)
         }
@@ -282,28 +285,28 @@ export default class SandBox implements SandBoxInterface {
    * @param appName app name
    */
   getScopeProperties (appName: string): void {
-    if (typeof microApp.plugins !== 'object') return
+    if (!isPlainObject(microApp.plugins)) return
 
-    if (toString.call(microApp.plugins.global) === '[object Array]') {
-      for (const plugin of microApp.plugins.global!) {
-        if (typeof plugin === 'object') {
-          if (toString.call(plugin.scopeProperties) === '[object Array]') {
+    if (isArray(microApp.plugins!.global)) {
+      for (const plugin of microApp.plugins!.global) {
+        if (isPlainObject(plugin)) {
+          if (isArray(plugin.scopeProperties)) {
             this.scopeProperties = this.scopeProperties.concat(plugin.scopeProperties!)
           }
-          if (toString.call(plugin.escapeProperties) === '[object Array]') {
+          if (isArray(plugin.escapeProperties)) {
             this.escapeProperties = this.escapeProperties.concat(plugin.escapeProperties!)
           }
         }
       }
     }
 
-    if (toString.call(microApp.plugins.modules?.[appName]) === '[object Array]') {
-      for (const plugin of microApp.plugins.modules![appName]) {
-        if (typeof plugin === 'object') {
-          if (toString.call(plugin.scopeProperties) === '[object Array]') {
+    if (isArray(microApp.plugins!.modules?.[appName])) {
+      for (const plugin of microApp.plugins!.modules![appName]) {
+        if (isPlainObject(plugin)) {
+          if (isArray(plugin.scopeProperties)) {
             this.scopeProperties = this.scopeProperties.concat(plugin.scopeProperties!)
           }
-          if (toString.call(plugin.escapeProperties) === '[object Array]') {
+          if (isArray(plugin.escapeProperties)) {
             this.escapeProperties = this.escapeProperties.concat(plugin.escapeProperties!)
           }
         }

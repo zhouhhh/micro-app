@@ -10,7 +10,7 @@ import extractHtml from './source'
 import { execScripts } from './source/scripts'
 import { appStatus, lifeCycles } from './constants'
 import SandBox from './sandbox'
-import { defer, isFunction, cloneNode } from './libs/utils'
+import { defer, isFunction, cloneNode, isBoolean, isNull } from './libs/utils'
 import dispatchLifecyclesEvent, { dispatchUnmountToMicroApp } from './interact/lifecycles_event'
 import globalEnv from './libs/global_env'
 
@@ -112,7 +112,7 @@ export default class CreateApp implements AppInterface {
     inline?: boolean,
     baseroute?: string,
   ): void {
-    if (typeof inline === 'boolean' && inline !== this.inline) {
+    if (isBoolean(inline) && inline !== this.inline) {
       this.inline = inline
     }
 
@@ -137,7 +137,7 @@ export default class CreateApp implements AppInterface {
     this.sandBox?.start(this.baseroute)
     if (!this.umdMode) {
       execScripts(this.source.scripts, this, (isFinished: boolean) => {
-        if (this.umdHookMount === null) {
+        if (isNull(this.umdHookMount)) {
           const { mount, unmount } = this.getUmdLibraryHooks()
           // if mount & unmount is function, the sub app is umd mode
           if (isFunction(mount) && isFunction(unmount)) {

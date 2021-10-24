@@ -1,5 +1,5 @@
 import { CallableFunctionForInteract } from '@micro-app/types'
-import { logError } from '../libs/utils'
+import { logError, isFunction, isPlainObject } from '../libs/utils'
 
 export default class EventCenter {
   eventList = new Map<string, {
@@ -25,7 +25,7 @@ export default class EventCenter {
    */
   on (name: string, f: CallableFunctionForInteract, autoTrigger = false): void {
     if (this.isLegalName(name)) {
-      if (typeof f !== 'function') {
+      if (!isFunction(f)) {
         return logError('event-center: Invalid callback function')
       }
 
@@ -50,7 +50,7 @@ export default class EventCenter {
     if (this.isLegalName(name)) {
       const eventInfo = this.eventList.get(name)
       if (eventInfo) {
-        if (typeof f === 'function') {
+        if (isFunction(f)) {
           eventInfo.callbacks.delete(f)
         } else {
           eventInfo.callbacks.clear()
@@ -62,7 +62,7 @@ export default class EventCenter {
   // dispatch data
   dispatch (name: string, data: Record<PropertyKey, unknown>): void {
     if (this.isLegalName(name)) {
-      if (toString.call(data) !== '[object Object]') {
+      if (!isPlainObject(data)) {
         return logError('event-center: data must be object')
       }
       let eventInfo = this.eventList.get(name)

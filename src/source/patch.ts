@@ -6,6 +6,8 @@ import {
   pureCreateElement,
   setCurrentAppName,
   logWarn,
+  isPlainObject,
+  isString,
 } from '../libs/utils'
 import scopedCSS from './scoped_css'
 import { extractLinkFromHtml, foramtDynamicLink } from './links'
@@ -205,10 +207,10 @@ export function patchElementPrototypeMethods (): void {
   // Rewrite setAttribute
   Element.prototype.setAttribute = function setAttribute (key: string, value: string): void {
     if (/^micro-app(-\S+)?/i.test(this.tagName) && key === 'data') {
-      if (toString.call(value) === '[object Object]') {
+      if (isPlainObject(value)) {
         const cloneValue: Record<PropertyKey, unknown> = {}
         Object.getOwnPropertyNames(value).forEach((propertyKey: PropertyKey) => {
-          if (!(typeof propertyKey === 'string' && propertyKey.indexOf('__') === 0)) {
+          if (!(isString(propertyKey) && propertyKey.indexOf('__') === 0)) {
             // @ts-ignore
             cloneValue[propertyKey] = value[propertyKey]
           }
