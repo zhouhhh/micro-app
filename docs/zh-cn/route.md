@@ -153,7 +153,6 @@ let app = new Vue({
 > [!TIP]
 > vue-router@4.x设置base的方式请查看 https://next.router.vuejs.org/
 
-
 ## 应用之间跳转
 因为每个应用的路由实例都是不同的，路由实例只能控制自身，无法影响其它应用，要实现应用之间的跳转有两种方式：
 
@@ -179,7 +178,7 @@ window.dispatchEvent(new PopStateEvent('popstate', { state: null }))
 > [!NOTE]
 > 1、popstate事件是全局发送的，所有正在运行的应用（包括发送popstate事件的应用）都会接受到popstate事件并进行路由匹配，此时要注意和兜底路由的冲突。
 >
-> 2、popstate常出现一些预料不到的问题，此时建议使用下面的方式2进行跳转。
+> 2、popstate常出现一些预料不到的问题，尤其是在vue-router4，angular中会出问题，此时建议使用下面的方式2进行跳转。
 
 ### 2、基座路由控制
 

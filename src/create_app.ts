@@ -237,6 +237,7 @@ export default class CreateApp implements AppInterface {
     if (appStatus.UNMOUNT !== this.status) {
       const global = (this.sandBox?.proxyWindow ?? globalEnv.rawWindow) as any
       this.libraryName = (this.container instanceof ShadowRoot ? this.container.host : this.container)!.getAttribute('library') || `micro-app-${this.name}`
+      // do not use isObject
       return typeof global[this.libraryName] === 'object' ? global[this.libraryName] : {}
     }
 
