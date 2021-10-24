@@ -1,5 +1,5 @@
 import { createApp } from 'vue'
-import * as VueRouter from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import App from './App.vue'
 import Page1 from './pages/page1.vue'
 import Page2 from './pages/page2.vue'
@@ -24,8 +24,8 @@ let router = null
 let history = null
 // 将渲染操作放入 mount 函数
 function mount () {
-  history = VueRouter.createWebHashHistory('/micro-app/vite/')
-  router = VueRouter.createRouter({
+  history = createWebHashHistory('/micro-app/vite/')
+  router = createRouter({
     history,
     routes,
   })
@@ -39,8 +39,8 @@ function mount () {
 
 // 将卸载操作放入 unmount 函数
 function unmount () {
-  app.unmount()
-  history.destroy()
+  app?.unmount()
+  history?.destroy()
   app = null
   router = null
   history = null

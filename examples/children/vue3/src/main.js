@@ -41,8 +41,8 @@ function mount () {
 
 // 将卸载操作放入 unmount 函数
 function unmount () {
-  app.unmount()
-  history.destroy()
+  app?.unmount()
+  history?.destroy()
   app = null
   router = null
   history = null

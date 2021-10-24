@@ -29,7 +29,7 @@ async function mount () {
 // 将卸载操作放入 unmount 函数
 function unmount () {
   app?.destroy();
-  // @ts-ignore
+  // @ts-ignore 清空根元素，如果根元素不是app-root，根据实际情况调整
   document.querySelector('app-root')?.innerHTML = '';
   app = null;
   console.log('微应用child-angular11卸载了');

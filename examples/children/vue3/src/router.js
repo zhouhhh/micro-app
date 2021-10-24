@@ -1,4 +1,4 @@
-import Home from './pages/page1.vue';
+import Home from './pages/page1.vue'
 
 const routes = [
   {
