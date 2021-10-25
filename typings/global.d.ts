@@ -60,6 +60,7 @@ declare module '@micro-app/types' {
     baseroute: string // route prefix, default is ''
     source: sourceType // sources of css, js, html
     sandBox: SandBoxInterface | null // sanxbox
+    umdMode: boolean // is umd mode
     loadSourceCode(): void // Load resources
     onLoad(html: HTMLElement): void // resource is loaded
     onLoadError(e: Error): void // Error loading HTML

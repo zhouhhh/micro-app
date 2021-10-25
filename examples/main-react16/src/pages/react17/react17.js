@@ -35,7 +35,7 @@ function React17 () {
         data={{from: '来自基座的数据'}}
         onMounted={() => hideLoading(false)}
         // destory
-        inline
+        // inline
       />
     </div>
   )

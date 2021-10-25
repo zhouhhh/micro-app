@@ -35,7 +35,7 @@ export default class CreateApp implements AppInterface {
   private umdHookMount: Func | null = null
   private umdHookunMount: Func | null = null
   private libraryName: string | null = null
-  private umdMode = false
+  umdMode = false
   isPrefetch = false
   name: string
   url: string
