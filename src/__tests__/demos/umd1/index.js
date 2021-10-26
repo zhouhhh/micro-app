@@ -77,6 +77,11 @@ function mount () {
   window.gd1 = 2
   window.gd2 = 2
   window.System = 'System'
+
+  const boundFunc1 = (function func1 () {}).bind(window)
+
+  // bound function will attach to raw document direct
+  document.addEventListener('click', boundFunc1, false)
 }
 
 function unmount () {

@@ -46,6 +46,7 @@ describe('create_app', () => {
         const app = appInstanceMap.get('test-app1')!
         expect(app.getAppStatus()).toBe(appStatus.UNMOUNT)
         // 因为应用还没渲染就卸载，所以active始终为false
+        // @ts-ignore
         expect(app.sandBox!.active).toBeFalsy()
         Promise.resolve().then(() => {
           expect(app.container).toBeNull()

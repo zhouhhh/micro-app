@@ -1,4 +1,4 @@
-/* eslint-disable no-new-func, indent */
+/* eslint-disable no-new-func, indent, @typescript-eslint/explicit-module-boundary-types */
 import type { Func } from '@micro-app/types'
 
 export const version = '__VERSION__'

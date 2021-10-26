@@ -81,8 +81,7 @@ export function effectDocumentEvent (): void {
   ): void {
     const appName = getCurrentAppName()
     /**
-     * BUG FIX
-     *
+     * ignore bound function of document event in umd mode, used to solve problem of react global events
      */
     if (appName && !(appInstanceMap.get(appName)?.umdMode && isBoundFunction(listener))) {
       const appListenersMap = documentEventListenerMap.get(appName)

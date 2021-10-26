@@ -202,6 +202,9 @@ microApp.removeGlobalDataListener(dataListener)
 
 // 清空基座应用绑定的全局数据函数
 microApp.clearGlobalDataListener()
+
+// 主动获取数据
+const globalData = microApp.getGlobalData()
 ```
 
 #### ** 子应用 **
@@ -223,6 +226,9 @@ window.microApp?.removeGlobalDataListener(dataListener)
 
 // 清空当前子应用绑定的全局数据函数
 window.microApp?.clearGlobalDataListener()
+
+// 主动获取数据
+const globalData = window.microApp?.getGlobalData()
 ```
 <!-- tabs:end -->
 

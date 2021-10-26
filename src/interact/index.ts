@@ -51,6 +51,13 @@ class EventCenterForGlobal {
   }
 
   /**
+   * get global data
+   */
+  getGlobalData (): Record<PropertyKey, unknown> | null {
+    return eventCenter.getData('global')
+  }
+
+  /**
    * clear all listener of global data
    * if appName exists, only the specified functions is cleared
    * if appName not exists, only clear the base app functions

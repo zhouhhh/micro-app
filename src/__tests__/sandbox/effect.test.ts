@@ -1,8 +1,7 @@
 /* eslint-disable promise/param-names */
-import { commonStartEffect, releaseAllEffect, ports } from '../common/initial'
+import { commonStartEffect, releaseAllEffect, ports, setAppName } from '../common/initial'
 import { appInstanceMap } from '../../create_app'
 import microApp from '../..'
-// import { defer } from '../../src/libs/utils'
 
 describe('sandbox effect', () => {
   let appCon: Element
@@ -61,7 +60,7 @@ describe('sandbox effect', () => {
     })
   })
 
-  //
+  // effect snapshot 分支覆盖
   test('coverage branch of umd effect snapshot', async () => {
     const microAppElement3 = document.createElement('micro-app')
     microAppElement3.setAttribute('name', 'test-app3')
@@ -88,6 +87,41 @@ describe('sandbox effect', () => {
       })
       // 再次渲染
       appCon.appendChild(microAppElement3)
+    })
+  })
+
+  // 分支覆盖 -- umd模式下 document事件的 bound 函数
+  test('coverage of bound function of document event in umd mode', async () => {
+    const microappElement4 = document.createElement('micro-app')
+    microappElement4.setAttribute('name', 'test-app4')
+    microappElement4.setAttribute('url', `http://127.0.0.1:${ports.effect}/umd1/`)
+
+    appCon.appendChild(microappElement4)
+
+    await new Promise((reslove) => {
+      microappElement4.addEventListener('mounted', () => {
+        setAppName('test-app4')
+        const boundFunc1 = function func1 () {}
+        const boundFunc2 = function func2 () {}
+        const boundFunc3 = function func3 () {}
+
+        const app = appInstanceMap.get('test-app4')!
+
+        // scene1 - app not exist
+        appInstanceMap.delete('test-app4')
+        document.addEventListener('click', boundFunc1, false)
+
+        // scene2 - app not umd mode
+        app.umdMode = false
+        appInstanceMap.set('test-app4', app)
+        document.addEventListener('click', boundFunc2, false)
+
+        // scene3 - app is umd mode, and listener is bound function
+        app.umdMode = true
+        document.addEventListener('click', boundFunc3, false)
+
+        reslove(true)
+      }, false)
     })
   })
 })
