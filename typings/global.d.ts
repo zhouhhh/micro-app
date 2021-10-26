@@ -69,9 +69,6 @@ declare module '@micro-app/types' {
       baseroute?: string,
     ): void
 
-    // dispatch mounted event when app run finished
-    dispatchMountedEvent (): void
-
     // unmount app
     unmount (destory: boolean): void
 
