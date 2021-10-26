@@ -123,60 +123,62 @@ export default class App extends React.Component {
 
   render () {
     return (
-      <Row className='react16'>
-        <Col span={6} className='btn-con'>
-          <Button type="primary" onClick={this.toggleShow}>微应用是否展示</Button>
-          <Button type="primary" onClick={this.changeData}>data属性发送数据</Button>
-          <Button type="primary" onClick={this.dispatchData}>dispatch方法发送数据</Button>
-          <Button type="primary" onClick={this.dispatchGlobalData}>发送全局数据</Button>
-          <Button type="primary" onClick={this.changeNameUrl}>切换应用</Button>
-          <Button type="primary" onClick={this.handleModal}>modal内嵌应用</Button>
-        </Col>
-        <Col span={18} className='app-con-react16'>
-          { this.state.showLoading && <Spin indicator={antIcon} /> }
-          { !this.state.showLoading && <h3>微应用{this.state.name}</h3> }
-          {
-            this.state.showMicroApp && (
+      <>
+        <Row className='react16'>
+          <Col span={6} className='btn-con'>
+            <Button type="primary" onClick={this.toggleShow}>微应用是否展示</Button>
+            <Button type="primary" onClick={this.changeData}>data属性发送数据</Button>
+            <Button type="primary" onClick={this.dispatchData}>dispatch方法发送数据</Button>
+            <Button type="primary" onClick={this.dispatchGlobalData}>发送全局数据</Button>
+            <Button type="primary" onClick={this.changeNameUrl}>切换应用</Button>
+            <Button type="primary" onClick={this.handleModal}>modal内嵌应用</Button>
+          </Col>
+          <Col span={18} className='app-con-react16'>
+            { this.state.showLoading && <Spin indicator={antIcon} /> }
+            { !this.state.showLoading && <h3>微应用{this.state.name}</h3> }
+            {
+              this.state.showMicroApp && (
+                <micro-app
+                  name={this.state.name}
+                  url={this.state.url}
+                  data={this.state.data}
+                  onCreated={this.handleCreated}
+                  onBeforemount={this.beforemount}
+                  onMounted={this.mounted}
+                  onUnmount={this.unmount}
+                  onError={this.error}
+                  onDataChange={this.handleDataChange}
+                  baseRoute='/micro-app/demo/react16'
+                  // destory
+                  // inline
+                  // disableSandbox
+                  // disableScopecss
+                  // macro
+                >
+                </micro-app>
+              )
+            }
+            <Modal
+              visible={this.state.modal1}
+              maskClosable={true}
+              title="Title"
+              width={500}
+              height={500}
+              destroyOnClose
+              onOk={() => this.setState({modal1: false})}
+              onCancel={() => this.setState({modal1: false})}
+            >
               <micro-app
-                name={this.state.name}
+                name='modal-app1'
                 url={this.state.url}
-                data={this.state.data}
-                onCreated={this.handleCreated}
-                onBeforemount={this.beforemount}
-                onMounted={this.mounted}
-                onUnmount={this.unmount}
-                onError={this.error}
-                onDataChange={this.handleDataChange}
                 baseRoute='/micro-app/demo/react16'
-                // destory
-                // inline
                 // disableSandbox
-                // disableScopecss
                 // macro
-              >
-              </micro-app>
-            )
-          }
-          <Modal
-            visible={this.state.modal1}
-            maskClosable={true}
-            title="Title"
-            width={500}
-            height={500}
-            destroyOnClose
-            onOk={() => this.setState({modal1: false})}
-            onCancel={() => this.setState({modal1: false})}
-          >
-            <micro-app
-              name='modal-app1'
-              url={this.state.url}
-              baseRoute='/micro-app/demo/react16'
-              // disableSandbox
-              // macro
-            />
-          </Modal>
-        </Col>
-      </Row>
+              />
+            </Modal>
+          </Col>
+        </Row>
+      </>
     )
   }
 }
