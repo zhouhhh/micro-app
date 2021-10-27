@@ -149,7 +149,6 @@ export default class CreateApp implements AppInterface {
       let hasDispatchMountedEvent = false
       // if all js are executed, param isFinished will be true
       execScripts(this.source.scripts, this, (isFinished: boolean) => {
-        // test ignore
         if (!this.umdMode) {
           const { mount, unmount } = this.getUmdLibraryHooks()
           // if mount & unmount is function, the sub app is umd mode
@@ -165,7 +164,7 @@ export default class CreateApp implements AppInterface {
             }
           }
         }
-        // test ignore
+
         if (!hasDispatchMountedEvent && (isFinished === true || this.umdMode)) {
           hasDispatchMountedEvent = true
           this.handleMounted(umdHookMountResult)

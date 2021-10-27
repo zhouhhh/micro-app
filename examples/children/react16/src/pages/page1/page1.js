@@ -60,7 +60,7 @@ function Page1() {
         }
       </div>
       <div>
-        <SVG src={logo} width={40} />
+        <SVG src={logo} width={60} />
       </div>
       <div className='test-cssrules-a'>test-cssrules-a</div>
       <div className='test-cssrules-b'>test-cssrules-b</div>

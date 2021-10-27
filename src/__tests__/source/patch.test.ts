@@ -295,31 +295,46 @@ describe('source patch', () => {
 
     await new Promise((reslove) => {
       microappElement2.addEventListener('mounted', () => {
-        // setAppName('test-app2')
-        // const parser = new DOMParser()
-        // const htmlString = `
-        // <div>
-        //   <span id='parser-id'></span>
-        //   <span class='parser-class'></span>
-        //   <i name='parser-name'></i>
-        // </div>
-        // `
-        // const doc = parser.parseFromString(htmlString, 'text/html')
-        // console.log(
-        //   'DOMParser querySelector',
-        //   doc.querySelector('#parser-id'),
-        //   doc.getElementById('parser-id'),
-        //   doc.querySelectorAll('span'),
-        //   // doc.getElementsByClassName('parser-class'),
-        //   // doc.getElementsByTagName('span'),
-        //   // doc.getElementsByName('parser-name'),
-        // )
+        setAppName('test-app2')
+        const fakerDoc = new Document()
 
-        // const d1 = doc.createElement('div')
-        // const d2 = doc.createElementNS('http://www.w3.org/1999/xhtml', 'svg')
-        // const d3 = doc.createDocumentFragment()
+        // 以下覆盖Document原型方法this为空或this不是document的情况
+        const createElement = Document.prototype.createElement
+        createElement.call(fakerDoc, 'div')
+        createElement.call('', 'div')
 
-        // console.log('DOMParser createElement', d1, d2, d3)
+        const createElementNS = Document.prototype.createElementNS
+        createElementNS.call(fakerDoc, 'http://www.w3.org/1999/xhtml', 'svg')
+        createElementNS.call('', 'http://www.w3.org/1999/xhtml', 'svg')
+
+        const createDocumentFragment = Document.prototype.createDocumentFragment
+        createDocumentFragment.call(fakerDoc)
+        createDocumentFragment.call('')
+
+        const querySelector = Document.prototype.querySelector
+        querySelector.call(fakerDoc, 'div')
+        querySelector.call('', 'div')
+
+        const querySelectorAll = Document.prototype.querySelectorAll
+        querySelectorAll.call(fakerDoc, 'div')
+        querySelectorAll.call('', 'div')
+
+        clearAppName() // clear scoped
+        const getElementById = Document.prototype.getElementById
+        getElementById.call(fakerDoc, 'id')
+        getElementById.call('', 'id')
+
+        const getElementsByClassName = Document.prototype.getElementsByClassName
+        getElementsByClassName.call(fakerDoc, 'classname')
+        getElementsByClassName.call('', 'classname')
+
+        const getElementsByTagName = Document.prototype.getElementsByTagName
+        getElementsByTagName.call(fakerDoc, 'div')
+        getElementsByTagName.call('', 'div')
+
+        const getElementsByName = Document.prototype.getElementsByName
+        getElementsByName.call(fakerDoc, 'name')
+        getElementsByName.call('', 'name')
 
         reslove(true)
       })
