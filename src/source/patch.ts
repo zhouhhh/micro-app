@@ -324,6 +324,9 @@ function patchDocument () {
 
   // query element👇
   function querySelector (this: Document, selectors: string): any {
+    // 对于 querySelector 的劫持应该只发生在当前document上
+    // 通过 newDOMParser().parseFromString() 得到的document的querySelector不应该被劫持
+    // 查看 https://github.com/micro-zoe/micro-app/issues/56
     if (this && rawDocument !== this) return globalEnv.rawQuerySelector.call(this, selectors)
 
     const appName = getCurrentAppName()
