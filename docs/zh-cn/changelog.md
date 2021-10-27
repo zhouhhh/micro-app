@@ -10,7 +10,7 @@
 
 ### 0.4.2
 
-`2021-10-28`
+`2021-10-29`
 
 - **New**
 
@@ -21,10 +21,14 @@
 
   - 🐞 修复了umd模式下，react16及以下版本二次渲染后路由跳转刷新页面的问题
   - 🐞 修复了SSR子应用二次渲染时url不同导致渲染失败的问题
+  - 🐞 修复了 react-inlinesvg 无法正常渲染的问题，fix [#56](https://github.com/micro-zoe/micro-app/issues/56)
+  - 🐞 修复了 safari 浏览器中，创建module脚本错误的问题
 
 - **Update**
 
   - 🚀 优化了MicroAppElement、沙箱等代码
+  - 🚀 优化了umd模式下，子应用初次渲染的速度
+  - 🚀 优化了动态创建的script元素src或textContent为空时的处理逻辑
 
 
 ### 0.4.1

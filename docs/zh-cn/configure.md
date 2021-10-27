@@ -24,7 +24,7 @@
 - Desc: `子应用的基础路由`
 - Type: `string`
 - Default: `''`
-- 使用方式: `<micro-app baseroute='/my-page/' name='xx' url='xx'></micro-app>`
+- 使用方式: `<micro-app name='xx' url='xx' baseroute='/my-page/'></micro-app>`
 
 在微前端环境下，子应用可以从window上获取baseroute的值，用于设置基础路由。
 
@@ -39,9 +39,8 @@
 
 ## inline
 - Desc: `是否使用内联script`
-- Type: `string(boolean)`
-- Default: `'false'`
-- 使用方式: `<micro-app inline name='xx' url='xx'></micro-app>`
+- Default: `false`
+- 使用方式: `<micro-app name='xx' url='xx' inline></micro-app>`
 
 默认情况下，子应用的js会被提取并在后台运行。
 
@@ -52,9 +51,8 @@
 
 ## destory
 - Desc: `卸载时是否强制删除缓存资源`
-- Type: `string(boolean)`
-- Default: `'false'`
-- 使用方式: `<micro-app destory name='xx' url='xx'></micro-app>`
+- Default: `false`
+- 使用方式: `<micro-app name='xx' url='xx' destory></micro-app>`
 
 默认情况下，子应用被卸载后会缓存静态资源，以便在重新渲染时获得更好的性能。
 
@@ -62,44 +60,42 @@
 
 ## disableScopecss
 - Desc: `禁用样式隔离`
-- Type: `string(boolean)`
-- Default: `'false'`
-- 使用方式: `<micro-app disableScopecss name='xx' url='xx'></micro-app>`
+- Default: `false`
+- 使用方式: `<micro-app name='xx' url='xx' disableScopecss></micro-app>`
 
 在禁用样式隔离前，请确保基座应用和子应用，以及子应用之间样式不会相互污染。
 
 > [!NOTE]
-> 禁用样式隔离，css中的静态资源补全功能失效，请设置__webpack_public_path__，详情请看[静态资源](/zh-cn/static-source)一章
+> 禁用样式隔离，CSS中的资源地址补全功能失效，需要设置[publicpath](/zh-cn/static-source?id=publicpath)防止资源加载失败。
 
 ## disableSandbox
 - Desc: `禁用js沙箱`
-- Type: `string(boolean)`
-- Default: `'false'`
-- 使用方式: `<micro-app disableSandbox name='xx' url='xx'></micro-app>`
+- Default: `false`
+- 使用方式: `<micro-app name='xx' url='xx' disableSandbox></micro-app>`
 
 禁用沙箱可能会导致一些不可预料的问题，通常情况不建议这样做。
 
 > [!NOTE]
-> 禁用沙箱的副作用:
+> 禁用沙箱后以下功能将失效:
 > 
-> 1、样式隔离失效
+> 1、样式隔离
 >
-> 2、元素隔离失效
+> 2、元素隔离
 > 
-> 3、数据通信功能失效
+> 3、数据通信
 >
-> 4、静态资源地址补全功能失效
+> 4、静态资源地址补全
 >
-> 5、`__MICRO_APP_ENVIRONMENT__`、`__MICRO_APP_PUBLIC_PATH__`等全局变量失效
+> 5、`__MICRO_APP_ENVIRONMENT__`、`__MICRO_APP_PUBLIC_PATH__`等全局变量
 >
-> 6、baseroute失效
+> 6、baseroute
 
 
 ## shadowDOM
 - Desc: `是否开启shadowDOM`
 - Type: `string(boolean)`
-- Default: `'false'`
-- 使用方式: `<micro-app shadowDOM name='xx' url='xx'></micro-app>`
+- Default: `false`
+- 使用方式: `<micro-app name='xx' url='xx' shadowDOM></micro-app>`
 
 shadowDOM具有更强的样式隔离能力，开启后，`<micro-app>`标签会成为一个真正的WebComponent。
 

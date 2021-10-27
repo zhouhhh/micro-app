@@ -304,7 +304,8 @@ function patchDocument () {
     tagName: string,
     options?: ElementCreationOptions,
   ): HTMLElement {
-    const element = globalEnv.rawCreateElement.call(rawDocument, tagName, options)
+    const _this = this && rawDocument !== this ? this : rawDocument
+    const element = globalEnv.rawCreateElement.call(_this, tagName, options)
     return markElement(element)
   }
 
@@ -313,20 +314,23 @@ function patchDocument () {
     name: string,
     options?: string | ElementCreationOptions,
   ): any {
-    const element = globalEnv.rawCreateElementNS.call(rawDocument, namespaceURI, name, options)
+    const _this = this && rawDocument !== this ? this : rawDocument
+    const element = globalEnv.rawCreateElementNS.call(_this, namespaceURI, name, options)
     return markElement(element)
   }
 
   Document.prototype.createDocumentFragment = function createDocumentFragment (): DocumentFragment {
-    const element = globalEnv.rawCreateDocumentFragment.call(rawDocument)
+    const _this = this && rawDocument !== this ? this : rawDocument
+    const element = globalEnv.rawCreateDocumentFragment.call(_this)
     return markElement(element)
   }
 
   // query element👇
   function querySelector (this: Document, selectors: string): any {
-    // 对于 querySelector 的劫持应该只发生在当前document上
-    // 通过 newDOMParser().parseFromString() 得到的document的querySelector不应该被劫持
-    // 查看 https://github.com/micro-zoe/micro-app/issues/56
+    /**
+     * The hijacking of queryselector should only occur on rawDocument, we should ignore document created by new DOMParser().parseFromString()
+     * see https://github.com/micro-zoe/micro-app/issues/56
+     */
     if (this && rawDocument !== this) return globalEnv.rawQuerySelector.call(this, selectors)
 
     const appName = getCurrentAppName()
@@ -336,7 +340,9 @@ function patchDocument () {
     return appInstanceMap.get(appName)?.container?.querySelector(selectors) ?? null
   }
 
-  function querySelectorAll (selectors: string): any {
+  function querySelectorAll (this: Document, selectors: string): any {
+    if (this && rawDocument !== this) return globalEnv.rawQuerySelectorAll.call(this, selectors)
+
     const appName = getCurrentAppName()
     if (!appName || selectors === 'head' || selectors === 'body' || selectors === 'html') {
       return globalEnv.rawQuerySelectorAll.call(rawDocument, selectors)
@@ -351,7 +357,8 @@ function patchDocument () {
   Document.prototype.getElementById = function getElementById (key: string): HTMLElement | null {
     const appName = getCurrentAppName()
     if (!appName || /^\d/.test(key)) {
-      return globalEnv.rawGetElementById.call(rawDocument, key)
+      const _this = this && rawDocument !== this ? this : rawDocument
+      return globalEnv.rawGetElementById.call(_this, key)
     }
     return querySelector.call(this, `#${key}`)
   }
@@ -359,9 +366,10 @@ function patchDocument () {
   Document.prototype.getElementsByClassName = function getElementsByClassName (key: string): HTMLCollectionOf<Element> {
     const appName = getCurrentAppName()
     if (!appName || /^\d/.test(key)) {
-      return globalEnv.rawGetElementsByClassName.call(rawDocument, key)
+      const _this = this && rawDocument !== this ? this : rawDocument
+      return globalEnv.rawGetElementsByClassName.call(_this, key)
     }
-    return querySelectorAll(`.${key}`)
+    return querySelectorAll.call(this, `.${key}`)
   }
 
   Document.prototype.getElementsByTagName = function getElementsByTagName (key: string): HTMLCollectionOf<Element> {
@@ -373,17 +381,19 @@ function patchDocument () {
       /^html$/i.test(key) ||
       (!appInstanceMap.get(appName)?.inline && /^script$/i.test(key))
     ) {
-      return globalEnv.rawGetElementsByTagName.call(rawDocument, key)
+      const _this = this && rawDocument !== this ? this : rawDocument
+      return globalEnv.rawGetElementsByTagName.call(_this, key)
     }
-    return querySelectorAll(key)
+    return querySelectorAll.call(this, key)
   }
 
   Document.prototype.getElementsByName = function getElementsByName (key: string): NodeListOf<HTMLElement> {
     const appName = getCurrentAppName()
     if (!appName || /^\d/.test(key)) {
-      return globalEnv.rawGetElementsByName.call(rawDocument, key)
+      const _this = this && rawDocument !== this ? this : rawDocument
+      return globalEnv.rawGetElementsByName.call(_this, key)
     }
-    return querySelectorAll(`[name=${key}]`)
+    return querySelectorAll.call(this, `[name=${key}]`)
   }
 }
 

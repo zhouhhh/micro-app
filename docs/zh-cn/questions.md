@@ -44,19 +44,36 @@ micro-app依赖于CustomElements和Proxy两个较新的API。
 
 因为相同的jsonpFunction名称会导致资源加载混乱。
 
-解决方式：
+**解决方式：修改子应用的webpack配置**
+<!-- tabs:start -->
 
+#### ** webpack4 **
 ```js
 // webpack.config.js
 module.exports = {
   ...
   output: {
     ...
-    jsonpFunction: `webpackJsonp_自定义名称`,
+    jsonpFunction: `webpackJsonp_custom_app_name`,
     globalObject: 'window',
   },
 }
 ```
+
+#### ** webpack5 **
+```js
+// webpack.config.js
+module.exports = {
+  ...
+  output: {
+    ...
+    chunkLoadingGlobal: 'webpackJsonp_custom_app_name',
+    globalObject: 'window',
+  },
+}
+```
+<!-- tabs:end -->
+
 
 ## 6、开发时每次保存文件时报错 (热更新导致报错)
 在一些场景下，热更新会导致保存时报错，请关闭热更新来解决这个问题，同时我们也在尝试更好的解决方案。

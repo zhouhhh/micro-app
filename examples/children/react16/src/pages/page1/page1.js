@@ -1,17 +1,18 @@
 import React from 'react'
 import { Modal, Button, Space } from 'antd';
-// import styled from 'styled-components'
+import styled from 'styled-components'
+import SVG from 'react-inlinesvg';
 import logo from '../../assets/logo.svg';
 import './page1.css';
 
-// const StyledButton = styled.button`
-//   background: transparent;
-//   border-radius: 3px;
-//   border: 2px solid red;
-//   color: red;
-//   margin: 0 1em;
-//   padding: 0.25em 1em;
-// `
+const StyledButton = styled.button`
+  background: transparent;
+  border-radius: 3px;
+  border: 2px solid red;
+  color: red;
+  margin: 0 1em;
+  padding: 0.25em 1em;
+`
 
 function getDataFromBase () {
   Modal.info({
@@ -58,12 +59,15 @@ function Page1() {
           )
         }
       </div>
+      <div>
+        <SVG src={logo} width={40} />
+      </div>
       <div className='test-cssrules-a'>test-cssrules-a</div>
       <div className='test-cssrules-b'>test-cssrules-b</div>
-      {/* <div>
+      <div>
         <p>styled-component👇</p>
         <StyledButton>按钮</StyledButton>
-      </div> */}
+      </div>
     </div>
   );
 }

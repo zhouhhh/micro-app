@@ -170,4 +170,108 @@ describe('create_app', () => {
       })
     })
   })
+
+  // 分支覆盖 -- 返回 promise 的 mount 和 unmount 函数
+  test('promised mount & unmount', async () => {
+    const microAppElement7 = document.createElement('micro-app')
+    microAppElement7.setAttribute('name', 'test-app7')
+    microAppElement7.setAttribute('library', 'umd-app3') // 自定义umd名称
+    microAppElement7.setAttribute('url', `http://127.0.0.1:${ports.create_app}/umd3`)
+
+    appCon.appendChild(microAppElement7)
+
+    await new Promise((reslove) => {
+      microAppElement7.addEventListener('mounted', () => {
+        microAppElement7.addEventListener('unmount', () => {
+          reslove(true)
+        })
+        appCon.removeChild(microAppElement7)
+      })
+    })
+
+    // 再次渲染 -- 分支覆盖
+    const microAppElement8 = document.createElement('micro-app')
+    microAppElement8.setAttribute('name', 'test-app7')
+    microAppElement8.setAttribute('library', 'umd-app3') // 自定义umd名称
+    microAppElement8.setAttribute('url', `http://127.0.0.1:${ports.create_app}/umd3`)
+
+    appCon.appendChild(microAppElement8)
+
+    await new Promise((reslove) => {
+      microAppElement8.addEventListener('mounted', () => {
+        reslove(true)
+      })
+    })
+  })
+
+  // 分支覆盖 -- 抛出错误的 mount 和 unmount 函数
+  test('throw error mount & unmount', async () => {
+    const microAppElement9 = document.createElement('micro-app')
+    microAppElement9.setAttribute('name', 'test-app9')
+    microAppElement9.setAttribute('library', 'umd-app3') // 自定义umd名称
+    microAppElement9.setAttribute('url', `http://127.0.0.1:${ports.create_app}/umd3`)
+
+    // @ts-ignore
+    window.specialUmdMode = 'error-hook'
+    appCon.appendChild(microAppElement9)
+
+    await new Promise((reslove) => {
+      microAppElement9.addEventListener('mounted', () => {
+        // 渲染时打印错误日志
+        expect(console.error).toHaveBeenCalledWith('[micro-app] app test-app9: an error occurred in the mount function \n', expect.any(Error))
+
+        appCon.removeChild(microAppElement9)
+
+        // 卸载时打印错误日志
+        expect(console.error).toHaveBeenCalledWith('[micro-app] app test-app9: an error occurred in the unmount function \n', expect.any(Error))
+
+        reslove(true)
+      })
+    })
+
+    const microAppElement10 = document.createElement('micro-app')
+    microAppElement10.setAttribute('name', 'test-app9')
+    microAppElement10.setAttribute('library', 'umd-app3') // 自定义umd名称
+    microAppElement10.setAttribute('url', `http://127.0.0.1:${ports.create_app}/umd3`)
+
+    appCon.appendChild(microAppElement10)
+
+    await new Promise((reslove) => {
+      microAppElement10.addEventListener('mounted', () => {
+        // 再次渲染时打印错误日志
+        expect(console.error).toHaveBeenCalledWith('[micro-app] app test-app9: an error occurred in the mount function \n', expect.any(Error))
+        reslove(true)
+      })
+    })
+
+    // @ts-ignore
+    delete window.specialUmdMode
+  })
+
+  // 分支覆盖 -- 抛出错误promise 的 mount 和 unmount 函数
+  test('throw error promise mount & unmount', async () => {
+    const microAppElement11 = document.createElement('micro-app')
+    microAppElement11.setAttribute('name', 'test-app11')
+    microAppElement11.setAttribute('library', 'umd-app3') // 自定义umd名称
+    microAppElement11.setAttribute('url', `http://127.0.0.1:${ports.create_app}/umd3`)
+
+    // @ts-ignore
+    window.specialUmdMode = 'error-promise-hook'
+    appCon.appendChild(microAppElement11)
+
+    await new Promise((reslove) => {
+      // promise.reject 会触发error事件，不会触发mounted事件
+      microAppElement11.addEventListener('error', () => {
+        // promise.reject 会正常触发unmount事件
+        microAppElement11.addEventListener('unmount', () => {
+          reslove(true)
+        })
+
+        appCon.removeChild(microAppElement11)
+      })
+    })
+
+    // @ts-ignore
+    delete window.specialUmdMode
+  })
 })

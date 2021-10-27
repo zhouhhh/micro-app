@@ -284,4 +284,45 @@ describe('source patch', () => {
       }, false)
     })
   })
+
+  // 分支覆盖 - document 原型方法的 this 指向
+  test('coverage of document this', async () => {
+    const microappElement2 = document.createElement('micro-app')
+    microappElement2.setAttribute('name', 'test-app2')
+    microappElement2.setAttribute('url', `http://127.0.0.1:${ports.source_patch}/ssr-render/`)
+
+    appCon.appendChild(microappElement2)
+
+    await new Promise((reslove) => {
+      microappElement2.addEventListener('mounted', () => {
+        // setAppName('test-app2')
+        // const parser = new DOMParser()
+        // const htmlString = `
+        // <div>
+        //   <span id='parser-id'></span>
+        //   <span class='parser-class'></span>
+        //   <i name='parser-name'></i>
+        // </div>
+        // `
+        // const doc = parser.parseFromString(htmlString, 'text/html')
+        // console.log(
+        //   'DOMParser querySelector',
+        //   doc.querySelector('#parser-id'),
+        //   doc.getElementById('parser-id'),
+        //   doc.querySelectorAll('span'),
+        //   // doc.getElementsByClassName('parser-class'),
+        //   // doc.getElementsByTagName('span'),
+        //   // doc.getElementsByName('parser-name'),
+        // )
+
+        // const d1 = doc.createElement('div')
+        // const d2 = doc.createElementNS('http://www.w3.org/1999/xhtml', 'svg')
+        // const d3 = doc.createDocumentFragment()
+
+        // console.log('DOMParser createElement', d1, d2, d3)
+
+        reslove(true)
+      })
+    })
+  })
 })

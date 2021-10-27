@@ -90,14 +90,18 @@ export function extractScriptElement (
     } else {
       return { url: nonceStr, info }
     }
-  } else {
+  } else if (!isDynamic) {
+    /**
+     * script with empty src or empty script.textContent remove in static html
+     * & not removed if it created by dynamic
+     */
     replaceComment = document.createComment('script element removed by micro-app')
   }
 
   if (isDynamic) {
     return { replaceComment }
   } else {
-    return parent.replaceChild(replaceComment, script)
+    return parent.replaceChild(replaceComment!, script)
   }
 }
 
@@ -187,6 +191,7 @@ export function execScripts (
         if (info.module) initedHook.moduleCount = initedHook.moduleCount ? ++initedHook.moduleCount : 1
       } else {
         runScript(url, info.code, app, info.module, false)
+        initedHook(false)
       }
     }
   }
@@ -196,6 +201,7 @@ export function execScripts (
       res.forEach((code, index) => {
         const [url, info] = deferScriptInfo[index]
         runScript(url, info.code = info.code || code, app, info.module, false, initedHook)
+        if (!info.module) initedHook(false)
       })
       initedHook(isUndefined(initedHook.moduleCount))
     }).catch((err) => {
@@ -316,7 +322,7 @@ function setInlinScriptContent (
 ): void {
   if (module) {
     // module script is async, transform it to a blob for subsequent operations
-    const blob = new Blob([code], { type: 'text/javascript;charset=utf-8' })
+    const blob = new Blob([code], { type: 'text/javascript' })
     scriptElement.src = URL.createObjectURL(blob)
     scriptElement.setAttribute('type', 'module')
     if (!url.startsWith('inline-')) {

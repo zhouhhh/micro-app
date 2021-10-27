@@ -15,7 +15,6 @@ import {
   isFunction,
   cloneNode,
   isBoolean,
-  isNull,
   isPromise,
   logError,
 } from './libs/utils'
@@ -147,8 +146,11 @@ export default class CreateApp implements AppInterface {
     let umdHookMountResult: any // result of mount function
 
     if (!this.umdMode) {
+      let hasDispatchMountedEvent = false
+      // if all js are executed, param isFinished will be true
       execScripts(this.source.scripts, this, (isFinished: boolean) => {
-        if (isNull(this.umdHookMount)) {
+        // test ignore
+        if (!this.umdMode) {
           const { mount, unmount } = this.getUmdLibraryHooks()
           // if mount & unmount is function, the sub app is umd mode
           if (isFunction(mount) && isFunction(unmount)) {
@@ -163,7 +165,9 @@ export default class CreateApp implements AppInterface {
             }
           }
         }
-        if (isFinished === true) {
+        // test ignore
+        if (!hasDispatchMountedEvent && (isFinished === true || this.umdMode)) {
+          hasDispatchMountedEvent = true
           this.handleMounted(umdHookMountResult)
         }
       })
@@ -199,6 +203,7 @@ export default class CreateApp implements AppInterface {
     if (appStatus.UNMOUNT !== this.status) {
       this.status = appStatus.MOUNTED
       defer(() => {
+        // test ignore
         if (appStatus.UNMOUNT !== this.status) {
           dispatchLifecyclesEvent(
             this.container as HTMLElement,
@@ -235,6 +240,7 @@ export default class CreateApp implements AppInterface {
       }
     }
 
+    // dispatch unmount event to micro app
     dispatchUnmountToMicroApp(this.name)
 
     this.handleUnmounted(destory, umdHookUnmountResult)
@@ -259,6 +265,7 @@ export default class CreateApp implements AppInterface {
    * @param destory completely destroy, delete cache resources
    */
   private actionsForUnmount (destory: boolean): void {
+    // dispatch unmount event to base app
     dispatchLifecyclesEvent(
       this.container as HTMLElement,
       this.name,
