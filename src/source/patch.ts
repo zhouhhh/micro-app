@@ -323,7 +323,9 @@ function patchDocument () {
   }
 
   // query element👇
-  function querySelector (selectors: string): any {
+  function querySelector (this: Document, selectors: string): any {
+    if (this && rawDocument !== this) return globalEnv.rawQuerySelector.call(this, selectors)
+
     const appName = getCurrentAppName()
     if (!appName || selectors === 'head' || selectors === 'body' || selectors === 'html') {
       return globalEnv.rawQuerySelector.call(rawDocument, selectors)
@@ -348,7 +350,7 @@ function patchDocument () {
     if (!appName || /^\d/.test(key)) {
       return globalEnv.rawGetElementById.call(rawDocument, key)
     }
-    return querySelector(`#${key}`)
+    return querySelector.call(this, `#${key}`)
   }
 
   Document.prototype.getElementsByClassName = function getElementsByClassName (key: string): HTMLCollectionOf<Element> {
