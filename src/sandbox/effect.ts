@@ -1,5 +1,6 @@
 import type { microWindowType } from '@micro-app/types'
-import { getCurrentAppName, setCurrentAppName, logWarn, isFunction } from '../libs/utils'
+import { getCurrentAppName, setCurrentAppName, logWarn, isFunction, isBoundFunction } from '../libs/utils'
+import { appInstanceMap } from '../create_app'
 import globalEnv from '../libs/global_env'
 
 type MicroEventListener = EventListenerOrEventListenerObject & Record<string, any>
@@ -79,7 +80,10 @@ export function effectDocumentEvent (): void {
     options?: boolean | AddEventListenerOptions
   ): void {
     const appName = getCurrentAppName()
-    if (appName) {
+    /**
+     * ignore bound function of document event in umd mode, used to solve problem of react global events
+     */
+    if (appName && !(appInstanceMap.get(appName)?.umdMode && isBoundFunction(listener))) {
       const appListenersMap = documentEventListenerMap.get(appName)
       if (appListenersMap) {
         const appListenerList = appListenersMap.get(type)

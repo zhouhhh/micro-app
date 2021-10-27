@@ -193,10 +193,14 @@ describe('sandbox', () => {
     expect(window.__REACT_ERROR_OVERLAY_GLOBAL_HOOK__).toBe('origin-react-hook')
 
     // 卸载时清空泄漏到外部window上的变量
+    // @ts-ignore
     expect(sandbox.escapeKeys.size).toBe(3)
+    // @ts-ignore
     expect(sandbox.active).toBeTruthy()
     sandbox.stop()
+    // @ts-ignore
     expect(sandbox.escapeKeys.size).toBe(0)
+    // @ts-ignore
     expect(sandbox.active).toBeFalsy()
     expect(window.escapeProperty1).toBeUndefined()
     expect(window.System).toBeUndefined()

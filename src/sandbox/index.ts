@@ -69,22 +69,26 @@ function macroTask (fn: TimerHandler): void {
 
 export default class SandBox implements SandBoxInterface {
   static activeCount = 0 // number of active sandbox
-  active = false // sandbox state
-  proxyWindow: WindowProxy & injectDataType
   // @ts-ignore
-  recordUmdEffect: CallableFunction
+  private recordUmdEffect: CallableFunction
   // @ts-ignore
-  rebuildUmdEffect: CallableFunction
+  private rebuildUmdEffect: CallableFunction
   // @ts-ignore
-  releaseEffect: CallableFunction
+  private releaseEffect: CallableFunction
   // Scoped global Properties(Properties that can only get and set in microWindow, will not escape to rawWindow)
-  scopeProperties: PropertyKey[] = ['webpackJsonp']
+  private scopeProperties: PropertyKey[] = ['webpackJsonp']
   // Properties that can be escape to rawWindow
-  escapeProperties: PropertyKey[] = []
+  private escapeProperties: PropertyKey[] = []
+  // Properties newly added to microWindow
+  private injectedKeys = new Set<PropertyKey>()
+  // Properties escape to rawWindow, cleared when unmount
+  private escapeKeys = new Set<PropertyKey>()
+  // record injected values before the first execution of umdHookMount and rebuild before remount umd app
+  private recordUmdinjectedValues?: Map<PropertyKey, unknown>
+  // sandbox state
+  private active = false
+  proxyWindow: WindowProxy & injectDataType // Proxy
   microWindow = {} as Window & injectDataType // Proxy target
-  injectedKeys = new Set<PropertyKey>() // Properties newly added to microWindow
-  escapeKeys = new Set<PropertyKey>() // Properties escape to rawWindow, cleared when unmount
-  recordUmdinjectedValues?: Map<PropertyKey, unknown>// record injected values before the first execution of umdHookMount and rebuild before remount umd app
 
   constructor (appName: string, url: string, macro: boolean) {
     const rawWindow = globalEnv.rawWindow
@@ -284,7 +288,7 @@ export default class SandBox implements SandBoxInterface {
    * get scopeProperties and escapeProperties from plugins
    * @param appName app name
    */
-  getScopeProperties (appName: string): void {
+  private getScopeProperties (appName: string): void {
     if (!isPlainObject(microApp.plugins)) return
 
     if (isArray(microApp.plugins!.global)) {
@@ -320,7 +324,7 @@ export default class SandBox implements SandBoxInterface {
    * @param appName app name
    * @param url app url
    */
-  inject (microWindow: microWindowType, appName: string, url: string): void {
+  private inject (microWindow: microWindowType, appName: string, url: string): void {
     microWindow.__MICRO_APP_ENVIRONMENT__ = true
     microWindow.__MICRO_APP_NAME__ = appName
     microWindow.__MICRO_APP_PUBLIC_PATH__ = getEffectivePath(url)

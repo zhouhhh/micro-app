@@ -1,5 +1,5 @@
 import type { Func } from '@micro-app/types'
-import { isFunction } from '../libs/utils'
+import { isFunction, isBoundFunction } from '../libs/utils'
 
 const boundedMap = new WeakMap<CallableFunction, boolean>()
 export function isBoundedFunction (value: CallableFunction): boolean {
@@ -8,7 +8,7 @@ export function isBoundedFunction (value: CallableFunction): boolean {
   }
 
   // bind function
-  const boundFunction = value.name.indexOf('bound ') === 0 && !value.hasOwnProperty('prototype')
+  const boundFunction = isBoundFunction(value)
 
   boundedMap.set(value, boundFunction)
 

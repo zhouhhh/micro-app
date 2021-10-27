@@ -35,14 +35,16 @@ export function defineElement (tagName: string): void {
       }
     }
 
+    private isWating = false
+    private cacheData: Record<PropertyKey, unknown> | null = null
+    private hasConnected = false
     appName = ''
     appUrl = ''
     version = version
-    isWating = false
-    cacheData: Record<PropertyKey, unknown> | null = null
-    hasConnected = false
 
     // 👇 Configuration
+    // name: app name
+    // url: html address
     // shadowDom: use shadowDOM, default is false
     // destory: whether delete cache resources when unmount, default is false
     // inline: whether js runs in inline script mode, default is false
@@ -102,14 +104,14 @@ export function defineElement (tagName: string): void {
     }
 
     // handle for connectedCallback run before attributeChangedCallback
-    handleInitialNameAndUrl (): void {
+    private handleInitialNameAndUrl (): void {
       if (this.hasConnected) {
         this.initialMount()
       }
     }
 
     // Perform global initialization when the element count is 1
-    performWhenFirstCreated (): void {
+    private performWhenFirstCreated (): void {
       if (elementInstanceMap.set(this, true).size === 1) {
         patchElementPrototypeMethods()
         rejectMicroAppStyle()
@@ -121,7 +123,7 @@ export function defineElement (tagName: string): void {
     /**
      * first mount of this app
      */
-    initialMount (): void {
+    private initialMount (): void {
       if (!this.appName || !this.appUrl) return
 
       if (this.getDisposeResult('shadowDOM') && !this.shadowRoot) {
@@ -139,18 +141,24 @@ export function defineElement (tagName: string): void {
           this.handleAppMount(app)
         } else if (app.isPrefetch) {
           logError(`the url ${this.appUrl} is different from prefetch url ${app.url}`, this.appName)
+        } else if (app.getAppStatus() === appStatus.UNMOUNT) {
+          /**
+           * add this logic for SSR
+           * if old app has unmounted and url is different, create new app to replace old one
+           */
+          this.handleCreateApp()
         } else {
           logError(`an app named ${this.appName} already exists`, this.appName)
         }
       } else {
-        this.handleCreate()
+        this.handleCreateApp()
       }
     }
 
     /**
      * handle for change of name an url after element inited
      */
-    handleAttributeUpdate = (): void => {
+    private handleAttributeUpdate = (): void => {
       this.isWating = false
       const attrName = this.getAttribute('name')
       const attrUrl = formatURL(this.getAttribute('url'), this.appName)
@@ -178,7 +186,7 @@ export function defineElement (tagName: string): void {
             // mount app
             this.handleAppMount(existApp)
           } else {
-            this.handleCreate()
+            this.handleCreateApp()
           }
         }
       } else if (attrName !== this.appName) {
@@ -191,7 +199,7 @@ export function defineElement (tagName: string): void {
      * @param name attribute name
      * @param val attribute value
      */
-    legalAttribute (name: string, val: AttrType): boolean {
+    private legalAttribute (name: string, val: AttrType): boolean {
       if (!isString(val) || !val) {
         logError(`unexpected attribute ${name}, please check again`, this.appName)
 
@@ -208,7 +216,7 @@ export function defineElement (tagName: string): void {
      * 2. is remount in another container ?
      * 3. is remount with change properties of the container ?
      */
-    handleAppMount (app: AppInterface): void {
+    private handleAppMount (app: AppInterface): void {
       app.isPrefetch = false
       defer(() => app.mount(
         this.shadowRoot ?? this,
@@ -218,7 +226,7 @@ export function defineElement (tagName: string): void {
     }
 
     // create app instance
-    handleCreate (): void {
+    private handleCreateApp (): void {
       const instance: AppInterface = new CreateApp({
         name: this.appName!,
         url: this.appUrl!,
@@ -237,7 +245,7 @@ export function defineElement (tagName: string): void {
      * unmount app
      * @param destory delete cache resources when unmount
      */
-    handleUnmount (destory: boolean): void {
+    private handleUnmount (destory: boolean): void {
       const app = appInstanceMap.get(this.appName!)
       if (app && appStatus.UNMOUNT !== app.getAppStatus()) app.unmount(destory)
     }
@@ -247,7 +255,7 @@ export function defineElement (tagName: string): void {
      * Global setting is lowest priority
      * @param name Configuration item name
      */
-    getDisposeResult (name: string): boolean {
+    private getDisposeResult (name: string): boolean {
       // @ts-ignore
       return (this.hasAttribute(name) || microApp[name]) && this.getAttribute(name) !== 'false'
     }
@@ -257,7 +265,7 @@ export function defineElement (tagName: string): void {
      * get baseRoute
      * getAttribute('baseurl') is compatible writing of versions below 0.3.1
      */
-    getBaseRouteCompatible (): string {
+    private getBaseRouteCompatible (): string {
       return this.getAttribute('baseroute') ?? this.getAttribute('baseurl') ?? ''
     }
 

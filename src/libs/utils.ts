@@ -1,4 +1,4 @@
-/* eslint-disable no-new-func, indent */
+/* eslint-disable no-new-func, indent, @typescript-eslint/explicit-module-boundary-types */
 import type { Func } from '@micro-app/types'
 
 export const version = '__VERSION__'
@@ -6,14 +6,16 @@ export const version = '__VERSION__'
 // do not use isUndefined
 export const isBrowser = typeof window !== 'undefined'
 
-export const globalThis =
-  !isUndefined(global)
-    ? global
-    : !isUndefined(window)
+// do not use isUndefined
+export const globalThis = (typeof global !== 'undefined')
+  ? global
+  : (
+    (typeof window !== 'undefined')
       ? window
-      : !isUndefined(self)
-        ? self
-        : Function('return this')()
+      : (
+        (typeof self !== 'undefined') ? self : Function('return this')()
+      )
+  )
 
 // is Undefined
 export function isUndefined (target: unknown): target is undefined {
@@ -51,6 +53,11 @@ export function isPlainObject (target: unknown): boolean {
 // is Promise
 export function isPromise (target: unknown): boolean {
   return toString.call(target) === '[object Promise]'
+}
+
+// is bind function
+export function isBoundFunction (target: any): boolean {
+  return isFunction(target) && target.name.indexOf('bound ') === 0 && !target.hasOwnProperty('prototype')
 }
 
 /**

@@ -6,23 +6,14 @@ declare module '@micro-app/types' {
   type microWindowType = Window & any
 
   interface SandBoxInterface {
-    active: boolean // sandbox state
     proxyWindow: WindowProxy
-    recordUmdEffect: CallableFunction
-    rebuildUmdEffect: CallableFunction
-    releaseEffect: CallableFunction
-    // Scoped global Properties(Properties that can only get and set in microWindow, will not escape to rawWindow)
-    scopeProperties: Array<PropertyKey>
-    // Properties that can be escape to rawWindow
-    escapeProperties: Array<PropertyKey>
     microWindow: Window // Proxy target
-    injectedKeys: Set<PropertyKey> // Properties newly added to microWindow
-    escapeKeys: Set<PropertyKey> // Properties escape to rawWindow, cleared when unmount
-    start(baseroute: string): void
-    stop(): void
-    recordUmdSnapshot(): void
-    rebuildUmdSnapshot(): void
-    inject(microWindow: microWindowType, appName: string, url: string): void
+    start (baseroute: string): void
+    stop (): void
+    // record umd snapshot before the first execution of umdHookMount
+    recordUmdSnapshot (): void
+    // rebuild umd snapshot before remount umd app
+    rebuildUmdSnapshot (): void
   }
 
   type sourceLinkInfo = {
@@ -60,35 +51,46 @@ declare module '@micro-app/types' {
     baseroute: string // route prefix, default is ''
     source: sourceType // sources of css, js, html
     sandBox: SandBoxInterface | null // sanxbox
-    loadSourceCode(): void // Load resources
-    onLoad(html: HTMLElement): void // resource is loaded
-    onLoadError(e: Error): void // Error loading HTML
-    mount(
+    umdMode: boolean // is umd mode
+
+    // Load resources
+    loadSourceCode (): void
+
+    // resource is loaded
+    onLoad (html: HTMLElement): void
+
+    // Error loading HTML
+    onLoadError (e: Error): void
+
+    // mount app
+    mount (
       container?: HTMLElement | ShadowRoot,
       inline?: boolean,
       baseroute?: string,
-    ): void // mount app
-    dispatchMountedEvent(): void // dispatch mounted event when app run finished
-    unmount(destory: boolean): void // unmount app
-    onerror(e: Error): void // app rendering error
-    getAppStatus(): string // get app status
+    ): void
+
+    // unmount app
+    unmount (destory: boolean): void
+
+    // app rendering error
+    onerror (e: Error): void
+
+    // get app status
+    getAppStatus (): string
   }
 
   interface MicroAppElementType {
     appName: AttrType // app name
     appUrl: AttrType // app url
-    isWating: boolean // combine action of set attribute name, url
-    cacheData: Record<PropertyKey, unknown> | null // Cache data
-    hasConnected: boolean // element has run connectedCallback
-    connectedCallback(): void // Hooks for element append to documents
-    disconnectedCallback(): void // Hooks for element delete from documents
-    attributeChangedCallback(a: 'name' | 'url', o: string, n: string): void // Hooks for element attributes change
-    handleAttributeUpdate(): void // handle for change of attribute name, url after inited
-    legalAttribute(name: string, val: AttrType): boolean // judge the attribute is legal
-    handleAppMount(app: AppInterface): void // mount app
-    handleCreate(): void // create app
-    handleUnmount (destory: boolean): void // unmount app
-    getDisposeResult (name: string): boolean // Get configuration
+
+    // Hooks for element append to documents
+    connectedCallback (): void
+
+    // Hooks for element delete from documents
+    disconnectedCallback (): void
+
+    // Hooks for element attributes change
+    attributeChangedCallback (a: 'name' | 'url', o: string, n: string): void
   }
 
   type prefetchParam = {

@@ -10,7 +10,15 @@ import extractHtml from './source'
 import { execScripts } from './source/scripts'
 import { appStatus, lifeCycles } from './constants'
 import SandBox from './sandbox'
-import { defer, isFunction, cloneNode, isBoolean, isNull } from './libs/utils'
+import {
+  defer,
+  isFunction,
+  cloneNode,
+  isBoolean,
+  isNull,
+  isPromise,
+  logError,
+} from './libs/utils'
 import dispatchLifecyclesEvent, { dispatchUnmountToMicroApp } from './interact/lifecycles_event'
 import globalEnv from './libs/global_env'
 
@@ -33,9 +41,9 @@ export default class CreateApp implements AppInterface {
   private status: string = appStatus.NOT_LOADED
   private loadSourceLevel: -1|0|1|2 = 0
   private umdHookMount: Func | null = null
-  private umdHookunMount: Func | null = null
+  private umdHookUnmount: Func | null = null
   private libraryName: string | null = null
-  private umdMode = false
+  umdMode = false
   isPrefetch = false
   name: string
   url: string
@@ -135,6 +143,9 @@ export default class CreateApp implements AppInterface {
     cloneNode(this.source.html as Element, this.container as Element, !this.umdMode)
 
     this.sandBox?.start(this.baseroute)
+
+    let umdHookMountResult: any // result of mount function
+
     if (!this.umdMode) {
       execScripts(this.source.scripts, this, (isFinished: boolean) => {
         if (isNull(this.umdHookMount)) {
@@ -142,19 +153,41 @@ export default class CreateApp implements AppInterface {
           // if mount & unmount is function, the sub app is umd mode
           if (isFunction(mount) && isFunction(unmount)) {
             this.umdHookMount = mount as Func
-            this.umdHookunMount = unmount as Func
+            this.umdHookUnmount = unmount as Func
             this.umdMode = true
             this.sandBox?.recordUmdSnapshot()
-            this.umdHookMount()
+            try {
+              umdHookMountResult = this.umdHookMount()
+            } catch (e) {
+              logError('an error occurred in the mount function \n', this.name, e)
+            }
           }
         }
         if (isFinished === true) {
-          this.dispatchMountedEvent()
+          this.handleMounted(umdHookMountResult)
         }
       })
     } else {
       this.sandBox?.rebuildUmdSnapshot()
-      this.umdHookMount!()
+      try {
+        umdHookMountResult = this.umdHookMount!()
+      } catch (e) {
+        logError('an error occurred in the mount function \n', this.name, e)
+      }
+      this.handleMounted(umdHookMountResult)
+    }
+  }
+
+  /**
+   * handle for promise umdHookMount
+   * @param umdHookMountResult result of umdHookMount
+   */
+  private handleMounted (umdHookMountResult: any): void {
+    if (isPromise(umdHookMountResult)) {
+      umdHookMountResult
+        .then(() => this.dispatchMountedEvent())
+        .catch((e: Error) => this.onerror(e))
+    } else {
       this.dispatchMountedEvent()
     }
   }
@@ -162,7 +195,7 @@ export default class CreateApp implements AppInterface {
   /**
    * dispatch mounted event when app run finished
    */
-  dispatchMountedEvent (): void {
+  private dispatchMountedEvent (): void {
     if (appStatus.UNMOUNT !== this.status) {
       this.status = appStatus.MOUNTED
       defer(() => {
@@ -185,16 +218,53 @@ export default class CreateApp implements AppInterface {
     if (this.status === appStatus.LOAD_SOURCE_ERROR) {
       destory = true
     }
+
     this.status = appStatus.UNMOUNT
+
+    // result of unmount function
+    let umdHookUnmountResult: any
+    /**
+     * send an unmount event to the micro app or call umd unmount hook
+     * before the sandbox is cleared
+     */
+    if (this.umdHookUnmount) {
+      try {
+        umdHookUnmountResult = this.umdHookUnmount()
+      } catch (e) {
+        logError('an error occurred in the unmount function \n', this.name, e)
+      }
+    }
+
+    dispatchUnmountToMicroApp(this.name)
+
+    this.handleUnmounted(destory, umdHookUnmountResult)
+  }
+
+  /**
+   * handle for promise umdHookUnmount
+   * @param umdHookUnmountResult result of umdHookUnmount
+   */
+  private handleUnmounted (destory: boolean, umdHookUnmountResult: any): void {
+    if (isPromise(umdHookUnmountResult)) {
+      umdHookUnmountResult
+        .then(() => this.actionsForUnmount(destory))
+        .catch(() => this.actionsForUnmount(destory))
+    } else {
+      this.actionsForUnmount(destory)
+    }
+  }
+
+  /**
+   * actions for unmount app
+   * @param destory completely destroy, delete cache resources
+   */
+  private actionsForUnmount (destory: boolean): void {
     dispatchLifecyclesEvent(
       this.container as HTMLElement,
       this.name,
       lifeCycles.UNMOUNT,
     )
-    // Send an unmount event to the micro app or call umd unmount hook
-    // before the sandbox is cleared & after the unmount lifecycle is executed
-    this.umdHookunMount && this.umdHookunMount()
-    dispatchUnmountToMicroApp(this.name)
+
     this.sandBox?.stop()
 
     // actions for completely destroy
@@ -203,7 +273,7 @@ export default class CreateApp implements AppInterface {
         delete window[this.libraryName as any]
       }
       appInstanceMap.delete(this.name)
-    } else if (this.umdMode) {
+    } else if (this.umdMode && (this.container as Element).childElementCount) {
       /**
       * In umd mode, ui frameworks will no longer create style elements to head in lazy load page when render again, so we should save container to keep these elements
       */
