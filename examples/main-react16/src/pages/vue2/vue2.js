@@ -12,8 +12,19 @@ const antIcon = <LoadingOutlined style={{ fontSize: 30 }} spin />
 function Vue2 () {
   const [data, changeData] = useState({from: '来自基座的初始化数据'})
   const [showLoading, hideLoading] = useState(true)
+
+  function mounted () {
+    console.timeEnd('mounted-vue2')
+    console.log('生命周期：mounted -- vue2', document.querySelector('micro-app'))
+    hideLoading(false)
+  }
+
+  function unmount () {
+    console.log('生命周期：unmount -- vue2', document.querySelector('#micro-app-template-style'))
+  }
+
   useEffect(() => {
-    console.time('vue2')
+    console.time('mounted-vue2')
   }, [])
   return (
     <div>
@@ -34,7 +45,8 @@ function Vue2 () {
         url={`${config.vue2}micro-app/vue2/`}
         data={data}
         // onBeforemount={() => hideLoading(false)}
-        onMounted={() => hideLoading(false)}
+        onMounted={mounted}
+        onUnmount={unmount}
         // shadowDOM
         // destory
         // inline

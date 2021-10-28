@@ -18,8 +18,7 @@ let hasRewriteDocumentOnClick = false
  */
 function overwriteDocumentOnClick (): void {
   hasRewriteDocumentOnClick = true
-  const descriptor = Object.getOwnPropertyDescriptor(document, 'onclick')
-  if (descriptor?.configurable === false) {
+  if (Object.getOwnPropertyDescriptor(document, 'onclick')) {
     return logWarn('Cannot redefine document property onclick')
   }
   const rawOnClick = document.onclick
@@ -33,7 +32,7 @@ function overwriteDocumentOnClick (): void {
   }
 
   Object.defineProperty(document, 'onclick', {
-    configurable: false,
+    configurable: true,
     enumerable: true,
     get () {
       const appName = getCurrentAppName()

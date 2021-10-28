@@ -23,6 +23,7 @@
   - 🐞 修复了SSR子应用二次渲染时url不同导致渲染失败的问题
   - 🐞 修复了 react-inlinesvg 无法正常渲染的问题，fix [#56](https://github.com/micro-zoe/micro-app/issues/56)
   - 🐞 修复了 safari 浏览器中，创建module脚本错误的问题
+  - 🐞 修复了子应用通过defineProperty重写document.onclick时报错的问题
 
 - **Update**
 
