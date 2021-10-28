@@ -29,6 +29,7 @@
   - 🚀 优化了MicroAppElement、沙箱等代码
   - 🚀 优化了umd模式下，子应用初次渲染的速度
   - 🚀 优化了动态创建的script元素src或textContent为空时的处理逻辑
+  - 🚀 优化了`mounted`生命周期的执行时机
 
 
 ### 0.4.1

@@ -33,6 +33,7 @@ export default class App extends React.Component {
   }
 
   mounted = () => {
+    console.timeEnd('mounted-react16')
     console.log('生命周期：mounted -- react16', document.querySelector('micro-app'))
     this.setState({
       showLoading: false
@@ -40,7 +41,7 @@ export default class App extends React.Component {
   }
 
   unmount = () => {
-    console.log('生命周期：unmount -- react16', document.querySelector('#template-style'))
+    console.log('生命周期：unmount -- react16', document.querySelector('#micro-app-template-style'))
   }
 
   error = (e) => {
@@ -106,7 +107,7 @@ export default class App extends React.Component {
   }
 
   componentDidMount () {
-    console.time('a1')
+    console.time('mounted-react16')
     console.time('react16')
 
     microApp.addDataListener('react16', (data) => {
@@ -158,6 +159,7 @@ export default class App extends React.Component {
                 </micro-app>
               )
             }
+            {/* <iframe src={this.state.url} onLoad={this.mounted} width='700' height='700'></iframe> */}
             <Modal
               visible={this.state.modal1}
               maskClosable={true}

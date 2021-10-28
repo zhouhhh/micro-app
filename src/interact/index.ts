@@ -47,6 +47,9 @@ class EventCenterForGlobal {
    * @param data data
    */
   setGlobalData (data: Record<PropertyKey, unknown>): void {
+    // clear dom scope before dispatch global data, apply to micro app
+    removeDomScope()
+
     eventCenter.dispatch('global', data)
   }
 

@@ -1,5 +1,5 @@
 import microApp from '../micro_app'
-import { logError, isFunction } from '../libs/utils'
+import { logError, isFunction, removeDomScope } from '../libs/utils'
 
 function eventHandler (event: CustomEvent, element: HTMLElement): void {
   Object.defineProperties(event, {
@@ -17,7 +17,8 @@ function eventHandler (event: CustomEvent, element: HTMLElement): void {
 }
 
 /**
- * dispatch lifeCycles event
+ * dispatch lifeCycles event to base app
+ * created, beforemount, mounted, unmount, error
  * @param element container
  * @param appName app.name
  * @param lifecycleName lifeCycle name
@@ -34,6 +35,9 @@ export default function dispatchLifecyclesEvent (
   } else if (element instanceof ShadowRoot) {
     element = element.host as HTMLElement
   }
+
+  // clear dom scope before dispatch lifeCycles event to base app, especially mounted & unmount
+  removeDomScope()
 
   const detail = Object.assign({
     name: appName,

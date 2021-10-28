@@ -11,7 +11,6 @@ import { execScripts } from './source/scripts'
 import { appStatus, lifeCycles } from './constants'
 import SandBox from './sandbox'
 import {
-  defer,
   isFunction,
   cloneNode,
   isBoolean,
@@ -201,16 +200,16 @@ export default class CreateApp implements AppInterface {
   private dispatchMountedEvent (): void {
     if (appStatus.UNMOUNT !== this.status) {
       this.status = appStatus.MOUNTED
-      defer(() => {
-        // test ignore
-        if (appStatus.UNMOUNT !== this.status) {
-          dispatchLifecyclesEvent(
-            this.container as HTMLElement,
-            this.name,
-            lifeCycles.MOUNTED,
-          )
-        }
-      })
+      // remove defer in v0.4.2
+      // defer(() => {
+      //   if (appStatus.UNMOUNT !== this.status) {
+      dispatchLifecyclesEvent(
+        this.container as HTMLElement,
+        this.name,
+        lifeCycles.MOUNTED,
+      )
+      //   }
+      // })
     }
   }
 
