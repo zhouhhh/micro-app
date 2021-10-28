@@ -261,4 +261,34 @@ describe('micro_app_element', () => {
       }, false)
     })
   })
+
+  // 当新的app与旧的app name相同而url不同时，且旧app已经卸载，则删除旧app的缓存，使用新app覆盖
+  test('overwrite unmount app when name conflicts', async () => {
+    const microAppElement16 = document.createElement('micro-app')
+    microAppElement16.setAttribute('name', 'test-app16')
+    microAppElement16.setAttribute('url', `http://127.0.0.1:${ports.micro_app_element}/common`)
+
+    appCon.appendChild(microAppElement16)
+
+    await new Promise((reslove) => {
+      microAppElement16.addEventListener('mounted', () => {
+        appCon.removeChild(microAppElement16)
+        reslove(true)
+      })
+    })
+
+    const microAppElement17 = document.createElement('micro-app')
+    // name相同，url不同
+    microAppElement17.setAttribute('name', 'test-app16')
+    microAppElement17.setAttribute('url', `http://127.0.0.1:${ports.micro_app_element}/dynamic/`)
+
+    appCon.appendChild(microAppElement17)
+
+    await new Promise((reslove) => {
+      microAppElement17.addEventListener('mounted', () => {
+        expect(appInstanceMap.get('test-app16')!.url).toBe(`http://127.0.0.1:${ports.micro_app_element}/dynamic/`)
+        reslove(true)
+      })
+    })
+  })
 })

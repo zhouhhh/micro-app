@@ -160,6 +160,8 @@ describe('data center', () => {
     expect(app1Global).toBeCalledWith(globalData2)
     expect(app2GlobalCb).toBeCalledWith(globalData2)
     expect(app2GlobalCbAutoTrigger).toBeCalledWith(globalData2)
+    // 通过getGlobalData直接获取数据
+    expect(microApp1.getGlobalData()).toBe(globalData2)
 
     // 基座应用卸载单个test-app2的监听
     baseApp.removeDataListener('test-app2', cbForApp2)

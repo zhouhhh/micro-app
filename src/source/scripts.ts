@@ -236,6 +236,7 @@ export function runScript (
       const scriptElement = pureCreateElement('script')
       setInlinScriptContent(url, code, module, scriptElement, callback)
       if (isDynamic) return scriptElement
+      // TEST IGNORE
       app.container?.querySelector('micro-app-body')!.appendChild(scriptElement)
     } else {
       Function(code)()

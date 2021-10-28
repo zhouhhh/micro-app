@@ -175,3 +175,7 @@ test('get element that not marked by micro-app', () => {
   // @ts-ignore
   expect(Utils.pureCreateElement('div').__MICRO_APP_NAME__).toBeUndefined()
 })
+
+test('coverage of isNull function', () => {
+  expect(Utils.isNull(null)).toBeTruthy()
+})
