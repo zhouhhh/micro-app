@@ -23,7 +23,7 @@
         inline
         baseRoute='/react16'
       >
-      <!-- destory  inline -->
+      <!-- destroy  inline -->
       </micro-app>
     </div>
   </div>

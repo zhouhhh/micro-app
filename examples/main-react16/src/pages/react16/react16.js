@@ -150,7 +150,7 @@ export default class App extends React.Component {
                   onError={this.error}
                   onDataChange={this.handleDataChange}
                   baseRoute='/micro-app/demo/react16'
-                  // destory
+                  // destroy
                   // inline
                   // disableSandbox
                   // disableScopecss

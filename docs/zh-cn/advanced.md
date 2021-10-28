@@ -333,6 +333,29 @@ if (如果是微前端环境) {
   mount()
 }
 ```
+
+#### ** 其它 **
+```js
+// entry.js
+
+// 👇 将渲染操作放入 mount 函数
+function mount () {
+  ...
+}
+
+// 👇 将卸载操作放入 unmount 函数
+function unmount () {
+  ...
+}
+
+// 微前端环境下，注册mount和unmount方法
+if (window.__MICRO_APP_ENVIRONMENT__) {
+  window[`micro-app-${window.__MICRO_APP_NAME__}`] = { mount, unmount }
+} else {
+  // 非微前端环境直接渲染
+  mount()
+}
+```
 <!-- tabs:end -->
 
 #### 自定义名称

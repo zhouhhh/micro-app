@@ -34,7 +34,7 @@ function React17 () {
         url={`${config.react17}micro-app/react17`}
         data={{from: '来自基座的数据'}}
         onMounted={() => hideLoading(false)}
-        // destory
+        // destroy
         // inline
       />
     </div>

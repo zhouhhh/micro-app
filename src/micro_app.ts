@@ -3,12 +3,12 @@ import { defineElement } from './micro_app_element'
 import preFetch, { getGlobalAssets } from './prefetch'
 import { logError, logWarn, isFunction, isBrowser, isPlainObject } from './libs/utils'
 import { EventCenterForBaseApp } from './interact'
-import { initGloalEnv } from './libs/global_env'
+import { initGlobalEnv } from './libs/global_env'
 
 class MicroApp extends EventCenterForBaseApp implements MicroAppConfigType {
   tagName = 'micro-app'
   shadowDOM?: boolean
-  destory?: boolean
+  destroy?: boolean
   inline?: boolean
   disableScopecss?: boolean
   disableSandbox?: boolean
@@ -34,10 +34,16 @@ class MicroApp extends EventCenterForBaseApp implements MicroAppConfigType {
       return logWarn(`element ${this.tagName} is already defined`)
     }
 
-    initGloalEnv()
+    initGlobalEnv()
 
     if (options && isPlainObject(options)) {
       this.shadowDOM = options.shadowDOM
+      this.destroy = options.destroy
+      /**
+       * compatible with versions below 0.4.2 of destroy
+       * Do not merge with the previous line of code
+       */
+      // @ts-ignore
       this.destory = options.destory
       this.inline = options.inline
       this.disableScopecss = options.disableScopecss

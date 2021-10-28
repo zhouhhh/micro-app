@@ -7,7 +7,7 @@
     :data='data'
     inline
   >
-    <!-- destory inline scopecss='false' -->
+    <!-- destroy inline scopecss='false' -->
   </micro-app>
 </div>
 </template>

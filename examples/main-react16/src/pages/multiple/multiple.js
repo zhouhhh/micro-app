@@ -44,7 +44,7 @@ function Vue3 () {
           data={data}
           baseRoute='/micro-app/demo/multiple'
           onMounted={() => hideLoading(false)}
-          // destory
+          // destroy
           // inline
           // scopecss='false'
         ></micro-app>
@@ -53,7 +53,7 @@ function Vue3 () {
           name='vue22'
           url={`${config.vue2}micro-app/vue2`}
           data={data}
-          // destory
+          // destroy
           // inline
           // scopecss='false'
         >

@@ -9,7 +9,7 @@
       baseRoute='/multiple'
       :data='data'
     ></micro-app>
-    <!-- destory inline scopecss='false' -->
+    <!-- destroy inline scopecss='false' -->
     <micro-app
       class='multiple-micro-app'
       name='vue22'

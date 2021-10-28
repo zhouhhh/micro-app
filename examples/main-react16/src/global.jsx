@@ -6,7 +6,7 @@ import config from './config'
 microApp.start({
   // shadowDOM: true,
   // inline: true,
-  // destory: true,
+  // destroy: true,
   // disableScopecss: true,
   // disableSandbox: true,
   // macro: true,

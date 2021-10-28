@@ -39,7 +39,7 @@ function vite () {
         data={data}
         // onBeforemount={() => hideLoading(false)}
         onMounted={handleMounted}
-        // destory
+        // destroy
         // inline
         disableSandbox
       >

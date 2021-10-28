@@ -7,7 +7,7 @@
     macro
     baseRoute='/vue3'
   >
-    <!-- destory inline scopecss='false' -->
+    <!-- destroy inline scopecss='false' -->
   </micro-app>
 </div>
 </template>

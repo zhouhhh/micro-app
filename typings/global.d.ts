@@ -70,7 +70,7 @@ declare module '@micro-app/types' {
     ): void
 
     // unmount app
-    unmount (destory: boolean): void
+    unmount (destroy: boolean): void
 
     // app rendering error
     onerror (e: Error): void
@@ -152,7 +152,7 @@ declare module '@micro-app/types' {
   type OptionsType = {
     tagName?: string
     shadowDOM?: boolean
-    destory?: boolean
+    destroy?: boolean
     inline?: boolean
     disableScopecss?: boolean
     disableSandbox?: boolean
@@ -168,7 +168,7 @@ declare module '@micro-app/types' {
   interface MicroAppConfigType {
     tagName: string
     shadowDOM?: boolean
-    destory?: boolean
+    destroy?: boolean
     inline?: boolean
     disableScopecss?: boolean
     disableSandbox?: boolean

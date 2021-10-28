@@ -24,7 +24,7 @@ function Angular11 () {
         data={data}
         onMounted={() => hideLoading(false)}
         baseRoute='/micro-app/demo/angular11'
-        // destory
+        // destroy
         // inline
         // disableScopecss
       >

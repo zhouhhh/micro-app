@@ -5,7 +5,7 @@
     url='http://localhost:3002/'
     :data='data'
   >
-    <!-- destory inline -->
+    <!-- destroy inline -->
   </micro-app>
 </div>
 </template>

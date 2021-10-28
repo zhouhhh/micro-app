@@ -48,7 +48,7 @@ function Vue2 () {
         onMounted={mounted}
         onUnmount={unmount}
         // shadowDOM
-        // destory
+        // destroy
         // inline
         // disableScopecss
         // disableSandbox

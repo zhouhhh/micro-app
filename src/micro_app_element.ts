@@ -46,7 +46,7 @@ export function defineElement (tagName: string): void {
     // name: app name
     // url: html address
     // shadowDom: use shadowDOM, default is false
-    // destory: whether delete cache resources when unmount, default is false
+    // destroy: whether delete cache resources when unmount, default is false
     // inline: whether js runs in inline script mode, default is false
     // disableScopecss: whether disable css scoped, default is false
     // disableSandbox: whether disable sandbox, default is false
@@ -71,7 +71,7 @@ export function defineElement (tagName: string): void {
     disconnectedCallback (): void {
       this.hasConnected = false
       elementInstanceMap.delete(this)
-      this.handleUnmount(this.getDisposeResult('destory'))
+      this.handleUnmount(this.getDisposeResult('destroy') || this.getDisposeResult('destory'))
       if (elementInstanceMap.size === 0) {
         releasePatches()
       }
@@ -243,11 +243,11 @@ export function defineElement (tagName: string): void {
 
     /**
      * unmount app
-     * @param destory delete cache resources when unmount
+     * @param destroy delete cache resources when unmount
      */
-    private handleUnmount (destory: boolean): void {
+    private handleUnmount (destroy: boolean): void {
       const app = appInstanceMap.get(this.appName!)
-      if (app && appStatus.UNMOUNT !== app.getAppStatus()) app.unmount(destory)
+      if (app && appStatus.UNMOUNT !== app.getAppStatus()) app.unmount(destroy)
     }
 
     /**

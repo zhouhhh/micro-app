@@ -16,6 +16,7 @@
 
   - 🆕 新增了数据通信中`getGlobalData`方法，用于主动获取全局数据
   - 🆕 新增了对`mount`, `unmount`方法promise类型的支持
+  - 🆕 新增了`destroy`配置项，用于替换`destory`，但依然保持对低版本的兼容
 
 - **Bug Fix**
 

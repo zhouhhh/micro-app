@@ -25,7 +25,7 @@ function Vue3 () {
         baseRoute='/micro-app/demo/vue3'
         disableScopecss
         // inline
-        // destory
+        // destroy
         // disableSandbox
         // shadowDOM
       >

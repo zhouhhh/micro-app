@@ -215,11 +215,11 @@ export default class CreateApp implements AppInterface {
 
   /**
    * unmount app
-   * @param destory completely destroy, delete cache resources
+   * @param destroy completely destroy, delete cache resources
    */
-  unmount (destory: boolean): void {
+  unmount (destroy: boolean): void {
     if (this.status === appStatus.LOAD_SOURCE_ERROR) {
-      destory = true
+      destroy = true
     }
 
     this.status = appStatus.UNMOUNT
@@ -241,28 +241,28 @@ export default class CreateApp implements AppInterface {
     // dispatch unmount event to micro app
     dispatchUnmountToMicroApp(this.name)
 
-    this.handleUnmounted(destory, umdHookUnmountResult)
+    this.handleUnmounted(destroy, umdHookUnmountResult)
   }
 
   /**
    * handle for promise umdHookUnmount
    * @param umdHookUnmountResult result of umdHookUnmount
    */
-  private handleUnmounted (destory: boolean, umdHookUnmountResult: any): void {
+  private handleUnmounted (destroy: boolean, umdHookUnmountResult: any): void {
     if (isPromise(umdHookUnmountResult)) {
       umdHookUnmountResult
-        .then(() => this.actionsForUnmount(destory))
-        .catch(() => this.actionsForUnmount(destory))
+        .then(() => this.actionsForUnmount(destroy))
+        .catch(() => this.actionsForUnmount(destroy))
     } else {
-      this.actionsForUnmount(destory)
+      this.actionsForUnmount(destroy)
     }
   }
 
   /**
    * actions for unmount app
-   * @param destory completely destroy, delete cache resources
+   * @param destroy completely destroy, delete cache resources
    */
-  private actionsForUnmount (destory: boolean): void {
+  private actionsForUnmount (destroy: boolean): void {
     // dispatch unmount event to base app
     dispatchLifecyclesEvent(
       this.container as HTMLElement,
@@ -273,7 +273,7 @@ export default class CreateApp implements AppInterface {
     this.sandBox?.stop()
 
     // actions for completely destroy
-    if (destory) {
+    if (destroy) {
       if (!this.useSandbox && this.umdMode) {
         delete window[this.libraryName as any]
       }
