@@ -153,95 +153,6 @@ let app = new Vue({
 > [!TIP]
 > vue-router@4.x设置base的方式请查看 https://next.router.vuejs.org/
 
-## 应用之间跳转
-因为每个应用的路由实例都是不同的，路由实例只能控制自身，无法影响其它应用，要实现应用之间的跳转有两种方式：
-
-### 1、history.pushState(replaceState)
-[history.pushState](https://developer.mozilla.org/zh-CN/docs/Web/API/History/pushState)和[history.replaceState](https://developer.mozilla.org/zh-CN/docs/Web/API/History/replaceState)可以直接修改浏览器地址，但是它们无法触发`popstate`事件，所以在跳转后需要主动触发一次`popstate`事件。
-
-例如：
-```js
-history.pushState(null, null, 'page2')
-
-// 主动触发一次popstate事件
-window.dispatchEvent(new PopStateEvent('popstate', { state: null }))
-```
-
-对于hash路由也同样适用
-```js
-history.pushState(null, null, '#/page2')
-
-// 主动触发一次popstate事件
-window.dispatchEvent(new PopStateEvent('popstate', { state: null }))
-```
-
-> [!NOTE]
-> 1、popstate事件是全局发送的，所有正在运行的应用（包括发送popstate事件的应用）都会接受到popstate事件并进行路由匹配，此时要注意和兜底路由的冲突。
->
-> 2、popstate常出现一些预料不到的问题，尤其是在vue-router4，angular中会出问题，此时建议使用下面的方式2进行跳转。
-
-### 2、基座路由控制
-
-例如：
-
-**基座下发pushState函数：**
-<!-- tabs:start -->
-
-#### ** React **
-```js
-import { useEffect } from 'react'
-import microApp from '@micro-zoe/micro-app'
-
-export default (props) => {
-  function pushState (path) {
-    props.history.push(path)
-  }
-
-  useEffect(() => {
-    // 👇 基座向子应用下发一个名为pushState的方法
-    microApp.setData(子应用名称, { pushState })
-  }, [])
-
-  return (
-    <div>
-      <micro-app name='子应用名称' url='...'></micro-app>
-    </div>
-  )
-}
-```
-
-#### ** Vue **
-
-```html
-<template>
-  <micro-app
-    name='子应用名称' 
-    url='url'
-    :data='microAppData'
-  ></micro-app>
-</template>
-
-<script>
-export default {
-  data () {
-    return {
-      microAppData: {
-        pushState: (path) => {
-          this.$router.push(path)
-        }
-      }
-    }
-  },
-}
-</script>
-```
-<!-- tabs:end -->
-
-**子应用使用pushState跳转：**
-
-子应用通过 `window.microApp.getData().pushState(path)` 进行跳转。
-
-这种方式更加规范，出错的可能性更小。
 
 ## url属性和子应用路由的关系
 答：没有关系！
@@ -304,3 +215,6 @@ micro-app配置如下：
 <!-- 子应用通过baseroute设置基础路由，路由 /page1 就变为 /my-page/page1 -->
 <micro-app url='http://www.xxx.com/' baseroute='/my-page'></micro-app>
 ```
+
+> [!TIP]
+> 如果你看到这里还是无法正确设置路由，那么将基座应用设置为history路由，子应用设置为hash路由，可以一劳永逸解决所有问题，此时不需要设置baseroute，也不需要修改基座和子应用的任何路由设置。

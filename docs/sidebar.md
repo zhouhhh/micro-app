@@ -19,6 +19,7 @@
   - [查看版本](zh-cn/version)
   - [高级功能](zh-cn/advanced)
   - [路由](zh-cn/route)
+  - [应用之间跳转](zh-cn/jump)
   <!-- - [部署](zh-cn/deploy) -->
 
 <!-- - 其他
