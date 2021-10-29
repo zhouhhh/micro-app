@@ -1,7 +1,7 @@
 import { CallableFunctionForInteract } from '@micro-app/types'
 import EventCenter from './event_center'
 import { appInstanceMap } from '../create_app'
-import { removeDomScope, isString, isFunction, isPlainObject } from '../libs/utils'
+import { removeDomScope, isString, isFunction, isPlainObject, isShadowRoot } from '../libs/utils'
 
 const eventCenter = new EventCenter()
 
@@ -189,8 +189,8 @@ export class EventCenterForMicroApp extends EventCenterForGlobal {
       })
 
       let element = app.container
-      if (element instanceof ShadowRoot) {
-        element = element.host as HTMLElement
+      if (isShadowRoot(element)) {
+        element = (element as ShadowRoot).host as HTMLElement
       }
       element.dispatchEvent(event)
     }

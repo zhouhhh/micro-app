@@ -8,6 +8,15 @@
 
 ---
 
+### 0.4.3
+
+`2021-11-05`
+
+- **Bug Fix**
+
+  - 🐞 修复了在不支持`ShadowRoot`的浏览器中的报错问题
+
+
 ### 0.4.2
 
 `2021-10-29`
@@ -16,7 +25,7 @@
 
   - 🆕 新增了数据通信中`getGlobalData`方法，用于主动获取全局数据
   - 🆕 新增了对`mount`, `unmount`方法promise类型的支持
-  - 🆕 新增了`destroy`配置项，用于替换`destory`，但依然保持对低版本的兼容
+  - 🆕 新增了`destroy`配置项，用于替换`destory`，但依然保持对低版本的兼容，fix [#132](https://github.com/micro-zoe/micro-app/issues/132)
 
 - **Bug Fix**
 

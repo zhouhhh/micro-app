@@ -1,5 +1,5 @@
 import type { AttrType, MicroAppElementType, AppInterface } from '@micro-app/types'
-import { defer, formatURL, version, logError, isString } from './libs/utils'
+import { defer, formatURL, version, logError, isString, isFunction } from './libs/utils'
 import { ObservedAttrName, appStatus, lifeCycles } from './constants'
 import CreateApp, { appInstanceMap } from './create_app'
 import {
@@ -126,7 +126,7 @@ export function defineElement (tagName: string): void {
     private initialMount (): void {
       if (!this.appName || !this.appUrl) return
 
-      if (this.getDisposeResult('shadowDOM') && !this.shadowRoot) {
+      if (this.getDisposeResult('shadowDOM') && !this.shadowRoot && isFunction(this.attachShadow)) {
         this.attachShadow({ mode: 'open' })
       }
 

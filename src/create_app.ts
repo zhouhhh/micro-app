@@ -16,6 +16,7 @@ import {
   isBoolean,
   isPromise,
   logError,
+  isShadowRoot,
 } from './libs/utils'
 import dispatchLifecyclesEvent, { dispatchUnmountToMicroApp } from './interact/lifecycles_event'
 import globalEnv from './libs/global_env'
@@ -311,7 +312,7 @@ export default class CreateApp implements AppInterface {
     // after execScripts, the app maybe unmounted
     if (appStatus.UNMOUNT !== this.status) {
       const global = (this.sandBox?.proxyWindow ?? globalEnv.rawWindow) as any
-      this.libraryName = (this.container instanceof ShadowRoot ? this.container.host : this.container)!.getAttribute('library') || `micro-app-${this.name}`
+      this.libraryName = (isShadowRoot(this.container) ? (this.container as ShadowRoot).host : this.container as Element).getAttribute('library') || `micro-app-${this.name}`
       // do not use isObject
       return typeof global[this.libraryName] === 'object' ? global[this.libraryName] : {}
     }

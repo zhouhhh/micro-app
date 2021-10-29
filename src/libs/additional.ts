@@ -1,6 +1,7 @@
 import { appInstanceMap } from '../create_app'
 import { elementInstanceMap } from '../micro_app_element'
 import { releasePatches } from '../source/patch'
+import { isShadowRoot } from '../libs/utils'
 
 function unmountNestedApp (): void {
   replaseUnmountOfNestedApp()
@@ -8,8 +9,8 @@ function unmountNestedApp (): void {
   appInstanceMap.forEach(app => {
     let element = app.container
     if (element) {
-      if (element instanceof ShadowRoot) {
-        element = element.host as HTMLElement
+      if (isShadowRoot(element)) {
+        element = (element as ShadowRoot).host as HTMLElement
       }
       // @ts-ignore
       element.disconnectedCallback()

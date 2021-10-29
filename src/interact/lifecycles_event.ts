@@ -1,5 +1,5 @@
 import microApp from '../micro_app'
-import { logError, isFunction, removeDomScope } from '../libs/utils'
+import { logError, isFunction, removeDomScope, isShadowRoot } from '../libs/utils'
 
 function eventHandler (event: CustomEvent, element: HTMLElement): void {
   Object.defineProperties(event, {
@@ -25,15 +25,15 @@ function eventHandler (event: CustomEvent, element: HTMLElement): void {
  * @param error param from error hook
  */
 export default function dispatchLifecyclesEvent (
-  element: HTMLElement,
+  element: HTMLElement | ShadowRoot,
   appName: string,
   lifecycleName: string,
   error?: Error,
 ): void {
   if (!element) {
     return logError(`element does not exist in lifecycle ${lifecycleName}`, appName)
-  } else if (element instanceof ShadowRoot) {
-    element = element.host as HTMLElement
+  } else if (isShadowRoot(element)) {
+    element = (element as ShadowRoot).host as HTMLElement
   }
 
   // clear dom scope before dispatch lifeCycles event to base app, especially mounted & unmount
@@ -50,7 +50,7 @@ export default function dispatchLifecyclesEvent (
     detail,
   })
 
-  eventHandler(event, element)
+  eventHandler(event, element as HTMLElement)
   // global hooks
   // @ts-ignore
   if (isFunction(microApp.lifeCycles?.[lifecycleName])) {

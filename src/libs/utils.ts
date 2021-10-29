@@ -60,6 +60,11 @@ export function isBoundFunction (target: any): boolean {
   return isFunction(target) && target.name.indexOf('bound ') === 0 && !target.hasOwnProperty('prototype')
 }
 
+// is ShadowRoot
+export function isShadowRoot (target: unknown): boolean {
+  return typeof ShadowRoot !== 'undefined' && target instanceof ShadowRoot
+}
+
 /**
  * format error log
  * @param msg message
