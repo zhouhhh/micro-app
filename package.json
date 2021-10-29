@@ -44,7 +44,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "prepublishOnly": "yarn lint && yarn build"
+    "prepublishOnly": "yarn lint && yarn test && yarn build"
   },
   "repository": {
     "type": "git",
