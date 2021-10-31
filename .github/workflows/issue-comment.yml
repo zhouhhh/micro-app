@@ -33,5 +33,5 @@ jobs:
           actions: 'create-comment'
           issue-number: ${{ github.event.issue.number }}
           body: |
-            Hello @${{ github.event.issue.user.login }}. In order to facilitate location and troubleshooting, we need you to provide a realistic example [codesandbox](https://codesandbox.io/) or GitHub repository.
-            您好 @${{ github.event.issue.user.login }}, 为了方便定位和排查问题，我们需要您提供一个重现实例，请提供一个尽可能精简的链接 [codesandbox](https://codesandbox.io/) 或 GitHub 仓库地址。
+            Hello @${{ github.event.issue.user.login }}. In order to facilitate location and troubleshooting, we need you to provide a realistic GitHub repository.
+            您好 @${{ github.event.issue.user.login }}, 为了方便定位和排查问题，我们需要您提供一个重现实例，请提供一个尽可能精简的 GitHub 仓库地址。
