@@ -24,7 +24,7 @@ let router = null
 let history = null
 // 将渲染操作放入 mount 函数
 function mount () {
-  history = createWebHashHistory('/micro-app/vite/')
+  history = createWebHashHistory()
   router = createRouter({
     history,
     routes,

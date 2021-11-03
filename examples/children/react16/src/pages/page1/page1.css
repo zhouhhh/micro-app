@@ -41,6 +41,8 @@
 .test-cssrules-a {
   padding: var(--padding-50);
   padding-top: 10px;
+  -webkit-background-clip: text;
+  background-clip: text;
 }
 
 .test-cssrules-b {

@@ -69,6 +69,8 @@ function mount () {
 
 function unmount () {
   console.log("微应用react16卸载了 -- 来自umd-unmount");
+  // 卸载时关闭弹窗
+  notification.destroy()
   // 卸载应用
   ReactDOM.unmountComponentAtNode(document.getElementById("root"));
 }

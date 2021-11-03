@@ -85,7 +85,7 @@ vite环境下，当路由的baseName和vite.base值不相等，两者会进行�
 - 方式二：子应用根据基座路由单独打包一个版本，这个版本的子应用无法单独访问，必须嵌入基座中运行。
 
 ##### 3、静态资源
-图片等静态资源需要使用绝对地址，可以使用 `new URL('../assets/logo.png', import.meta.url)` 等方式获取资源的全链接地址。
+图片等静态资源需要使用绝对地址，可以使用 `new URL('../assets/logo.png', import.meta.url).href` 等方式获取资源的全链接地址。
 
 ### 👇 基座应用的修改
 `请确保vite版本>=2.5.0`
@@ -304,7 +304,7 @@ let router = null
 let history = null
 // 👇 将渲染操作放入 mount 函数
 function mount () {
-  history = VueRouter.createWebHashHistory(import.meta.env.BASE_URL)
+  history = VueRouter.createWebHashHistory()
   router = VueRouter.createRouter({
     history,
     routes,
