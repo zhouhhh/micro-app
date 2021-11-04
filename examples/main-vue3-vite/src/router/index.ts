@@ -14,37 +14,37 @@ const routes = [
   {
     path: '/react17/:page*',
     name: 'react17',
-    component: () => import(/* webpackChunkName: "react17" */ '../pages/react17.vue'),
+    component: () => import('../pages/react17.vue'),
   },
   {
     path: '/vue2/:page*',
     name: 'vue2',
-    component: () => import(/* webpackChunkName: "vue2" */ '../pages/vue2.vue'),
+    component: () => import('../pages/vue2.vue'),
   },
   {
     path: '/vue3/:page*',
     name: 'vue3',
-    component: () => import(/* webpackChunkName: "vue3" */ '../pages/vue3.vue'),
+    component: () => import('../pages/vue3.vue'),
   },
   {
     path: '/vite/:page*',
     name: 'vite',
-    component: () => import(/* webpackChunkName: "vite" */ '../pages/vite.vue'),
+    component: () => import('../pages/vite.vue'),
   },
   {
     path: '/angular11/:page*',
     name: 'angular11',
-    component: () => import(/* webpackChunkName: "angular11" */ '../pages/angular11.vue'),
+    component: () => import('../pages/angular11.vue'),
   },
   {
     path: '/multiple/:page*',
     name: 'multiple',
-    component: () => import(/* webpackChunkName: "multiple" */ '../pages/multiple.vue'),
+    component: () => import('../pages/multiple.vue'),
   },
   {
     path: '/self/:page*',
     name: 'self',
-    component: () => import(/* webpackChunkName: "self" */ '../pages/self.vue'),
+    component: () => import('../pages/self.vue'),
   },
 ];
 
