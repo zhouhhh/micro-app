@@ -191,3 +191,7 @@ declare namespace JSX {
 }
 
 declare module '@micro-zoe/micro-app/polyfill/jsx-custom-event'
+
+declare const __DEV__: boolean
+
+declare const __TEST__: boolean

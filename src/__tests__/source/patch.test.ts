@@ -298,43 +298,32 @@ describe('source patch', () => {
         setAppName('test-app2')
         const fakerDoc = new Document()
 
-        // 以下覆盖Document原型方法this为空或this不是document的情况
-        const createElement = Document.prototype.createElement
-        createElement.call(fakerDoc, 'div')
-        createElement.call('', 'div')
-
-        const createElementNS = Document.prototype.createElementNS
-        createElementNS.call(fakerDoc, 'http://www.w3.org/1999/xhtml', 'svg')
-        createElementNS.call('', 'http://www.w3.org/1999/xhtml', 'svg')
-
-        const createDocumentFragment = Document.prototype.createDocumentFragment
-        createDocumentFragment.call(fakerDoc)
-        createDocumentFragment.call('')
-
         const querySelector = Document.prototype.querySelector
         querySelector.call(fakerDoc, 'div')
-        querySelector.call('', 'div')
 
         const querySelectorAll = Document.prototype.querySelectorAll
         querySelectorAll.call(fakerDoc, 'div')
-        querySelectorAll.call('', 'div')
 
-        clearAppName() // clear scoped
-        const getElementById = Document.prototype.getElementById
-        getElementById.call(fakerDoc, 'id')
-        getElementById.call('', 'id')
+        reslove(true)
+      })
+    })
+  })
 
-        const getElementsByClassName = Document.prototype.getElementsByClassName
-        getElementsByClassName.call(fakerDoc, 'classname')
-        getElementsByClassName.call('', 'classname')
+  // 分支覆盖 - 错误的 querySelector key
+  test('coverage of error querySelector key', async () => {
+    const microappElement3 = document.createElement('micro-app')
+    microappElement3.setAttribute('name', 'test-app3')
+    microappElement3.setAttribute('url', `http://127.0.0.1:${ports.source_patch}/ssr-render/`)
 
-        const getElementsByTagName = Document.prototype.getElementsByTagName
-        getElementsByTagName.call(fakerDoc, 'div')
-        getElementsByTagName.call('', 'div')
+    appCon.appendChild(microappElement3)
 
-        const getElementsByName = Document.prototype.getElementsByName
-        getElementsByName.call(fakerDoc, 'name')
-        getElementsByName.call('', 'name')
+    await new Promise((reslove) => {
+      microappElement3.addEventListener('mounted', () => {
+        setAppName('test-app3')
+        document.getElementById('sd$fs')
+        document.getElementsByClassName('sd$fs')
+        document.getElementsByTagName('sd$fs')
+        document.getElementsByName('sd$fs')
 
         reslove(true)
       })

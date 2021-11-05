@@ -179,3 +179,11 @@ test('get element that not marked by micro-app', () => {
 test('coverage of isNull function', () => {
   expect(Utils.isNull(null)).toBeTruthy()
 })
+
+test('coverage of isInvalidQuerySelectorKey', () => {
+  // @ts-ignore
+  window.__TEST__ = false
+  expect(Utils.isInvalidQuerySelectorKey('a&bc')).toBeTruthy()
+  // @ts-ignore
+  window.__TEST__ = true
+})

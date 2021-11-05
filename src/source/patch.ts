@@ -8,6 +8,8 @@ import {
   logWarn,
   isPlainObject,
   isString,
+  isInvalidQuerySelectorKey,
+  isUniqueElement,
 } from '../libs/utils'
 import scopedCSS from './scoped_css'
 import { extractLinkFromHtml, foramtDynamicLink } from './links'
@@ -289,9 +291,7 @@ export function patchElementPrototypeMethods (): void {
  */
 function markElement <T extends { __MICRO_APP_NAME__: string }> (element: T): T {
   const appName = getCurrentAppName()
-  if (appName) {
-    element.__MICRO_APP_NAME__ = appName
-  }
+  appName && (element.__MICRO_APP_NAME__ = appName)
   return element
 }
 
@@ -304,8 +304,7 @@ function patchDocument () {
     tagName: string,
     options?: ElementCreationOptions,
   ): HTMLElement {
-    const _this = this && rawDocument !== this ? this : rawDocument
-    const element = globalEnv.rawCreateElement.call(_this, tagName, options)
+    const element = globalEnv.rawCreateElement.call(this, tagName, options)
     return markElement(element)
   }
 
@@ -314,38 +313,39 @@ function patchDocument () {
     name: string,
     options?: string | ElementCreationOptions,
   ): any {
-    const _this = this && rawDocument !== this ? this : rawDocument
-    const element = globalEnv.rawCreateElementNS.call(_this, namespaceURI, name, options)
+    const element = globalEnv.rawCreateElementNS.call(this, namespaceURI, name, options)
     return markElement(element)
   }
 
   Document.prototype.createDocumentFragment = function createDocumentFragment (): DocumentFragment {
-    const _this = this && rawDocument !== this ? this : rawDocument
-    const element = globalEnv.rawCreateDocumentFragment.call(_this)
+    const element = globalEnv.rawCreateDocumentFragment.call(this)
     return markElement(element)
   }
 
   // query element👇
   function querySelector (this: Document, selectors: string): any {
-    /**
-     * The hijacking of queryselector should only occur on rawDocument, we should ignore document created by new DOMParser().parseFromString()
-     * see https://github.com/micro-zoe/micro-app/issues/56
-     */
-    if (this && rawDocument !== this) return globalEnv.rawQuerySelector.call(this, selectors)
-
     const appName = getCurrentAppName()
-    if (!appName || selectors === 'head' || selectors === 'body' || selectors === 'html') {
-      return globalEnv.rawQuerySelector.call(rawDocument, selectors)
+    if (
+      !appName ||
+      !selectors ||
+      isUniqueElement(selectors) ||
+      // see https://github.com/micro-zoe/micro-app/issues/56
+      rawDocument !== this
+    ) {
+      return globalEnv.rawQuerySelector.call(this, selectors)
     }
     return appInstanceMap.get(appName)?.container?.querySelector(selectors) ?? null
   }
 
   function querySelectorAll (this: Document, selectors: string): any {
-    if (this && rawDocument !== this) return globalEnv.rawQuerySelectorAll.call(this, selectors)
-
     const appName = getCurrentAppName()
-    if (!appName || selectors === 'head' || selectors === 'body' || selectors === 'html') {
-      return globalEnv.rawQuerySelectorAll.call(rawDocument, selectors)
+    if (
+      !appName ||
+      !selectors ||
+      isUniqueElement(selectors) ||
+      rawDocument !== this
+    ) {
+      return globalEnv.rawQuerySelectorAll.call(this, selectors)
     }
     return appInstanceMap.get(appName)?.container?.querySelectorAll(selectors) ?? []
   }
@@ -353,47 +353,58 @@ function patchDocument () {
   Document.prototype.querySelector = querySelector
   Document.prototype.querySelectorAll = querySelectorAll
 
-  // querySelector does not support the beginning of a number
   Document.prototype.getElementById = function getElementById (key: string): HTMLElement | null {
-    const appName = getCurrentAppName()
-    if (!appName || /^\d/.test(key)) {
-      const _this = this && rawDocument !== this ? this : rawDocument
-      return globalEnv.rawGetElementById.call(_this, key)
+    if (!getCurrentAppName() || isInvalidQuerySelectorKey(key)) {
+      return globalEnv.rawGetElementById.call(this, key)
     }
-    return querySelector.call(this, `#${key}`)
+
+    try {
+      return querySelector.call(this, `#${key}`)
+    } catch {
+      return globalEnv.rawGetElementById.call(this, key)
+    }
   }
 
   Document.prototype.getElementsByClassName = function getElementsByClassName (key: string): HTMLCollectionOf<Element> {
-    const appName = getCurrentAppName()
-    if (!appName || /^\d/.test(key)) {
-      const _this = this && rawDocument !== this ? this : rawDocument
-      return globalEnv.rawGetElementsByClassName.call(_this, key)
+    if (!getCurrentAppName() || isInvalidQuerySelectorKey(key)) {
+      return globalEnv.rawGetElementsByClassName.call(this, key)
     }
-    return querySelectorAll.call(this, `.${key}`)
+
+    try {
+      return querySelectorAll.call(this, `.${key}`)
+    } catch {
+      return globalEnv.rawGetElementsByClassName.call(this, key)
+    }
   }
 
   Document.prototype.getElementsByTagName = function getElementsByTagName (key: string): HTMLCollectionOf<Element> {
     const appName = getCurrentAppName()
     if (
       !appName ||
-      /^body$/i.test(key) ||
-      /^head$/i.test(key) ||
-      /^html$/i.test(key) ||
+      isUniqueElement(key) ||
+      isInvalidQuerySelectorKey(key) ||
       (!appInstanceMap.get(appName)?.inline && /^script$/i.test(key))
     ) {
-      const _this = this && rawDocument !== this ? this : rawDocument
-      return globalEnv.rawGetElementsByTagName.call(_this, key)
+      return globalEnv.rawGetElementsByTagName.call(this, key)
     }
-    return querySelectorAll.call(this, key)
+
+    try {
+      return querySelectorAll.call(this, key)
+    } catch {
+      return globalEnv.rawGetElementsByTagName.call(this, key)
+    }
   }
 
   Document.prototype.getElementsByName = function getElementsByName (key: string): NodeListOf<HTMLElement> {
-    const appName = getCurrentAppName()
-    if (!appName || /^\d/.test(key)) {
-      const _this = this && rawDocument !== this ? this : rawDocument
-      return globalEnv.rawGetElementsByName.call(_this, key)
+    if (!getCurrentAppName() || isInvalidQuerySelectorKey(key)) {
+      return globalEnv.rawGetElementsByName.call(this, key)
     }
-    return querySelectorAll.call(this, `[name=${key}]`)
+
+    try {
+      return querySelectorAll.call(this, `[name=${key}]`)
+    } catch {
+      return globalEnv.rawGetElementsByName.call(this, key)
+    }
   }
 }
 

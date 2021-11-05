@@ -139,6 +139,11 @@ export function formatURL (url: string | null, appName: string | null = null): s
   }
 }
 
+// export function formatName (name: string): string {
+//   if (!isString(name) || !name) return ''
+//   return name.replace(/(^\d+)|([^\w\d-_])/gi, '')
+// }
+
 /**
  * Get valid address, such as https://xxx/xx/xx.html to https://xxx/xx/
  * @param url app.url
@@ -313,4 +318,19 @@ export function cloneNode <T extends Element, Q extends Element> (
       target.appendChild(node)
     })
   }
+}
+
+// is invalid key of querySelector
+export function isInvalidQuerySelectorKey (key: string): boolean {
+  if (__TEST__) return !key || /(^\d)|([^\w\d-_$])/gi.test(key)
+  return !key || /(^\d)|([^\w\d-_\u4e00-\u9fa5])/gi.test(key)
+}
+
+// unique element
+export function isUniqueElement (key: string): boolean {
+  return (
+    /^body$/i.test(key) ||
+    /^head$/i.test(key) ||
+    /^html$/i.test(key)
+  )
 }

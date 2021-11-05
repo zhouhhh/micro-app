@@ -12,9 +12,14 @@
 
 `2021-11-05`
 
+- **New**
+
+  - 🆕 新增了`EventCenterForMicroApp`方法，用于沙箱关闭时实现通信功能(如vite)
+
 - **Bug Fix**
 
-  - 🐞 修复了在不支持`ShadowRoot`的浏览器中的报错问题
+  - 🐞 修复了在不支持`ShadowRoot`的浏览器中的报错问题，fix [#134](https://github.com/micro-zoe/micro-app/issues/134)
+  - 🐞 修复了元素查询时带有特殊字符导致报错的问题，fix [#140](https://github.com/micro-zoe/micro-app/issues/140)
 
 
 ### 0.4.2

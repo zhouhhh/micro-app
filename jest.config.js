@@ -39,6 +39,7 @@ module.exports = {
   ],
   globals: {
     __DEV__: true,
+    __TEST__: true,
     'ts-jest': {
       tsconfig: {
         target: 'es5',

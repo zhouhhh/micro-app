@@ -4,8 +4,12 @@ import jsxCustomEvent from '@micro-zoe/micro-app/polyfill/jsx-custom-event'
 import { useState } from 'react'
 import { Button, Spin } from 'antd'
 import { LoadingOutlined } from '@ant-design/icons'
+import { EventCenterForMicroApp } from '@micro-zoe/micro-app'
 import config from '../../config'
 import './vite.less'
+
+// 注册子应用vite的数据通信对象
+window.eventCenterForVite = new EventCenterForMicroApp('vite')
 
 const antIcon = <LoadingOutlined style={{ fontSize: 30 }} spin />
 
@@ -18,9 +22,13 @@ function vite () {
     console.log('生命周期: vite 渲染完成了')
   }
 
+  function handleDataChange (e) {
+    console.log('来自 vite 子应用的数据', e.detail.data)
+  }
+
   return (
     <div>
-      {/* <div className='btn-con'>
+      <div className='btn-con'>
         <Button
           type='primary'
           onClick={() => changeData({from: '来自基座的数据' + (+new Date())})}
@@ -28,7 +36,7 @@ function vite () {
         >
           发送数据
         </Button>
-      </div> */}
+      </div>
       {
         showLoading && <Spin indicator={antIcon} />
       }
@@ -39,6 +47,7 @@ function vite () {
         data={data}
         // onBeforemount={() => hideLoading(false)}
         onMounted={handleMounted}
+        onDataChange={handleDataChange}
         // destroy
         // inline
         disableSandbox

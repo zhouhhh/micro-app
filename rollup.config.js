@@ -33,6 +33,7 @@ const commonPlugins = [
   replace({
     preventAssignment: true,
     __VERSION__: version,
+    __TEST__: 'false',
   })
 ]
 
