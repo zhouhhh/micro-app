@@ -85,7 +85,7 @@ export default defineConfig({
 ```
 
 ##### 2、路由
-推荐子应用使用hash路由，避免一些可能出现的问题。
+推荐基座使用history路由，vite子应用使用hash路由，避免一些可能出现的问题。
 
 ##### 3、静态资源
 图片等静态资源需要使用绝对地址，可以使用 `new URL('../assets/logo.png', import.meta.url).href` 等方式获取资源的全链接地址。
