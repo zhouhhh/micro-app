@@ -142,7 +142,7 @@ import { EventCenterForMicroApp } from '@micro-zoe/micro-app'
 window.eventCenterForViteApp1 = new EventCenterForMicroApp(appName)
 ```
 
-vite子应用就可以通过注册的`eventCenterForViteApp1`对象进行通信，其api和`window.microApp`一致，*而基座通信方式没有任何变化。*
+vite子应用就可以通过注册的`eventCenterForViteApp1`对象进行通信，其api和`window.microApp`一致，*基座通信方式没有任何变化。*
 
 **子应用通信方式：**
 ```js
