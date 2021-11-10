@@ -1,6 +1,6 @@
 <template>
   <div class='page2'>
-    <div class="test-btn">test</div>
+    <div class="test-btn" @click="goback">goback</div>
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
       <el-form-item label="活动名称" prop="name">
         <el-input v-model="ruleForm.name"></el-input>
@@ -118,6 +118,9 @@ export default {
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
+    },
+    goback () {
+      this.$router.back()
     }
   }
 }

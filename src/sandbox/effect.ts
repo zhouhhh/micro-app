@@ -105,7 +105,7 @@ export function effectDocumentEvent (): void {
     options?: boolean | AddEventListenerOptions,
   ): void {
     const appName = getCurrentAppName()
-    if (appName) {
+    if (appName && !(appInstanceMap.get(appName)?.umdMode && isBoundFunction(listener))) {
       const appListenersMap = documentEventListenerMap.get(appName)
       if (appListenersMap) {
         const appListenerList = appListenersMap.get(type)

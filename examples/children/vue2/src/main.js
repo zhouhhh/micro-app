@@ -20,39 +20,43 @@ const router = new VueRouter({
 
 let app = null
 
-// app = new Vue({
-//   router,
-//   render: h => h(App),
-// }).$mount('#app')
+// -------------------分割线-默认模式------------------ //
+app = new Vue({
+  router,
+  render: h => h(App),
+}).$mount('#app')
 
-// // 监听卸载
-// window.addEventListener('unmount', function () {
-//   console.log('微应用vue2卸载了')
-//   // 卸载应用
-//   app.$destroy()
-// })
-
-function mount () {
-  app = new Vue({
-    router,
-    render: h => h(App),
-  }).$mount('#app')
-  console.timeEnd('vue2')
-  console.log("微应用vue2渲染了 -- 来自umd-mount")
-}
-
-// 卸载应用
-function unmount () {
+// 监听卸载
+window.addEventListener('unmount', function () {
+  console.log('微应用vue2卸载了 -- 自定义事件unmount')
+  // 卸载应用
   app.$destroy()
-  app.$el.innerHTML = ''
   app = null
-  console.log("微应用vue2卸载了 -- 来自umd-unmount")
-}
+})
 
-// 微前端环境下，注册mount和unmount方法
-if (window.__MICRO_APP_ENVIRONMENT__) {
-  window[`micro-app-${window.__MICRO_APP_NAME__}`] = { mount, unmount }
-} else {
-  // 非微前端环境直接渲染
-  mount()
-}
+// -------------------分割线-umd模式------------------ //
+
+// function mount () {
+//   app = new Vue({
+//     router,
+//     render: h => h(App),
+//   }).$mount('#app')
+//   console.timeEnd('vue2')
+//   console.log("微应用vue2渲染了 -- 来自umd-mount")
+// }
+
+// // 卸载应用
+// function unmount () {
+//   app.$destroy()
+//   app.$el.innerHTML = ''
+//   app = null
+//   console.log("微应用vue2卸载了 -- 来自umd-unmount")
+// }
+
+// // 微前端环境下，注册mount和unmount方法
+// if (window.__MICRO_APP_ENVIRONMENT__) {
+//   window[`micro-app-${window.__MICRO_APP_NAME__}`] = { mount, unmount }
+// } else {
+//   // 非微前端环境直接渲染
+//   mount()
+// }

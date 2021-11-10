@@ -72,8 +72,8 @@ export function MyPage () {
   return (
     <div>
       <h1>子应用</h1>
-      // name(必传)：应用名称，每个`name`都对应一个应用，必须以字母开头，且不可以带有 `.`、`#` 等特殊符号
-      // url(必传)：页面html的地址
+      // name(必传)：应用名称
+      // url(必传)：应用的html地址
       // baseroute(可选)：基座应用分配给子应用的基础路由，就是上面的my-page
       <micro-app name='app1' url='http://localhost:3000/' baseroute='/my-page'></micro-app>
     </div>
@@ -88,8 +88,8 @@ export function MyPage () {
   <div>
     <h1>子应用</h1>
     <!-- 
-      name(必传)：应用名称，每个`name`都对应一个应用，必须以字母开头，且不可以带有 `.`、`#` 等特殊符号
-      url(必传)：页面html的地址
+      name(必传)：应用名称
+      url(必传)：应用的html地址
       baseroute(可选)：基座应用分配给子应用的基础路由，就是上面的my-page
      -->
     <micro-app name='app1' url='http://localhost:3000/' baseroute='/my-page'></micro-app>
@@ -159,8 +159,8 @@ devServer: {
 > [!NOTE]
 > 1、url只是html地址，子应用的页面渲染还是基于浏览器地址的，关于这点请查看[路由一章](/zh-cn/route)
 >
-> 2、baseroute的作用请查看[路由配置](/zh-cn/route?id=路由配置)
+> 2、name必须以字母开头，且不可以带有特殊符号
 >
-> 3、子应用必须支持跨域访问，跨域配置参考[这里](/zh-cn/questions?id=_2、子应用静态资源一定要支持跨域吗？)
-> 
-> 4、子应用卸载时应该进行相应的卸载操作，参考[子应用卸载](/zh-cn/life-cycles?id=子应用卸载)
+> 3、baseroute的作用请查看[路由配置](/zh-cn/route?id=路由配置)
+>
+> 4、子应用必须支持跨域访问，跨域配置参考[这里](/zh-cn/questions?id=_2、子应用静态资源一定要支持跨域吗？)

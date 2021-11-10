@@ -139,10 +139,10 @@ export function formatURL (url: string | null, appName: string | null = null): s
   }
 }
 
-// export function formatName (name: string): string {
-//   if (!isString(name) || !name) return ''
-//   return name.replace(/(^\d+)|([^\w\d-_])/gi, '')
-// }
+export function formatName (name: string | null): string {
+  if (!isString(name) || !name) return ''
+  return name.replace(/(^\d+)|([^\w\d-_])/gi, '')
+}
 
 /**
  * Get valid address, such as https://xxx/xx/xx.html to https://xxx/xx/
@@ -300,7 +300,7 @@ export function pureCreateElement<K extends keyof HTMLElementTagNameMap> (tagNam
  * @param target Accept cloned elements
  * @param deep deep clone or transfer dom
  */
-export function cloneNode <T extends Element, Q extends Element> (
+export function cloneContainer <T extends Element, Q extends Element> (
   origin: T,
   target: Q,
   deep: boolean,

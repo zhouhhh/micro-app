@@ -41,7 +41,7 @@ class MicroApp extends EventCenterForBaseApp implements MicroAppConfigType {
       this.destroy = options.destroy
       /**
        * compatible with versions below 0.4.2 of destroy
-       * Do not merge with the previous line of code
+       * do not merge with the previous line
        */
       // @ts-ignore
       this.destory = options.destory

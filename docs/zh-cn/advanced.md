@@ -174,10 +174,19 @@ window.eventCenterForViteApp1.dispatch({type: '子应用发送的数据'})
 > 3、请确保vite版本>=2.5.0
 
 
-## 3、内存优化
-虽然我们在卸载子应用时对变量和事件进行了清除，但仍有一些变量无法回收。如果子应用渲染和卸载非常频繁，建议通过下面方式进行内存优化。
+## 3、性能&内存优化
+`micro-app`支持两种渲染微前端的模式，默认模式和umd模式。
 
-#### 在window上注册mount和unmount方法
+- **默认模式：**子应用在初次渲染和后续渲染时会顺序执行所有js，以保证多次渲染的一致性。
+- **umd模式：**子应用暴露出`mount`、`unmount`方法，此时只在初次渲染时执行所有js，后续渲染时只会执行这两个方法。
+
+正常情况下默认模式已经可以满足绝大部分项目，但得益于umd模式的实现方式，它在多次渲染时具有更好的性能和内存表现。
+
+**我的项目是否需要切换为umd模式?**
+
+如果你不希望子应用做过多修改，或子应用渲染和卸载不频繁，那么使用默认模式即可，如果子应用渲染和卸载非常频繁建议使用umd模式。
+
+**切换为umd模式：子应用在window上注册mount和unmount方法**
 
 <!-- tabs:start -->
 
@@ -188,12 +197,12 @@ import React from "react"
 import ReactDOM from "react-dom"
 import App from './App'
 
-// 👇 将渲染操作放入 mount 函数
+// 👇 将渲染操作放入 mount 函数 -- 必填
 export function mount () {
   ReactDOM.render(<App />, document.getElementById("root"))
 }
 
-// 👇 将卸载操作放入 unmount 函数
+// 👇 将卸载操作放入 unmount 函数 -- 必填
 export function unmount () {
   ReactDOM.unmountComponentAtNode(document.getElementById("root"))
 }
@@ -217,7 +226,7 @@ import router from './router'
 import App from './App.vue'
 
 let app = null
-// 👇 将渲染操作放入 mount 函数
+// 👇 将渲染操作放入 mount 函数 -- 必填
 function mount () {
   app = new Vue({
     router,
@@ -225,7 +234,7 @@ function mount () {
   }).$mount('#app')
 }
 
-// 👇 将卸载操作放入 unmount 函数
+// 👇 将卸载操作放入 unmount 函数 -- 必填
 function unmount () {
   app.$destroy()
   app.$el.innerHTML = ''
@@ -254,7 +263,7 @@ import App from './App.vue'
 let app = null
 let router = null
 let history = null
-// 👇 将渲染操作放入 mount 函数
+// 👇 将渲染操作放入 mount 函数 -- 必填
 function mount () {
   history = VueRouter.createWebHistory(window.__MICRO_APP_BASE_ROUTE__ || '/')
   router = VueRouter.createRouter({
@@ -267,7 +276,7 @@ function mount () {
   app.mount('#app')
 }
 
-// 👇 将卸载操作放入 unmount 函数
+// 👇 将卸载操作放入 unmount 函数 -- 必填
 function unmount () {
   app?.unmount()
   history?.destroy()
@@ -302,14 +311,14 @@ declare global {
 }
 
 let app = null;
-// 👇 将渲染操作放入 mount 函数
+// 👇 将渲染操作放入 mount 函数 -- 必填
 async function mount () {
   app = await platformBrowserDynamic()
   .bootstrapModule(AppModule)
   .catch(err => console.error(err))
 }
 
-// 👇 将卸载操作放入 unmount 函数
+// 👇 将卸载操作放入 unmount 函数 -- 必填
 function unmount () {
   app?.destroy();
   // 清空根元素，如果根元素不是app-root，根据实际情况调整
@@ -341,7 +350,7 @@ import App from './App.vue'
 let app = null
 let router = null
 let history = null
-// 👇 将渲染操作放入 mount 函数
+// 👇 将渲染操作放入 mount 函数 -- 必填
 function mount () {
   history = VueRouter.createWebHashHistory()
   router = VueRouter.createRouter({
@@ -354,7 +363,7 @@ function mount () {
   app.mount('#app')
 }
 
-// 👇 将卸载操作放入 unmount 函数
+// 👇 将卸载操作放入 unmount 函数 -- 必填
 function unmount () {
   app?.unmount()
   history?.destroy()
@@ -377,12 +386,12 @@ if (如果是微前端环境) {
 ```js
 // entry.js
 
-// 👇 将渲染操作放入 mount 函数
+// 👇 将渲染操作放入 mount 函数 -- 必填
 function mount () {
   ...
 }
 
-// 👇 将卸载操作放入 unmount 函数
+// 👇 将卸载操作放入 unmount 函数 -- 必填
 function unmount () {
   ...
 }
@@ -411,4 +420,10 @@ if (window.__MICRO_APP_ENVIRONMENT__) {
 ></micro-app>
 ```
 
-在沙箱关闭时`__MICRO_APP_NAME__`变量失效(如：vite子应用)，此时可以使用自定义名称的方式进行注册，也可以通过 `window['micro-app-${应用的name值}']`的方式注册。
+> [!NOTE]
+>
+> 1、nextjs, nuxtjs等ssr框架作为子应用时暂不支持umd模式
+>
+> 2、umd模式不需要修改webpack配置，通过注册window方法可以实现一致的效果。
+>
+> 3、umd模式下，因为初次渲染和后续渲染逻辑不同，可能会出现一些问题，如：[#138](https://github.com/micro-zoe/micro-app/issues/138)

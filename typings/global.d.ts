@@ -30,6 +30,7 @@ declare module '@micro-app/types' {
     defer: boolean // defer script
     module: boolean // module type script
     isGlobal?: boolean // share js to global
+    code2Function?: Function // code to Function
   }
 
   interface sourceType {
@@ -77,6 +78,9 @@ declare module '@micro-app/types' {
 
     // get app status
     getAppStatus (): string
+
+    // actions for completely destroy
+    actionsForCompletelyDestory (): void
   }
 
   interface MicroAppElementType {

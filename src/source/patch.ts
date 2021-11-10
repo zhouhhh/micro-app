@@ -74,8 +74,8 @@ function handleNewNode (parent: Node, child: Node, app: AppInterface): Node {
     ) || {}
 
     if (url && info) {
-      if (info.code) { // inline script
-        const replaceElement = runScript(url, info.code, app, info.module, true)
+      if (!info.isExternal) { // inline script
+        const replaceElement = runScript(url, app, info, true)
         dynamicElementInMicroAppMap.set(child, replaceElement)
         return replaceElement
       } else { // remote script

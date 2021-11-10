@@ -40,12 +40,12 @@ function handleGlobalData(data) {
 // 全局数据监听
 window.microApp?.addGlobalDataListener(handleGlobalData);
 
-// ReactDOM.render(
-//   <React.StrictMode>
-//     <Router />
-//   </React.StrictMode>,
-//   document.getElementById("root")
-// );
+ReactDOM.render(
+  <React.StrictMode>
+    <Router />
+  </React.StrictMode>,
+  document.getElementById("root")
+);
 
 // // 监听卸载
 // window.addEventListener("unmount", function () {
@@ -57,31 +57,31 @@ window.microApp?.addGlobalDataListener(handleGlobalData);
 //   ReactDOM.unmountComponentAtNode(document.getElementById("root"));
 // })
 
-function mount () {
-  ReactDOM.render(
-    <React.StrictMode>
-      <Router />
-    </React.StrictMode>,
-    document.getElementById("root")
-  );
-  console.timeEnd("react16");
-}
+// function mount () {
+//   ReactDOM.render(
+//     <React.StrictMode>
+//       <Router />
+//     </React.StrictMode>,
+//     document.getElementById("root")
+//   );
+//   console.timeEnd("react16");
+// }
 
-function unmount () {
-  console.log("微应用react16卸载了 -- 来自umd-unmount");
-  // 卸载时关闭弹窗
-  notification.destroy()
-  // 卸载应用
-  ReactDOM.unmountComponentAtNode(document.getElementById("root"));
-}
+// function unmount () {
+//   console.log("微应用react16卸载了 -- 来自umd-unmount");
+//   // 卸载时关闭弹窗
+//   notification.destroy()
+//   // 卸载应用
+//   ReactDOM.unmountComponentAtNode(document.getElementById("root"));
+// }
 
-// 微前端环境下，注册mount和unmount方法
-if (window.__MICRO_APP_ENVIRONMENT__) {
-  window[`micro-app-${window.__MICRO_APP_NAME__}`] = { mount, unmount }
-} else {
-  // 非微前端环境直接渲染
-  mount();
-}
+// // 微前端环境下，注册mount和unmount方法
+// if (window.__MICRO_APP_ENVIRONMENT__) {
+//   window[`micro-app-${window.__MICRO_APP_NAME__}`] = { mount, unmount }
+// } else {
+//   // 非微前端环境直接渲染
+//   mount();
+// }
 
 // document.addEventListener('click', function () {
 //   console.log(`子应用${window.__MICRO_APP_NAME__}内部的document.addEventListener(click)绑定`)
@@ -100,7 +100,7 @@ if (window.__MICRO_APP_ENVIRONMENT__) {
 // }, 1000)
 
 // const dynamicScript1 = document.createElement('script')
-// dynamicScript1.setAttribute('type', 'module')
+// // dynamicScript1.setAttribute('type', 'module')
 // // dynamicScript1.textContent = 'console.warn("inline module")'
 // dynamicScript1.setAttribute('src', 'http://127.0.0.1:8080/test.js')
 // dynamicScript1.onload = () => {

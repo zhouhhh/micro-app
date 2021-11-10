@@ -12,7 +12,7 @@ import { appStatus, lifeCycles } from './constants'
 import SandBox from './sandbox'
 import {
   isFunction,
-  cloneNode,
+  cloneContainer,
   isBoolean,
   isPromise,
   logError,
@@ -139,7 +139,7 @@ export default class CreateApp implements AppInterface {
 
     this.status = appStatus.MOUNTING
 
-    cloneNode(this.source.html as Element, this.container as Element, !this.umdMode)
+    cloneContainer(this.source.html as Element, this.container as Element, !this.umdMode)
 
     this.sandBox?.start(this.baseroute)
 
@@ -273,20 +273,24 @@ export default class CreateApp implements AppInterface {
 
     this.sandBox?.stop()
 
-    // actions for completely destroy
     if (destroy) {
-      if (!this.useSandbox && this.umdMode) {
-        delete window[this.libraryName as any]
-      }
-      appInstanceMap.delete(this.name)
+      this.actionsForCompletelyDestory()
     } else if (this.umdMode && (this.container as Element).childElementCount) {
       /**
       * In umd mode, ui frameworks will no longer create style elements to head in lazy load page when render again, so we should save container to keep these elements
       */
-      cloneNode(this.container as Element, this.source.html as Element, false)
+      cloneContainer(this.container as Element, this.source.html as Element, false)
     }
 
     this.container = null
+  }
+
+  // actions for completely destroy
+  actionsForCompletelyDestory (): void {
+    if (!this.useSandbox && this.umdMode) {
+      delete window[this.libraryName as any]
+    }
+    appInstanceMap.delete(this.name)
   }
 
   /**

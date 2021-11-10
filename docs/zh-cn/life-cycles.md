@@ -19,12 +19,12 @@
 
 
 ## 监听生命周期
-大部分框架中，监听生命周期的方式和普通事件一样。
+我们通过micro-app元素的自定义事件发送生命周期。
 
 <!-- tabs:start -->
 
 #### ** React **
-在React中略有不同，因为React不支持自定义事件，所以我们需要引入一个polyfill。
+因为React不支持自定义事件，所以我们需要引入一个polyfill。
 
 `在<micro-app>标签所在的文件顶部`添加polyfill，注释也要复制。
 ```js
@@ -119,50 +119,11 @@ microApp.start({
 
 **挂载**：子应用的js被执行则为挂载，所以不需要特殊的监听，一般在入口js文件中进行挂载相关操作。
 
-**卸载**：子应用被卸载时会接受到一个名为`unmount`的事件，在卸载时开发者需要对应用进行清除。
+**卸载**：子应用被卸载时会接受到一个名为`unmount`的事件，开发者可以在此进行卸载相关操作。
 
-<!-- tabs:start -->
-
-#### ** React **
 ```js
-// index.js
 // 子应用卸载
 window.addEventListener('unmount', function () {
-  // 卸载应用
-  ReactDOM.unmountComponentAtNode(document.getElementById('root'))
+  // 执行卸载相关操作
 })
 ```
-
-#### ** Vue2 **
-```js
-// main.js
-...
-let app = new Vue({
-  router,
-  render: h => h(App),
-}).$mount('#app')
-
-// 监听卸载
-window.addEventListener('unmount', function () {
-  // 卸载应用
-  app.$destroy()
-  app = null
-})
-```
-
-#### ** Vue3 **
-```js
-// main.js
-...
-let app = createApp(App)
-
-app.use(router).mount('#app')
-
-// 监听卸载
-window.addEventListener('unmount', function () {
-  // 卸载应用
-  app.unmount()
-  app = null
-})
-```
-<!-- tabs:end -->
