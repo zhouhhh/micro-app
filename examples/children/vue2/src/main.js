@@ -34,8 +34,8 @@ window.addEventListener('unmount', function () {
   app = null
 })
 
-// -------------------分割线-umd模式------------------ //
 
+// -------------------分割线-umd模式------------------ //
 // function mount () {
 //   app = new Vue({
 //     router,

@@ -424,6 +424,6 @@ if (window.__MICRO_APP_ENVIRONMENT__) {
 >
 > 1、nextjs, nuxtjs等ssr框架作为子应用时暂不支持umd模式
 >
-> 2、umd模式不需要修改webpack配置，通过注册window方法可以实现一致的效果。
+> 2、因为注册了`unmount`函数，所以卸载监听事件 `window.addEventListener('unmount', () => {})` 就不需要了
 >
 > 3、umd模式下，因为初次渲染和后续渲染逻辑不同，可能会出现一些问题，如：[#138](https://github.com/micro-zoe/micro-app/issues/138)

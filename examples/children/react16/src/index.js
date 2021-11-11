@@ -40,6 +40,8 @@ function handleGlobalData(data) {
 // 全局数据监听
 window.microApp?.addGlobalDataListener(handleGlobalData);
 
+
+// ----------------------分割线-默认模式--------------------- //
 ReactDOM.render(
   <React.StrictMode>
     <Router />
@@ -47,16 +49,14 @@ ReactDOM.render(
   document.getElementById("root")
 );
 
-// // 监听卸载
-// window.addEventListener("unmount", function () {
-//   // microApp.clearApps()
-//   console.log("微应用react16卸载了");
-//   // 卸载前卸载全局数据监听
-//   // window.microApp?.removeGlobalDataListener(handleGlobalData);
-//   // 卸载应用
-//   ReactDOM.unmountComponentAtNode(document.getElementById("root"));
-// })
+// 监听卸载
+window.addEventListener("unmount", function () {
+  console.log("微应用react16卸载了");
+  ReactDOM.unmountComponentAtNode(document.getElementById("root"));
+})
 
+
+// ----------------------分割线-umd模式--------------------- //
 // function mount () {
 //   ReactDOM.render(
 //     <React.StrictMode>
@@ -83,6 +83,8 @@ ReactDOM.render(
 //   mount();
 // }
 
+
+// ----------------------分割线-特殊场景测试--------------------- //
 // document.addEventListener('click', function () {
 //   console.log(`子应用${window.__MICRO_APP_NAME__}内部的document.addEventListener(click)绑定`)
 // }, false)
