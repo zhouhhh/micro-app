@@ -174,7 +174,7 @@ export function foramtDynamicLink (
   fetchSource(url, app.name).then((data: string) => {
     info.code = data
     app.source.links.set(url, info)
-    if (info.isGlobal) globalLinks.set(url, data)
+    info.isGlobal && globalLinks.set(url, data)
     replaceStyle.textContent = data
     scopedCSS(replaceStyle, app.name)
     dispatchOnLoadEvent(originLink)

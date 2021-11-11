@@ -37,9 +37,7 @@ class EventCenterForGlobal {
    * @param cb listener
    */
   removeGlobalDataListener (cb: CallableFunctionForInteract): void {
-    if (isFunction(cb)) {
-      eventCenter.off('global', cb)
-    }
+    isFunction(cb) && eventCenter.off('global', cb)
   }
 
   /**
@@ -99,9 +97,7 @@ export class EventCenterForBaseApp extends EventCenterForGlobal {
    * @param cb listener
    */
   removeDataListener (appName: string, cb: CallableFunction): void {
-    if (isFunction(cb)) {
-      eventCenter.off(formatEventName(appName, false), cb)
-    }
+    isFunction(cb) && eventCenter.off(formatEventName(appName, false), cb)
   }
 
   /**
@@ -159,9 +155,7 @@ export class EventCenterForMicroApp extends EventCenterForGlobal {
    * @param cb listener
    */
   removeDataListener (cb: CallableFunctionForInteract): void {
-    if (isFunction(cb)) {
-      eventCenter.off(formatEventName(this.appName, true), cb)
-    }
+    isFunction(cb) && eventCenter.off(formatEventName(this.appName, true), cb)
   }
 
   /**

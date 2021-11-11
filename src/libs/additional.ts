@@ -9,15 +9,13 @@ function unmountNestedApp (): void {
   appInstanceMap.forEach(app => {
     let element = app.container
     if (element) {
-      if (isShadowRoot(element)) {
-        element = (element as ShadowRoot).host as HTMLElement
-      }
+      isShadowRoot(element) && (element = (element as ShadowRoot).host as HTMLElement)
       // @ts-ignore
       element.disconnectedCallback()
     }
   })
 
-  if (!window.__MICRO_APP_UMD_MODE__) appInstanceMap.clear()
+  !window.__MICRO_APP_UMD_MODE__ && appInstanceMap.clear()
 
   if (elementInstanceMap.size) {
     elementInstanceMap.clear()

@@ -47,7 +47,7 @@ export default function preFetch (apps: prefetchParamList): void {
     return logError('preFetch is only supported in browser environment')
   }
   requestIdleCallback(() => {
-    if (isFunction(apps)) apps = (apps as Function)()
+    isFunction(apps) && (apps = (apps as Function)())
 
     filterPreFetchTarget(apps as prefetchParam[]).forEach((item) => {
       const app = new CreateApp({

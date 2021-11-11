@@ -49,25 +49,17 @@ class MicroApp extends EventCenterForBaseApp implements MicroAppConfigType {
       this.disableScopecss = options.disableScopecss
       this.disableSandbox = options.disableSandbox
       this.macro = options.macro
-      if (isFunction(options.fetch)) this.fetch = options.fetch
+      isFunction(options.fetch) && (this.fetch = options.fetch)
 
-      if (isPlainObject(options.lifeCycles)) {
-        this.lifeCycles = options.lifeCycles
-      }
+      isPlainObject(options.lifeCycles) && (this.lifeCycles = options.lifeCycles)
 
-      if (isPlainObject(options.plugins)) {
-        this.plugins = options.plugins
-      }
+      isPlainObject(options.plugins) && (this.plugins = options.plugins)
 
       // load app assets when browser is idle
-      if (options.preFetchApps) {
-        preFetch(options.preFetchApps)
-      }
+      options.preFetchApps && preFetch(options.preFetchApps)
 
       // load global assets when browser is idle
-      if (options.globalAssets) {
-        getGlobalAssets(options.globalAssets)
-      }
+      options.globalAssets && getGlobalAssets(options.globalAssets)
     }
 
     defineElement(this.tagName)

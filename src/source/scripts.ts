@@ -189,7 +189,7 @@ export function execScripts (
         }
         deferScriptInfo.push([url, info])
 
-        if (info.module) initedHook.moduleCount = initedHook.moduleCount ? ++initedHook.moduleCount : 1
+        info.module && (initedHook.moduleCount = initedHook.moduleCount ? ++initedHook.moduleCount : 1)
       } else {
         runScript(url, app, info, false)
         initedHook(false)
@@ -203,7 +203,7 @@ export function execScripts (
         const [url, info] = deferScriptInfo[index]
         info.code = info.code || code
         runScript(url, app, info, false, initedHook)
-        if (!info.module) initedHook(false)
+        !info.module && initedHook(false)
       })
       initedHook(isUndefined(initedHook.moduleCount))
     }).catch((err) => {
@@ -265,7 +265,7 @@ export function runDynamicRemoteScript (
   // url is unique
   if (app.source.scripts.has(url)) {
     const existInfo: sourceScriptInfo = app.source.scripts.get(url)!
-    if (!existInfo.module) defer(dispatchScriptOnLoadEvent)
+    !existInfo.module && defer(dispatchScriptOnLoadEvent)
     return runScript(url, app, existInfo, true, dispatchScriptOnLoadEvent)
   }
 
@@ -273,7 +273,7 @@ export function runDynamicRemoteScript (
     const code = globalScripts.get(url)!
     info.code = code
     app.source.scripts.set(url, info)
-    if (!info.module) defer(dispatchScriptOnLoadEvent)
+    !info.module && defer(dispatchScriptOnLoadEvent)
     return runScript(url, app, info, true, dispatchScriptOnLoadEvent)
   }
 
@@ -287,7 +287,7 @@ export function runDynamicRemoteScript (
   fetchSource(url, app.name).then((code: string) => {
     info.code = code
     app.source.scripts.set(url, info)
-    if (info.isGlobal) globalScripts.set(url, code)
+    info.isGlobal && globalScripts.set(url, code)
     try {
       code = bindScope(url, app, code, info.module)
       if (app.inline || info.module) {
@@ -298,7 +298,7 @@ export function runDynamicRemoteScript (
     } catch (e) {
       console.error(`[micro-app from runDynamicScript] app ${app.name}: `, e, url)
     }
-    if (!info.module) dispatchOnLoadEvent(originScript)
+    !info.module && dispatchOnLoadEvent(originScript)
   }).catch((err) => {
     logError(err, app.name)
     dispatchOnErrorEvent(originScript)

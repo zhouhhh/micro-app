@@ -53,9 +53,7 @@ function overwriteDocumentOnClick (): void {
     }
   })
 
-  if (rawOnClick) {
-    document.onclick = rawOnClick
-  }
+  rawOnClick && (document.onclick = rawOnClick)
 }
 
 /**
@@ -69,9 +67,7 @@ export function effectDocumentEvent (): void {
     rawDocumentRemoveEventListener,
   } = globalEnv
 
-  if (!hasRewriteDocumentOnClick) {
-    overwriteDocumentOnClick()
-  }
+  !hasRewriteDocumentOnClick && overwriteDocumentOnClick()
 
   document.addEventListener = function (
     type: string,

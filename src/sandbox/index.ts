@@ -63,7 +63,7 @@ const unscopables = {
  */
 let macroTimer: number
 function macroTask (fn: TimerHandler): void {
-  if (macroTimer) clearTimeout(macroTimer)
+  macroTimer && clearTimeout(macroTimer)
   macroTimer = setTimeout(fn, 0)
 }
 
@@ -219,9 +219,7 @@ export default class SandBox implements SandBoxInterface {
       },
       deleteProperty: (target: microWindowType, key: PropertyKey): boolean => {
         if (target.hasOwnProperty(key)) {
-          if (this.escapeKeys.has(key)) {
-            Reflect.deleteProperty(rawWindow, key)
-          }
+          this.escapeKeys.has(key) && Reflect.deleteProperty(rawWindow, key)
           return Reflect.deleteProperty(target, key)
         }
         return true
@@ -233,7 +231,8 @@ export default class SandBox implements SandBoxInterface {
     if (!this.active) {
       this.active = true
       this.microWindow.__MICRO_APP_BASE_ROUTE__ = this.microWindow.__MICRO_APP_BASE_URL__ = baseroute
-      if (globalEnv.rawWindow._babelPolyfill) globalEnv.rawWindow._babelPolyfill = false
+      // BUG FIX: bable-polyfill@6.x
+      globalEnv.rawWindow._babelPolyfill && (globalEnv.rawWindow._babelPolyfill = false)
       if (++SandBox.activeCount === 1) {
         effectDocumentEvent()
       }

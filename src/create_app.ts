@@ -70,9 +70,7 @@ export default class CreateApp implements AppInterface {
       scripts: new Map<string, sourceScriptInfo>(),
     }
     this.loadSourceCode()
-    if (this.useSandbox) {
-      this.sandBox = new SandBox(name, url, this.macro)
-    }
+    this.useSandbox && (this.sandBox = new SandBox(name, url, this.macro))
   }
 
   // Load resources
@@ -201,16 +199,11 @@ export default class CreateApp implements AppInterface {
   private dispatchMountedEvent (): void {
     if (appStatus.UNMOUNT !== this.status) {
       this.status = appStatus.MOUNTED
-      // remove defer in v0.4.2
-      // defer(() => {
-      //   if (appStatus.UNMOUNT !== this.status) {
       dispatchLifecyclesEvent(
         this.container as HTMLElement,
         this.name,
         lifeCycles.MOUNTED,
       )
-      //   }
-      // })
     }
   }
 

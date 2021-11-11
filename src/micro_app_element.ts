@@ -124,9 +124,7 @@ export function defineElement (tagName: string): void {
 
     // handle for connectedCallback run before attributeChangedCallback
     private handleInitialNameAndUrl (): void {
-      if (this.hasConnected) {
-        this.initialMount()
-      }
+      this.hasConnected && this.initialMount()
     }
 
     // Perform global initialization when the element count is 1
