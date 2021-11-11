@@ -1,6 +1,6 @@
 /* eslint-disable promise/param-names, no-console */
 import { commonStartEffect, releaseAllEffect, ports } from './common/initial'
-import microApp, { preFetch, removeDomScope, version, pureCreateElement } from '..'
+import microApp, { preFetch, removeDomScope, version, pureCreateElement, EventCenterForMicroApp, setCurrentAppName } from '..'
 import { appInstanceMap } from '../create_app'
 import { getCurrentAppName, defer } from '../libs/utils'
 
@@ -11,6 +11,8 @@ describe('main process', () => {
     commonStartEffect(ports.main)
     appCon = document.querySelector('#app-container')!
     console.log(version, pureCreateElement('div'))
+    console.log(new EventCenterForMicroApp('app-name'))
+    setCurrentAppName(null)
 
     microApp.start({
       tagName: 'micro-app',

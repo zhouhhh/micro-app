@@ -30,9 +30,9 @@ English｜[简体中文](./README.zh-cn.md)｜[Documentation](https://micro-zoe.
 # 📖Introduction
 micro-app is a micro front-end framework launched by JD Retail. It renders based on webcomponent-like and realizes the micro front-end from component thinking, it aiming to reduce the difficulty of getting started and improve work efficiency. 
 
-It is the lowest cost framework for accessing micro front-end, and provides a series of perfect functions such as JS sandbox, style isolation, element isolation, preloading, resource address completion, plugin system, data communication and so on.
+It is the lowest cost framework for accessing micro front-end, only one line of code needs to be changed, and even nothing needs to be changed to access the micro front-end, and provides a series of perfect functions such as JS sandbox, style isolation, element isolation, preloading, resource address completion, plugin system, data communication and so on.
 
-The micro-app has nothing to do with the technology stack, nor is it tied to the business, and can be used in any front-end framework.
+The micro-app has nothing to do with the technology stack, and can be used in any front-end framework.
 
 # Getting Start
 The micro front-end is divided into base application and micro application. We list the modifications required for base application and micro application respectively, and introduce the use of micro-app in detail.

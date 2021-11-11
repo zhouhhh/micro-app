@@ -45,7 +45,7 @@ describe('micro_app_element', () => {
     })
   })
 
-  // 新建的app与预加载的app冲突
+  // 当新的app与旧的app name相同而url不同时，且旧app为预加载，则删除旧app的缓存，使用新app覆盖
   test('app3 has same name with prefetch app1 but the url is different', () => {
     const microappElement3 = document.createElement('micro-app')
     microappElement3.setAttribute('name', 'test-app1')
@@ -53,7 +53,7 @@ describe('micro_app_element', () => {
 
     appCon.appendChild(microappElement3)
 
-    expect(console.error).toHaveBeenCalledWith(`[micro-app] app test-app1: the url http://127.0.0.1:${ports.micro_app_element}/ssr-render/ is different from prefetch url http://127.0.0.1:${ports.micro_app_element}/common/`)
+    expect(console.warn).toHaveBeenCalled()
   })
 
   // name冲突
@@ -217,7 +217,11 @@ describe('micro_app_element', () => {
     await new Promise((reslove) => {
       function handleMounted () {
         microappElement13.removeEventListener('mounted', handleMounted)
-        microappElement13.setAttribute('name', 'test-app12')
+        // test-app12# 会格式化为 test-app12
+        microappElement13.setAttribute('name', 'test-app12#')
+        defer(() => {
+          expect(microappElement13.getAttribute('name')).toBe('test-app12')
+        })
         microappElement13.setAttribute('url', `http://127.0.0.1:${ports.micro_app_element}/common`)
         reslove(true)
       }
@@ -290,5 +294,18 @@ describe('micro_app_element', () => {
         reslove(true)
       })
     })
+  })
+
+  // 测试一些带有特殊符号的name
+  test('test name with special characters', async () => {
+    // scene1: 格式化后name为空
+    const microAppElement18 = document.createElement('micro-app')
+    microAppElement18.setAttribute('name', '123$')
+    expect(console.error).toBeCalledWith('[micro-app] Invalid attribute name 123$')
+
+    // scene2: 前后name不一致，重新赋值
+    const microAppElement19 = document.createElement('micro-app')
+    microAppElement19.setAttribute('name', 'test-app19$')
+    expect(microAppElement19.getAttribute('name')).toBe('test-app19')
   })
 })

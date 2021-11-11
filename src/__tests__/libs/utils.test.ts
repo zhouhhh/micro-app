@@ -187,3 +187,8 @@ test('coverage of isInvalidQuerySelectorKey', () => {
   // @ts-ignore
   window.__TEST__ = true
 })
+
+test('coverage of formatName', () => {
+  expect(Utils.formatName(null)).toBe('')
+  expect(Utils.formatName('')).toBe('')
+})

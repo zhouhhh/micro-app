@@ -162,7 +162,7 @@ export function defineElement (tagName: string): void {
           /**
            * url is different & old app is unmounted or prefetch, create new app to replace old one
            */
-          logWarn(`the ${app.isPrefetch ? 'prefetch' : 'unmounted'} app with name ${this.appName} and url ${app.url} is replaced by a new one`, this.appName)
+          logWarn(`the ${app.isPrefetch ? 'prefetch' : 'unmounted'} app with name ${this.appName} and url ${app.url} is replaced by a new app`, this.appName)
           this.handleCreateApp()
         } else {
           logError(`an app named ${this.appName} already exists`, this.appName)
