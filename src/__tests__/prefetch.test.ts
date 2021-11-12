@@ -42,6 +42,7 @@ describe('prefetch', () => {
     })
   })
 
+  // globalAssets 正确执行
   test('globalAssets should work normal', async () => {
     expect(globalLinks.get(`http://127.0.0.1:${ports.prefetch}/common/link1.css`)).not.toBeNull()
     expect(globalScripts.get(`http://127.0.0.1:${ports.prefetch}/common/script1.js`)).not.toBeNull()
@@ -50,5 +51,18 @@ describe('prefetch', () => {
         reslove(true)
       }, 100)
     })
+  })
+
+  // globalAssets 分支覆盖
+  test('coverage branch of globalAssets', () => {
+    microApp.start({
+      tagName: 'micro-app-global-assets',
+      globalAssets: {}
+    })
+  })
+
+  // 分支覆盖: 错误的预加载入参
+  test('coverage branch: Invalid prefetch params', () => {
+    preFetch(['aa' as any])
   })
 })

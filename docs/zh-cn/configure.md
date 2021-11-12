@@ -2,9 +2,10 @@
 
 ## name
 - Desc: `应用名称`
-- Type: `string`，不可以带有 `.`、`#` 等特殊符号。
+- Type: `string`
 - Default: `必传参数`
 - 使用方式: `<micro-app name='xx'></micro-app>`
+- 注意事项: 必须以字母开头，且不可以带有除中划线和下划线外的特殊符号
 
 每个`name`都对应一个应用，当多个应用同时渲染时，name不可以重复。
 

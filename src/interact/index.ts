@@ -1,7 +1,15 @@
 import { CallableFunctionForInteract } from '@micro-app/types'
 import EventCenter from './event_center'
 import { appInstanceMap } from '../create_app'
-import { removeDomScope, isString, isFunction, isPlainObject, isShadowRoot } from '../libs/utils'
+import {
+  removeDomScope,
+  isString,
+  isFunction,
+  isPlainObject,
+  isShadowRoot,
+  formatAppName,
+  logError,
+} from '../libs/utils'
 
 const eventCenter = new EventCenter()
 
@@ -88,7 +96,7 @@ export class EventCenterForBaseApp extends EventCenterForGlobal {
    * @param autoTrigger If there is cached data when first bind listener, whether it needs to trigger, default is false
    */
   addDataListener (appName: string, cb: CallableFunction, autoTrigger?: boolean): void {
-    eventCenter.on(formatEventName(appName, false), cb, autoTrigger)
+    eventCenter.on(formatEventName(formatAppName(appName), false), cb, autoTrigger)
   }
 
   /**
@@ -97,7 +105,7 @@ export class EventCenterForBaseApp extends EventCenterForGlobal {
    * @param cb listener
    */
   removeDataListener (appName: string, cb: CallableFunction): void {
-    isFunction(cb) && eventCenter.off(formatEventName(appName, false), cb)
+    isFunction(cb) && eventCenter.off(formatEventName(formatAppName(appName), false), cb)
   }
 
   /**
@@ -106,7 +114,7 @@ export class EventCenterForBaseApp extends EventCenterForGlobal {
    * @param fromBaseApp whether get data from base app, default is false
    */
   getData (appName: string, fromBaseApp = false): Record<PropertyKey, unknown> | null {
-    return eventCenter.getData(formatEventName(appName, fromBaseApp))
+    return eventCenter.getData(formatEventName(formatAppName(appName), fromBaseApp))
   }
 
   /**
@@ -115,7 +123,7 @@ export class EventCenterForBaseApp extends EventCenterForGlobal {
    * @param data data
    */
   setData (appName: string, data: Record<PropertyKey, unknown>): void {
-    eventCenter.dispatch(formatEventName(appName, true), data)
+    eventCenter.dispatch(formatEventName(formatAppName(appName), true), data)
   }
 
   /**
@@ -123,7 +131,7 @@ export class EventCenterForBaseApp extends EventCenterForGlobal {
    * @param appName app.name
    */
   clearDataListener (appName: string): void {
-    eventCenter.off(formatEventName(appName, false))
+    eventCenter.off(formatEventName(formatAppName(appName), false))
   }
 }
 
@@ -137,7 +145,8 @@ export class EventCenterForMicroApp extends EventCenterForGlobal {
 
   constructor (appName: string) {
     super()
-    this.appName = appName
+    this.appName = formatAppName(appName)
+    !this.appName && logError(`Invalid appName ${appName}`)
   }
 
   /**

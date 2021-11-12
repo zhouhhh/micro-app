@@ -55,6 +55,7 @@ window.addEventListener("unmount", function () {
   ReactDOM.unmountComponentAtNode(document.getElementById("root"));
 })
 
+console.timeEnd("react#16");
 
 // ----------------------分割线-umd模式--------------------- //
 // function mount () {
@@ -149,3 +150,4 @@ window.addEventListener("unmount", function () {
 
 //   console.log('DOMParser createElement', d1, d2, d3)
 // }, 3000)
+

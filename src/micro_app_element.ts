@@ -1,8 +1,8 @@
 import type { AttrType, MicroAppElementType, AppInterface } from '@micro-app/types'
 import {
   defer,
-  formatName,
-  formatURL,
+  formatAppName,
+  formatAppURL,
   version,
   logError,
   logWarn,
@@ -92,14 +92,14 @@ export function defineElement (tagName: string): void {
         this[attr === ObservedAttrName.NAME ? 'appName' : 'appUrl'] !== newVal
       ) {
         if (attr === ObservedAttrName.URL && !this.appUrl) {
-          newVal = formatURL(newVal, this.appName)
+          newVal = formatAppURL(newVal, this.appName)
           if (!newVal) {
             return logError(`Invalid attribute url ${newVal}`, this.appName)
           }
           this.appUrl = newVal
           this.handleInitialNameAndUrl()
         } else if (attr === ObservedAttrName.NAME && !this.appName) {
-          const formatNewName = formatName(newVal)
+          const formatNewName = formatAppName(newVal)
 
           if (!formatNewName) {
             return logError(`Invalid attribute name ${newVal}`, this.appName)
@@ -175,8 +175,8 @@ export function defineElement (tagName: string): void {
      */
     private handleAttributeUpdate = (): void => {
       this.isWating = false
-      const formatAttrName = formatName(this.getAttribute('name'))
-      const formatAttrUrl = formatURL(this.getAttribute('url'), this.appName)
+      const formatAttrName = formatAppName(this.getAttribute('name'))
+      const formatAttrUrl = formatAppURL(this.getAttribute('url'), this.appName)
       if (this.legalAttribute('name', formatAttrName) && this.legalAttribute('url', formatAttrUrl)) {
         const existApp = appInstanceMap.get(formatAttrName)
         if (formatAttrName !== this.appName && existApp) {

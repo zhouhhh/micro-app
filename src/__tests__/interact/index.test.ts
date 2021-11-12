@@ -284,4 +284,19 @@ describe('data center', () => {
     const microApp3 = new EventCenterForMicroApp('test-app3')
     recordDataCenterSnapshot(microApp3)
   })
+
+  // 测试带有特殊符号的 appName
+  test('test specail appName', () => {
+    // 初始化子应用数据对象 - 带有特殊符号，被格式化的appName
+    const specialNameApp1 = new EventCenterForMicroApp('special-name_$#1')
+    expect(specialNameApp1.appName).toBe('special-name_1')
+
+    // 初始化子应用数据对象 - 错误的appName
+    new EventCenterForMicroApp('&') // eslint-disable-line
+    expect(console.error).toHaveBeenCalledWith('[micro-app] Invalid appName &')
+
+    // 基座应用发送数据 - 错误的appName
+    baseApp.setData('^', {})
+    expect(console.error).toHaveBeenCalledWith('[micro-app] event-center: Invalid name')
+  })
 })

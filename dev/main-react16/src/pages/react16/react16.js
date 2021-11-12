@@ -25,27 +25,27 @@ export default class App extends React.Component {
   }
 
   handleCreated = () => {
-    console.log('生命周期：created -- react16')
+    console.log(`生命周期：created -- ${this.state.name}`)
   }
 
   beforemount = (e) => {
-    console.log('生命周期：beforemount -- react16', e)
+    console.log(`生命周期：beforemount -- ${this.state.name}`, e)
   }
 
   mounted = () => {
-    console.timeEnd('mounted-react16')
-    console.log('生命周期：mounted -- react16', document.querySelector('micro-app'))
+    console.timeEnd(`mounted-${this.state.name}`)
+    console.log(`生命周期：mounted -- ${this.state.name}`, document.querySelector('micro-app'))
     this.setState({
       showLoading: false
     })
   }
 
   unmount = () => {
-    console.log('生命周期：unmount -- react16', document.querySelector('#micro-app-template-style'))
+    console.log(`生命周期：unmount -- ${this.state.name}`, document.querySelector('#micro-app-template-style'))
   }
 
   error = (e) => {
-    console.log('生命周期：error -- react16', e)
+    console.log(`生命周期：error -- ${this.state.name}`, e)
   }
 
   changeData = () => {
@@ -57,7 +57,7 @@ export default class App extends React.Component {
   }
 
   dispatchData = () => {
-    microApp.setData('react16', {dispatch: 'data from dispatch' + (+new Date())})
+    microApp.setData(this.state.name, {dispatch: 'data from dispatch' + (+new Date())})
   }
 
   dispatchGlobalData = () => {
@@ -85,7 +85,7 @@ export default class App extends React.Component {
 
   changeNameUrl = () => {
     this.setState({
-      name: 'vue2',
+      name: 'react16-to-vue2',
       url: `${config.vue2}micro-app/vue2`,
     })
   }
@@ -103,14 +103,14 @@ export default class App extends React.Component {
   }
 
   handleGlobalDataForBaseApp = (data) => {
-    console.log('这是全局数据--基座应用-react16', data)
+    console.log(`这是全局数据--基座应用-${this.state.name}`, data)
   }
 
   componentDidMount () {
-    console.time('mounted-react16')
-    console.time('react16')
+    console.time(`mounted-${this.state.name}`)
+    console.time(this.state.name)
 
-    microApp.addDataListener('react16', (data) => {
+    microApp.addDataListener(this.state.name, (data) => {
       console.log('来自子应用react16的数据', data)
     })
 
@@ -118,7 +118,7 @@ export default class App extends React.Component {
   }
 
   componentWillUnmount ()  {
-    microApp.clearDataListener('react16')
+    microApp.clearDataListener(this.state.name)
     microApp.removeGlobalDataListener(this.handleGlobalDataForBaseApp)
   }
 

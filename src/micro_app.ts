@@ -1,7 +1,7 @@
 import type { OptionsType, MicroAppConfigType, lifeCyclesType, plugins, fetchType } from '@micro-app/types'
 import { defineElement } from './micro_app_element'
 import preFetch, { getGlobalAssets } from './prefetch'
-import { logError, logWarn, isFunction, isBrowser, isPlainObject } from './libs/utils'
+import { logError, logWarn, isFunction, isBrowser, isPlainObject, formatAppName } from './libs/utils'
 import { EventCenterForBaseApp } from './interact'
 import { initGlobalEnv } from './libs/global_env'
 
@@ -53,15 +53,29 @@ class MicroApp extends EventCenterForBaseApp implements MicroAppConfigType {
 
       isPlainObject(options.lifeCycles) && (this.lifeCycles = options.lifeCycles)
 
-      isPlainObject(options.plugins) && (this.plugins = options.plugins)
-
       // load app assets when browser is idle
       options.preFetchApps && preFetch(options.preFetchApps)
 
       // load global assets when browser is idle
       options.globalAssets && getGlobalAssets(options.globalAssets)
+
+      if (isPlainObject(options.plugins)) {
+        const modules = options.plugins!.modules
+        if (isPlainObject(modules)) {
+          for (const appName in modules) {
+            const formattedAppName = formatAppName(appName)
+            if (formattedAppName && appName !== formattedAppName) {
+              modules[formattedAppName] = modules[appName]
+              delete modules[appName]
+            }
+          }
+        }
+
+        this.plugins = options.plugins
+      }
     }
 
+    // define customElement after init
     defineElement(this.tagName)
   }
 }

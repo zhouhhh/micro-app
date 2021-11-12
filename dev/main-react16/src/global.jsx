@@ -52,7 +52,7 @@ microApp.start({
       }
     ],
     modules: {
-      react16: [{
+      react$16: [{
         scopeProperties: ['3', '4'],
         escapeProperties: ['ccc', 'd'],
         loader(code, url) {
@@ -80,7 +80,7 @@ microApp.start({
           return code
         }
       }],
-      vite: [{
+      vi$te: [{
         loader(code) {
           if (process.env.NODE_ENV === 'development') {
             code = code.replace(/(from|import)(\s*['"])(\/micro-app\/vite\/)/g, (all) => {
