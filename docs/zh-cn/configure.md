@@ -82,14 +82,12 @@
 > 1、样式隔离
 >
 > 2、元素隔离
-> 
-> 3、数据通信
 >
-> 4、静态资源地址补全
+> 3、静态资源地址补全
 >
-> 5、`__MICRO_APP_ENVIRONMENT__`、`__MICRO_APP_PUBLIC_PATH__`等全局变量
+> 4、`__MICRO_APP_ENVIRONMENT__`、`__MICRO_APP_PUBLIC_PATH__`等全局变量
 >
-> 6、baseroute
+> 5、baseroute
 
 
 ## shadowDOM

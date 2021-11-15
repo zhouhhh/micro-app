@@ -28,10 +28,10 @@ app = new Vue({
 
 // 监听卸载
 window.addEventListener('unmount', function () {
-  console.log('微应用vue2卸载了 -- 自定义事件unmount')
-  // 卸载应用
   app.$destroy()
+  app.$el.innerHTML = ''
   app = null
+  console.log('微应用vue2卸载了 -- 自定义事件unmount')
 })
 
 

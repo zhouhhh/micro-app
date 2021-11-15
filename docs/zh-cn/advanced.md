@@ -278,8 +278,8 @@ function mount () {
 
 // 👇 将卸载操作放入 unmount 函数 -- 必填
 function unmount () {
-  app?.unmount()
-  history?.destroy()
+  app.unmount()
+  history.destroy()
   app = null
   router = null
   history = null
@@ -320,9 +320,8 @@ async function mount () {
 
 // 👇 将卸载操作放入 unmount 函数 -- 必填
 function unmount () {
-  app?.destroy();
-  // 清空根元素，如果根元素不是app-root，根据实际情况调整
-  document.querySelector('app-root')?.innerHTML = '';
+  // angular部分版本在执行destory时会删除容器元素app-root(如：angular11)，此时可删除`app.destroy()`以防止报错
+  app.destroy();
   app = null;
 }
 
@@ -365,8 +364,8 @@ function mount () {
 
 // 👇 将卸载操作放入 unmount 函数 -- 必填
 function unmount () {
-  app?.unmount()
-  history?.destroy()
+  app.unmount()
+  history.destroy()
   app = null
   router = null
   history = null
