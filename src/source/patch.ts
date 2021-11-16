@@ -33,7 +33,7 @@ function handleNewNode (parent: Node, child: Node, app: AppInterface): Node {
       dynamicElementInMicroAppMap.set(child, replaceComment)
       return replaceComment
     } else if (app.scopecss && !child.hasAttribute('ignore')) {
-      return scopedCSS(child, app.name)
+      return scopedCSS(child, app)
     }
     return child
   } else if (child instanceof HTMLLinkElement) {
@@ -41,7 +41,7 @@ function handleNewNode (parent: Node, child: Node, app: AppInterface): Node {
       const linkReplaceComment = document.createComment('link element with exclude attribute ignored by micro-app')
       dynamicElementInMicroAppMap.set(child, linkReplaceComment)
       return linkReplaceComment
-    } else if (!app.scopecss || child.hasAttribute('ignore')) {
+    } else if (child.hasAttribute('ignore')) {
       return child
     }
 
@@ -55,7 +55,7 @@ function handleNewNode (parent: Node, child: Node, app: AppInterface): Node {
 
     if (url && info) {
       const replaceStyle = pureCreateElement('style')
-      replaceStyle.linkpath = url
+      replaceStyle.__MICRO_APP_LINK_PATH__ = url
       foramtDynamicLink(url, info, app, child, replaceStyle)
       dynamicElementInMicroAppMap.set(child, replaceStyle)
       return replaceStyle

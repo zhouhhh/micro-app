@@ -131,9 +131,9 @@ export function fetchLinkSuccess (
 
   const styleLink = pureCreateElement('style')
   styleLink.textContent = data
-  styleLink.linkpath = url
+  styleLink.__MICRO_APP_LINK_PATH__ = url
 
-  microAppHead.replaceChild(scopedCSS(styleLink, app.name), info.placeholder!)
+  microAppHead.replaceChild(scopedCSS(styleLink, app), info.placeholder!)
 
   info.placeholder = null
   info.code = data
@@ -156,7 +156,7 @@ export function foramtDynamicLink (
 ): void {
   if (app.source.links.has(url)) {
     replaceStyle.textContent = app.source.links.get(url)!.code
-    scopedCSS(replaceStyle, app.name)
+    scopedCSS(replaceStyle, app)
     defer(() => dispatchOnLoadEvent(originLink))
     return
   }
@@ -166,7 +166,7 @@ export function foramtDynamicLink (
     info.code = code
     app.source.links.set(url, info)
     replaceStyle.textContent = code
-    scopedCSS(replaceStyle, app.name)
+    scopedCSS(replaceStyle, app)
     defer(() => dispatchOnLoadEvent(originLink))
     return
   }
@@ -176,7 +176,7 @@ export function foramtDynamicLink (
     app.source.links.set(url, info)
     info.isGlobal && globalLinks.set(url, data)
     replaceStyle.textContent = data
-    scopedCSS(replaceStyle, app.name)
+    scopedCSS(replaceStyle, app)
     dispatchOnLoadEvent(originLink)
   }).catch((err) => {
     logError(err, app.name)

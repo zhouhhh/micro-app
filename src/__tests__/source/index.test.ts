@@ -40,10 +40,10 @@ describe('source index', () => {
         expect(document.getElementById('app4-style-exclude')).toBeNull()
         expect(document.getElementById('app4-link-exclude')).toBeNull()
         expect(document.getElementById('app4-script-exclude')).toBeNull()
-        expect(document.getElementById('app4-link-include')).not.toBeNull()
+        expect(document.getElementById('app4-link-include')).toBeNull()
 
         const app = appInstanceMap.get('test-app2')!
-        expect(app.source.links.size).toBe(0)
+        expect(app.source.links.size).toBe(3)
         expect(app.source.scripts.size).toBe(3)
         reslove(true)
       }, false)

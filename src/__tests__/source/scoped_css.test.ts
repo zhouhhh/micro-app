@@ -122,7 +122,7 @@ describe('source scoped_css', () => {
         const dynamicStyle1 = document.createElement('style')
         dynamicStyle1.textContent = '.static-path1 { background: url(http://www.micro-app-test.com/img.jpeg)} .static-path2 { background: url(data:image/png;base64,iVB...)} .static-path3 { background: url(../path1/img.png)} .static-path4 { background: url(./path1/img.png)}'
         // @ts-ignore
-        dynamicStyle1.linkpath = 'http://www.micro-app-test.com/css/dynamic.css'
+        dynamicStyle1.__MICRO_APP_LINK_PATH__ = 'http://www.micro-app-test.com/css/dynamic.css'
 
         document.head.appendChild(dynamicStyle1)
         expect(dynamicStyle1.textContent).toBe('micro-app[name=test-app4] .static-path1 {background: url(http://www.micro-app-test.com/img.jpeg);} micro-app[name=test-app4] .static-path2 {background: url(data:image/png;base64,iVB...);} micro-app[name=test-app4] .static-path3 {background: url("http://www.micro-app-test.com/path1/img.png");} micro-app[name=test-app4] .static-path4 {background: url("http://www.micro-app-test.com/css/path1/img.png");}')

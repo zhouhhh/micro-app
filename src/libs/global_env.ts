@@ -16,20 +16,23 @@ declare global {
       opts?: RequestIdleCallbackOptions,
     ): number
     _babelPolyfill: boolean
-    proxyWindow?: WindowProxy
     __MICRO_APP_ENVIRONMENT__?: boolean
     __MICRO_APP_UMD_MODE__?: boolean
     __MICRO_APP_BASE_APPLICATION__?: boolean
   }
+
   interface Element {
     __MICRO_APP_NAME__?: string
     data?: any
   }
+
   interface Node {
     __MICRO_APP_NAME__?: string
   }
+
   interface HTMLStyleElement {
-    linkpath?: string
+    __MICRO_APP_LINK_PATH__?: string
+    __MICRO_APP_HAS_SCOPED__?: boolean
   }
 }
 
