@@ -1,4 +1,4 @@
-import { enableProdMode } from '@angular/core';
+import { enableProdMode, NgModuleRef  } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
 import { AppModule } from './app/app.module';
@@ -16,6 +16,25 @@ declare global {
   }
 }
 
+// ----------分割线---默认模式------两种模式任选其一-----放开注释即可运行------- //
+// let app = null;
+// platformBrowserDynamic()
+//   .bootstrapModule(AppModule)
+//   .then((res: NgModuleRef<AppModule>) => {
+//     app = res
+//   })
+//   .catch(err => console.error(err))
+
+// console.log('微应用child-angular11渲染了');
+
+// // 监听卸载操作
+// window.addEventListener("unmount", function () {
+//   app.destroy();
+//   app = null;
+//   console.log('微应用child-angular11卸载了');
+// })
+
+// ----------分割线---umd模式------两种模式任选其一-------------- //
 let app = null;
 // 将渲染操作放入 mount 函数
 async function mount () {
@@ -28,9 +47,7 @@ async function mount () {
 
 // 将卸载操作放入 unmount 函数
 function unmount () {
-  app?.destroy();
-  // @ts-ignore 清空根元素，如果根元素不是app-root，根据实际情况调整
-  document.querySelector('app-root')?.innerHTML = '';
+  app.destroy();
   app = null;
   console.log('微应用child-angular11卸载了');
 }

@@ -320,7 +320,7 @@ async function mount () {
 
 // 👇 将卸载操作放入 unmount 函数 -- 必填
 function unmount () {
-  // angular部分版本在执行destory时会删除容器元素app-root(如：angular11)，此时可删除`app.destroy()`以防止报错
+  // angular在部分场景下执行destory时会删除根元素app-root，此时可删除app.destroy()以避免这个问题
   app.destroy();
   app = null;
 }
