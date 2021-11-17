@@ -8,6 +8,7 @@ import {
   logWarn,
   isString,
   isFunction,
+  CompletionPath,
 } from './libs/utils'
 import { ObservedAttrName, appStatus, lifeCycles } from './constants'
 import CreateApp, { appInstanceMap } from './create_app'
@@ -22,6 +23,7 @@ import {
 } from './libs/additional'
 import microApp from './micro_app'
 import dispatchLifecyclesEvent from './interact/lifecycles_event'
+import globalEnv from './libs/global_env'
 
 // record all micro-app elements
 export const elementInstanceMap = new Map<Element, boolean>()
@@ -47,8 +49,9 @@ export function defineElement (tagName: string): void {
     private isWating = false
     private cacheData: Record<PropertyKey, unknown> | null = null
     private hasConnected = false
-    appName = ''
-    appUrl = ''
+    appName = '' // app name
+    appUrl = '' // app url
+    ssrUrl = '' // html path in ssr mode
     version = version
 
     // 👇 Configuration
@@ -147,10 +150,18 @@ export function defineElement (tagName: string): void {
         this.attachShadow({ mode: 'open' })
       }
 
+      if (this.getDisposeResult('ssr')) {
+        this.ssrUrl = CompletionPath(globalEnv.rawWindow.location.pathname, this.appUrl)
+      } else if (this.ssrUrl) {
+        this.ssrUrl = ''
+      }
+
       const app = appInstanceMap.get(this.appName)
       if (app) {
+        const existAppUrl = app.ssrUrl || app.url
+        const activeAppUrl = this.ssrUrl || this.appUrl
         if (
-          app.url === this.appUrl && (
+          existAppUrl === activeAppUrl && (
             app.isPrefetch ||
             app.getAppStatus() === appStatus.UNMOUNT
           )
@@ -160,7 +171,7 @@ export function defineElement (tagName: string): void {
           /**
            * url is different & old app is unmounted or prefetch, create new app to replace old one
            */
-          logWarn(`the ${app.isPrefetch ? 'prefetch' : 'unmounted'} app with name ${this.appName} and url ${app.url} is replaced by a new app`, this.appName)
+          logWarn(`the ${app.isPrefetch ? 'prefetch' : 'unmounted'} app with url: ${existAppUrl} is replaced by a new app`, this.appName)
           this.handleCreateApp()
         } else {
           logError(`an app named ${this.appName} already exists`, this.appName)
@@ -189,20 +200,39 @@ export function defineElement (tagName: string): void {
 
         if (formatAttrName !== this.appName || formatAttrUrl !== this.appUrl) {
           this.handleUnmount(formatAttrName === this.appName)
+
+          /**
+           * change ssrUrl in ssr mode
+           * do not add judgment of formatAttrUrl === this.appUrl
+           */
+          if (this.getDisposeResult('ssr')) {
+            this.ssrUrl = CompletionPath(globalEnv.rawWindow.location.pathname, formatAttrUrl)
+          } else if (this.ssrUrl) {
+            this.ssrUrl = ''
+          }
+
           this.appName = formatAttrName as string
           this.appUrl = formatAttrUrl
           ;(this.shadowRoot ?? this).innerHTML = ''
           if (formatAttrName !== this.getAttribute('name')) {
             this.setAttribute('name', this.appName)
           }
+
           /**
-           * when existApp not null
-           * if formatAttrName and this.appName are equal: exitApp is the current app, the url must be different, existApp has been unmounted
-           * if formatAttrName and this.appName are different: existApp must be prefetch or unmounted, if url is equal, then just mount, if url is different, then create new app to replace existApp
+           * when existApp not null:
+           * scene1: if formatAttrName and this.appName are equal: exitApp is the current app, the url must be different, existApp has been unmounted
+           * scene2: if formatAttrName and this.appName are different: existApp must be prefetch or unmounted, if url is equal, then just mount, if url is different, then create new app to replace existApp
            */
-          if (existApp && existApp.url === formatAttrUrl) {
-            // mount app
-            this.handleAppMount(existApp)
+
+          if (existApp) {
+            const existAppUrl = existApp.ssrUrl || existApp.url
+            const activeAppUrl = this.ssrUrl || this.appUrl
+            if (existAppUrl === activeAppUrl) {
+              // mount app
+              this.handleAppMount(existApp)
+            } else {
+              this.handleCreateApp()
+            }
           } else {
             this.handleCreateApp()
           }
@@ -256,6 +286,7 @@ export function defineElement (tagName: string): void {
       const instance: AppInterface = new CreateApp({
         name: this.appName,
         url: this.appUrl,
+        ssrUrl: this.ssrUrl,
         container: this.shadowRoot ?? this,
         inline: this.getDisposeResult('inline'),
         scopecss: !(this.getDisposeResult('disableScopecss') || this.getDisposeResult('shadowDOM')),

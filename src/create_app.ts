@@ -28,6 +28,7 @@ export const appInstanceMap = new Map<string, AppInterface>()
 export interface CreateAppParam {
   name: string
   url: string
+  ssrUrl?: string
   scopecss: boolean
   useSandbox: boolean
   macro?: boolean
@@ -46,6 +47,7 @@ export default class CreateApp implements AppInterface {
   isPrefetch = false
   name: string
   url: string
+  ssrUrl: string
   container: HTMLElement | ShadowRoot | null = null
   inline: boolean
   scopecss: boolean
@@ -55,10 +57,21 @@ export default class CreateApp implements AppInterface {
   source: sourceType
   sandBox: SandBoxInterface | null = null
 
-  constructor ({ name, url, container, inline, scopecss, useSandbox, macro, baseroute }: CreateAppParam) {
+  constructor ({
+    name,
+    url,
+    ssrUrl,
+    container,
+    inline,
+    scopecss,
+    useSandbox,
+    macro,
+    baseroute,
+  }: CreateAppParam) {
     this.container = container ?? null
     this.inline = inline ?? false
     this.baseroute = baseroute ?? ''
+    this.ssrUrl = ssrUrl ?? ''
     // optional during init👆
     this.name = name
     this.url = url

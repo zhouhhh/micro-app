@@ -44,6 +44,7 @@ declare module '@micro-app/types' {
     isPrefetch: boolean // whether prefetch app, default is false
     name: string // app name
     url: string // app url
+    ssrUrl: string // html path in ssr mode
     container: HTMLElement | ShadowRoot | null // app container
     inline: boolean //  whether js runs in inline script mode, default is false
     scopecss: boolean // whether use css scoped, default is true
