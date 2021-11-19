@@ -308,4 +308,59 @@ describe('micro_app_element', () => {
     microAppElement19.setAttribute('name', 'test-app19$')
     expect(microAppElement19.getAttribute('name')).toBe('test-app19')
   })
+
+  // 测试ssr配置
+  test('test ssr mode', async () => {
+    const microAppElement20 = document.createElement('micro-app')
+    microAppElement20.setAttribute('name', 'test-app20')
+    microAppElement20.setAttribute('url', `http://127.0.0.1:${ports.micro_app_element}/common`)
+    microAppElement20.setAttribute('ssr', 'true')
+
+    // 场景1: 测试正常渲染的ssr应用
+    appCon.appendChild(microAppElement20)
+
+    // connectedCallback中会对url地址进行格式化，因为jest环境下，location.pathname 默认为 '/'，所以/common被截掉
+    expect(microAppElement20.ssrUrl).toBe(`http://127.0.0.1:${ports.micro_app_element}/`)
+
+    // 场景2: 再次渲染时，去除ssr配置，如果有 ssrUrl，则进行删除
+    appCon.removeChild(microAppElement20)
+    microAppElement20.removeAttribute('ssr')
+    appCon.appendChild(microAppElement20)
+
+    expect(microAppElement20.ssrUrl).toBe('')
+
+    // 场景3: ssr模式下动态修改url的值，此时ssrUrl会进行同步更新
+    appCon.removeChild(microAppElement20)
+    microAppElement20.setAttribute('ssr', 'true')
+    appCon.appendChild(microAppElement20)
+
+    await new Promise((reslove) => {
+      microAppElement20.addEventListener('mounted', () => {
+        microAppElement20.setAttribute('url', `http://127.0.0.1:${ports.micro_app_element}/dynamic/`)
+        defer(() => {
+          expect(microAppElement20.ssrUrl).toBe(`http://127.0.0.1:${ports.micro_app_element}/`)
+          reslove(true)
+        })
+      })
+    })
+
+    // 场景4: ssr模式已经渲染，修改url的值的同时去除ssr配置，需要将ssrUrl的值删除
+    const microAppElement21 = document.createElement('micro-app')
+    microAppElement21.setAttribute('name', 'test-app21')
+    microAppElement21.setAttribute('url', `http://127.0.0.1:${ports.micro_app_element}/common`)
+    microAppElement21.setAttribute('ssr', 'true')
+
+    appCon.appendChild(microAppElement21)
+
+    await new Promise((reslove) => {
+      microAppElement21.addEventListener('mounted', () => {
+        microAppElement21.removeAttribute('ssr')
+        microAppElement21.setAttribute('url', `http://127.0.0.1:${ports.micro_app_element}/dynamic/`)
+        defer(() => {
+          expect(microAppElement21.ssrUrl).toBe('')
+          reslove(true)
+        })
+      })
+    })
+  })
 })

@@ -6,9 +6,9 @@ import {
   isString,
   isFunction,
   isPlainObject,
-  isShadowRoot,
   formatAppName,
   logError,
+  getRootContainer,
 } from '../libs/utils'
 
 const eventCenter = new EventCenter()
@@ -191,11 +191,7 @@ export class EventCenterForMicroApp extends EventCenterForGlobal {
         }
       })
 
-      let element = app.container
-      if (isShadowRoot(element)) {
-        element = (element as ShadowRoot).host as HTMLElement
-      }
-      element.dispatchEvent(event)
+      getRootContainer(app.container).dispatchEvent(event)
     }
   }
 

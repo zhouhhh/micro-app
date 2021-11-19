@@ -222,17 +222,16 @@ export function defineElement (tagName: string): void {
            * when existApp not null:
            * scene1: if formatAttrName and this.appName are equal: exitApp is the current app, the url must be different, existApp has been unmounted
            * scene2: if formatAttrName and this.appName are different: existApp must be prefetch or unmounted, if url is equal, then just mount, if url is different, then create new app to replace existApp
+           * scene3: url is different but ssrUrl is equal
+           * scene4: url is equal but ssrUrl is different, if url is equal, name must different
            */
-
-          if (existApp) {
-            const existAppUrl = existApp.ssrUrl || existApp.url
-            const activeAppUrl = this.ssrUrl || this.appUrl
-            if (existAppUrl === activeAppUrl) {
-              // mount app
-              this.handleAppMount(existApp)
-            } else {
-              this.handleCreateApp()
-            }
+          if (
+            existApp &&
+            existApp.url === this.appUrl &&
+            existApp.ssrUrl === this.ssrUrl
+          ) {
+            // mount app
+            this.handleAppMount(existApp)
           } else {
             this.handleCreateApp()
           }

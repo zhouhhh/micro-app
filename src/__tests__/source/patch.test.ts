@@ -280,6 +280,12 @@ describe('source patch', () => {
         document.head.appendChild(handleNewNodeDom4)
         expect(microAppHead.contains(handleNewNodeDom4)).toBeFalsy()
 
+        // 分支覆盖 - 动态插入具有ignore属性的link元素
+        const handleNewNodeDom6 = document.createElement('link')
+        handleNewNodeDom6.setAttribute('ignore', 'true')
+        document.head.appendChild(handleNewNodeDom6)
+        expect(microAppHead.contains(handleNewNodeDom6)).toBeTruthy()
+
         reslove(true)
       }, false)
     })

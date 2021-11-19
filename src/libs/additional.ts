@@ -1,18 +1,14 @@
 import { appInstanceMap } from '../create_app'
 import { elementInstanceMap } from '../micro_app_element'
 import { releasePatches } from '../source/patch'
-import { isShadowRoot } from '../libs/utils'
+import { getRootContainer } from '../libs/utils'
 
 function unmountNestedApp (): void {
   replaseUnmountOfNestedApp()
 
   appInstanceMap.forEach(app => {
-    let element = app.container
-    if (element) {
-      isShadowRoot(element) && (element = (element as ShadowRoot).host as HTMLElement)
-      // @ts-ignore
-      element.disconnectedCallback()
-    }
+    // @ts-ignore
+    app.container && getRootContainer(app.container).disconnectedCallback()
   })
 
   !window.__MICRO_APP_UMD_MODE__ && appInstanceMap.clear()

@@ -5,6 +5,12 @@ const liveServer = require('../../../scripts/test_server')
 global.fetch = require('node-fetch')
 jest.useRealTimers()
 
+declare global {
+  interface Element {
+    ssrUrl: string
+  }
+}
+
 export const ports = {
   main: 9000,
   create_app: 9001,

@@ -345,3 +345,11 @@ export function isUniqueElement (key: string): boolean {
     /^html$/i.test(key)
   )
 }
+
+/**
+ * get micro-app element
+ * @param target app container
+ */
+export function getRootContainer (target: HTMLElement | ShadowRoot): HTMLElement {
+  return (isShadowRoot(target) ? (target as ShadowRoot).host : target) as HTMLElement
+}

@@ -186,6 +186,9 @@ describe('source scoped_css', () => {
         defer(() => {
           // 所有style都被清空内容
           expect(dynamicStyle.textContent).toBe('micro-app[name=test-app6] div {color: red;}')
+
+          // 将模版style还原，否则下面的test无法运行
+          document.body.appendChild(templateStyle)
           reslove(true)
         })
       }, false)
@@ -232,6 +235,29 @@ describe('source scoped_css', () => {
           expect(dynamicStyle3.textContent).toBe('')
         }, 10)
 
+        reslove(true)
+      }, false)
+    })
+  })
+
+  // 分支覆盖 -- 同一个style元素被执行了两次 -- styleElement.__MICRO_APP_HAS_SCOPED__
+  test('coverage: styleElement.__MICRO_APP_HAS_SCOPED__', async () => {
+    const microappElement8 = document.createElement('micro-app')
+    microappElement8.setAttribute('name', 'test-app8')
+    microappElement8.setAttribute('url', `http://127.0.0.1:${ports.scoped_css}/dynamic/`)
+
+    appCon.appendChild(microappElement8)
+
+    await new Promise((reslove) => {
+      microappElement8.addEventListener('mounted', () => {
+        setAppName('test-app8')
+        const dynamicStyle1 = document.createElement('style')
+        document.head.appendChild(dynamicStyle1)
+        document.head.removeChild(dynamicStyle1)
+        dynamicStyle1.textContent = 'div {color: red}'
+        document.head.appendChild(dynamicStyle1)
+
+        expect(dynamicStyle1.textContent).toBe('micro-app[name=test-app8] div {color: red;}')
         reslove(true)
       }, false)
     })
