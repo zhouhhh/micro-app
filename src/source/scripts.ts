@@ -327,15 +327,16 @@ function runCode2InlineScript (
     const blob = new Blob([code], { type: 'text/javascript' })
     scriptElement.src = URL.createObjectURL(blob)
     scriptElement.setAttribute('type', 'module')
-    if (!url.startsWith('inline-')) {
-      scriptElement.setAttribute('originSrc', url)
-    }
     if (callback) {
       callback.moduleCount && callback.moduleCount--
       scriptElement.onload = callback.bind(scriptElement, callback.moduleCount === 0)
     }
   } else {
     scriptElement.textContent = code
+  }
+
+  if (!url.startsWith('inline-')) {
+    scriptElement.setAttribute('data-origin-src', url)
   }
 }
 

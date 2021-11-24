@@ -330,3 +330,15 @@ export default class CreateApp implements AppInterface {
     return {}
   }
 }
+
+// if app not prefetch & not unmount, then app is active
+export function getActiveApps (): string[] {
+  const activeApps: string[] = []
+  appInstanceMap.forEach((app: AppInterface, appName: string) => {
+    if (appStatus.UNMOUNT !== app.getAppStatus() && !app.isPrefetch) {
+      activeApps.push(appName)
+    }
+  })
+
+  return activeApps
+}

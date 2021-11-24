@@ -34,7 +34,7 @@ It is the lowest cost framework for accessing micro front-end, and provides a se
 
 The micro-app has nothing to do with the technology stack, and can be used in any front-end framework.
 
-# Getting Start
+# How to use
 The micro front-end is divided into base application and micro application. We list the modifications required for base application and micro application respectively, and introduce the use of micro-app in detail.
 
 ## base application

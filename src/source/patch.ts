@@ -49,7 +49,6 @@ function handleNewNode (parent: Node, child: Node, app: AppInterface): Node {
       child,
       parent,
       app,
-      null,
       true,
     )
 
