@@ -15,6 +15,7 @@
 - **New**
 
   - 🆕 新增了`getActiveApps`方法，用于获取正在运行的子应用。
+  - 🆕 新增了`getAllApps`方法，用于获取所有已经注册的子应用。
 
 - **Bug Fix**
 

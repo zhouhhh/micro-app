@@ -12,4 +12,5 @@ export {
 } from './interact'
 export {
   getActiveApps, // version >= 0.5.1
+  getAllApps, // version >= 0.5.1
 } from './create_app'

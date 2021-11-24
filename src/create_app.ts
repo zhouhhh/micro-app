@@ -342,3 +342,8 @@ export function getActiveApps (): string[] {
 
   return activeApps
 }
+
+// get all registered apps
+export function getAllApps (): string[] {
+  return Array.from(appInstanceMap.keys())
+}
