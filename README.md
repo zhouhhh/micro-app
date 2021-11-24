@@ -75,7 +75,7 @@ devServer: {
 },
 ```
 
-Then micro front-end can be rendered normally, and the react micro application is embedded in the vue base application. The effect is as follows：
+The above micro front-end rendering is completed, and the effect is as follows:
 
 ![image](https://img10.360buyimg.com/imagetools/jfs/t1/188373/14/17696/41854/6111f4a0E532736ba/4b86f4f8e2044519.png)
 
