@@ -75,7 +75,7 @@ devServer: {
 },
 ```
 
-以上微前端就可以正常渲染，实现了在vue基座应用中嵌入react子应用，效果如下：
+以上微前端基本渲染完成，效果如下：
 
 <img src="https://img12.360buyimg.com/imagetools/jfs/t1/196940/34/1541/38365/610a14fcE46c21374/c321b9f8fa50a8fc.png" alt="result" width='900'/>
 
