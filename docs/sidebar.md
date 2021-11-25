@@ -21,6 +21,7 @@
   - [路由](zh-cn/route)
   - [应用之间跳转](zh-cn/jump)
   <!-- - [部署](zh-cn/deploy) -->
+  <!-- - [API](zh-cn/deploy) 查看版本放入api -->
 
 <!-- - 其他
 
