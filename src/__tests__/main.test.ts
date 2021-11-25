@@ -1,6 +1,14 @@
 /* eslint-disable promise/param-names, no-console */
 import { commonStartEffect, releaseAllEffect, ports } from './common/initial'
-import microApp, { preFetch, removeDomScope, version, pureCreateElement, EventCenterForMicroApp } from '..'
+import microApp, {
+  preFetch,
+  removeDomScope,
+  version,
+  pureCreateElement,
+  EventCenterForMicroApp,
+  getActiveApps,
+  getAllApps,
+} from '..'
 import { appInstanceMap } from '../create_app'
 import { getCurrentAppName, defer } from '../libs/utils'
 
@@ -122,6 +130,8 @@ describe('main process', () => {
     await new Promise((reslove) => {
       microappElement1.addEventListener('mounted', () => {
         expect(appInstanceMap.size).toBe(prefetchAppNum + 1)
+        expect(getActiveApps().length).toBe(1)
+        expect(getAllApps().length).toBe(prefetchAppNum + 1)
         reslove(true)
       }, false)
     })
