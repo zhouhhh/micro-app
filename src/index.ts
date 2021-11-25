@@ -11,6 +11,6 @@ export {
   EventCenterForMicroApp,
 } from './interact'
 export {
-  getActiveApps, // version >= 0.5.1
-  getAllApps, // version >= 0.5.1
+  getActiveApps,
+  getAllApps,
 } from './create_app'
