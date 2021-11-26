@@ -190,6 +190,8 @@ export default class SandBox implements SandBoxInterface {
         if (this.scopeProperties.includes(key)) return key in target
         return key in unscopables || key in target || key in rawWindow
       },
+      // Object.getOwnPropertyDescriptor(window, key)
+      // TODO: use set
       getOwnPropertyDescriptor: (target: microWindowType, key: PropertyKey): PropertyDescriptor|undefined => {
         if (target.hasOwnProperty(key)) {
           descriptorTargetMap.set(key, 'target')
@@ -197,6 +199,7 @@ export default class SandBox implements SandBoxInterface {
         }
 
         if (rawWindow.hasOwnProperty(key)) {
+          // like console, alert ...
           descriptorTargetMap.set(key, 'rawWindow')
           const descriptor = Object.getOwnPropertyDescriptor(rawWindow, key)
           if (descriptor && !descriptor.configurable) {
@@ -207,6 +210,7 @@ export default class SandBox implements SandBoxInterface {
 
         return undefined
       },
+      // Object.defineProperty(window, key, Descriptor)
       defineProperty: (target: microWindowType, key: PropertyKey, value: PropertyDescriptor): boolean => {
         const from = descriptorTargetMap.get(key)
         if (from === 'rawWindow') {
@@ -214,6 +218,7 @@ export default class SandBox implements SandBoxInterface {
         }
         return Reflect.defineProperty(target, key, value)
       },
+      // Object.getOwnPropertyNames(window)
       ownKeys: (target: microWindowType): Array<string | symbol> => {
         return unique(Reflect.ownKeys(rawWindow).concat(Reflect.ownKeys(target)))
       },
