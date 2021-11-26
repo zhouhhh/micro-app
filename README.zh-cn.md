@@ -56,10 +56,8 @@ microApp.start()
 ```html
 <!-- my-page.vue -->
 <template>
-  <div>
-    <!-- 👇 name为应用名称，url为html地址 -->
-    <micro-app name='my-app' url='http://localhost:3000/'></micro-app>
-  </div>
+  <!-- 👇 name为应用名称，url为html地址 -->
+  <micro-app name='my-app' url='http://localhost:3000/'></micro-app>
 </template>
 ```
 
