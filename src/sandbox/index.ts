@@ -224,6 +224,7 @@ export default class SandBox implements SandBoxInterface {
       },
       deleteProperty: (target: microWindowType, key: PropertyKey): boolean => {
         if (target.hasOwnProperty(key)) {
+          this.injectedKeys.has(key) && this.injectedKeys.delete(key)
           this.escapeKeys.has(key) && Reflect.deleteProperty(rawWindow, key)
           return Reflect.deleteProperty(target, key)
         }
