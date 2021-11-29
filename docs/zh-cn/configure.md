@@ -27,16 +27,9 @@
 - Default: `''`
 - 使用方式: `<micro-app name='xx' url='xx' baseroute='/my-page/'></micro-app>`
 
-在微前端环境下，子应用可以从window上获取baseroute的值，用于设置基础路由。
+在微前端环境下，子应用可以从window.__MICRO_APP_BASE_ROUTE__上获取baseroute的值，用于设置基础路由。
 
-以react-router为例，在子应用的路由中配置`basename`：
-```js
-<BrowserRouter basename={window.__MICRO_APP_BASE_ROUTE__ || '/'}>
-  <Switch>
-    ...
-  </Switch>
-</BrowserRouter>
-```
+如果基座应用是history路由，子应用是hash路由，则不需要设置baseroute。
 
 ## inline
 - Desc: `是否使用内联script`
@@ -47,7 +40,7 @@
 
 开启inline后，被提取的js会作为script标签插入应用中运行，在开发环境中更方便调试。
 
-> [!TIP]
+> [!NOTE]
 > 开启inline后会稍微损耗性能，一般在开发环境中使用。
 
 ## destory

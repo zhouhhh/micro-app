@@ -44,7 +44,7 @@ micro-app与技术栈无关，对前端框架没有限制，任何框架都可�
 yarn add @micro-zoe/micro-app
 ```
 
-**2、在入口处引入依赖**
+**2、在入口处引入**
 ```js
 // main.js
 import microApp from '@micro-zoe/micro-app'

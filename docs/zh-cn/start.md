@@ -7,7 +7,7 @@
 npm i @micro-zoe/micro-app --save
 ```
 
-2、在入口处引入依赖
+2、在入口处引入
 ```js
 // index.js
 import microApp from '@micro-zoe/micro-app'
@@ -74,7 +74,7 @@ export function MyPage () {
       <h1>子应用</h1>
       // name(必传)：应用名称
       // url(必传)：应用的html地址
-      // baseroute(可选)：基座应用分配给子应用的基础路由，就是上面的my-page
+      // baseroute(可选)：基座应用分配给子应用的基础路由，就是上面的 `/my-page`
       <micro-app name='app1' url='http://localhost:3000/' baseroute='/my-page'></micro-app>
     </div>
   )
@@ -90,7 +90,7 @@ export function MyPage () {
     <!-- 
       name(必传)：应用名称
       url(必传)：应用的html地址
-      baseroute(可选)：基座应用分配给子应用的基础路由，就是上面的my-page
+      baseroute(可选)：基座应用分配给子应用的基础路由，就是上面的 `/my-page`
      -->
     <micro-app name='app1' url='http://localhost:3000/' baseroute='/my-page'></micro-app>
   </div>
