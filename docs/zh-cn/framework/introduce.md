@@ -4,13 +4,15 @@
 
 我们列举比较流行的前端框架，指出各框架的注意事项，规避各种可能出现的问题。
 
-**目前的框架有：**
-- 1、react (version 16, 17)
-- 2、vue (version 2, 3)
-- 3、vite (version 2)
-- 4、angular (version 11)
-- 5、nextjs (version 11)
-- 6、nuxtjs (version 2)
+**目前有：**
+- react (version 16, 17)
+- vue (version 2, 3)
+- vite (version 2)
+- angular (version 11)
+- nextjs (version 11)
+- nuxtjs (version 2)
 
 > [!TIP]
-> 我们只举例了比较流行的框架，如果有其它框架需求，请在github上提issue告知我们。
+> 以上框架可以任意组合，换句话说任何一个框架都可以作为基座嵌入其它类型的子应用，任何一个框架也可以作为子应用被其它框架嵌入，包括上面没有列举出的其它库，如 svelte、umi ...
+>
+> 我们只举例了部分框架，如果有其它框架需求，请在github上提issue告知我们。

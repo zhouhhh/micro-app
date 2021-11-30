@@ -175,5 +175,4 @@ jsonp会创建一个script元素加载数据，正常情况script会被拦截导
 // 修改jsonp方法，在创建script元素后添加ignore属性
 const script = document.createElement('script')
 script.setAttribute('ignore', 'true')
-...
 ```

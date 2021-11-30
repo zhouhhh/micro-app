@@ -51,7 +51,6 @@ micro-app依赖于CustomElements和Proxy两个较新的API。
 ```js
 // webpack.config.js
 module.exports = {
-  ...
   output: {
     ...
     jsonpFunction: `webpackJsonp_custom_app_name`,
@@ -64,7 +63,6 @@ module.exports = {
 ```js
 // webpack.config.js
 module.exports = {
-  ...
   output: {
     ...
     chunkLoadingGlobal: 'webpackJsonp_custom_app_name',

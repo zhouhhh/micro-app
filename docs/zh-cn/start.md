@@ -28,11 +28,10 @@ export default function AppRoute () {
   return (
     <BrowserRouter>
       <Switch>
-        // 👇👇 非严格匹配，/my-page/* 都将匹配到 MyPage 页面
+        // 👇 非严格匹配，/my-page/* 都将匹配到 MyPage 页面
         <Route path='/my-page'>
           <MyPage />
         </Route>
-        ...
       </Switch>
     </BrowserRouter>
   )
@@ -51,7 +50,7 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    // 👇👇 非严格匹配，/my-page/* 都将匹配到 MyPage 页面
+    // 👇 非严格匹配，/my-page/* 都将匹配到 MyPage 页面
     path: '/my-page/*', // vue-router@4.x path的写法为：'/my-page/:page*'
     name: 'my-page',
     component: MyPage,
@@ -62,7 +61,7 @@ export default routes
 ```
 <!-- tabs:end -->
 
-4、在`MyPage`页面中嵌入微前端应用
+4、在`MyPage`页面中嵌入子应用
 <!-- tabs:start -->
 
 #### ** React **
@@ -100,7 +99,7 @@ export function MyPage () {
 
 ### 子应用
 
-1、设置基础路由`(如果基座应用是history路由，子应用是hash路由，不需要设置基础路由，这一步可以省略)`
+1、设置基础路由`(如果基座应用是history路由，子应用是hash路由，这一步可以省略)`
 
 <!-- tabs:start -->
 
@@ -111,11 +110,9 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom'
 
 export default function AppRoute () {
   return (
-    // 👇👇 设置基础路由，子应用可以通过window.__MICRO_APP_BASE_ROUTE__获取基座下发的baseroute，如果没有设置baseroute属性，则此值默认为空字符串
+    // 👇 设置基础路由，子应用可以通过window.__MICRO_APP_BASE_ROUTE__获取基座下发的baseroute，如果没有设置baseroute属性，则此值默认为空字符串
     <BrowserRouter basename={window.__MICRO_APP_BASE_ROUTE__ || '/'}>
-      <Switch>
-        ...
-      </Switch>
+      ...
     </BrowserRouter>
   )
 }
@@ -129,7 +126,7 @@ import VueRouter from 'vue-router'
 import routes from './router'
 
 const router = new VueRouter({
-  // 👇👇 设置基础路由，子应用可以通过window.__MICRO_APP_BASE_ROUTE__获取基座下发的baseroute，如果没有设置baseroute属性，则此值默认为空字符串
+  // 👇 设置基础路由，子应用可以通过window.__MICRO_APP_BASE_ROUTE__获取基座下发的baseroute，如果没有设置baseroute属性，则此值默认为空字符串
   base: window.__MICRO_APP_BASE_ROUTE__ || '/',
   routes,
 })
@@ -147,13 +144,11 @@ let app = new Vue({
 devServer: {
   headers: {
     'Access-Control-Allow-Origin': '*',
-  },
+  }
 },
 ```
 
 完成以上步骤微前端即可正常渲染。
-
-上面列出了react和vue框架的使用方式，它们是可以自由组合的，比如基座应用是react，子应用是vue，或者基座应用是vue，子应用是react，或者基座应用和子应用都是react、vue。 `micro-app`对前端框架没有限制，任何框架都可以作为基座应用嵌入任何类型框架的子应用。
 
 
 > [!NOTE]

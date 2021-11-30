@@ -14,25 +14,32 @@
 
 基座应用中通过设置 `<micro-app>`的`baseroute`属性下发，子应用通过`window.__MICRO_APP_BASE_ROUTE__`获取此值并设置基础路由。
 
-如：基座设置 `<micro-app baseroute='/my-page'></micro-app>`
-
-
 **注意点：**
 - 1、如果基座是history路由，子应用是hash路由，不需要设置基础路由baseroute
 - 2、如果子应用只有一个页面，没有使用`react-router`，`vue-router`之类，也不需要设置基础路由baseroute
-- 3、vue-router在hash模式下不支持通过base设置基础路由，需要创建一个空的路由页面，将其它路由作为它的children
+- 3、vue-router在hash模式下无法通过base设置基础路由，需要创建一个空的路由页面，将其它路由作为它的children，具体设置如下：
 
 ```js
+import RootApp from './root-app.vue'
+
 const routes = [
     {
       path: window.__MICRO_APP_BASE_ROUTE__ || '/',
-      component: Home,
+      component: RootApp,
       children: [
         // 其他的路由都写到这里
       ],
     },
 ]
 ```
+
+`root-app.vue`内容如下：
+```html
+<template>
+  <router-view />
+</template>
+```
+
 
 **示例**
 
@@ -56,7 +63,6 @@ export default function AppRoute () {
         <Route path='/child'>
           <ChildPage />
         </Route>
-        ...
       </Switch>
     </BrowserRouter>
   )
@@ -79,11 +85,9 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom'
 
 export default function AppRoute () {
   return (
-    // 👇👇 设置基础路由，子应用可以通过window.__MICRO_APP_BASE_ROUTE__获取基座下发的baseroute，如果没有设置baseroute属性，则此值默认为空字符串
+    // 👇 设置基础路由，子应用可以通过window.__MICRO_APP_BASE_ROUTE__获取基座下发的baseroute，如果没有设置baseroute属性，则此值默认为空字符串
     <BrowserRouter basename={window.__MICRO_APP_BASE_ROUTE__ || '/'}>
-      <Switch>
-        ...
-      </Switch>
+      ...
     </BrowserRouter>
   )
 }
@@ -107,7 +111,6 @@ Vue.use(VueRouter)
 const routes = [
   {
     // /child/* 都将匹配到ChildPage组件
-    // /child 就是分配给子应用的基础路由baseroute
     path: '/child/*',  // vue-router@4.x path的写法为：'/child/:page*'
     name: 'child',
     component: ChildPage,
@@ -123,12 +126,6 @@ export default routes
     <micro-app name='child-app' url='http://localhost:3000/' baseroute='/child'></micro-app>
   </div>
 </template>
-
-<script>
-export default {
-  name: 'ChildPage',
-}
-</script>
 ```
 
 #### ** 子应用 **
@@ -138,7 +135,7 @@ import VueRouter from 'vue-router'
 import routes from './router'
 
 const router = new VueRouter({
-  // 👇👇 设置基础路由，子应用可以通过window.__MICRO_APP_BASE_ROUTE__获取基座下发的baseroute，如果没有设置baseroute属性，则此值默认为空字符串
+  // 👇 设置基础路由，子应用可以通过window.__MICRO_APP_BASE_ROUTE__获取基座下发的baseroute，如果没有设置baseroute属性，则此值默认为空字符串
   base: window.__MICRO_APP_BASE_ROUTE__ || '/',
   routes,
 })

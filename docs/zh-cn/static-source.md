@@ -30,7 +30,7 @@
 
 #### 设置方式
 
-**步骤1:** 在`子应用`src目录下创建名称为`public-path.js`的文件，并添加如下内容
+**步骤1:** 在子应用src目录下创建名称为`public-path.js`的文件，并添加如下内容
 ```js
 // __MICRO_APP_ENVIRONMENT__和__MICRO_APP_PUBLIC_PATH__是由micro-app注入的全局变量
 if (window.__MICRO_APP_ENVIRONMENT__) {
@@ -39,11 +39,10 @@ if (window.__MICRO_APP_ENVIRONMENT__) {
 }
 ```
 
-**步骤2:** 在子应用的入口文件的`最顶部`引入`public-path.js`
+**步骤2:** 在子应用入口文件的`最顶部`引入`public-path.js`
 ```js
-// entry.js
+// entry
 import './public-path'
-...
 ```
 
 ## 资源共享
