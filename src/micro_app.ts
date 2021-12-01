@@ -13,6 +13,7 @@ class MicroApp extends EventCenterForBaseApp implements MicroAppConfigType {
   disableScopecss?: boolean
   disableSandbox?: boolean
   macro?: boolean
+  ssr?: boolean
   lifeCycles?: lifeCyclesType
   plugins?: plugins
   fetch?: fetchType
@@ -49,6 +50,7 @@ class MicroApp extends EventCenterForBaseApp implements MicroAppConfigType {
       this.disableScopecss = options.disableScopecss
       this.disableSandbox = options.disableSandbox
       this.macro = options.macro
+      this.ssr = options.ssr
       isFunction(options.fetch) && (this.fetch = options.fetch)
 
       isPlainObject(options.lifeCycles) && (this.lifeCycles = options.lifeCycles)

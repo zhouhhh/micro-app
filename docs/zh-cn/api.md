@@ -10,7 +10,6 @@ preFetch([
     url: string,
     disableScopecss?: boolean,
     disableSandbox?: boolean,
-    macro?: boolean,
   },
 ])
 ```

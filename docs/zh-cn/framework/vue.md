@@ -1,4 +1,4 @@
-本篇以vue2、3作为案例介绍vue的接入方式，其它版本vue的接入方式以此类推，我们默认开发者掌握了各版本vue的开发技巧，如示例中vue2的代码如何转换为vue1。
+本篇以vue2、3作为案例介绍vue的接入方式，其它版本vue的接入方式以此类推，我们默认开发者掌握了各版本vue的开发技巧，比如示例中vue2的代码如何转换为vue1。
 
 ## 作为基座应用
 我们强烈建议基座应用采用history模式，hash路由的基座应用只能加载hash路由的子应用，history模式的基座应用对这两种子应用都支持。
@@ -34,7 +34,7 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    // 👇 非严格匹配，/my-page/* 都将匹配到 MyPage 页面
+    // 👇 非严格匹配，/my-page/* 都指向 MyPage 页面
     path: '/my-page/*',
     name: 'my-page',
     component: MyPage,
@@ -52,7 +52,7 @@ import MyPage from './my-page.vue'
 
 const routes = [
   {
-    // 👇 非严格匹配，/my-page/* 都将匹配到 MyPage 页面
+    // 👇 非严格匹配，/my-page/* 都指向 MyPage 页面
     path: '/my-page/:page*',
     name: 'my-page',
     component: MyPage,
@@ -78,7 +78,7 @@ export default router
     <h1>子应用</h1>
     <!-- 
       name(必传)：应用名称
-      url(必传)：应用的html地址
+      url(必传)：应用地址，会被自动补全为http://localhost:3000/index.html
       baseroute(可选)：基座应用分配给子应用的基础路由，就是上面的 `/my-page`
      -->
     <micro-app name='app1' url='http://localhost:3000/' baseroute='/my-page'></micro-app>
@@ -114,7 +114,7 @@ import routes from './router'
 
 const router = new VueRouter({
   mode: 'history',
-  // __MICRO_APP_BASE_ROUTE__ 为micro-app传入的基础路由
+  // 👇 __MICRO_APP_BASE_ROUTE__ 为micro-app传入的基础路由
   base: window.__MICRO_APP_BASE_ROUTE__ || process.env.BASE_URL,
   routes,
 })
@@ -128,7 +128,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import routes from './router'
 
 const router = createRouter({
-  // __MICRO_APP_BASE_ROUTE__ 为micro-app传入的基础路由
+  // 👇 __MICRO_APP_BASE_ROUTE__ 为micro-app传入的基础路由
   history: createWebHistory(window.__MICRO_APP_BASE_ROUTE__ || process.env.BASE_URL),
   routes,
 })
@@ -206,7 +206,7 @@ window.addEventListener('unmount', function () {
 <!-- tabs:start -->
 
 #### ** Vue2 **
-在入口文件main.js中设置ignoredElements，详情查看官方文档：https://cn.vuejs.org/v2/api/#ignoredElements
+在入口文件main.js中设置ignoredElements，详情查看：https://cn.vuejs.org/v2/api/#ignoredElements
 ```js
 // main.js
 import Vue from 'vue'

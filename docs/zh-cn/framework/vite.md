@@ -5,7 +5,7 @@ vite作为基座应用时没有特殊之处，具体方式参考各框架接入�
 
 ## 作为子应用
 
-当子应用是vite应用时需要做特别的适配，适配vite的代价是巨大的，我们必须关闭沙箱功能，因为沙箱在`module script`下不支持，这导致大部分功能失效，包括：环境变量、样式隔离、元素隔离、资源地址补全、baseroute 等。
+当子应用是vite应用时需要做特别的适配，适配vite的代价是巨大的，我们必须关闭沙箱功能，因为沙箱在`module script`下不支持，这导致大部分功能失效，包括：环境变量、样式隔离、元素隔离、资源路径补全、baseroute 等。
 
 在嵌入vite子应用时，`micro-app`的功能只负责渲染，其它的行为由应用自行决定，这包括如何防止样式、JS变量、元素的冲突。
 
@@ -85,7 +85,7 @@ const router = createRouter({
 
 **2、处理子应用静态资源**
 
-写一个简易的插件，对开发环境的子应用进行处理，补全静态资源地址。
+写一个简易的插件，对开发环境的子应用进行处理，补全静态资源路径。
 
 ```js
 import microApp from '@micro-zoe/micro-app'
@@ -157,6 +157,3 @@ window.eventCenterForViteApp1.dispatch({type: '子应用发送的数据'})
 以上介绍了vite如何接入微前端，但在实际使用中会涉及更多功能，如数据通信、路由跳转、打包部署，为此我们提供了一套案例，用于展示vite作为基座嵌入(或作为子应用被嵌入) react、vue、angular、vite、nextjs、nuxtjs等框架，在案例中我们使用尽可能少的代码实现尽可能多的功能。
 
 案例地址：https://github.com/micro-zoe/micro-app-demo
-
-## 常见问题
-#### 1、基座应用中抛出警告，micro-app未定义

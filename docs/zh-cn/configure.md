@@ -60,7 +60,7 @@
 在禁用样式隔离前，请确保基座应用和子应用，以及子应用之间样式不会相互污染。
 
 > [!NOTE]
-> 禁用样式隔离，CSS中的资源地址补全功能失效，需要设置[publicpath](/zh-cn/static-source?id=publicpath)防止资源加载失败。
+> 禁用样式隔离，CSS中的资源路径补全功能失效，需要设置[publicpath](/zh-cn/static-source?id=publicpath)防止资源加载失败。
 
 ## disableSandbox
 - Desc: `禁用js沙箱`
@@ -76,7 +76,7 @@
 >
 > 2、元素隔离
 >
-> 3、静态资源地址补全
+> 3、静态资源路径补全
 >
 > 4、`__MICRO_APP_ENVIRONMENT__`、`__MICRO_APP_PUBLIC_PATH__`等全局变量
 >
@@ -93,12 +93,19 @@ shadowDOM具有更强的样式隔离能力，开启后，`<micro-app>`标签会�
 
 但shadowDOM在React框架及一些UI库中的兼容不是很好，请谨慎使用。
 
+## ssr
+- Desc: `是否开启ssr模式`
+- Type: `string(boolean)`
+- Default: `false`
+- 使用方式: `<micro-app name='xx' url='xx' ssr></micro-app>`
+
+当子应用是ssr应用时，需要设置ssr属性，此时micro-app会根据ssr模式加载子应用。
+
 ## 全局配置
-全局配置会影响每一个子应用，上述几个选项都可以配置到全局。
+全局配置会影响每一个子应用，请小心使用！
 
 **使用方式**
 
-只在入口文件定义一次，不要多次定义。
 ```js
 import microApp from '@micro-zoe/micro-app'
 
@@ -108,6 +115,7 @@ microApp.start({
   disableScopecss: true, // 默认值false
   disableSandbox: true, // 默认值false
   shadowDOM: true, // 默认值false
+  ssr: true, // 默认值false
 })
 ```
 
@@ -121,6 +129,7 @@ microApp.start({
   disableScopecss='false'
   disableSandbox='false'
   shadowDOM='false'
+  ssr='false'
 ></micro-app>
 ```
 

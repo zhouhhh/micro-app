@@ -1,7 +1,6 @@
 - 指南
   - [介绍](/)
   - [快速开始](zh-cn/start)
-  <!-- - [API](zh-cn/api) -->
 
 - 功能
   - [配置项](zh-cn/configure)
@@ -16,10 +15,10 @@
   - [插件系统](zh-cn/plugins)
   - [多层嵌套](zh-cn/nest)
   - [高级功能](zh-cn/advanced)
+  - [API](zh-cn/api)
   - [路由](zh-cn/route)
   - [应用之间跳转](zh-cn/jump)
   - [部署](zh-cn/deploy)
-  - [API](zh-cn/api)
 
 - 手把手
   - [说明](zh-cn/framework/introduce)

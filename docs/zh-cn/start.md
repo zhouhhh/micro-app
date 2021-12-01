@@ -28,7 +28,7 @@ export default function AppRoute () {
   return (
     <BrowserRouter>
       <Switch>
-        // 👇 非严格匹配，/my-page/* 都将匹配到 MyPage 页面
+        // 👇 非严格匹配，/my-page/* 都指向 MyPage 页面
         <Route path='/my-page'>
           <MyPage />
         </Route>
@@ -50,7 +50,7 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    // 👇 非严格匹配，/my-page/* 都将匹配到 MyPage 页面
+    // 👇 非严格匹配，/my-page/* 都指向 MyPage 页面
     path: '/my-page/*', // vue-router@4.x path的写法为：'/my-page/:page*'
     name: 'my-page',
     component: MyPage,
@@ -72,7 +72,7 @@ export function MyPage () {
     <div>
       <h1>子应用</h1>
       // name(必传)：应用名称
-      // url(必传)：应用的html地址
+      // url(必传)：应用地址，会被自动补全为http://localhost:3000/index.html
       // baseroute(可选)：基座应用分配给子应用的基础路由，就是上面的 `/my-page`
       <micro-app name='app1' url='http://localhost:3000/' baseroute='/my-page'></micro-app>
     </div>
@@ -88,7 +88,7 @@ export function MyPage () {
     <h1>子应用</h1>
     <!-- 
       name(必传)：应用名称
-      url(必传)：应用的html地址
+      url(必传)：应用地址，会被自动补全为http://localhost:3000/index.html
       baseroute(可选)：基座应用分配给子应用的基础路由，就是上面的 `/my-page`
      -->
     <micro-app name='app1' url='http://localhost:3000/' baseroute='/my-page'></micro-app>

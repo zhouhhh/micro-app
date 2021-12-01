@@ -83,7 +83,7 @@ module.exports = {
 
 **2、图片等静态资源无法正常加载**
 
-vue3中需要配置publicPath补全资源地址，详情请查看[publicPath](/zh-cn/static-source?id=publicpath)
+vue3中需要配置publicPath补全资源路径，详情请查看[publicPath](/zh-cn/static-source?id=publicpath)
 
 
 ## 8、开发环境中渲染angular子应用报错

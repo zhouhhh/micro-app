@@ -8,7 +8,7 @@
 #### 2、禁用隔离
 禁用方式：[disableScopecss](/zh-cn/configure?id=disablescopecss)
 
-禁用样式隔离后，`micro-app`不会对任何样式进行处理，同时css静态资源地址补全功能将失效。
+禁用样式隔离后，`micro-app`不会对任何样式进行处理，同时css静态资源路径补全功能将失效。
 
 如果css中一些图片等资源无法正常渲染，需要设置__webpack_public_path__，详情请看[静态资源](/zh-cn/static-source)一章
 
