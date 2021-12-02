@@ -44,7 +44,7 @@ micro-app与技术栈无关，对前端框架没有限制，任何框架都可�
 yarn add @micro-zoe/micro-app
 ```
 
-**2、在入口处引入依赖**
+**2、在入口处引入**
 ```js
 // main.js
 import microApp from '@micro-zoe/micro-app'
@@ -56,11 +56,8 @@ microApp.start()
 ```html
 <!-- my-page.vue -->
 <template>
-  <div>
-    <h1>子应用</h1>
-    <!-- 👇 name为应用名称，url为html地址 -->
-    <micro-app name='app1' url='http://localhost:3000/'></micro-app>
-  </div>
+  <!-- 👇 name为应用名称，url为应用地址 -->
+  <micro-app name='my-app' url='http://localhost:3000/'></micro-app>
 </template>
 ```
 
@@ -146,7 +143,13 @@ yarn start # 访问 http://localhost:3000
 <details>
   <summary>支持vite吗?</summary>
   
-  支持，详情请查看[适配vite](https://micro-zoe.github.io/micro-app/docs.html#/zh-cn/advanced?id=_2%e3%80%81%e9%80%82%e9%85%8dvite)
+  支持，详情请查看[适配vite](https://micro-zoe.github.io/micro-app/docs.html#/zh-cn/framework/vite)
+</details>
+
+<details>
+  <summary>支持ssr吗?</summary>
+  
+  支持，详情请查看[nextjs](https://micro-zoe.github.io/micro-app/docs.html#/zh-cn/framework/nextjs)、[nuxtjs](https://micro-zoe.github.io/micro-app/docs.html#/zh-cn/framework/nuxtjs)
 </details>
 
 # 贡献者们

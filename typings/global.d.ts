@@ -162,6 +162,7 @@ declare module '@micro-app/types' {
     disableScopecss?: boolean
     disableSandbox?: boolean
     macro?: boolean
+    ssr?: boolean
     lifeCycles?: lifeCyclesType
     preFetchApps?: prefetchParamList
     plugins?: plugins
@@ -178,6 +179,7 @@ declare module '@micro-app/types' {
     disableScopecss?: boolean
     disableSandbox?: boolean
     macro?: boolean
+    ssr?: boolean
     lifeCycles?: lifeCyclesType
     plugins?: plugins
     fetch?: fetchType

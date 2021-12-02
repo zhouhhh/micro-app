@@ -57,11 +57,8 @@ microApp.start()
 ```html
 <!-- my-page.vue -->
 <template>
-  <div>
-    <h1>micro application</h1>
-    <!-- 👇 name is the application name, url is the html address -->
-    <micro-app name='app1' url='http://localhost:3000/'></micro-app>
-  </div>
+  <!-- 👇 name is the app name, url is the app address -->
+  <micro-app name='my-app' url='http://localhost:3000/'></micro-app>
 </template>
 ```
 
@@ -145,7 +142,13 @@ For more commands, see [DEVELP](https://github.com/micro-zoe/micro-app/blob/mast
 <details>
   <summary>Does it support vite?</summary>
   
-  Yes, please see [adapt vite](https://micro-zoe.github.io/micro-app/docs.html#/zh-cn/advanced?id=_2%e3%80%81%e9%80%82%e9%85%8dvite) for details.
+  Yes, please see [adapt vite](https://micro-zoe.github.io/micro-app/docs.html#/zh-cn/framework/vite) for details.
+</details>
+
+<details>
+  <summary>Does it support ssr?</summary>
+  
+  Yes, please see [nextjs](https://micro-zoe.github.io/micro-app/docs.html#/zh-cn/framework/nextjs), [nuxtjs](https://micro-zoe.github.io/micro-app/docs.html#/zh-cn/framework/nuxtjs) for details.
 </details>
 
 # Contributors

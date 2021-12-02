@@ -10,7 +10,7 @@
 
 例如：
 ```js
-window.history.pushState(null, null, 'page2')
+window.history.pushState(null, '', 'page2')
 
 // 主动触发一次popstate事件
 window.dispatchEvent(new PopStateEvent('popstate', { state: null }))
@@ -18,7 +18,7 @@ window.dispatchEvent(new PopStateEvent('popstate', { state: null }))
 
 对于hash路由也同样适用
 ```js
-window.history.pushState(null, null, '#/page2')
+window.history.pushState(null, '', '#/page2')
 
 // 主动触发一次popstate事件
 window.dispatchEvent(new PopStateEvent('popstate', { state: null }))
@@ -33,17 +33,15 @@ window.dispatchEvent(new PopStateEvent('popstate', { state: null }))
 
 
 ## 方式二、通过数据通信控制跳转
-*适用场景: 基座控制子应用跳转。*
+*适用场景: 基座控制子应用跳转*
 
 **子应用中监听数据变化**
 
 ```js
-let oldPath = null
 // 监听基座下发的数据变化
 window.microApp.addDataListener((data) => {
   // 当基座下发跳转指令时进行跳转
-  if (data.path && data.path !== oldPath) {
-    oldPath = data.path
+  if (data.path) {
     router.push(data.path)
   }
 })
@@ -59,7 +57,7 @@ microApp.setData('子应用name', { path: '/new-path/' })
 
 ## 方式三、传递路由实例方法
 
-*适用场景: 子应用控制基座跳转。*
+*适用场景: 子应用控制基座跳转*
 
 **基座下发pushState函数：**
 <!-- tabs:start -->
@@ -67,11 +65,14 @@ microApp.setData('子应用name', { path: '/new-path/' })
 #### ** React **
 ```js
 import { useEffect } from 'react'
+import { useHistory } from 'react-router-dom'
 import microApp from '@micro-zoe/micro-app'
 
-export default (props) => {
+export default () => {
+  const history = useHistory()
+
   function pushState (path) {
-    props.history.push(path)
+    history.push(path)
   }
 
   useEffect(() => {
@@ -81,7 +82,7 @@ export default (props) => {
 
   return (
     <div>
-      <micro-app name='子应用名称' url='...'></micro-app>
+      <micro-app name='子应用名称' url='url'></micro-app>
     </div>
   )
 }
