@@ -143,7 +143,13 @@ yarn start # 访问 http://localhost:3000
 <details>
   <summary>支持vite吗?</summary>
   
-  支持，详情请查看[适配vite](https://micro-zoe.github.io/micro-app/docs.html#/zh-cn/advanced?id=_2%e3%80%81%e9%80%82%e9%85%8dvite)
+  支持，详情请查看[适配vite](https://micro-zoe.github.io/micro-app/docs.html#/zh-cn/framework/vite)
+</details>
+
+<details>
+  <summary>支持ssr吗?</summary>
+  
+  支持，详情请查看[nextjs](https://micro-zoe.github.io/micro-app/docs.html#/zh-cn/framework/nextjs)、[nuxtjs](https://micro-zoe.github.io/micro-app/docs.html#/zh-cn/framework/nuxtjs)
 </details>
 
 # 贡献者们

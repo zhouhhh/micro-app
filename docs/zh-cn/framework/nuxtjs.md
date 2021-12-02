@@ -1,4 +1,4 @@
-本篇以`nuxtjs2`作为案例介绍nuxtjs的接入方式，其它版本nuxtjs接入方式会在后续补充，如果你在使用时出现问题，请在github上提issue告知我们。
+本篇以`nuxtjs 2`作为案例介绍nuxtjs的接入方式，其它版本nuxtjs接入方式会在后续补充，如果你在使用时出现问题，请在github上提issue告知我们。
 
 ## 作为基座应用
 
@@ -222,3 +222,8 @@ module.exports = {
   },
 }
 ```
+
+
+> [!TIP]
+>
+> nuxtjs相关问题可以在[nuxtjs专属讨论贴](https://github.com/micro-zoe/micro-app/issues/169)下反馈。

@@ -46,7 +46,7 @@ microApp.start({
 
 **我的项目是否需要切换为umd模式?**
 
-如果你不希望子应用做过多修改，或子应用渲染和卸载不频繁，那么使用默认模式即可，如果子应用渲染和卸载非常频繁建议使用umd模式。
+如果子应用渲染和卸载不频繁，那么使用默认模式即可，如果子应用渲染和卸载非常频繁建议使用umd模式。
 
 **切换为umd模式：子应用在window上注册mount和unmount方法**
 
@@ -283,8 +283,10 @@ if (window.__MICRO_APP_ENVIRONMENT__) {
 
 > [!NOTE]
 >
-> 1、nextjs, nuxtjs等ssr框架作为子应用时暂不支持umd模式
+> 1、mount和unmount方法都是必须的
 >
-> 2、因为注册了`unmount`函数，所以卸载监听事件 `window.addEventListener('unmount', () => {})` 就不需要了
+> 2、nextjs, nuxtjs等ssr框架作为子应用时暂不支持umd模式
 >
-> 3、umd模式下，因为初次渲染和后续渲染逻辑不同，可能会出现一些问题，如：[#138](https://github.com/micro-zoe/micro-app/issues/138)
+> 3、因为注册了`unmount`函数，所以卸载监听事件 `window.addEventListener('unmount', () => {})` 就不需要了
+>
+> 4、umd模式下，因为初次渲染和后续渲染逻辑不同，可能会出现一些问题，如：[#138](https://github.com/micro-zoe/micro-app/issues/138)

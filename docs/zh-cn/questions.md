@@ -102,16 +102,13 @@ vue3中需要配置publicPath补全资源路径，详情请查看[publicPath](/z
 
 如果你使用的是`ant-design`等组件库，一般会提供添加前缀进行样式隔离的功能。
 
-## 11、支持vite吗
-支持，详情请查看[适配vite](/zh-cn/advanced?id=_2、适配vite)
-
-## 12、子应用在沙箱环境中如何获取到外部真实window？
+## 11、子应用在沙箱环境中如何获取到外部真实window？
   目前有3种方式在子应用中获取外部真实window
   - 1、new Function("return window")() 或 Function("return window")()
   - 2、(0, eval)('window')
   - 3、window.rawWindow
 
-## 13、错误信息：xxx 未定义
+## 12、错误信息：xxx 未定义
 
 **包括：**
 - `xxx is not defined`
@@ -152,7 +149,7 @@ microApp.start({
 })
 ```
 
-## 14、子应用加载sockjs-node失败
+## 13、子应用加载sockjs-node失败
   这个问题常见于create-react-app创建的子应用，推荐通过插件系统来解决。
 ```js
 microApp.start({
@@ -173,7 +170,7 @@ microApp.start({
 实际情况可能更加复杂，上面只是一种解决思路。
 
 
-## 15、子应用请求接口报错
+## 14、子应用请求接口报错
   - 1、请确保接口请求没有跨域问题，因为子应用被加载到基座渲染，所以请求接口时origin为基座应用的域名。
 
   - 2、请求的接口为相对地址，会以基座域名进行补全，导致报错。

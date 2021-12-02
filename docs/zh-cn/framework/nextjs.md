@@ -1,4 +1,4 @@
-本篇以`nextjs11`作为案例介绍nextjs的接入方式，其它版本nextjs接入方式会在后续补充，如果你在使用时出现问题，请在github上提issue告知我们。
+本篇以`nextjs 11`作为案例介绍nextjs的接入方式，其它版本nextjs接入方式会在后续补充，如果你在使用时出现问题，请在github上提issue告知我们。
 
 ## 作为基座应用
 
@@ -22,7 +22,7 @@ function MyApp({ Component, pageProps }) {
 
     /**
      * BUG FIX
-     * 在nextjs11下，子应用内部跳转，基座无法监听，导致点击浏览器前进、后退按钮，无法回退到正确的子应用页面
+     * 在nextjs 11下，子应用内部跳转，基座无法监听，导致点击浏览器前进、后退按钮，无法回退到正确的子应用页面
      * 通过监听popstate事件，在地址变化时重新替换为next路由来解决这个问题
      */
     window.addEventListener('popstate', () => {
@@ -202,7 +202,7 @@ window.addEventListener('unmount', function () {
   
 **解决方式：**
 
-在部分nextjs版本中(如：nextjs11)，使用`next/image`组件无法正确引入图片，此时推荐使用img元素代替。
+在部分nextjs版本中(如：nextjs 11)，使用`next/image`组件无法正确引入图片，此时推荐使用img元素代替。
 
 #### 2、无法预加载ssr子应用
 
@@ -235,3 +235,8 @@ module.exports = {
   },
 }
 ```
+
+
+> [!TIP]
+>
+> nextjs相关问题可以在[nextjs专属讨论贴](https://github.com/micro-zoe/micro-app/issues/168)下反馈。

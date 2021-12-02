@@ -33,6 +33,8 @@ preFetch(() => [
 ## 2、getActiveApps
 **描述：获取正在运行的子应用，不包含已卸载和预加载的应用**
 
+**版本限制：** 0.5.2及以上版本
+
 **介绍：**
 ```js
 function getActiveApps(): string[]
@@ -48,6 +50,8 @@ getActiveApps() // [子应用name, 子应用name, ...]
 ## 3、getAllApps
 **描述：获取所有子应用，包含已卸载和预加载的应用**
 
+**版本限制：** 0.5.2及以上版本
+
 **介绍：**
 ```js
 function getAllApps(): string[]
@@ -59,6 +63,7 @@ import { getAllApps } from '@micro-zoe/micro-app'
 
 getAllApps() // [子应用name, 子应用name, ...]
 ```
+
 
 
 ## 4、version

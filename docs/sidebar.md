@@ -18,7 +18,7 @@
   - [API](zh-cn/api)
   - [路由](zh-cn/route)
   - [应用之间跳转](zh-cn/jump)
-  - [部署](zh-cn/deploy)
+  <!-- - [部署](zh-cn/deploy) -->
 
 - 手把手
   - [说明](zh-cn/framework/introduce)
