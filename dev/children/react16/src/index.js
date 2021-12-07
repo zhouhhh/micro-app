@@ -65,7 +65,8 @@ console.timeEnd("react#16");
 //     </React.StrictMode>,
 //     document.getElementById("root")
 //   );
-//   console.timeEnd("react16");
+//   console.log("微应用react16渲染了 -- 来自umd-mount");
+//   console.timeEnd("react#16");
 // }
 
 // function unmount () {

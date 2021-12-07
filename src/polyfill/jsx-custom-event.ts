@@ -3,7 +3,17 @@ const React = require('react')
 type MicroElementType = HTMLElement & Record<string, unknown>
 
 // lifecycles
-const eventLifeCycles = ['oncreated', 'onbeforemount', 'onmounted', 'onunmount', 'onerror', 'ondatachange']
+const eventLifeCycles = [
+  'oncreated',
+  'onbeforemount',
+  'onmounted',
+  'onunmount',
+  'onerror',
+  'ondatachange',
+  'onbeforeshow',
+  'onaftershow',
+  'onafterhidden',
+]
 
 function jsxCustomEvent (
   type: string | CallableFunction,

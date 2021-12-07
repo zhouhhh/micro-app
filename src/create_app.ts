@@ -8,7 +8,7 @@ import type {
 } from '@micro-app/types'
 import extractHtml from './source'
 import { execScripts } from './source/scripts'
-import { appStatus, lifeCycles } from './constants'
+import { appStates, lifeCycles, keepAliveStates } from './constants'
 import SandBox from './sandbox'
 import {
   isFunction,
@@ -18,7 +18,7 @@ import {
   logError,
   getRootContainer,
 } from './libs/utils'
-import dispatchLifecyclesEvent, { dispatchUnmountToMicroApp } from './interact/lifecycles_event'
+import dispatchLifecyclesEvent, { dispatchCustomEventToMicroApp } from './interact/lifecycles_event'
 import globalEnv from './libs/global_env'
 
 // micro app instances
@@ -38,7 +38,9 @@ export interface CreateAppParam {
 }
 
 export default class CreateApp implements AppInterface {
-  private status: string = appStatus.NOT_LOADED
+  private state: string = appStates.NOT_LOADED
+  private keepAliveState: string | null = null
+  private keepAliveContainer: HTMLElement | null = null
   private loadSourceLevel: -1|0|1|2 = 0
   private umdHookMount: Func | null = null
   private umdHookUnmount: Func | null = null
@@ -88,7 +90,7 @@ export default class CreateApp implements AppInterface {
 
   // Load resources
   loadSourceCode (): void {
-    this.status = appStatus.LOADING_SOURCE_CODE
+    this.state = appStates.LOADING_SOURCE_CODE
     extractHtml(this)
   }
 
@@ -99,9 +101,9 @@ export default class CreateApp implements AppInterface {
     if (++this.loadSourceLevel === 2) {
       this.source.html = html
 
-      if (this.isPrefetch || appStatus.UNMOUNT === this.status) return
+      if (this.isPrefetch || appStates.UNMOUNT === this.state) return
 
-      this.status = appStatus.LOAD_SOURCE_FINISHED
+      this.state = appStates.LOAD_SOURCE_FINISHED
 
       this.mount()
     }
@@ -113,9 +115,9 @@ export default class CreateApp implements AppInterface {
    */
   onLoadError (e: Error): void {
     this.loadSourceLevel = -1
-    if (appStatus.UNMOUNT !== this.status) {
+    if (appStates.UNMOUNT !== this.state) {
       this.onerror(e)
-      this.status = appStatus.LOAD_SOURCE_ERROR
+      this.state = appStates.LOAD_SOURCE_ERROR
     }
   }
 
@@ -138,7 +140,7 @@ export default class CreateApp implements AppInterface {
     this.baseroute = baseroute ?? this.baseroute
 
     if (this.loadSourceLevel !== 2) {
-      this.status = appStatus.LOADING_SOURCE_CODE
+      this.state = appStates.LOADING_SOURCE_CODE
       return
     }
 
@@ -148,7 +150,7 @@ export default class CreateApp implements AppInterface {
       lifeCycles.BEFOREMOUNT,
     )
 
-    this.status = appStatus.MOUNTING
+    this.state = appStates.MOUNTING
 
     cloneContainer(this.source.html as Element, this.container as Element, !this.umdMode)
 
@@ -210,8 +212,8 @@ export default class CreateApp implements AppInterface {
    * dispatch mounted event when app run finished
    */
   private dispatchMountedEvent (): void {
-    if (appStatus.UNMOUNT !== this.status) {
-      this.status = appStatus.MOUNTED
+    if (appStates.UNMOUNT !== this.state) {
+      this.state = appStates.MOUNTED
       dispatchLifecyclesEvent(
         this.container as HTMLElement,
         this.name,
@@ -225,11 +227,12 @@ export default class CreateApp implements AppInterface {
    * @param destroy completely destroy, delete cache resources
    */
   unmount (destroy: boolean): void {
-    if (this.status === appStatus.LOAD_SOURCE_ERROR) {
+    if (this.state === appStates.LOAD_SOURCE_ERROR) {
       destroy = true
     }
 
-    this.status = appStatus.UNMOUNT
+    this.state = appStates.UNMOUNT
+    this.keepAliveState = null
 
     // result of unmount function
     let umdHookUnmountResult: any
@@ -246,7 +249,7 @@ export default class CreateApp implements AppInterface {
     }
 
     // dispatch unmount event to micro app
-    dispatchUnmountToMicroApp(this.name)
+    dispatchCustomEventToMicroApp('unmount', this.name)
 
     this.handleUnmounted(destroy, umdHookUnmountResult)
   }
@@ -287,7 +290,7 @@ export default class CreateApp implements AppInterface {
       */
       cloneContainer(this.container as Element, this.source.html as Element, false)
     }
-
+    this.container!.innerHTML = ''
     this.container = null
   }
 
@@ -297,6 +300,54 @@ export default class CreateApp implements AppInterface {
       delete window[this.libraryName as any]
     }
     appInstanceMap.delete(this.name)
+  }
+
+  // hidden app when disconnectedCallback with keep-alive
+  hiddenKeepAliveApp (): void {
+    this.keepAliveState = keepAliveStates.KEEP_ALIVE_HIDDEN
+    // dispatch afterhidden event to base app
+    dispatchLifecyclesEvent(
+      this.container as HTMLElement,
+      this.name,
+      lifeCycles.AFTERHIDDEN,
+    )
+
+    // dispatch app-state-change event to micro-app
+    dispatchCustomEventToMicroApp('appstate-change', this.name, {
+      appState: 'afterhidden',
+    })
+
+    cloneContainer(
+      this.container as Element,
+      this.keepAliveContainer ? this.keepAliveContainer : (this.keepAliveContainer = document.createElement('div')),
+      false,
+    )
+
+    this.container = this.keepAliveContainer
+  }
+
+  // show app when connectedCallback with keep-alive
+  showKeepAliveApp (container: HTMLElement | ShadowRoot): void {
+    this.keepAliveState = keepAliveStates.KEEP_ALIVE_SHOW
+    cloneContainer(
+      this.keepAliveContainer as Element,
+      container as Element,
+      false,
+    )
+
+    this.container = container
+
+    // dispatch aftershow event to base app
+    dispatchLifecyclesEvent(
+      this.container as HTMLElement,
+      this.name,
+      lifeCycles.AFTERSHOW,
+    )
+
+    // dispath CustomEvent to micro-app
+    dispatchCustomEventToMicroApp('appstate-change', this.name, {
+      appState: 'aftershow',
+    })
   }
 
   /**
@@ -312,15 +363,20 @@ export default class CreateApp implements AppInterface {
     )
   }
 
-  // get app status
-  getAppStatus (): string {
-    return this.status
+  // get app state
+  getAppState (): string {
+    return this.state
+  }
+
+  // get keep-alive state
+  getKeepAliveState (): string | null {
+    return this.keepAliveState
   }
 
   // get umd library, if it not exist, return empty object
   private getUmdLibraryHooks (): Record<string, unknown> {
     // after execScripts, the app maybe unmounted
-    if (appStatus.UNMOUNT !== this.status) {
+    if (appStates.UNMOUNT !== this.state) {
       const global = (this.sandBox?.proxyWindow ?? globalEnv.rawWindow) as any
       this.libraryName = getRootContainer(this.container!).getAttribute('library') || `micro-app-${this.name}`
       // do not use isObject
@@ -335,7 +391,7 @@ export default class CreateApp implements AppInterface {
 export function getActiveApps (): string[] {
   const activeApps: string[] = []
   appInstanceMap.forEach((app: AppInterface, appName: string) => {
-    if (appStatus.UNMOUNT !== app.getAppStatus() && !app.isPrefetch) {
+    if (appStates.UNMOUNT !== app.getAppState() && !app.isPrefetch) {
       activeApps.push(appName)
     }
   })

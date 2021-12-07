@@ -45,7 +45,7 @@ declare module '@micro-app/types' {
     name: string // app name
     url: string // app url
     ssrUrl: string // html path in ssr mode
-    container: HTMLElement | ShadowRoot | null // app container
+    container: HTMLElement | ShadowRoot | null // container maybe null, micro-app, shadowRoot, DIV(keep-alive)
     inline: boolean //  whether js runs in inline script mode, default is false
     scopecss: boolean // whether use css scoped, default is true
     useSandbox: boolean // whether use js sandbox, default is true
@@ -77,11 +77,19 @@ declare module '@micro-app/types' {
     // app rendering error
     onerror (e: Error): void
 
-    // get app status
-    getAppStatus (): string
+    // get app state
+    getAppState (): string
+
+    getKeepAliveState(): string | null
 
     // actions for completely destroy
     actionsForCompletelyDestory (): void
+
+    // hidden app when disconnectedCallback with keep-alive
+    hiddenKeepAliveApp (): void
+
+    // show app when connectedCallback with keep-alive
+    showKeepAliveApp (container: HTMLElement | ShadowRoot): void
   }
 
   interface MicroAppElementType {

@@ -1,7 +1,7 @@
 /* eslint-disable promise/param-names */
 import { commonStartEffect, releaseAllEffect, ports } from './common/initial'
 import { appInstanceMap } from '../create_app'
-import { appStatus } from '../constants'
+import { appStates } from '../constants'
 import microApp from '..'
 
 describe('create_app', () => {
@@ -30,10 +30,10 @@ describe('create_app', () => {
         createCount++
         expect(appInstanceMap.size).toBe(1)
         if (createCount === 1) {
-          expect(appInstanceMap.get('test-app1')!.getAppStatus()).toBe(appStatus.LOADING_SOURCE_CODE)
+          expect(appInstanceMap.get('test-app1')!.getAppState()).toBe(appStates.LOADING_SOURCE_CODE)
         } else {
           // 二次渲染时会异步执行mount，所以此时仍然是UNMOUNT
-          expect(appInstanceMap.get('test-app1')!.getAppStatus()).toBe(appStatus.UNMOUNT)
+          expect(appInstanceMap.get('test-app1')!.getAppState()).toBe(appStates.UNMOUNT)
         }
         reslove(true)
       }, false)
@@ -44,7 +44,7 @@ describe('create_app', () => {
     await new Promise((reslove) => {
       microappElement1.addEventListener('unmount', () => {
         const app = appInstanceMap.get('test-app1')!
-        expect(app.getAppStatus()).toBe(appStatus.UNMOUNT)
+        expect(app.getAppState()).toBe(appStates.UNMOUNT)
         // 因为应用还没渲染就卸载，所以active始终为false
         // @ts-ignore
         expect(app.sandBox!.active).toBeFalsy()

@@ -62,10 +62,18 @@ export default function dispatchLifecyclesEvent (
 }
 
 /**
- * Dispatch unmount event to micro app
- * @param appName app.name
+ * Dispatch custom event to micro app
+ * @param eventName event name
+ * @param appName app name
+ * @param detail event detail
  */
-export function dispatchUnmountToMicroApp (appName: string): void {
-  const event = new CustomEvent(`unmount-${appName}`)
+export function dispatchCustomEventToMicroApp (
+  eventName: string,
+  appName: string,
+  detail: Record<string, any> = {},
+): void {
+  const event = new CustomEvent(`${eventName}-${appName}`, {
+    detail,
+  })
   window.dispatchEvent(event)
 }

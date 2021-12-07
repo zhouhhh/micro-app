@@ -120,14 +120,17 @@ export function releaseEffectDocumentEvent (): void {
   document.removeEventListener = globalEnv.rawDocumentRemoveEventListener
 }
 
+// the following events should be sent to the specified app
+const formatEventList = ['unmount', 'appstate-change']
+
 /**
  * Format event name
  * @param type event name
  * @param microWindow micro window
  */
 function formatEventType (type: string, microWindow: microWindowType): string {
-  if (type === 'unmount') {
-    return `unmount-${microWindow.__MICRO_APP_NAME__}`
+  if (formatEventList.includes(type)) {
+    return `${type}-${microWindow.__MICRO_APP_NAME__}`
   }
   return type
 }

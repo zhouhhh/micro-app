@@ -48,6 +48,22 @@ export default class App extends React.Component {
     console.log(`生命周期：error -- ${this.state.name}`, e)
   }
 
+  handleBeforeshow = (e) => {
+    console.log(`生命周期：keep-alive beforeshow -- ${this.state.name}`, e)
+  }
+
+  handleAftershow = (e) => {
+    console.timeEnd(`mounted-${this.state.name}`)
+    console.log(`生命周期：keep-alive aftershow -- ${this.state.name}`, document.querySelector('micro-app'))
+    this.setState({
+      showLoading: false
+    })
+  }
+
+  handleAfterhidden = (e) => {
+    console.log(`生命周期：keep-alive afterhidden -- ${this.state.name}`, e)
+  }
+
   changeData = () => {
     this.setState({
       data: {
@@ -148,8 +164,12 @@ export default class App extends React.Component {
                   onMounted={this.mounted}
                   onUnmount={this.unmount}
                   onError={this.error}
+                  onBeforeshow={this.handleBeforeshow}
+                  onAftershow={this.handleAftershow}
+                  onAfterhidden={this.handleAfterhidden}
                   onDataChange={this.handleDataChange}
                   baseRoute='/micro-app/demo/react16'
+                  keep-alive
                   // destroy
                   // inline
                   // disableSandbox
