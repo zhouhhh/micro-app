@@ -351,7 +351,7 @@ export default class CreateApp implements AppInterface {
     )
 
     cloneContainer(
-      this.keepAliveContainer as Element,
+      this.container as Element,
       container as Element,
       false,
     )
