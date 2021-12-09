@@ -145,7 +145,7 @@ export default class CreateApp implements AppInterface {
     }
 
     dispatchLifecyclesEvent(
-      this.container as HTMLElement,
+      this.container,
       this.name,
       lifeCycles.BEFOREMOUNT,
     )
@@ -215,7 +215,7 @@ export default class CreateApp implements AppInterface {
     if (appStates.UNMOUNT !== this.state) {
       this.state = appStates.MOUNTED
       dispatchLifecyclesEvent(
-        this.container as HTMLElement,
+        this.container!,
         this.name,
         lifeCycles.MOUNTED,
       )
@@ -225,14 +225,16 @@ export default class CreateApp implements AppInterface {
   /**
    * unmount app
    * @param destroy completely destroy, delete cache resources
+   * @param unmountcb callback of unmount
    */
-  unmount (destroy: boolean): void {
+  unmount (destroy: boolean, unmountcb?: CallableFunction): void {
     if (this.state === appStates.LOAD_SOURCE_ERROR) {
       destroy = true
     }
 
     this.state = appStates.UNMOUNT
     this.keepAliveState = null
+    this.keepAliveContainer = null
 
     // result of unmount function
     let umdHookUnmountResult: any
@@ -251,31 +253,38 @@ export default class CreateApp implements AppInterface {
     // dispatch unmount event to micro app
     dispatchCustomEventToMicroApp('unmount', this.name)
 
-    this.handleUnmounted(destroy, umdHookUnmountResult)
+    this.handleUnmounted(destroy, umdHookUnmountResult, unmountcb)
   }
 
   /**
    * handle for promise umdHookUnmount
+   * @param destroy completely destroy, delete cache resources
    * @param umdHookUnmountResult result of umdHookUnmount
+   * @param unmountcb callback of unmount
    */
-  private handleUnmounted (destroy: boolean, umdHookUnmountResult: any): void {
+  private handleUnmounted (
+    destroy: boolean,
+    umdHookUnmountResult: any,
+    unmountcb?: CallableFunction,
+  ): void {
     if (isPromise(umdHookUnmountResult)) {
       umdHookUnmountResult
-        .then(() => this.actionsForUnmount(destroy))
-        .catch(() => this.actionsForUnmount(destroy))
+        .then(() => this.actionsForUnmount(destroy, unmountcb))
+        .catch(() => this.actionsForUnmount(destroy, unmountcb))
     } else {
-      this.actionsForUnmount(destroy)
+      this.actionsForUnmount(destroy, unmountcb)
     }
   }
 
   /**
    * actions for unmount app
    * @param destroy completely destroy, delete cache resources
+   * @param unmountcb callback of unmount
    */
-  private actionsForUnmount (destroy: boolean): void {
+  private actionsForUnmount (destroy: boolean, unmountcb?: CallableFunction): void {
     // dispatch unmount event to base app
     dispatchLifecyclesEvent(
-      this.container as HTMLElement,
+      this.container!,
       this.name,
       lifeCycles.UNMOUNT,
     )
@@ -285,13 +294,12 @@ export default class CreateApp implements AppInterface {
     if (destroy) {
       this.actionsForCompletelyDestory()
     } else if (this.umdMode && (this.container as Element).childElementCount) {
-      /**
-      * In umd mode, ui frameworks will no longer create style elements to head in lazy load page when render again, so we should save container to keep these elements
-      */
       cloneContainer(this.container as Element, this.source.html as Element, false)
     }
     this.container!.innerHTML = ''
     this.container = null
+
+    unmountcb && unmountcb()
   }
 
   // actions for completely destroy
@@ -305,17 +313,19 @@ export default class CreateApp implements AppInterface {
   // hidden app when disconnectedCallback with keep-alive
   hiddenKeepAliveApp (): void {
     this.keepAliveState = keepAliveStates.KEEP_ALIVE_HIDDEN
-    // dispatch afterhidden event to base app
-    dispatchLifecyclesEvent(
-      this.container as HTMLElement,
-      this.name,
-      lifeCycles.AFTERHIDDEN,
-    )
 
-    // dispatch app-state-change event to micro-app
+    // event should dispatch before clone node
+    // dispatch afterhidden event to micro-app
     dispatchCustomEventToMicroApp('appstate-change', this.name, {
       appState: 'afterhidden',
     })
+
+    // dispatch afterhidden event to base app
+    dispatchLifecyclesEvent(
+      this.container!,
+      this.name,
+      lifeCycles.AFTERHIDDEN,
+    )
 
     cloneContainer(
       this.container as Element,
@@ -328,7 +338,18 @@ export default class CreateApp implements AppInterface {
 
   // show app when connectedCallback with keep-alive
   showKeepAliveApp (container: HTMLElement | ShadowRoot): void {
-    this.keepAliveState = keepAliveStates.KEEP_ALIVE_SHOW
+    // dispatch beforeshow event to micro-app
+    dispatchCustomEventToMicroApp('appstate-change', this.name, {
+      appState: 'beforeshow',
+    })
+
+    // dispatch beforeshow event to base app
+    dispatchLifecyclesEvent(
+      container,
+      this.name,
+      lifeCycles.BEFORESHOW,
+    )
+
     cloneContainer(
       this.keepAliveContainer as Element,
       container as Element,
@@ -337,17 +358,19 @@ export default class CreateApp implements AppInterface {
 
     this.container = container
 
-    // dispatch aftershow event to base app
-    dispatchLifecyclesEvent(
-      this.container as HTMLElement,
-      this.name,
-      lifeCycles.AFTERSHOW,
-    )
+    this.keepAliveState = keepAliveStates.KEEP_ALIVE_SHOW
 
-    // dispath CustomEvent to micro-app
+    // dispatch aftershow event to micro-app
     dispatchCustomEventToMicroApp('appstate-change', this.name, {
       appState: 'aftershow',
     })
+
+    // dispatch aftershow event to base app
+    dispatchLifecyclesEvent(
+      this.container,
+      this.name,
+      lifeCycles.AFTERSHOW,
+    )
   }
 
   /**
@@ -356,7 +379,7 @@ export default class CreateApp implements AppInterface {
    */
   onerror (e: Error): void {
     dispatchLifecyclesEvent(
-      this.container as HTMLElement,
+      this.container!,
       this.name,
       lifeCycles.ERROR,
       e,

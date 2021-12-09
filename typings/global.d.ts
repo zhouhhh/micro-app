@@ -72,7 +72,7 @@ declare module '@micro-app/types' {
     ): void
 
     // unmount app
-    unmount (destroy: boolean): void
+    unmount (destroy: boolean, unmountcb?: CallableFunction): void
 
     // app rendering error
     onerror (e: Error): void

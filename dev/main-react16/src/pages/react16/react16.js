@@ -101,7 +101,7 @@ export default class App extends React.Component {
 
   changeNameUrl = () => {
     this.setState({
-      name: 'react16-to-vue2',
+      name: 'vue2',
       url: `${config.vue2}micro-app/vue2`,
     })
   }

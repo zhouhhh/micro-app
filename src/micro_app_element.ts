@@ -24,10 +24,10 @@ import {
 } from './source/patch'
 import {
   listenUmountOfNestedApp,
-  replaseUnmountOfNestedApp,
+  releaseUnmountOfNestedApp,
 } from './libs/additional'
 import microApp from './micro_app'
-import dispatchLifecyclesEvent, { dispatchCustomEventToMicroApp } from './interact/lifecycles_event'
+import dispatchLifecyclesEvent from './interact/lifecycles_event'
 import globalEnv from './libs/global_env'
 
 // record all micro-app elements
@@ -93,10 +93,14 @@ export function defineElement (tagName: string): void {
         this.handleHiddenKeepAliveApp()
       } else {
         elementInstanceMap.delete(this)
-        this.handleUnmount(this.getDisposeResult('destroy') || this.getDisposeResult('destory'))
-        if (elementInstanceMap.size === 0) {
-          releasePatches()
-        }
+        this.handleUnmount(
+          this.getDisposeResult('destroy') || this.getDisposeResult('destory'),
+          () => {
+            if (elementInstanceMap.size === 0) {
+              releasePatches()
+            }
+          }
+        )
       }
     }
 
@@ -146,7 +150,7 @@ export function defineElement (tagName: string): void {
       if (elementInstanceMap.set(this, true).size === 1) {
         patchElementPrototypeMethods()
         rejectMicroAppStyle()
-        replaseUnmountOfNestedApp()
+        releaseUnmountOfNestedApp()
         listenUmountOfNestedApp()
       }
     }
@@ -171,12 +175,18 @@ export function defineElement (tagName: string): void {
         const app = appInstanceMap.get(this.appName)!
         const existAppUrl = app.ssrUrl || app.url
         const activeAppUrl = this.ssrUrl || this.appUrl
-        // keep-alive don't care about ssrUrl
-        if (
-          app.getKeepAliveState() === keepAliveStates.KEEP_ALIVE_HIDDEN &&
-          app.url === this.appUrl
-        ) {
-          this.handleShowKeepAliveApp(app)
+        // keep-alive app
+        if (app.getKeepAliveState() === keepAliveStates.KEEP_ALIVE_HIDDEN) {
+          // keep-alive don't care about ssrUrl
+          if (app.url === this.appUrl) {
+            this.handleShowKeepAliveApp(app)
+          } else {
+            // make sure the app render correctly, if url conflict
+            logWarn(`the keep-alive app with url: ${app.url} is replaced by a new app`, this.appName)
+            this.handleUnmount(true, () => {
+              this.handleCreateApp()
+            })
+          }
         } else if (
           existAppUrl === activeAppUrl && (
             app.isPrefetch ||
@@ -221,59 +231,76 @@ export function defineElement (tagName: string): void {
 
         if (formatAttrName !== this.appName || formatAttrUrl !== this.appUrl) {
           if (formatAttrName === this.appName) {
-            this.handleUnmount(true)
+            this.handleUnmount(true, () => {
+              this.actionsForAttributeChange(formatAttrName, formatAttrUrl, existApp)
+            })
           } else if (this.getDisposeResult('keep-alive')) {
             this.handleHiddenKeepAliveApp()
+            this.actionsForAttributeChange(formatAttrName, formatAttrUrl, existApp)
           } else {
-            this.handleUnmount(this.getDisposeResult('destroy') || this.getDisposeResult('destory'))
-          }
-
-          /**
-           * change ssrUrl in ssr mode
-           * do not add judgment of formatAttrUrl === this.appUrl
-           */
-          if (this.getDisposeResult('ssr')) {
-            this.ssrUrl = CompletionPath(globalEnv.rawWindow.location.pathname, formatAttrUrl)
-          } else if (this.ssrUrl) {
-            this.ssrUrl = ''
-          }
-
-          this.appName = formatAttrName as string
-          this.appUrl = formatAttrUrl
-          ;(this.shadowRoot ?? this).innerHTML = ''
-          if (formatAttrName !== this.getAttribute('name')) {
-            this.setAttribute('name', this.appName)
-          }
-
-          /**
-           * when existApp not null:
-           * scene1: if formatAttrName and this.appName are equal: exitApp is the current app, the url must be different, existApp has been unmounted
-           * scene2: if formatAttrName and this.appName are different: existApp must be prefetch or unmounted, if url is equal, then just mount, if url is different, then create new app to replace existApp
-           * scene3: url is different but ssrUrl is equal
-           * scene4: url is equal but ssrUrl is different, if url is equal, name must different
-           */
-          if (existApp) {
-            if (existApp.url === this.appUrl) {
-              if (existApp.getKeepAliveState() === keepAliveStates.KEEP_ALIVE_HIDDEN) {
-                this.handleShowKeepAliveApp(existApp)
-              } else if (existApp.ssrUrl === this.ssrUrl) {
-                // mount app
-                this.handleAppMount(existApp)
-              } else {
-                this.handleCreateApp()
+            this.handleUnmount(
+              this.getDisposeResult('destroy') || this.getDisposeResult('destory'),
+              () => {
+                this.actionsForAttributeChange(formatAttrName, formatAttrUrl, existApp)
               }
-            } else if (existApp.getKeepAliveState() === keepAliveStates.KEEP_ALIVE_HIDDEN) {
-              this.handleUnmount(true, existApp.name)
-              this.handleCreateApp()
-            } else {
-              this.handleCreateApp()
-            }
-          } else {
-            this.handleCreateApp()
+            )
           }
         }
       } else if (formatAttrName !== this.appName) {
         this.setAttribute('name', this.appName)
+      }
+    }
+
+    // remount app or create app if attribute url or name change
+    private actionsForAttributeChange (
+      formatAttrName: string,
+      formatAttrUrl: string,
+      existApp: AppInterface | undefined,
+    ): void {
+      /**
+       * change ssrUrl in ssr mode
+       * do not add judgment of formatAttrUrl === this.appUrl
+       */
+      if (this.getDisposeResult('ssr')) {
+        this.ssrUrl = CompletionPath(globalEnv.rawWindow.location.pathname, formatAttrUrl)
+      } else if (this.ssrUrl) {
+        this.ssrUrl = ''
+      }
+
+      this.appName = formatAttrName as string
+      this.appUrl = formatAttrUrl
+      ;(this.shadowRoot ?? this).innerHTML = ''
+      if (formatAttrName !== this.getAttribute('name')) {
+        this.setAttribute('name', this.appName)
+      }
+
+      /**
+       * when existApp not null: this.appName === existApp.name
+       * scene1: if formatAttrName and this.appName are equal: exitApp is the current app, the url must be different, existApp has been unmounted
+       * scene2: if formatAttrName and this.appName are different: existApp must be prefetch or unmounted, if url is equal, then just mount, if url is different, then create new app to replace existApp
+       * scene3: url is different but ssrUrl is equal
+       * scene4: url is equal but ssrUrl is different, if url is equal, name must different
+       * scene5: if existApp is KEEP_ALIVE_HIDDEN, name must different
+       */
+      if (existApp) {
+        if (existApp.getKeepAliveState() === keepAliveStates.KEEP_ALIVE_HIDDEN) {
+          if (existApp.url === this.appUrl) {
+            this.handleShowKeepAliveApp(existApp)
+          } else {
+            // make sure the app render correctly, if url conflict
+            logWarn(`the keep-alive app with url: ${existApp.url} is replaced by a new app`, this.appName)
+            this.handleUnmount(true, () => {
+              this.handleCreateApp()
+            })
+          }
+        } else if (existApp.url === this.appUrl && existApp.ssrUrl === this.ssrUrl) {
+          // mount app
+          this.handleAppMount(existApp)
+        } else {
+          this.handleCreateApp()
+        }
+      } else {
+        this.handleCreateApp()
       }
     }
 
@@ -337,9 +364,9 @@ export function defineElement (tagName: string): void {
      * unmount app
      * @param destroy delete cache resources when unmount
      */
-    private handleUnmount (destroy: boolean, appName: string = this.appName): void {
-      const app = appInstanceMap.get(appName)
-      if (app && appStates.UNMOUNT !== app.getAppState()) app.unmount(destroy)
+    private handleUnmount (destroy: boolean, unmountcb?: CallableFunction): void {
+      const app = appInstanceMap.get(this.appName)
+      if (app && appStates.UNMOUNT !== app.getAppState()) app.unmount(destroy, unmountcb)
     }
 
     // hidden app when disconnectedCallback with keep-alive
@@ -350,18 +377,6 @@ export function defineElement (tagName: string): void {
 
     // show app when connectedCallback with keep-alive
     private handleShowKeepAliveApp (app: AppInterface) {
-      // dispatch beforeshow event to base app
-      dispatchLifecyclesEvent(
-        this,
-        this.appName,
-        lifeCycles.BEFORESHOW,
-      )
-
-      // dispatch app-state-change event to micro-app
-      dispatchCustomEventToMicroApp('appstate-change', this.appName, {
-        appState: 'beforeshow',
-      })
-
       defer(() => app.showKeepAliveApp(this.shadowRoot ?? this))
     }
 

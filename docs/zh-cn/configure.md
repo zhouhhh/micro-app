@@ -43,10 +43,10 @@
 > [!NOTE]
 > 开启inline后会稍微损耗性能，一般在开发环境中使用。
 
-## destory
+## destroy
 - Desc: `卸载时是否强制删除缓存资源`
 - Default: `false`
-- 使用方式: `<micro-app name='xx' url='xx' destory></micro-app>`
+- 使用方式: `<micro-app name='xx' url='xx' destroy></micro-app>`
 
 默认情况下，子应用被卸载后会缓存静态资源，以便在重新渲染时获得更好的性能。
 
@@ -111,7 +111,7 @@ import microApp from '@micro-zoe/micro-app'
 
 microApp.start({
   inline: true, // 默认值false
-  destory: true, // 默认值false
+  destroy: true, // 默认值false
   disableScopecss: true, // 默认值false
   disableSandbox: true, // 默认值false
   shadowDOM: true, // 默认值false
@@ -125,7 +125,7 @@ microApp.start({
   name='xx' 
   url='xx' 
   inline='false'
-  destory='false'
+  destroy='false'
   disableScopecss='false'
   disableSandbox='false'
   shadowDOM='false'

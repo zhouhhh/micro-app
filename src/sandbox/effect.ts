@@ -120,7 +120,7 @@ export function releaseEffectDocumentEvent (): void {
   document.removeEventListener = globalEnv.rawDocumentRemoveEventListener
 }
 
-// the following events should be sent to the specified app
+// this events should be sent to the specified app
 const formatEventList = ['unmount', 'appstate-change']
 
 /**

@@ -47,6 +47,8 @@ function Vue2 () {
         // onBeforemount={() => hideLoading(false)}
         onMounted={mounted}
         onUnmount={unmount}
+        onBeforeshow={mounted}
+        // keep-alive
         // shadowDOM
         // destroy
         // inline

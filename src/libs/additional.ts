@@ -4,7 +4,7 @@ import { releasePatches } from '../source/patch'
 import { getRootContainer } from '../libs/utils'
 
 function unmountNestedApp (): void {
-  replaseUnmountOfNestedApp()
+  releaseUnmountOfNestedApp()
 
   appInstanceMap.forEach(app => {
     // @ts-ignore
@@ -27,7 +27,7 @@ export function listenUmountOfNestedApp (): void {
 }
 
 // release listener
-export function replaseUnmountOfNestedApp (): void {
+export function releaseUnmountOfNestedApp (): void {
   if (window.__MICRO_APP_ENVIRONMENT__) {
     window.removeEventListener('unmount', unmountNestedApp, false)
   }

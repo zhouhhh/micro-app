@@ -40,6 +40,10 @@ function handleGlobalData(data) {
 // 全局数据监听
 window.microApp?.addGlobalDataListener(handleGlobalData);
 
+// 监听keep-alive模式下的app状态
+window.addEventListener("appstate-change", function (e) {
+  console.log('子应用内部console.log -- keep-alive app 状态：', e.detail.appState);
+})
 
 // ----------------------分割线-默认模式--------------------- //
 ReactDOM.render(

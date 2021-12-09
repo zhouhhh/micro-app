@@ -22,8 +22,10 @@ function Vue3 () {
         url={`${config.vue3}micro-app/vue3`}
         data={data}
         onMounted={() => hideLoading(false)}
+        onBeforeshow={() => hideLoading(false)}
         baseRoute='/micro-app/demo/vue3'
         disableScopecss
+        // keep-alive
         // inline
         // destroy
         // disableSandbox
