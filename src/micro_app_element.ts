@@ -369,7 +369,10 @@ export function defineElement (tagName: string): void {
      */
     private handleUnmount (destroy: boolean, unmountcb?: CallableFunction): void {
       const app = appInstanceMap.get(this.appName)
-      if (app && app.getAppState() !== appStates.UNMOUNT) app.unmount(destroy, unmountcb)
+      if (
+        app &&
+        app.getAppState() !== appStates.UNMOUNT
+      ) app.unmount(destroy, unmountcb)
     }
 
     // hidden app when disconnectedCallback with keep-alive
