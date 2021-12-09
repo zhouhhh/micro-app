@@ -181,7 +181,10 @@ export function defineElement (tagName: string): void {
           if (app.url === this.appUrl) {
             this.handleShowKeepAliveApp(app)
           } else {
-            // make sure the app render correctly, if url conflict
+            /**
+             * The priority of the app which pushed into the background is the lowest
+             * make sure the app render correctly, if url different
+             */
             logWarn(`the keep-alive app with url: ${app.url} is replaced by a new app`, this.appName)
             this.handleUnmount(true, () => {
               this.handleCreateApp()
@@ -201,7 +204,7 @@ export function defineElement (tagName: string): void {
           logWarn(`the ${app.isPrefetch ? 'prefetch' : 'unmounted'} app with url: ${existAppUrl} is replaced by a new app`, this.appName)
           this.handleCreateApp()
         } else {
-          logError(`an app named ${this.appName} already exists`, this.appName)
+          logError(`app name conflict, an app named ${this.appName} is running`, this.appName)
         }
       } else {
         this.handleCreateApp()
@@ -225,7 +228,7 @@ export function defineElement (tagName: string): void {
             !existApp.isPrefetch
           ) {
             this.setAttribute('name', this.appName)
-            return logError(`an app named ${formatAttrName} already exists`, this.appName)
+            return logError(`app name conflict, an app named ${formatAttrName} is running`, this.appName)
           }
         }
 
@@ -366,17 +369,22 @@ export function defineElement (tagName: string): void {
      */
     private handleUnmount (destroy: boolean, unmountcb?: CallableFunction): void {
       const app = appInstanceMap.get(this.appName)
-      if (app && appStates.UNMOUNT !== app.getAppState()) app.unmount(destroy, unmountcb)
+      if (app && app.getAppState() !== appStates.UNMOUNT) app.unmount(destroy, unmountcb)
     }
 
     // hidden app when disconnectedCallback with keep-alive
     private handleHiddenKeepAliveApp () {
       const app = appInstanceMap.get(this.appName)
-      if (app && appStates.UNMOUNT !== app.getAppState()) app.hiddenKeepAliveApp()
+      if (
+        app &&
+        app.getAppState() !== appStates.UNMOUNT &&
+        app.getKeepAliveState() !== keepAliveStates.KEEP_ALIVE_HIDDEN
+      ) app.hiddenKeepAliveApp()
     }
 
     // show app when connectedCallback with keep-alive
     private handleShowKeepAliveApp (app: AppInterface) {
+      // must be asnyc
       defer(() => app.showKeepAliveApp(this.shadowRoot ?? this))
     }
 
