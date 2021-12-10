@@ -9,6 +9,9 @@ declare global {
   interface Element {
     ssrUrl: string
   }
+  interface Window {
+    keepAliveListener: (...rest: any[]) => void
+  }
 }
 
 export const ports = {

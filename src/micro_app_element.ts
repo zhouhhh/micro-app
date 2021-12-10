@@ -175,21 +175,13 @@ export function defineElement (tagName: string): void {
         const app = appInstanceMap.get(this.appName)!
         const existAppUrl = app.ssrUrl || app.url
         const activeAppUrl = this.ssrUrl || this.appUrl
-        // keep-alive app
-        if (app.getKeepAliveState() === keepAliveStates.KEEP_ALIVE_HIDDEN) {
-          // keep-alive don't care about ssrUrl
-          if (app.url === this.appUrl) {
-            this.handleShowKeepAliveApp(app)
-          } else {
-            /**
-             * The priority of the app which pushed into the background is the lowest
-             * make sure the app render correctly, if url different
-             */
-            logWarn(`the keep-alive app with url: ${app.url} is replaced by a new app`, this.appName)
-            this.handleUnmount(true, () => {
-              this.handleCreateApp()
-            })
-          }
+        // keep-alive don't care about ssrUrl
+        // Even if the keep-alive app is pushed into the background, it is still active and cannot be replaced. Otherwise, it is difficult for developers to troubleshoot in case of conflict and  will leave developers at a loss
+        if (
+          app.getKeepAliveState() === keepAliveStates.KEEP_ALIVE_HIDDEN &&
+          app.url === this.appUrl
+        ) {
+          this.handleShowKeepAliveApp(app)
         } else if (
           existAppUrl === activeAppUrl && (
             app.isPrefetch ||
@@ -270,7 +262,7 @@ export function defineElement (tagName: string): void {
         this.ssrUrl = ''
       }
 
-      this.appName = formatAttrName as string
+      this.appName = formatAttrName
       this.appUrl = formatAttrUrl
       ;(this.shadowRoot ?? this).innerHTML = ''
       if (formatAttrName !== this.getAttribute('name')) {
@@ -290,11 +282,8 @@ export function defineElement (tagName: string): void {
           if (existApp.url === this.appUrl) {
             this.handleShowKeepAliveApp(existApp)
           } else {
-            // make sure the app render correctly, if url conflict
-            logWarn(`the keep-alive app with url: ${existApp.url} is replaced by a new app`, this.appName)
-            this.handleUnmount(true, () => {
-              this.handleCreateApp()
-            })
+            // the hidden keep-alive app is still active
+            logError(`app name conflict, an app named ${this.appName} is running`, this.appName)
           }
         } else if (existApp.url === this.appUrl && existApp.ssrUrl === this.ssrUrl) {
           // mount app
@@ -375,7 +364,7 @@ export function defineElement (tagName: string): void {
       ) app.unmount(destroy, unmountcb)
     }
 
-    // hidden app when disconnectedCallback with keep-alive
+    // hidden app when disconnectedCallback called with keep-alive
     private handleHiddenKeepAliveApp () {
       const app = appInstanceMap.get(this.appName)
       if (
@@ -385,7 +374,7 @@ export function defineElement (tagName: string): void {
       ) app.hiddenKeepAliveApp()
     }
 
-    // show app when connectedCallback with keep-alive
+    // show app when connectedCallback called with keep-alive
     private handleShowKeepAliveApp (app: AppInterface) {
       // must be asnyc
       defer(() => app.showKeepAliveApp(this.shadowRoot ?? this))

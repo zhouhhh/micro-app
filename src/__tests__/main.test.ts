@@ -217,7 +217,8 @@ describe('main process', () => {
             microappElement3.setAttribute('url', `http://127.0.0.1:${ports.main}/ssr-render`)
           }, 500)
         } else {
-          expect(appInstanceMap.size).toBe(prefetchAppNum + 2)
+          // 预加载app test-app3，设置了destroy，name切换时被彻底删除
+          expect(appInstanceMap.size).toBe(3)
           reslove(true)
         }
       }, false)
@@ -226,7 +227,8 @@ describe('main process', () => {
     await new Promise((reslove) => {
       microappElement3.addEventListener('unmount', () => {
         defer(() => {
-          expect(appInstanceMap.size).toBe(prefetchAppNum + 1)
+          // test-app1也被删除
+          expect(appInstanceMap.size).toBe(2)
           reslove(true)
         })
       }, false)
@@ -240,7 +242,6 @@ describe('main process', () => {
    * 预加载: false
    * 执行前: appInstanceMap => [
    *  {name: 'test-app5'},
-   *  {name: 'test-app3'},
    *  {name: 'test-app2'},
    * ]
    */
@@ -263,7 +264,6 @@ describe('main process', () => {
    * 预加载: false
    * 执行前: appInstanceMap => [
    *  {name: 'test-app5'},
-   *  {name: 'test-app3'},
    *  {name: 'test-app2'},
    * ]
    *
@@ -311,7 +311,6 @@ describe('main process', () => {
    * 预加载: false
    * 执行前: appInstanceMap => [
    *  {name: 'test-app5'},
-   *  {name: 'test-app3'},
    *  {name: 'test-app2'},
    *  {name: 'test-app6'},
    * ]
@@ -356,7 +355,6 @@ describe('main process', () => {
    * 卸载所有应用
    * 卸载前：appInstanceMap => [
    *  {name: 'test-app5'},
-   *  {name: 'test-app3'},
    *  {name: 'test-app2'},
    *  {name: 'test-app6'},
    *  {name: 'test-app7'},
@@ -365,6 +363,6 @@ describe('main process', () => {
   test('clear all apps', () => {
     appCon.innerHTML = ''
     // test-app5为预加载，test-app2不强制删除，所以卸载后还有2个应用
-    expect(appInstanceMap.size).toBe(5)
+    expect(appInstanceMap.size).toBe(4)
   })
 })

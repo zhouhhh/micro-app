@@ -108,3 +108,8 @@ window.dispatchEvent(new CustomEvent('unmount-me'))
 Promise.resolve().then(() => {
   window.microApp && window.microApp.dispatch({ unmountMeAsync: true })
 })
+
+// 监听keep-alive模式下的app状态
+window.addEventListener("appstate-change", function (e) {
+  window.keepAliveListener && window.keepAliveListener(e.detail.appState)
+})

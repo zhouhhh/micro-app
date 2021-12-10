@@ -310,7 +310,7 @@ export default class CreateApp implements AppInterface {
     appInstanceMap.delete(this.name)
   }
 
-  // hidden app when disconnectedCallback with keep-alive
+  // hidden app when disconnectedCallback called with keep-alive
   hiddenKeepAliveApp (): void {
     this.keepAliveState = keepAliveStates.KEEP_ALIVE_HIDDEN
 
@@ -336,7 +336,7 @@ export default class CreateApp implements AppInterface {
     this.container = this.keepAliveContainer
   }
 
-  // show app when connectedCallback with keep-alive
+  // show app when connectedCallback called with keep-alive
   showKeepAliveApp (container: HTMLElement | ShadowRoot): void {
     // dispatch beforeshow event to micro-app
     dispatchCustomEventToMicroApp('appstate-change', this.name, {
