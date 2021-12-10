@@ -90,6 +90,7 @@ export default {
     }
   }
 }
+</script>
 ```
 <!-- tabs:end -->
 
@@ -146,8 +147,8 @@ vue中监听方式和普通事件一致。
     @datachange='handleDataChange'
   />
 </template>
-<script>
 
+<script>
 export default {
   methods: {
     handleDataChange (e) {
@@ -155,6 +156,7 @@ export default {
     }
   }
 }
+</script>
 ```
 <!-- tabs:end -->
 

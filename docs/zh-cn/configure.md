@@ -101,6 +101,14 @@ shadowDOM具有更强的样式隔离能力，开启后，`<micro-app>`标签会�
 
 当子应用是ssr应用时，需要设置ssr属性，此时micro-app会根据ssr模式加载子应用。
 
+## keep-alive
+- Desc: `是否开启keep-alive模式`
+- Type: `string(boolean)`
+- Default: `false`
+- 使用方式: `<micro-app name='xx' url='xx' keep-alive></micro-app>`
+
+开启keep-alive后，应用卸载时会进入缓存，而不是销毁它们，以便保留应用的状态和提升重复渲染的性能。
+
 ## 全局配置
 全局配置会影响每一个子应用，请小心使用！
 

@@ -1,12 +1,12 @@
-import "./public-path";
+import './public-path';
 import 'babel-polyfill'
 // import '@babel/polyfill'
-import React from "react";
-import ReactDOM from "react-dom";
-import "antd/dist/antd.css";
-import "./index.css";
-import Router from "./router";
-import { Modal, notification } from "antd";
+import React from 'react';
+import ReactDOM from 'react-dom';
+import 'antd/dist/antd.css';
+import './index.css';
+import Router from './router';
+import { Modal, notification } from 'antd';
 import subMicroApp from '@micro-zoe/micro-app'
 
 // 循环内嵌
@@ -16,9 +16,9 @@ subMicroApp.start({
 
 // 数据监听
 window.microApp?.addDataListener((data) => {
-  console.log("react16 来自基座应用的数据", data)
+  console.log('react16 来自基座应用的数据', data)
   notification.open({
-    message: "来自基座应用的数据",
+    message: '来自基座应用的数据',
     description: JSON.stringify(data),
     duration: 1,
   })
@@ -27,7 +27,7 @@ window.microApp?.addDataListener((data) => {
 function handleGlobalData(data) {
   console.log('react16: 来自全局数据')
   Modal.info({
-    title: "react16: 来自全局数据",
+    title: 'react16: 来自全局数据',
     content: (
       <div>
         <p>{JSON.stringify(data)}</p>
@@ -41,7 +41,7 @@ function handleGlobalData(data) {
 window.microApp?.addGlobalDataListener(handleGlobalData);
 
 // 监听keep-alive模式下的app状态
-window.addEventListener("appstate-change", function (e) {
+window.addEventListener('appstate-change', function (e) {
   console.log('子应用内部console.log -- keep-alive app 状态：', e.detail.appState);
 })
 
@@ -50,16 +50,16 @@ ReactDOM.render(
   <React.StrictMode>
     <Router />
   </React.StrictMode>,
-  document.getElementById("root")
+  document.getElementById('root')
 );
 
 // 监听卸载
-window.addEventListener("unmount", function () {
-  ReactDOM.unmountComponentAtNode(document.getElementById("root"));
-  console.log("微应用react16卸载了 -- 自定义事件unmount");
+window.addEventListener('unmount', function () {
+  ReactDOM.unmountComponentAtNode(document.getElementById('root'));
+  console.log('微应用react16卸载了 -- 自定义事件unmount');
 })
 
-console.timeEnd("react#16");
+console.timeEnd('react#16');
 
 // ----------------------分割线-umd模式--------------------- //
 // function mount () {
@@ -67,18 +67,18 @@ console.timeEnd("react#16");
 //     <React.StrictMode>
 //       <Router />
 //     </React.StrictMode>,
-//     document.getElementById("root")
+//     document.getElementById('root')
 //   );
-//   console.log("微应用react16渲染了 -- 来自umd-mount");
-//   console.timeEnd("react#16");
+//   console.log('微应用react16渲染了 -- 来自umd-mount');
+//   console.timeEnd('react#16');
 // }
 
 // function unmount () {
-//   console.log("微应用react16卸载了 -- 来自umd-unmount");
+//   console.log('微应用react16卸载了 -- 来自umd-unmount');
 //   // 卸载时关闭弹窗
 //   notification.destroy()
 //   // 卸载应用
-//   ReactDOM.unmountComponentAtNode(document.getElementById("root"));
+//   ReactDOM.unmountComponentAtNode(document.getElementById('root'));
 // }
 
 // // 微前端环境下，注册mount和unmount方法
@@ -109,7 +109,7 @@ console.timeEnd("react#16");
 
 // const dynamicScript1 = document.createElement('script')
 // // dynamicScript1.setAttribute('type', 'module')
-// // dynamicScript1.textContent = 'console.warn("inline module")'
+// // dynamicScript1.textContent = 'console.warn('inline module')'
 // dynamicScript1.setAttribute('src', 'http://127.0.0.1:8080/test.js')
 // dynamicScript1.onload = () => {
 //   console.log('动态module加载完成了')
@@ -136,7 +136,7 @@ console.timeEnd("react#16");
 // </div>
 // `
 
-// const doc = parser.parseFromString(htmlString, "text/html")
+// const doc = parser.parseFromString(htmlString, 'text/html')
 
 // console.log(
 //   'DOMParser querySelector',

@@ -3,24 +3,22 @@
 ## 生命周期列表
 
 #### 1. created
-在`<micro-app>`标签初始化后，加载资源前触发。
+`<micro-app>`标签初始化后，加载资源前触发。
 
 #### 2. beforemount
-在加载资源完成后，开始渲染之前触发。
+加载资源完成后，开始渲染之前触发。
 
 #### 3. mounted
-在子应用渲染结束后触发。
+子应用渲染结束后触发。
 
 #### 4. unmount
-在子应用被卸载时触发。
+子应用卸载时触发。
 
 #### 5. error
 子应用渲染出错时触发，只有会导致渲染终止的错误才会触发此生命周期。
 
 
 ## 监听生命周期
-我们通过micro-app元素的自定义事件发送生命周期。
-
 <!-- tabs:start -->
 
 #### ** React **
@@ -41,23 +39,47 @@ import jsxCustomEvent from '@micro-zoe/micro-app/polyfill/jsx-custom-event'
   onCreated={() => console.log('micro-app元素被创建')}
   onBeforemount={() => console.log('即将被渲染')}
   onMounted={() => console.log('已经渲染完成')}
-  onUnmount={() => console.log('被卸载')}
+  onUnmount={() => console.log('已经卸载')}
   onError={() => console.log('渲染出错')}
 />
 ```
 
 #### ** Vue **
 vue中监听方式和普通事件一致。
-```vue
-<micro-app
-  name='xx'
-  url='xx'
-  @created='created'
-  @beforemount='beforemount'
-  @mounted='mounted'
-  @unmount='unmount'
-  @error='error'
-/>
+```html
+<template>
+  <micro-app
+    name='xx'
+    url='xx'
+    @created='created'
+    @beforemount='beforemount'
+    @mounted='mounted'
+    @unmount='unmount'
+    @error='error'
+  />
+</template>
+
+<script>
+export default {
+  methods: {
+    created () {
+      console.log('micro-app元素被创建'),
+    },
+    beforemount () {
+      console.log('即将被渲染'),
+    },
+    mounted () {
+      console.log('已经渲染完成'),
+    },
+    unmount () {
+      console.log('已经卸载'),
+    },
+    error () {
+      console.log('渲染出错'),
+    }
+  }
+}
+</script>
 ```
 #### ** 自定义 **
 我们可以手动监听生命周期事件。

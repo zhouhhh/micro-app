@@ -14,6 +14,7 @@
   - [预加载](zh-cn/prefetch)
   - [插件系统](zh-cn/plugins)
   - [多层嵌套](zh-cn/nest)
+  - [keep-alive](zh-cn/keep-alive)
   - [高级功能](zh-cn/advanced)
   - [API](zh-cn/api)
   - [路由](zh-cn/route)
