@@ -26,7 +26,7 @@ function Angular11 () {
         baseRoute='/micro-app/demo/angular11'
         // destroy
         // inline
-        // disableScopecss
+        disableScopecss
       >
       </micro-app>
     </div>

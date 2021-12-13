@@ -14,14 +14,18 @@ export class FirstComponent implements OnInit {
   }
 
   openDialog() {
-    // console.log(document)
     this.dialog.open(DialogElementsExampleDialog);
   }
-
 }
 
 @Component({
   selector: 'dialog-elements-example-dialog',
   templateUrl: 'dialog-elements-example-dialog.html',
 })
-export class DialogElementsExampleDialog {}
+export class DialogElementsExampleDialog {
+  constructor(public dialog: MatDialog) { }
+
+  closeDialog() {
+    this.dialog.closeAll()
+  }
+}

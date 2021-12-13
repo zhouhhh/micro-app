@@ -180,3 +180,9 @@ window.addEventListener('unmount', function () {
 ## 常见问题
 #### 1、基座是react、nextjs应用，引入zone.js后导致micro-app元素生命周期异常
 **解决方式：** 在micro-app元素上设置destory
+
+#### 2、@angular/material组件库样式失效
+**解决方式：** 关闭样式隔离
+```html
+<micro-app name='xx' url='xx' disableScopecss></micro-app>
+```
