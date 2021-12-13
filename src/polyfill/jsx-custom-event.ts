@@ -20,7 +20,7 @@ function jsxCustomEvent (
   props: Record<string, unknown> | null,
   ...children: any[]
 ): void {
-  if (typeof type !== 'string' || !/^micro-app(-\S+)?/.test(type as string) || !props) {
+  if (typeof type !== 'string' || !/^micro-app(-\S+)?/.test(type) || !props) {
     return React.createElement.apply(null, [type, props, ...children])
   }
 
