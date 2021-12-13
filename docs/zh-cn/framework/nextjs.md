@@ -87,7 +87,7 @@ export default MyPage
 
 
 #### 2、设置跨域支持
-通过自定义服务可以设置跨域访问，详情参考 [custom-server](https://nextjs.org/docs/advanced-features/custom-server)
+通过自定义服务设置跨域访问，详情参考 [custom-server](https://nextjs.org/docs/advanced-features/custom-server)
 
 **步骤1、在根目录创建`server.js`**
 

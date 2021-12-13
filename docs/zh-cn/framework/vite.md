@@ -51,7 +51,28 @@ export default defineConfig({
 })
 ```
 
-**2、路由**
+**2、修改容器元素id**
+
+因为vite子应用没有元素隔离的保护，建议修改容器元素的id值，以确保与其它元素不冲突。
+
+*1、修改index.html中容器元素的id值*
+
+```html
+<!-- index.html -->
+<body>
+  <div id="my-vite-app"></div>
+</body>
+```
+
+*2、使用新的id渲染*
+```js
+// main.js
+createApp(App).mount('#my-vite-app')
+```
+
+当多个vite子应用同时渲染时，必须修改容器元素的id值，确保每个子应用容器元素id的唯一性，否则无法正常渲染。
+
+**3、路由**
 
 推荐基座使用history路由，vite子应用使用hash路由，避免一些可能出现的问题。
 
@@ -66,7 +87,7 @@ const router = createRouter({
 })
 ```
 
-**3、静态资源**
+**4、静态资源**
 
 图片等静态资源需要使用绝对地址，可以使用 `new URL('../assets/logo.png', import.meta.url).href` 等方式获取资源的全链接地址。
 
