@@ -191,6 +191,9 @@ window.addEventListener('unmount', function () {
 })
 ```
 
+> [!NOTE]
+> nextjs默认支持css module功能，如果你使用了此功能，建议关闭样式隔离以提升性能：`<micro-app name='xx' url='xx' disableScopecss></micro-app>`
+
 
 ## 实战案例
 以上介绍了nextjs如何接入微前端，但在实际使用中会涉及更多功能，如数据通信、路由跳转、打包部署，为此我们提供了一套案例，用于展示nextjs作为基座嵌入(或作为子应用被嵌入) react、vue、angular、vite、nextjs、nuxtjs等框架，在案例中我们使用尽可能少的代码实现尽可能多的功能。

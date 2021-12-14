@@ -2,6 +2,7 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Root from './pages/root.vue';
 import Home from './pages/page1.vue';
+import Table from './pages/table.vue';
 
 Vue.use(VueRouter);
 
@@ -22,6 +23,11 @@ const routes = [
         path: '/page2',
         name: 'page2',
         component: () => import(/* webpackChunkName: "page2" */ './pages/page2.vue'),
+      },
+      {
+        path: '/table',
+        name: 'table',
+        component: Table,
       },
     ],
   },

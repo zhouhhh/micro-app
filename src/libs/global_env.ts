@@ -21,13 +21,9 @@ declare global {
     __MICRO_APP_BASE_APPLICATION__?: boolean
   }
 
-  interface Element {
-    __MICRO_APP_NAME__?: string
-    data?: any
-  }
-
   interface Node {
     __MICRO_APP_NAME__?: string
+    data?: any
   }
 
   interface HTMLStyleElement {
@@ -45,10 +41,10 @@ export function initGlobalEnv (): void {
      * pay attention to this binding
      */
     const rawSetAttribute = Element.prototype.setAttribute
-    const rawAppendChild = Node.prototype.appendChild
-    const rawInsertBefore = Node.prototype.insertBefore
-    const rawReplaceChild = Node.prototype.replaceChild
-    const rawRemoveChild = Node.prototype.removeChild
+    const rawAppendChild = Element.prototype.appendChild
+    const rawInsertBefore = Element.prototype.insertBefore
+    const rawReplaceChild = Element.prototype.replaceChild
+    const rawRemoveChild = Element.prototype.removeChild
     const rawAppend = Element.prototype.append
     const rawPrepend = Element.prototype.prepend
 

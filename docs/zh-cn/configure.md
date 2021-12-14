@@ -57,10 +57,7 @@
 - Default: `false`
 - 使用方式: `<micro-app name='xx' url='xx' disableScopecss></micro-app>`
 
-在禁用样式隔离前，请确保基座应用和子应用，以及子应用之间样式不会相互污染。
-
-> [!NOTE]
-> 禁用样式隔离，CSS中的资源路径补全功能失效，需要设置[publicpath](/zh-cn/static-source?id=publicpath)防止资源加载失败。
+禁用样式隔离可以显著提升页面渲染速度，在禁用样式隔离前，请确保各应用之间样式不会相互污染。
 
 ## disableSandbox
 - Desc: `禁用js沙箱`

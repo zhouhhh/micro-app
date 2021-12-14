@@ -236,15 +236,15 @@ export function patchElementPrototypeMethods (): void {
   }
 
   // prototype methods of add element👇
-  Node.prototype.appendChild = function appendChild<T extends Node> (newChild: T): T {
+  Element.prototype.appendChild = function appendChild<T extends Node> (newChild: T): T {
     return commonElementHander(this, newChild, null, globalEnv.rawAppendChild)
   }
 
-  Node.prototype.insertBefore = function insertBefore<T extends Node> (newChild: T, refChild: Node | null): T {
+  Element.prototype.insertBefore = function insertBefore<T extends Node> (newChild: T, refChild: Node | null): T {
     return commonElementHander(this, newChild, refChild, globalEnv.rawInsertBefore)
   }
 
-  Node.prototype.replaceChild = function replaceChild<T extends Node> (newChild: Node, oldChild: T): T {
+  Element.prototype.replaceChild = function replaceChild<T extends Node> (newChild: Node, oldChild: T): T {
     return commonElementHander(this, newChild, oldChild, globalEnv.rawReplaceChild)
   }
 
@@ -266,7 +266,7 @@ export function patchElementPrototypeMethods (): void {
   }
 
   // prototype methods of delete element👇
-  Node.prototype.removeChild = function removeChild<T extends Node> (oldChild: T): T {
+  Element.prototype.removeChild = function removeChild<T extends Node> (oldChild: T): T {
     if (oldChild?.__MICRO_APP_NAME__) {
       const app = appInstanceMap.get(oldChild.__MICRO_APP_NAME__)
       if (app?.container) {
@@ -424,10 +424,10 @@ export function releasePatches (): void {
   setCurrentAppName(null)
   releasePatchDocument()
   Element.prototype.setAttribute = globalEnv.rawSetAttribute
-  Node.prototype.appendChild = globalEnv.rawAppendChild
-  Node.prototype.insertBefore = globalEnv.rawInsertBefore
-  Node.prototype.replaceChild = globalEnv.rawReplaceChild
-  Node.prototype.removeChild = globalEnv.rawRemoveChild
+  Element.prototype.appendChild = globalEnv.rawAppendChild
+  Element.prototype.insertBefore = globalEnv.rawInsertBefore
+  Element.prototype.replaceChild = globalEnv.rawReplaceChild
+  Element.prototype.removeChild = globalEnv.rawRemoveChild
   Element.prototype.append = globalEnv.rawAppend
   Element.prototype.prepend = globalEnv.rawPrepend
 }
