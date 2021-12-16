@@ -13,4 +13,6 @@ export {
 export {
   getActiveApps,
   getAllApps,
+  unmountApp,
+  unmountAllApps,
 } from './create_app'

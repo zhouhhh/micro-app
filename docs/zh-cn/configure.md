@@ -55,14 +55,14 @@
 ## disableScopecss
 - Desc: `禁用样式隔离`
 - Default: `false`
-- 使用方式: `<micro-app name='xx' url='xx' disableScopecss></micro-app>`
+- 使用方式: `<micro-app name='xx' url='xx' disableScopecss 或 disable-scopecss></micro-app>`
 
-禁用样式隔离可以显著提升页面渲染速度，在禁用样式隔离前，请确保各应用之间样式不会相互污染。
+禁用样式隔离可以提升页面渲染速度，在此之前，请确保各应用之间样式不会相互污染。
 
 ## disableSandbox
 - Desc: `禁用js沙箱`
 - Default: `false`
-- 使用方式: `<micro-app name='xx' url='xx' disableSandbox></micro-app>`
+- 使用方式: `<micro-app name='xx' url='xx' disableSandbox 或 disable-sandbox></micro-app>`
 
 禁用沙箱可能会导致一些不可预料的问题，通常情况不建议这样做。
 
@@ -79,16 +79,6 @@
 >
 > 5、baseroute
 
-
-## shadowDOM
-- Desc: `是否开启shadowDOM`
-- Type: `string(boolean)`
-- Default: `false`
-- 使用方式: `<micro-app name='xx' url='xx' shadowDOM></micro-app>`
-
-shadowDOM具有更强的样式隔离能力，开启后，`<micro-app>`标签会成为一个真正的WebComponent。
-
-但shadowDOM在React框架及一些UI库中的兼容不是很好，请谨慎使用。
 
 ## ssr
 - Desc: `是否开启ssr模式`
@@ -107,6 +97,19 @@ shadowDOM具有更强的样式隔离能力，开启后，`<micro-app>`标签会�
 - 版本要求: `0.6.0及以上版本`
 
 开启keep-alive后，应用卸载时会进入缓存，而不是销毁它们，以便保留应用的状态和提升重复渲染的性能。
+
+keep-alive的优先级小于[destory](/zh-cn/configure?id=destroy)，当两者同时存在时，keep-alive将失效。
+
+## shadowDOM
+- Desc: `是否开启shadowDOM`
+- Type: `string(boolean)`
+- Default: `false`
+- 使用方式: `<micro-app name='xx' url='xx' shadowDOM></micro-app>`
+
+shadowDOM具有更强的样式隔离能力，开启后，`<micro-app>`标签会成为一个真正的WebComponent。
+
+但shadowDOM在React框架及一些UI库中的兼容不是很好，请谨慎使用。
+
 
 ## 全局配置
 全局配置会影响每一个子应用，请小心使用！

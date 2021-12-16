@@ -89,23 +89,23 @@ const myApp = document.querySelector('micro-app[name=my-app]')
 
 myApp.addEventListener('created', () => {
   console.log('created')
-}, false)
+})
 
 myApp.addEventListener('beforemount', () => {
   console.log('beforemount')
-}, false)
+})
 
 myApp.addEventListener('mounted', () => {
   console.log('mounted')
-}, false)
+})
 
 myApp.addEventListener('unmount', () => {
   console.log('unmount')
-}, false)
+})
 
 myApp.addEventListener('error', () => {
   console.log('error')
-}, false)
+})
 ```
 
 <!-- tabs:end -->

@@ -16,7 +16,9 @@ import {
   isBoolean,
   isPromise,
   logError,
+  logWarn,
   getRootContainer,
+  formatAppName,
 } from './libs/utils'
 import dispatchLifecyclesEvent, { dispatchCustomEventToMicroApp } from './interact/lifecycles_event'
 import globalEnv from './libs/global_env'
@@ -282,13 +284,6 @@ export default class CreateApp implements AppInterface {
    * @param unmountcb callback of unmount
    */
   private actionsForUnmount (destroy: boolean, unmountcb?: CallableFunction): void {
-    // dispatch unmount event to base app
-    dispatchLifecyclesEvent(
-      this.container!,
-      this.name,
-      lifeCycles.UNMOUNT,
-    )
-
     this.sandBox?.stop()
 
     if (destroy) {
@@ -296,6 +291,14 @@ export default class CreateApp implements AppInterface {
     } else if (this.umdMode && (this.container as Element).childElementCount) {
       cloneContainer(this.container as Element, this.source.html as Element, false)
     }
+
+    // dispatch unmount event to base app
+    dispatchLifecyclesEvent(
+      this.container!,
+      this.name,
+      lifeCycles.UNMOUNT,
+    )
+
     this.container!.innerHTML = ''
     this.container = null
 
@@ -425,4 +428,83 @@ export function getActiveApps (): string[] {
 // get all registered apps
 export function getAllApps (): string[] {
   return Array.from(appInstanceMap.keys())
+}
+
+export interface unmountAppParams {
+  destroy?: boolean // destory app, default is false
+  clearAliveState?: boolean // clear keep-alive app state, default is false
+}
+
+/**
+ *
+ * @param appName
+ * @param options unmountAppParams
+ * @returns Promise<void>
+ */
+export function unmountApp (appName: string, options?: unmountAppParams): Promise<void> {
+  const app = appInstanceMap.get(formatAppName(appName))
+  return new Promise((reslove) => { // eslint-disable-line
+    if (app) {
+      if (app.getAppState() === appStates.UNMOUNT || app.isPrefetch) {
+        if (options?.destroy) {
+          app.actionsForCompletelyDestory()
+        }
+        reslove()
+      } else if (app.getKeepAliveState() === keepAliveStates.KEEP_ALIVE_HIDDEN) {
+        if (options?.destroy) {
+          app.unmount(true, reslove)
+        } else if (options?.clearAliveState) {
+          app.unmount(false, reslove)
+        } else {
+          reslove()
+        }
+      } else {
+        const container = getRootContainer(app.container!)
+        function unmountHandler () {
+          container.removeEventListener('unmount', unmountHandler)
+          container.removeEventListener('afterhidden', afterhiddenHandler)
+          reslove()
+        }
+
+        function afterhiddenHandler () {
+          container.removeEventListener('unmount', unmountHandler)
+          container.removeEventListener('afterhidden', afterhiddenHandler)
+          reslove()
+        }
+
+        container.addEventListener('unmount', unmountHandler)
+        container.addEventListener('afterhidden', afterhiddenHandler)
+
+        if (options?.destroy) {
+          let destroyAttrValue, destoryAttrValue
+          container.hasAttribute('destroy') && (destroyAttrValue = container.getAttribute('destroy'))
+          container.hasAttribute('destory') && (destoryAttrValue = container.getAttribute('destory'))
+
+          container.setAttribute('destroy', 'true')
+          container.parentNode?.removeChild(container)
+          container.removeAttribute('destroy')
+
+          typeof destroyAttrValue === 'string' && container.setAttribute('destroy', destroyAttrValue)
+          typeof destoryAttrValue === 'string' && container.setAttribute('destory', destoryAttrValue)
+        } else if (options?.clearAliveState && container.hasAttribute('keep-alive')) {
+          const keepAliveAttrValue = container.getAttribute('keep-alive')!
+
+          container.removeAttribute('keep-alive')
+          container.parentNode?.removeChild(container)
+
+          container.setAttribute('keep-alive', keepAliveAttrValue)
+        } else {
+          container.parentNode?.removeChild(container)
+        }
+      }
+    } else {
+      logWarn(`app ${appName} does not exist`)
+      reslove()
+    }
+  })
+}
+
+// unmount all apps in turn
+export function unmountAllApps (options?: unmountAppParams): Promise<void> {
+  return Array.from(appInstanceMap.keys()).reduce((pre, next) => pre.then(() => unmountApp(next, options)), Promise.resolve())
 }

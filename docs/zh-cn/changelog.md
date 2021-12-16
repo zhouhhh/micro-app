@@ -8,6 +8,21 @@
 
 ---
 
+### 0.6.1
+
+`2021-12-17`
+
+- **New**
+
+  - 🆕 新增了`unmountApp`, `unmountAllApps`方法，用于主动卸载应用。
+  - 🆕 新增了对`disable-sandbox`, `disable-scopecss`配置的支持。
+
+- **Update**
+
+  - 🚀 优化了元素隔离patch原型链方法相关代码。
+  - 🚀 优化了kee-alive和destory相关的处理逻辑。
+  - 🚀 优化了`unmount`生命周期的触发时机，移动到应用彻底卸载后执行。
+
 ### 0.6.0
 
 `2021-12-10`

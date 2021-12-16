@@ -69,7 +69,7 @@ export function defineElement (tagName: string): void {
     // disableSandbox: whether disable sandbox, default is false
     // macro: used to solve the async render problem of vue3, default is false
     // baseRoute: route prefix, default is ''
-    // keep-alive: open keep-alive mode, keep-alive has priority over destroy
+    // keep-alive: open keep-alive mode
 
     connectedCallback (): void {
       this.hasConnected = true
@@ -88,13 +88,13 @@ export function defineElement (tagName: string): void {
 
     disconnectedCallback (): void {
       this.hasConnected = false
-      // keep-alive has priority over destroy
-      if (this.getDisposeResult('keep-alive')) {
+      // keep-alive
+      if (this.getKeepAliveModeResult()) {
         this.handleHiddenKeepAliveApp()
       } else {
         elementInstanceMap.delete(this)
         this.handleUnmount(
-          this.getDisposeResult('destroy') || this.getDisposeResult('destory'),
+          this.getDestroyCompatibleResult(),
           () => {
             if (elementInstanceMap.size === 0) {
               releasePatches()
@@ -229,12 +229,12 @@ export function defineElement (tagName: string): void {
             this.handleUnmount(true, () => {
               this.actionsForAttributeChange(formatAttrName, formatAttrUrl, existApp)
             })
-          } else if (this.getDisposeResult('keep-alive')) {
+          } else if (this.getKeepAliveModeResult()) {
             this.handleHiddenKeepAliveApp()
             this.actionsForAttributeChange(formatAttrName, formatAttrUrl, existApp)
           } else {
             this.handleUnmount(
-              this.getDisposeResult('destroy') || this.getDisposeResult('destory'),
+              this.getDestroyCompatibleResult(),
               () => {
                 this.actionsForAttributeChange(formatAttrName, formatAttrUrl, existApp)
               }
@@ -387,7 +387,27 @@ export function defineElement (tagName: string): void {
      */
     private getDisposeResult (name: string): boolean {
       // @ts-ignore
-      return (this.hasAttribute(name) || microApp[name]) && this.getAttribute(name) !== 'false'
+      return (this.compatibleSpecialProperties(name) || microApp[name]) && this.compatibleDisablSpecialProperties(name)
+    }
+
+    // compatible of disableScopecss & disableSandbox
+    private compatibleSpecialProperties (name: string): boolean {
+      if (name === 'disableScopecss') {
+        return this.hasAttribute('disableScopecss') || this.hasAttribute('disable-scopecss')
+      } else if (name === 'disableSandbox') {
+        return this.hasAttribute('disableSandbox') || this.hasAttribute('disable-sandbox')
+      }
+      return this.hasAttribute(name)
+    }
+
+    // compatible of disableScopecss & disableSandbox
+    private compatibleDisablSpecialProperties (name: string): boolean {
+      if (name === 'disableScopecss') {
+        return this.getAttribute('disableScopecss') !== 'false' && this.getAttribute('disable-scopecss') !== 'false'
+      } else if (name === 'disableSandbox') {
+        return this.getAttribute('disableSandbox') !== 'false' && this.getAttribute('disable-sandbox') !== 'false'
+      }
+      return this.getAttribute(name) !== 'false'
     }
 
     /**
@@ -397,6 +417,18 @@ export function defineElement (tagName: string): void {
      */
     private getBaseRouteCompatible (): string {
       return this.getAttribute('baseroute') ?? this.getAttribute('baseurl') ?? ''
+    }
+
+    // compatible of destroy
+    private getDestroyCompatibleResult (): boolean {
+      return this.getDisposeResult('destroy') || this.getDisposeResult('destory')
+    }
+
+    /**
+     * destroy has priority over destroy keep-alive
+     */
+    private getKeepAliveModeResult (): boolean {
+      return this.getDisposeResult('keep-alive') && !this.getDestroyCompatibleResult()
     }
 
     /**

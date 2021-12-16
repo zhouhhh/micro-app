@@ -1,5 +1,5 @@
 import 'babel-polyfill'
-import microApp from '@micro-zoe/micro-app'
+import microApp, { unmountApp, unmountAllApps } from '@micro-zoe/micro-app'
 import config from './config'
 // microApp.preFetch([{name: 'vue2', url: `${config.vue2}micro-app/vue2`, disableScopecss: false}])
 
@@ -119,3 +119,12 @@ microApp.start({
     })
   },
 })
+
+// setTimeout(() => {
+//   unmountAllApps({
+//     // destroy: true,
+//     // clearAliveState: true,
+//   }).then(() => {
+//     console.log('unmountAllApps方法 -- 主动卸载所有应用成功')
+//   })
+// }, 50000)
