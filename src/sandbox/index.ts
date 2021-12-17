@@ -1,23 +1,14 @@
-import type { SandBoxInterface, microWindowType } from '@micro-app/types'
-import bindFunctionToRawWidow from './bind_function'
+import type { microWindowType, SandBoxInterface } from '@micro-app/types';
 import {
-  unique,
-  setCurrentAppName,
-  defer,
-  getEffectivePath,
-  removeDomScope,
-  isString,
-  isPlainObject,
-  isArray,
-} from '../libs/utils'
-import effect, { effectDocumentEvent, releaseEffectDocumentEvent } from './effect'
+  EventCenterForMicroApp, rebuildDataCenterSnapshot, recordDataCenterSnapshot
+} from '../interact';
+import globalEnv from '../libs/global_env';
 import {
-  EventCenterForMicroApp,
-  recordDataCenterSnapshot,
-  rebuildDataCenterSnapshot,
-} from '../interact'
-import microApp from '../micro_app'
-import globalEnv from '../libs/global_env'
+  defer, getCurrentAppName, getEffectivePath, isArray, isPlainObject, isString, removeDomScope, setCurrentAppName, unique
+} from "../libs/utils";
+import microApp from '../micro_app';
+import bindFunctionToRawWidow from './bind_function';
+import effect, { effectDocumentEvent, releaseEffectDocumentEvent } from './effect';
 
 /* eslint-disable camelcase */
 type injectDataType = {
@@ -67,6 +58,13 @@ function macroTask (fn: TimerHandler): void {
   macroTimer = setTimeout(fn, 0)
 }
 
+const imageProxy = new Proxy(Image, {
+  construct: (Target, args): any => {
+    Target.prototype.__MICRO_APP_NAME__ = getCurrentAppName();
+    return new Target(...args);
+  },
+});
+
 export default class SandBox implements SandBoxInterface {
   static activeCount = 0 // number of active sandbox
   // @ts-ignore
@@ -108,6 +106,10 @@ export default class SandBox implements SandBoxInterface {
 
         if (['window', 'self', 'globalThis'].includes(key as string)) {
           return this.proxyWindow
+        }
+
+        if (key === "Image") {
+          return imageProxy;
         }
 
         if (key === 'top' || key === 'parent') {
