@@ -285,7 +285,6 @@ export default class CreateApp implements AppInterface {
    */
   private actionsForUnmount (destroy: boolean, unmountcb?: CallableFunction): void {
     this.sandBox?.stop()
-
     if (destroy) {
       this.actionsForCompletelyDestory()
     } else if (this.umdMode && (this.container as Element).childElementCount) {
@@ -315,6 +314,16 @@ export default class CreateApp implements AppInterface {
 
   // hidden app when disconnectedCallback called with keep-alive
   hiddenKeepAliveApp (): void {
+    const oldContainer = this.container
+
+    cloneContainer(
+      this.container as Element,
+      this.keepAliveContainer ? this.keepAliveContainer : (this.keepAliveContainer = document.createElement('div')),
+      false,
+    )
+
+    this.container = this.keepAliveContainer
+
     this.keepAliveState = keepAliveStates.KEEP_ALIVE_HIDDEN
 
     // event should dispatch before clone node
@@ -325,18 +334,10 @@ export default class CreateApp implements AppInterface {
 
     // dispatch afterhidden event to base app
     dispatchLifecyclesEvent(
-      this.container!,
+      oldContainer!,
       this.name,
       lifeCycles.AFTERHIDDEN,
     )
-
-    cloneContainer(
-      this.container as Element,
-      this.keepAliveContainer ? this.keepAliveContainer : (this.keepAliveContainer = document.createElement('div')),
-      false,
-    )
-
-    this.container = this.keepAliveContainer
   }
 
   // show app when connectedCallback called with keep-alive
@@ -436,7 +437,7 @@ export interface unmountAppParams {
 }
 
 /**
- *
+ * unmount app by appname
  * @param appName
  * @param options unmountAppParams
  * @returns Promise<void>
@@ -460,13 +461,13 @@ export function unmountApp (appName: string, options?: unmountAppParams): Promis
         }
       } else {
         const container = getRootContainer(app.container!)
-        function unmountHandler () {
+        const unmountHandler = () => {
           container.removeEventListener('unmount', unmountHandler)
           container.removeEventListener('afterhidden', afterhiddenHandler)
           reslove()
         }
 
-        function afterhiddenHandler () {
+        const afterhiddenHandler = () => {
           container.removeEventListener('unmount', unmountHandler)
           container.removeEventListener('afterhidden', afterhiddenHandler)
           reslove()
@@ -481,7 +482,7 @@ export function unmountApp (appName: string, options?: unmountAppParams): Promis
           container.hasAttribute('destory') && (destoryAttrValue = container.getAttribute('destory'))
 
           container.setAttribute('destroy', 'true')
-          container.parentNode?.removeChild(container)
+          container.parentNode!.removeChild(container)
           container.removeAttribute('destroy')
 
           typeof destroyAttrValue === 'string' && container.setAttribute('destroy', destroyAttrValue)
@@ -490,11 +491,11 @@ export function unmountApp (appName: string, options?: unmountAppParams): Promis
           const keepAliveAttrValue = container.getAttribute('keep-alive')!
 
           container.removeAttribute('keep-alive')
-          container.parentNode?.removeChild(container)
+          container.parentNode!.removeChild(container)
 
           container.setAttribute('keep-alive', keepAliveAttrValue)
         } else {
-          container.parentNode?.removeChild(container)
+          container.parentNode!.removeChild(container)
         }
       }
     } else {
