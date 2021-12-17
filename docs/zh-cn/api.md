@@ -114,3 +114,82 @@ window.eventCenterForAppName = new EventCenterForMicroApp(appName)
 ```
 
 详情查看：[关闭沙箱后的通信方式](/zh-cn/data?id=关闭沙箱后的通信方式)
+
+
+## 8、unmountApp
+**描述：手动卸载应用**
+
+**版本限制：** 0.6.1及以上版本
+
+**介绍：**
+```js
+// unmountApp 参数配置
+interface unmountAppParams {
+  /**
+   * destory: 是否强制卸载应用并删除缓存资源，默认值：false
+   * 优先级: 高于 clearAliveState
+   * 场景1: 当子应用已经卸载或keep-alive应用已经推入后台，则清除应用状态及缓存资源
+   * 场景2: 当子应用正在运行，则卸载应用并删除状态及缓存资源
+   */
+  destroy?: boolean; 
+  /**
+   * clearAliveState: 是否清空应用的缓存状态，默认值：false
+   * 解释: 如果子应用是keep-alive，则卸载并清空状态，如果子应用不是keep-alive，则执行正常卸载流程
+   * 场景: 无论keep-alive应用正在运行还是已经推入后台，都将执行卸载操作，清空应用缓存状态，并保留缓存资源
+   */
+  clearAliveState?: boolean;
+}
+
+function unmountApp(appName: string, options?: unmountAppParams): Promise<void>
+```
+
+**使用方式：**
+```js
+// 正常流程
+unmountApp(子应用名称).then(() => console.log('卸载成功'))
+
+// 卸载应用并清空缓存资源
+unmountApp(子应用名称, { destory: true }).then(() => console.log('卸载成功'))
+
+// 如果子应用是keep-alive应用，则卸载并清空状态，如果子应用不是keep-alive应用，则正常卸载
+unmountApp(子应用名称, { clearAliveState: true }).then(() => console.log('卸载成功'))
+```
+
+## 9、unmountAllApps
+**描述：手动卸载所有应用**
+
+**版本限制：** 0.6.1及以上版本
+
+**介绍：**
+```js
+// unmountAllApps 参数配置
+interface unmountAppParams {
+  /**
+   * destory: 是否强制卸载应用并删除缓存资源，默认值：false
+   * 优先级: 高于 clearAliveState
+   * 场景1: 当子应用已经卸载或keep-alive应用已经推入后台，则清除应用状态及缓存资源
+   * 场景2: 当子应用正在运行，则卸载应用并删除状态及缓存资源
+   */
+  destroy?: boolean; 
+  /**
+   * clearAliveState: 是否清空应用的缓存状态，默认值：false
+   * 解释: 如果子应用是keep-alive，则卸载并清空状态，如果子应用不是keep-alive，则执行正常卸载流程
+   * 场景: 无论keep-alive应用正在运行还是已经推入后台，都将执行卸载操作，清空应用缓存状态，并保留缓存资源
+   */
+  clearAliveState?: boolean;
+}
+
+function unmountAllApps(appName: string, options?: unmountAppParams): Promise<void>
+```
+
+**使用方式：**
+```js
+// 正常流程
+unmountAllApps().then(() => console.log('卸载成功'))
+
+// 卸载所有应用并清空缓存资源
+unmountAllApps({ destory: true }).then(() => console.log('卸载成功'))
+
+// 如果子应用是keep-alive应用，则卸载并清空状态，如果子应用不是keep-alive应用，则正常卸载
+unmountAllApps({ clearAliveState: true }).then(() => console.log('卸载成功'))
+```
