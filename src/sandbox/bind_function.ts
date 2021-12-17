@@ -38,7 +38,7 @@ function isConstructor (value: Func | FunctionConstructor) {
 
 const rawWindowMethodMap = new WeakMap<CallableFunction, CallableFunction>()
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export default function bindFunctionToRawWidow (rawWindow: Window, value: any): unknown {
+export default function bindFunctionToRawWindow (rawWindow: Window, value: any): unknown {
   if (rawWindowMethodMap.has(value)) {
     return rawWindowMethodMap.get(value)
   }
