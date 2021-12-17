@@ -156,3 +156,12 @@ console.timeEnd('react#16');
 //   console.log('DOMParser createElement', d1, d2, d3)
 // }, 3000)
 
+
+// // 测试 Image
+// const newImg = new Image()
+// newImg.src = '/static/media/logo.6ce24c58.svg'
+// document.body.appendChild(newImg)
+
+// // 测试 cloneNode
+// var img2 = newImg.cloneNode(true)
+// document.body.appendChild(img2)

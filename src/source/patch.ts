@@ -282,6 +282,13 @@ export function patchElementPrototypeMethods (): void {
 
     return globalEnv.rawRemoveChild.call(this, oldChild) as T
   }
+
+  // patch cloneNode
+  Element.prototype.cloneNode = function cloneNode (deep?: boolean): Node {
+    const clonedNode = globalEnv.rawCloneNode.call(this, deep)
+    this.__MICRO_APP_NAME__ && (clonedNode.__MICRO_APP_NAME__ = this.__MICRO_APP_NAME__)
+    return clonedNode
+  }
 }
 
 /**
@@ -430,6 +437,7 @@ export function releasePatches (): void {
   Element.prototype.removeChild = globalEnv.rawRemoveChild
   Element.prototype.append = globalEnv.rawAppend
   Element.prototype.prepend = globalEnv.rawPrepend
+  Element.prototype.cloneNode = globalEnv.rawCloneNode
 }
 
 // Set the style of micro-app-head and micro-app-body

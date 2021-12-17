@@ -22,7 +22,7 @@ declare global {
   }
 
   interface Node {
-    __MICRO_APP_NAME__?: string
+    __MICRO_APP_NAME__?: string | null
     data?: any
   }
 
@@ -47,6 +47,7 @@ export function initGlobalEnv (): void {
     const rawRemoveChild = Element.prototype.removeChild
     const rawAppend = Element.prototype.append
     const rawPrepend = Element.prototype.prepend
+    const rawCloneNode = Element.prototype.cloneNode
 
     const rawCreateElement = Document.prototype.createElement
     const rawCreateElementNS = Document.prototype.createElementNS
@@ -89,6 +90,7 @@ export function initGlobalEnv (): void {
       rawRemoveChild,
       rawAppend,
       rawPrepend,
+      rawCloneNode,
       rawCreateElement,
       rawCreateElementNS,
       rawCreateDocumentFragment,

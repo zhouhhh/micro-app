@@ -16,7 +16,6 @@
   - [多层嵌套](zh-cn/nest)
   - [keep-alive](zh-cn/keep-alive)
   - [高级功能](zh-cn/advanced)
-  - [API](zh-cn/api)
   - [路由](zh-cn/route)
   - [应用之间跳转](zh-cn/jump)
   <!-- - [部署](zh-cn/deploy) -->
@@ -31,6 +30,6 @@
   - [Nuxtjs](zh-cn/framework/nuxtjs)
 
 - 其他
+  - [API](zh-cn/api)
   - [常见问题](zh-cn/questions)
   - [更新日志](zh-cn/changelog)
-  - [讨论区](zh-cn/chat)

@@ -122,9 +122,9 @@ microApp.start({
 
 // setTimeout(() => {
 //   unmountAllApps({
-//     // destroy: true,
-//     // clearAliveState: true,
+//     destroy: true,
+//     clearAliveState: true,
 //   }).then(() => {
 //     console.log('unmountAllApps方法 -- 主动卸载所有应用成功')
 //   })
-// }, 50000)
+// }, 10000)

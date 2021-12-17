@@ -1,14 +1,22 @@
-import type { microWindowType, SandBoxInterface } from '@micro-app/types';
+import type { microWindowType, SandBoxInterface } from '@micro-app/types'
 import {
   EventCenterForMicroApp, rebuildDataCenterSnapshot, recordDataCenterSnapshot
-} from '../interact';
-import globalEnv from '../libs/global_env';
+} from '../interact'
+import globalEnv from '../libs/global_env'
 import {
-  defer, getCurrentAppName, getEffectivePath, isArray, isPlainObject, isString, removeDomScope, setCurrentAppName, unique
-} from "../libs/utils";
-import microApp from '../micro_app';
-import bindFunctionToRawWidow from './bind_function';
-import effect, { effectDocumentEvent, releaseEffectDocumentEvent } from './effect';
+  defer,
+  getEffectivePath,
+  isArray,
+  isPlainObject,
+  isString,
+  removeDomScope,
+  setCurrentAppName,
+  unique,
+} from '../libs/utils'
+import microApp from '../micro_app'
+import bindFunctionToRawWidow from './bind_function'
+import effect, { effectDocumentEvent, releaseEffectDocumentEvent } from './effect'
+import ImageProxy from './image'
 
 /* eslint-disable camelcase */
 type injectDataType = {
@@ -58,13 +66,6 @@ function macroTask (fn: TimerHandler): void {
   macroTimer = setTimeout(fn, 0)
 }
 
-const imageProxy = new Proxy(Image, {
-  construct: (Target, args): any => {
-    Target.prototype.__MICRO_APP_NAME__ = getCurrentAppName();
-    return new Target(...args);
-  },
-});
-
 export default class SandBox implements SandBoxInterface {
   static activeCount = 0 // number of active sandbox
   // @ts-ignore
@@ -108,10 +109,6 @@ export default class SandBox implements SandBoxInterface {
           return this.proxyWindow
         }
 
-        if (key === "Image") {
-          return imageProxy;
-        }
-
         if (key === 'top' || key === 'parent') {
           if (rawWindow === rawWindow.parent) { // not in iframe
             return this.proxyWindow
@@ -121,7 +118,7 @@ export default class SandBox implements SandBoxInterface {
 
         if (key === 'hasOwnProperty') return hasOwnProperty
 
-        if (key === 'document' || key === 'eval') {
+        if (key === 'document' || key === 'eval' || key === 'Image') {
           if (this.active) {
             setCurrentAppName(appName)
             ;(macro ? macroTask : defer)(() => setCurrentAppName(null))
@@ -131,6 +128,8 @@ export default class SandBox implements SandBoxInterface {
               return rawDocument
             case 'eval':
               return eval
+            case 'Image':
+              return ImageProxy
           }
         }
 
