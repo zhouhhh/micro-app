@@ -1,4 +1,4 @@
-import { isSupportModuleScript, isBrowser } from './utils'
+import { isSupportModuleScript, isBrowser, getCurrentAppName } from './utils'
 
 type RequestIdleCallbackOptions = {
   timeout: number
@@ -59,6 +59,14 @@ export function initGlobalEnv (): void {
     const rawGetElementsByTagName = Document.prototype.getElementsByTagName
     const rawGetElementsByName = Document.prototype.getElementsByName
 
+    const ImageProxy = new Proxy(Image, {
+      construct (Target, args): HTMLImageElement {
+        const elementImage = new Target(...args)
+        elementImage.__MICRO_APP_NAME__ = getCurrentAppName()
+        return elementImage
+      },
+    })
+
     const rawWindow = Function('return window')()
     const rawDocument = Function('return document')()
     const supportModuleScript = isSupportModuleScript()
@@ -100,6 +108,7 @@ export function initGlobalEnv (): void {
       rawGetElementsByClassName,
       rawGetElementsByTagName,
       rawGetElementsByName,
+      ImageProxy,
 
       // common global vars
       rawWindow,

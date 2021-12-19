@@ -16,7 +16,6 @@ import {
 import microApp from '../micro_app'
 import bindFunctionToRawWidow from './bind_function'
 import effect, { effectDocumentEvent, releaseEffectDocumentEvent } from './effect'
-import ImageProxy from './image'
 
 /* eslint-disable camelcase */
 type injectDataType = {
@@ -129,7 +128,7 @@ export default class SandBox implements SandBoxInterface {
             case 'eval':
               return eval
             case 'Image':
-              return ImageProxy
+              return globalEnv.ImageProxy
           }
         }
 
