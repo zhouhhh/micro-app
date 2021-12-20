@@ -14,7 +14,7 @@ import {
   unique,
 } from '../libs/utils'
 import microApp from '../micro_app'
-import bindFunctionToRawWidow from './bind_function'
+import bindFunctionToRawWindow from './bind_function'
 import effect, { effectDocumentEvent, releaseEffectDocumentEvent } from './effect'
 
 /* eslint-disable camelcase */
@@ -145,7 +145,7 @@ export default class SandBox implements SandBoxInterface {
 
         const rawValue = Reflect.get(rawWindow, key)
 
-        return bindFunctionToRawWidow(rawWindow, rawValue)
+        return bindFunctionToRawWindow(rawWindow, rawValue)
       },
       set: (target: microWindowType, key: PropertyKey, value: unknown): boolean => {
         if (this.active) {
