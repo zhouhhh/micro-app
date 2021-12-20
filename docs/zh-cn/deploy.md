@@ -35,7 +35,7 @@ module.exports = {
 
 我们以[micro-app-demo](https://github.com/micro-zoe/micro-app-demo)为例介绍部署相关内容，以供大家参考，因为`micro-app-demo`覆盖了history路由、hash路由、ssr、根路径、二级路径等大部分场景，是一个典型的案例。
 
-#### 仓库代码的目录结构：
+#### 代码仓库目录结构：
 ```
 .
 ├── child_apps
@@ -319,8 +319,7 @@ server {
 }
 ```
 
-#### 具体效果访问线上地址：
+#### 线上效果如下：
 - main-vue2：[http://www.micro-zoe.com/main-vue2/](http://www.micro-zoe.com/main-vue2/)
 - main-nextjs11：[http://nextjs11.micro-zoe.com/](http://nextjs11.micro-zoe.com/)
 - main-nuxtjs2：[http://nuxtjs2.micro-zoe.com/](http://nuxtjs2.micro-zoe.com/)
-- 其它应用在后续补充...
