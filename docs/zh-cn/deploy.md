@@ -28,14 +28,14 @@ module.exports = {
 ```
 <!-- tabs:end -->
 
-## 开始
-正常来说只要开发环境和线上环境资源路径一致，并在部署后设置好nginx的跨域支持，就不会出现问题，在开发环境能够正常运行的项目，部署到服务器也一定可以正常运行。
+## 示例
+正常来说只要开发环境和线上环境资源路径一致，并在部署后设置好nginx的跨域即可，*在开发环境能够正常运行的项目，部署到服务器也一定可以正常运行*。
 
 但在实际开发中经常会出现地址404、资源丢失等问题，这通常是因为服务器配置错误或者micro-app元素url属性地址错误导致。
 
 我们以[micro-app-demo](https://github.com/micro-zoe/micro-app-demo)为例介绍部署相关内容，以供大家参考，因为`micro-app-demo`覆盖了history路由、hash路由、ssr、根路径、二级路径等大部分场景，是一个典型的案例。
 
-**仓库代码的目录结构：**
+#### 仓库代码的目录结构：
 ```
 .
 ├── child_apps
@@ -61,7 +61,7 @@ module.exports = {
 └── yarn.lock
 ```
 
-**部署到服务器的目录结构：**
+#### 部署到服务器的目录结构：
 
 ```
 root(服务器根目录)
@@ -85,3 +85,242 @@ root(服务器根目录)
 ├── main-nextjs11         // 主应用 nextjs11，监听端口号：5000
 ├── main-nuxtjs2          // 主应用 nuxtjs2，监听端口号：7000
 ```
+
+#### nginx配置如下：
+
+以下配置仅供参考，具体项目根据实际情况调整。
+```js
+# micro-zoe.com 相关配置
+server {
+  listen       80;
+  server_name  www.micro-zoe.com micro-zoe.com;
+
+  location / {
+    root /root/mygit/micro-zoe;
+    index index.php index.html index.htm;
+    # add_header Cache-Control;
+    add_header Access-Control-Allow-Origin *;
+    if ( $request_uri ~* ^.+.(js|css|jpg|png|gif|tif|dpg|jpeg|eot|svg|ttf|woff|json|mp4|rmvb|rm|wmv|avi|3gp)$ ){
+      add_header Cache-Control max-age=7776000;
+      add_header Access-Control-Allow-Origin *;
+    }
+  }
+
+  # 主应用main-angular11
+  location /main-angular11 {
+    root /root/mygit/micro-zoe;
+    add_header Access-Control-Allow-Origin *;
+    if ( $request_uri ~* ^.+.(js|css|jpg|png|gif|tif|dpg|jpeg|eot|svg|ttf|woff|json|mp4|rmvb|rm|wmv|avi|3gp)$ ){
+      add_header Cache-Control max-age=7776000;
+      add_header Access-Control-Allow-Origin *;
+    }
+    try_files $uri $uri/ /main-angular11/index.html;
+  }
+
+  # 主应用main-react16
+  location /main-react16 {
+    root /root/mygit/micro-zoe;
+    add_header Access-Control-Allow-Origin *;
+    if ( $request_uri ~* ^.+.(js|css|jpg|png|gif|tif|dpg|jpeg|eot|svg|ttf|woff|json|mp4|rmvb|rm|wmv|avi|3gp)$ ){
+      add_header Cache-Control max-age=7776000;
+      add_header Access-Control-Allow-Origin *;
+    }
+    try_files $uri $uri/ /main-react16/index.html;
+  }
+
+  # 主应用main-react17
+  location /main-react17 {
+    root /root/mygit/micro-zoe;
+    add_header Access-Control-Allow-Origin *;
+    if ( $request_uri ~* ^.+.(js|css|jpg|png|gif|tif|dpg|jpeg|eot|svg|ttf|woff|json|mp4|rmvb|rm|wmv|avi|3gp)$ ){
+      add_header Cache-Control max-age=7776000;
+      add_header Access-Control-Allow-Origin *;
+    }
+    try_files $uri $uri/ /main-react17/index.html;
+  }
+
+  # 主应用main-vite
+  location /main-vite {
+    root /root/mygit/micro-zoe;
+    add_header Access-Control-Allow-Origin *;
+    if ( $request_uri ~* ^.+.(js|css|jpg|png|gif|tif|dpg|jpeg|eot|svg|ttf|woff|json|mp4|rmvb|rm|wmv|avi|3gp)$ ){
+      add_header Cache-Control max-age=7776000;
+      add_header Access-Control-Allow-Origin *;
+    }
+    try_files $uri $uri/ /main-vite/index.html;
+  }
+
+  # 主应用main-vue2
+  location /main-vue2 {
+    root /root/mygit/micro-zoe;
+    add_header Access-Control-Allow-Origin *;
+    if ( $request_uri ~* ^.+.(js|css|jpg|png|gif|tif|dpg|jpeg|eot|svg|ttf|woff|json|mp4|rmvb|rm|wmv|avi|3gp)$ ){
+      add_header Cache-Control max-age=7776000;
+      add_header Access-Control-Allow-Origin *;
+    }
+    try_files $uri $uri/ /main-vue2/index.html;
+  }
+
+  # 主应用main-vue3
+  location /main-vue3 {
+    root /root/mygit/micro-zoe;
+    add_header Access-Control-Allow-Origin *;
+    if ( $request_uri ~* ^.+.(js|css|jpg|png|gif|tif|dpg|jpeg|eot|svg|ttf|woff|json|mp4|rmvb|rm|wmv|avi|3gp)$ ){
+      add_header Cache-Control max-age=7776000;
+      add_header Access-Control-Allow-Origin *;
+    }
+    try_files $uri $uri/ /main-vue3/index.html;
+  }
+
+  # 子应用child-angular11
+  location /child/angular11 {
+    root /root/mygit/micro-zoe;
+    add_header Access-Control-Allow-Origin *;
+    if ( $request_uri ~* ^.+.(js|css|jpg|png|gif|tif|dpg|jpeg|eot|svg|ttf|woff|json|mp4|rmvb|rm|wmv|avi|3gp)$ ){
+      add_header Cache-Control max-age=7776000;
+      add_header Access-Control-Allow-Origin *;
+    }
+    try_files $uri $uri/ /child/angular11/index.html;
+  }
+
+  # 子应用child-react16
+  location /child/react16 {
+    root /root/mygit/micro-zoe;
+    add_header Access-Control-Allow-Origin *;
+    if ( $request_uri ~* ^.+.(js|css|jpg|png|gif|tif|dpg|jpeg|eot|svg|ttf|woff|json|mp4|rmvb|rm|wmv|avi|3gp)$ ){
+      add_header Cache-Control max-age=7776000;
+      add_header Access-Control-Allow-Origin *;
+    }
+    try_files $uri $uri/ /child/react16/index.html;
+  }
+
+  # 子应用child-react17
+  location /child/react17 {
+    root /root/mygit/micro-zoe;
+    add_header Access-Control-Allow-Origin *;
+    if ( $request_uri ~* ^.+.(js|css|jpg|png|gif|tif|dpg|jpeg|eot|svg|ttf|woff|json|mp4|rmvb|rm|wmv|avi|3gp)$ ){
+      add_header Cache-Control max-age=7776000;
+      add_header Access-Control-Allow-Origin *;
+    }
+    try_files $uri $uri/ /child/react17/index.html;
+  }
+  
+  # 子应用child-sidebar
+  location /child/sidebar {
+    root /root/mygit/micro-zoe;
+    add_header Access-Control-Allow-Origin *;
+    if ( $request_uri ~* ^.+.(js|css|jpg|png|gif|tif|dpg|jpeg|eot|svg|ttf|woff|json|mp4|rmvb|rm|wmv|avi|3gp)$ ){
+      add_header Cache-Control max-age=7776000;
+      add_header Access-Control-Allow-Origin *;
+    }
+    try_files $uri $uri/ /child/sidebar/index.html;
+  }
+
+  # 子应用child-vite
+  location /child/vite {
+    root /root/mygit/micro-zoe;
+    add_header Access-Control-Allow-Origin *;
+    if ( $request_uri ~* ^.+.(js|css|jpg|png|gif|tif|dpg|jpeg|eot|svg|ttf|woff|json|mp4|rmvb|rm|wmv|avi|3gp)$ ){
+      add_header Cache-Control max-age=7776000;
+      add_header Access-Control-Allow-Origin *;
+    }
+    try_files $uri $uri/ /child/vite/index.html;
+  }
+
+  # 子应用child-vue2
+  location /child/vue2 {
+    root /root/mygit/micro-zoe;
+    add_header Access-Control-Allow-Origin *;
+    if ( $request_uri ~* ^.+.(js|css|jpg|png|gif|tif|dpg|jpeg|eot|svg|ttf|woff|json|mp4|rmvb|rm|wmv|avi|3gp)$ ){
+      add_header Cache-Control max-age=7776000;
+      add_header Access-Control-Allow-Origin *;
+    }
+    try_files $uri $uri/ /child/vue2/index.html;
+  }
+
+  # 子应用child-vue3
+  location /child/vue3 {
+    root /root/mygit/micro-zoe;
+    add_header Access-Control-Allow-Origin *;
+    if ( $request_uri ~* ^.+.(js|css|jpg|png|gif|tif|dpg|jpeg|eot|svg|ttf|woff|json|mp4|rmvb|rm|wmv|avi|3gp)$ ){
+      add_header Cache-Control max-age=7776000;
+      add_header Access-Control-Allow-Origin *;
+    }
+    try_files $uri $uri/ /child/vue3/index.html;
+  }
+  
+  error_page 404 /404.html;
+      location = /40x.html {
+  }
+
+  error_page 500 502 503 504 /50x.html;
+      location = /50x.html {
+  }
+}
+
+# 主应用nextjs11部署后监听5000端口，设置代理指向5000端口，则可以通过 nextjs11.micro-zoe.com 访问主应用
+server {
+  listen       80;
+  server_name  nextjs11.micro-zoe.com;
+
+  root html;
+  index index.html index.htm;
+
+  location / {
+    proxy_pass http://127.0.0.1:5000;
+    proxy_set_header Host $host:80;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    # add_header Cache-Control;
+    if ( $request_uri ~* ^.+.(js|css|jpg|png|gif|tif|dpg|jpeg|eot|svg|ttf|woff|json|mp4|rmvb|rm|wmv|avi|3gp)$ ){
+        add_header Cache-Control max-age=7776000;
+        add_header Access-Control-Allow-Origin *;
+    }
+  }
+
+
+  error_page 404 /404.html;
+    location = /40x.html {
+  }
+
+  error_page 500 502 503 504 /50x.html;
+    location = /50x.html {
+  }
+}
+
+# 主应用nuxtjs2部署后监听7000端口，设置代理指向7000端口，则可以通过 nuxtjs2.micro-zoe.com 访问主应用
+server {
+  listen       80;
+  server_name  nuxtjs2.micro-zoe.com;
+
+  root html;
+  index index.html index.htm;
+
+  location / {
+    proxy_pass http://127.0.0.1:7000;
+    proxy_set_header Host $host:80;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    # add_header Cache-Control;
+    if ( $request_uri ~* ^.+.(js|css|jpg|png|gif|tif|dpg|jpeg|eot|svg|ttf|woff|json|mp4|rmvb|rm|wmv|avi|3gp)$ ){
+        add_header Cache-Control max-age=7776000;
+        add_header Access-Control-Allow-Origin *;
+    }
+  }
+
+
+  error_page 404 /404.html;
+    location = /40x.html {
+  }
+
+  error_page 500 502 503 504 /50x.html;
+    location = /50x.html {
+  }
+}
+```
+
+#### 具体效果访问线上地址：
+- main-vue2：[http://www.micro-zoe.com/main-vue2/](http://www.micro-zoe.com/main-vue2/)
+- main-nextjs11：[http://nextjs11.micro-zoe.com/](http://nextjs11.micro-zoe.com/)
+- main-nuxtjs2：[http://nuxtjs2.micro-zoe.com/](http://nuxtjs2.micro-zoe.com/)
+- 其它应用在后续补充...
