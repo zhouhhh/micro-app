@@ -1,4 +1,4 @@
-import { appInstanceMap } from '../create_app'
+import type { AppInterface } from '@micro-app/types'
 import { CompletionPath, isSafari, pureCreateElement, getLinkFileDir } from '../libs/utils'
 import microApp from '../micro_app'
 import globalEnv from '../libs/global_env'
@@ -132,30 +132,33 @@ function commonAction (
   baseURI: string,
   linkpath?: string,
 ) {
-  const rules: CSSRule[] = Array.from(templateStyle.sheet?.cssRules ?? [])
-  let result = scopedHost(
-    scopedRule(rules, prefix),
-    baseURI,
-    originContent,
-    linkpath,
-  )
-  /**
-   * Solve the problem of missing content quotes in some Safari browsers
-   * docs: https://developer.mozilla.org/zh-CN/docs/Web/CSS/content
-   * If there are still problems, it is recommended to use the attr()
-   */
-  if (isSafari()) {
-    result = result.replace(/([;{]\s*content:\s*)([^\s"][^";}]*)/gm, (all, $1, $2) => {
-      if (
-        $2 === 'none' ||
-        /^(url\()|(counter\()|(attr\()|(open-quote)|(close-quote)/.test($2)
-      ) {
-        return all
-      }
-      return `${$1}"${$2}"`
-    })
+  if (!styleElement.__MICRO_APP_HAS_SCOPED__) {
+    const rules: CSSRule[] = Array.from(templateStyle.sheet?.cssRules ?? [])
+    let result = scopedHost(
+      scopedRule(rules, prefix),
+      baseURI,
+      originContent,
+      linkpath,
+    )
+    /**
+     * Solve the problem of missing content quotes in some Safari browsers
+     * docs: https://developer.mozilla.org/zh-CN/docs/Web/CSS/content
+     * If there are still problems, it is recommended to use the attr()
+     */
+    if (isSafari()) {
+      result = result.replace(/([;{]\s*content:\s*)([^\s"][^";}]*)/gm, (all, $1, $2) => {
+        if (
+          $2 === 'none' ||
+          /^(url\()|(counter\()|(attr\()|(open-quote)|(close-quote)/.test($2)
+        ) {
+          return all
+        }
+        return `${$1}"${$2}"`
+      })
+    }
+    styleElement.textContent = result
+    styleElement.__MICRO_APP_HAS_SCOPED__ = true
   }
-  styleElement.textContent = result
 }
 
 /**
@@ -163,10 +166,12 @@ function commonAction (
  * @param styleElement target style element
  * @param appName app name
  */
-export default function scopedCSS (styleElement: HTMLStyleElement, appName: string): HTMLStyleElement {
-  const app = appInstanceMap.get(appName)
-  if (app?.scopecss) {
-    const prefix = `${microApp.tagName}[name=${appName}]`
+export default function scopedCSS (
+  styleElement: HTMLStyleElement,
+  app: AppInterface,
+): HTMLStyleElement {
+  if (app.scopecss) {
+    const prefix = `${microApp.tagName}[name=${app.name}]`
     let templateStyle = globalEnv.templateStyle
     if (!templateStyle) {
       globalEnv.templateStyle = templateStyle = pureCreateElement('style')
@@ -177,7 +182,14 @@ export default function scopedCSS (styleElement: HTMLStyleElement, appName: stri
 
     if (styleElement.textContent) {
       templateStyle.textContent = styleElement.textContent
-      commonAction(templateStyle, styleElement, styleElement.textContent, prefix, app.url, styleElement.linkpath)
+      commonAction(
+        templateStyle,
+        styleElement,
+        styleElement.textContent,
+        prefix,
+        app.url,
+        styleElement.__MICRO_APP_LINK_PATH__,
+      )
       templateStyle.textContent = ''
     } else {
       const observer = new MutationObserver(function () {
@@ -187,7 +199,14 @@ export default function scopedCSS (styleElement: HTMLStyleElement, appName: stri
           (!styleElement.textContent && styleElement.sheet?.cssRules?.length) ||
           styleElement.hasAttribute('data-styled')
         ) return
-        commonAction(styleElement, styleElement, styleElement.textContent!, prefix, app.url, styleElement.linkpath)
+        commonAction(
+          styleElement,
+          styleElement,
+          styleElement.textContent!,
+          prefix,
+          app.url,
+          styleElement.__MICRO_APP_LINK_PATH__,
+        )
       })
 
       observer.observe(styleElement, { childList: true })

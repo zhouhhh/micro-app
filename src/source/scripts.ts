@@ -180,6 +180,7 @@ export function execScripts (
   const deferScriptInfo: Array<[string, sourceScriptInfo]> = []
   for (const [url, info] of scriptListEntries) {
     if (!info.isDynamic) {
+      // Notice the second render
       if (info.defer || info.async) {
         if (info.isExternal && !info.code) {
           deferScriptPromise.push(fetchSource(url, app.name))
@@ -188,9 +189,9 @@ export function execScripts (
         }
         deferScriptInfo.push([url, info])
 
-        if (info.module) initedHook.moduleCount = initedHook.moduleCount ? ++initedHook.moduleCount : 1
+        info.module && (initedHook.moduleCount = initedHook.moduleCount ? ++initedHook.moduleCount : 1)
       } else {
-        runScript(url, info.code, app, info.module, false)
+        runScript(url, app, info, false)
         initedHook(false)
       }
     }
@@ -200,8 +201,9 @@ export function execScripts (
     Promise.all(deferScriptPromise).then((res: string[]) => {
       res.forEach((code, index) => {
         const [url, info] = deferScriptInfo[index]
-        runScript(url, info.code = info.code || code, app, info.module, false, initedHook)
-        if (!info.module) initedHook(false)
+        info.code = info.code || code
+        runScript(url, app, info, false, initedHook)
+        !info.module && initedHook(false)
       })
       initedHook(isUndefined(initedHook.moduleCount))
     }).catch((err) => {
@@ -216,30 +218,28 @@ export function execScripts (
 /**
  * run code
  * @param url script address
- * @param code js code
  * @param app app
- * @param module type='module' of script
+ * @param info script info
  * @param isDynamic dynamically created script
  * @param callback callback of module script
  */
 export function runScript (
   url: string,
-  code: string,
   app: AppInterface,
-  module: boolean,
+  info: sourceScriptInfo,
   isDynamic: boolean,
   callback?: moduleCallBack,
 ): any {
   try {
-    code = bindScope(url, code, app, module)
-    if (app.inline || module) {
+    const code = bindScope(url, app, info.code, info.module)
+    if (app.inline || info.module) {
       const scriptElement = pureCreateElement('script')
-      setInlinScriptContent(url, code, module, scriptElement, callback)
+      runCode2InlineScript(url, code, info.module, scriptElement, callback)
       if (isDynamic) return scriptElement
       // TEST IGNORE
       app.container?.querySelector('micro-app-body')!.appendChild(scriptElement)
     } else {
-      Function(code)()
+      runCode2Function(code, info)
       if (isDynamic) return document.createComment('dynamic script extract by micro-app')
     }
   } catch (e) {
@@ -262,18 +262,19 @@ export function runDynamicRemoteScript (
 ): HTMLScriptElement | Comment {
   const dispatchScriptOnLoadEvent = () => dispatchOnLoadEvent(originScript)
 
+  // url is unique
   if (app.source.scripts.has(url)) {
     const existInfo: sourceScriptInfo = app.source.scripts.get(url)!
-    if (!info.module) defer(dispatchScriptOnLoadEvent)
-    return runScript(url, existInfo.code, app, info.module, true, dispatchScriptOnLoadEvent)
+    !existInfo.module && defer(dispatchScriptOnLoadEvent)
+    return runScript(url, app, existInfo, true, dispatchScriptOnLoadEvent)
   }
 
   if (globalScripts.has(url)) {
     const code = globalScripts.get(url)!
     info.code = code
     app.source.scripts.set(url, info)
-    if (!info.module) defer(dispatchScriptOnLoadEvent)
-    return runScript(url, code, app, info.module, true, dispatchScriptOnLoadEvent)
+    !info.module && defer(dispatchScriptOnLoadEvent)
+    return runScript(url, app, info, true, dispatchScriptOnLoadEvent)
   }
 
   let replaceElement: Comment | HTMLScriptElement
@@ -286,18 +287,18 @@ export function runDynamicRemoteScript (
   fetchSource(url, app.name).then((code: string) => {
     info.code = code
     app.source.scripts.set(url, info)
-    if (info.isGlobal) globalScripts.set(url, code)
+    info.isGlobal && globalScripts.set(url, code)
     try {
-      code = bindScope(url, code, app, info.module)
+      code = bindScope(url, app, code, info.module)
       if (app.inline || info.module) {
-        setInlinScriptContent(url, code, info.module, replaceElement as HTMLScriptElement, dispatchScriptOnLoadEvent)
+        runCode2InlineScript(url, code, info.module, replaceElement as HTMLScriptElement, dispatchScriptOnLoadEvent)
       } else {
-        Function(code)()
+        runCode2Function(code, info)
       }
     } catch (e) {
       console.error(`[micro-app from runDynamicScript] app ${app.name}: `, e, url)
     }
-    if (!info.module) dispatchOnLoadEvent(originScript)
+    !info.module && dispatchOnLoadEvent(originScript)
   }).catch((err) => {
     logError(err, app.name)
     dispatchOnErrorEvent(originScript)
@@ -309,12 +310,12 @@ export function runDynamicRemoteScript (
 /**
  * common handle for inline script
  * @param url script address
- * @param code js code
+ * @param code bound code
  * @param module type='module' of script
  * @param scriptElement target script element
  * @param callback callback of module script
  */
-function setInlinScriptContent (
+function runCode2InlineScript (
   url: string,
   code: string,
   module: boolean,
@@ -326,9 +327,6 @@ function setInlinScriptContent (
     const blob = new Blob([code], { type: 'text/javascript' })
     scriptElement.src = URL.createObjectURL(blob)
     scriptElement.setAttribute('type', 'module')
-    if (!url.startsWith('inline-')) {
-      scriptElement.setAttribute('originSrc', url)
-    }
     if (callback) {
       callback.moduleCount && callback.moduleCount--
       scriptElement.onload = callback.bind(scriptElement, callback.moduleCount === 0)
@@ -336,19 +334,31 @@ function setInlinScriptContent (
   } else {
     scriptElement.textContent = code
   }
+
+  if (!url.startsWith('inline-')) {
+    scriptElement.setAttribute('data-origin-src', url)
+  }
+}
+
+// init & run code2Function
+function runCode2Function (code: string, info: sourceScriptInfo) {
+  if (!info.code2Function) {
+    info.code2Function = new Function(code)
+  }
+  info.code2Function.call(window)
 }
 
 /**
  * bind js scope
  * @param url script address
- * @param code code
  * @param app app
+ * @param code code
  * @param module type='module' of script
  */
 function bindScope (
   url: string,
-  code: string,
   app: AppInterface,
+  code: string,
   module: boolean,
 ): string {
   if (isPlainObject(microApp.plugins)) {

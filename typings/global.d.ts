@@ -30,6 +30,7 @@ declare module '@micro-app/types' {
     defer: boolean // defer script
     module: boolean // module type script
     isGlobal?: boolean // share js to global
+    code2Function?: Function // code to Function
   }
 
   interface sourceType {
@@ -43,7 +44,8 @@ declare module '@micro-app/types' {
     isPrefetch: boolean // whether prefetch app, default is false
     name: string // app name
     url: string // app url
-    container: HTMLElement | ShadowRoot | null // app container
+    ssrUrl: string // html path in ssr mode
+    container: HTMLElement | ShadowRoot | null // container maybe null, micro-app, shadowRoot, DIV(keep-alive)
     inline: boolean //  whether js runs in inline script mode, default is false
     scopecss: boolean // whether use css scoped, default is true
     useSandbox: boolean // whether use js sandbox, default is true
@@ -70,13 +72,24 @@ declare module '@micro-app/types' {
     ): void
 
     // unmount app
-    unmount (destroy: boolean): void
+    unmount (destroy: boolean, unmountcb?: CallableFunction): void
 
     // app rendering error
     onerror (e: Error): void
 
-    // get app status
-    getAppStatus (): string
+    // get app state
+    getAppState (): string
+
+    getKeepAliveState(): string | null
+
+    // actions for completely destroy
+    actionsForCompletelyDestory (): void
+
+    // hidden app when disconnectedCallback with keep-alive
+    hiddenKeepAliveApp (): void
+
+    // show app when connectedCallback with keep-alive
+    showKeepAliveApp (container: HTMLElement | ShadowRoot): void
   }
 
   interface MicroAppElementType {
@@ -157,6 +170,7 @@ declare module '@micro-app/types' {
     disableScopecss?: boolean
     disableSandbox?: boolean
     macro?: boolean
+    ssr?: boolean
     lifeCycles?: lifeCyclesType
     preFetchApps?: prefetchParamList
     plugins?: plugins
@@ -173,6 +187,7 @@ declare module '@micro-app/types' {
     disableScopecss?: boolean
     disableSandbox?: boolean
     macro?: boolean
+    ssr?: boolean
     lifeCycles?: lifeCyclesType
     plugins?: plugins
     fetch?: fetchType

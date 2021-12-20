@@ -4,7 +4,7 @@ export enum ObservedAttrName {
 }
 
 // app status
-export enum appStatus {
+export enum appStates {
   NOT_LOADED = 'NOT_LOADED',
   LOADING_SOURCE_CODE = 'LOADING_SOURCE_CODE',
   LOAD_SOURCE_FINISHED = 'LOAD_SOURCE_FINISHED',
@@ -21,4 +21,14 @@ export enum lifeCycles {
   MOUNTED = 'mounted',
   UNMOUNT = 'unmount',
   ERROR = 'error',
+  // 👇 keep-alive only
+  BEFORESHOW = 'beforeshow',
+  AFTERSHOW = 'aftershow',
+  AFTERHIDDEN = 'afterhidden',
+}
+
+// keep-alive status
+export enum keepAliveStates {
+  KEEP_ALIVE_SHOW = 'KEEP_ALIVE_SHOW',
+  KEEP_ALIVE_HIDDEN = 'KEEP_ALIVE_HIDDEN',
 }

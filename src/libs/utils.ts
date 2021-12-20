@@ -119,10 +119,12 @@ export function addProtocol (url: string): string {
 }
 
 /**
- * Format URL address
- * @param url address
+ * format URL address
+ * note the scenes:
+ * 1. micro-app -> attributeChangedCallback
+ * 2. preFetch
  */
-export function formatURL (url: string | null, appName: string | null = null): string {
+export function formatAppURL (url: string | null, appName: string | null = null): string {
   if (!isString(url) || !url) return ''
 
   try {
@@ -139,10 +141,19 @@ export function formatURL (url: string | null, appName: string | null = null): s
   }
 }
 
-// export function formatName (name: string): string {
-//   if (!isString(name) || !name) return ''
-//   return name.replace(/(^\d+)|([^\w\d-_])/gi, '')
-// }
+/**
+ * format name
+ * note the scenes:
+ * 1. micro-app -> attributeChangedCallback
+ * 2. event_center -> EventCenterForMicroApp -> constructor
+ * 3. event_center -> EventCenterForBaseApp -> all methods
+ * 4. preFetch
+ * 5. plugins
+ */
+export function formatAppName (name: string | null): string {
+  if (!isString(name) || !name) return ''
+  return name.replace(/(^\d+)|([^\w\d-_])/gi, '')
+}
 
 /**
  * Get valid address, such as https://xxx/xx/xx.html to https://xxx/xx/
@@ -300,7 +311,7 @@ export function pureCreateElement<K extends keyof HTMLElementTagNameMap> (tagNam
  * @param target Accept cloned elements
  * @param deep deep clone or transfer dom
  */
-export function cloneNode <T extends Element, Q extends Element> (
+export function cloneContainer <T extends Element, Q extends Element> (
   origin: T,
   target: Q,
   deep: boolean,
@@ -333,4 +344,12 @@ export function isUniqueElement (key: string): boolean {
     /^head$/i.test(key) ||
     /^html$/i.test(key)
   )
+}
+
+/**
+ * get micro-app element
+ * @param target app container
+ */
+export function getRootContainer (target: HTMLElement | ShadowRoot): HTMLElement {
+  return (isShadowRoot(target) ? (target as ShadowRoot).host : target) as HTMLElement
 }

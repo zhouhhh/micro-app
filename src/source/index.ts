@@ -38,8 +38,8 @@ function flatChildren (
     if (dom instanceof HTMLLinkElement) {
       if (dom.hasAttribute('exclude')) {
         parent.replaceChild(document.createComment('link element with exclude attribute ignored by micro-app'), dom)
-      } else if (app.scopecss && !dom.hasAttribute('ignore')) {
-        extractLinkFromHtml(dom, parent, app, microAppHead)
+      } else if (!dom.hasAttribute('ignore')) {
+        extractLinkFromHtml(dom, parent, app)
       } else if (dom.hasAttribute('href')) {
         dom.setAttribute('href', CompletionPath(dom.getAttribute('href')!, app.url))
       }
@@ -47,7 +47,7 @@ function flatChildren (
       if (dom.hasAttribute('exclude')) {
         parent.replaceChild(document.createComment('style element with exclude attribute ignored by micro-app'), dom)
       } else if (app.scopecss && !dom.hasAttribute('ignore')) {
-        microAppHead.appendChild(scopedCSS(dom, app.name))
+        scopedCSS(dom, app)
       }
     } else if (dom instanceof HTMLScriptElement) {
       extractScriptElement(dom, parent, app)
@@ -95,7 +95,7 @@ function extractSourceDom (htmlStr: string, app: AppInterface) {
  * @param app app
  */
 export default function extractHtml (app: AppInterface): void {
-  fetchSource(app.url, app.name, { cache: 'no-cache' }).then((htmlStr: string) => {
+  fetchSource(app.ssrUrl || app.url, app.name, { cache: 'no-cache' }).then((htmlStr: string) => {
     if (!htmlStr) {
       const msg = 'html is empty, please check in detail'
       app.onerror(new Error(msg))

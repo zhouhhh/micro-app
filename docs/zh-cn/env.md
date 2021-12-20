@@ -32,7 +32,6 @@ if (window.__MICRO_APP_ENVIRONMENT__) {
 **步骤2:** 在子应用的入口文件的`最顶部`引入`public-path.js`
 ```js
 import './public-path'
-...
 ```
 
 ### `__MICRO_APP_BASE_ROUTE__`

@@ -1,7 +1,7 @@
 import type { OptionsType, MicroAppConfigType, lifeCyclesType, plugins, fetchType } from '@micro-app/types'
 import { defineElement } from './micro_app_element'
 import preFetch, { getGlobalAssets } from './prefetch'
-import { logError, logWarn, isFunction, isBrowser, isPlainObject } from './libs/utils'
+import { logError, logWarn, isFunction, isBrowser, isPlainObject, formatAppName } from './libs/utils'
 import { EventCenterForBaseApp } from './interact'
 import { initGlobalEnv } from './libs/global_env'
 
@@ -13,6 +13,7 @@ class MicroApp extends EventCenterForBaseApp implements MicroAppConfigType {
   disableScopecss?: boolean
   disableSandbox?: boolean
   macro?: boolean
+  ssr?: boolean
   lifeCycles?: lifeCyclesType
   plugins?: plugins
   fetch?: fetchType
@@ -41,7 +42,7 @@ class MicroApp extends EventCenterForBaseApp implements MicroAppConfigType {
       this.destroy = options.destroy
       /**
        * compatible with versions below 0.4.2 of destroy
-       * Do not merge with the previous line of code
+       * do not merge with the previous line
        */
       // @ts-ignore
       this.destory = options.destory
@@ -49,27 +50,34 @@ class MicroApp extends EventCenterForBaseApp implements MicroAppConfigType {
       this.disableScopecss = options.disableScopecss
       this.disableSandbox = options.disableSandbox
       this.macro = options.macro
-      if (isFunction(options.fetch)) this.fetch = options.fetch
+      this.ssr = options.ssr
+      isFunction(options.fetch) && (this.fetch = options.fetch)
 
-      if (isPlainObject(options.lifeCycles)) {
-        this.lifeCycles = options.lifeCycles
-      }
-
-      if (isPlainObject(options.plugins)) {
-        this.plugins = options.plugins
-      }
+      isPlainObject(options.lifeCycles) && (this.lifeCycles = options.lifeCycles)
 
       // load app assets when browser is idle
-      if (options.preFetchApps) {
-        preFetch(options.preFetchApps)
-      }
+      options.preFetchApps && preFetch(options.preFetchApps)
 
       // load global assets when browser is idle
-      if (options.globalAssets) {
-        getGlobalAssets(options.globalAssets)
+      options.globalAssets && getGlobalAssets(options.globalAssets)
+
+      if (isPlainObject(options.plugins)) {
+        const modules = options.plugins!.modules
+        if (isPlainObject(modules)) {
+          for (const appName in modules) {
+            const formattedAppName = formatAppName(appName)
+            if (formattedAppName && appName !== formattedAppName) {
+              modules[formattedAppName] = modules[appName]
+              delete modules[appName]
+            }
+          }
+        }
+
+        this.plugins = options.plugins
       }
     }
 
+    // define customElement after init
     defineElement(this.tagName)
   }
 }

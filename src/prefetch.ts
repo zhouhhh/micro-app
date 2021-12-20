@@ -1,6 +1,17 @@
 import type { prefetchParamList, prefetchParam, globalAssetsType } from '@micro-app/types'
 import CreateApp, { appInstanceMap } from './create_app'
-import { requestIdleCallback, formatURL, promiseStream, logError, isBrowser, isArray, isPlainObject, isString, isFunction } from './libs/utils'
+import {
+  requestIdleCallback,
+  formatAppURL,
+  formatAppName,
+  promiseStream,
+  logError,
+  isBrowser,
+  isArray,
+  isPlainObject,
+  isString,
+  isFunction,
+} from './libs/utils'
 import { fetchSource } from './source/fetch'
 import { globalLinks } from './source/links'
 import { globalScripts } from './source/scripts'
@@ -11,14 +22,12 @@ function filterPreFetchTarget<T extends prefetchParam> (apps: T[]): T[] {
 
   if (isArray(apps)) {
     apps.forEach((item) => {
-      item.url = formatURL(item.url, item.name)
-      if (
-        isPlainObject(item) &&
-        isString(item.name) &&
-        item.url &&
-        !appInstanceMap.has(item.name)
-      ) {
-        validApps.push(item)
+      if (isPlainObject(item)) {
+        item.name = formatAppName(item.name)
+        item.url = formatAppURL(item.url, item.name)
+        if (item.name && item.url && !appInstanceMap.has(item.name)) {
+          validApps.push(item)
+        }
       }
     })
   }
@@ -47,7 +56,7 @@ export default function preFetch (apps: prefetchParamList): void {
     return logError('preFetch is only supported in browser environment')
   }
   requestIdleCallback(() => {
-    if (isFunction(apps)) apps = (apps as Function)()
+    isFunction(apps) && (apps = (apps as Function)())
 
     filterPreFetchTarget(apps as prefetchParam[]).forEach((item) => {
       const app = new CreateApp({

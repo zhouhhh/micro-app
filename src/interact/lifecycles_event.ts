@@ -1,7 +1,7 @@
 import microApp from '../micro_app'
-import { logError, isFunction, removeDomScope, isShadowRoot } from '../libs/utils'
+import { logError, isFunction, removeDomScope, getRootContainer } from '../libs/utils'
 
-function eventHandler (event: CustomEvent, element: HTMLElement): void {
+function formatEventInfo (event: CustomEvent, element: HTMLElement): void {
   Object.defineProperties(event, {
     currentTarget: {
       get () {
@@ -32,9 +32,9 @@ export default function dispatchLifecyclesEvent (
 ): void {
   if (!element) {
     return logError(`element does not exist in lifecycle ${lifecycleName}`, appName)
-  } else if (isShadowRoot(element)) {
-    element = (element as ShadowRoot).host as HTMLElement
   }
+
+  element = getRootContainer(element)
 
   // clear dom scope before dispatch lifeCycles event to base app, especially mounted & unmount
   removeDomScope()
@@ -50,7 +50,7 @@ export default function dispatchLifecyclesEvent (
     detail,
   })
 
-  eventHandler(event, element as HTMLElement)
+  formatEventInfo(event, element)
   // global hooks
   // @ts-ignore
   if (isFunction(microApp.lifeCycles?.[lifecycleName])) {
@@ -62,10 +62,18 @@ export default function dispatchLifecyclesEvent (
 }
 
 /**
- * Dispatch unmount event to micro app
- * @param appName app.name
+ * Dispatch custom event to micro app
+ * @param eventName event name
+ * @param appName app name
+ * @param detail event detail
  */
-export function dispatchUnmountToMicroApp (appName: string): void {
-  const event = new CustomEvent(`unmount-${appName}`)
+export function dispatchCustomEventToMicroApp (
+  eventName: string,
+  appName: string,
+  detail: Record<string, any> = {},
+): void {
+  const event = new CustomEvent(`${eventName}-${appName}`, {
+    detail,
+  })
   window.dispatchEvent(event)
 }

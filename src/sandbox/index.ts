@@ -1,23 +1,21 @@
-import type { SandBoxInterface, microWindowType } from '@micro-app/types'
-import bindFunctionToRawWindow from './bind_function'
+import type { microWindowType, SandBoxInterface } from '@micro-app/types'
 import {
-  unique,
-  setCurrentAppName,
+  EventCenterForMicroApp, rebuildDataCenterSnapshot, recordDataCenterSnapshot
+} from '../interact'
+import globalEnv from '../libs/global_env'
+import {
   defer,
   getEffectivePath,
-  removeDomScope,
-  isString,
-  isPlainObject,
   isArray,
+  isPlainObject,
+  isString,
+  removeDomScope,
+  setCurrentAppName,
+  unique,
 } from '../libs/utils'
-import effect, { effectDocumentEvent, releaseEffectDocumentEvent } from './effect'
-import {
-  EventCenterForMicroApp,
-  recordDataCenterSnapshot,
-  rebuildDataCenterSnapshot,
-} from '../interact'
 import microApp from '../micro_app'
-import globalEnv from '../libs/global_env'
+import bindFunctionToRawWindow from './bind_function'
+import effect, { effectDocumentEvent, releaseEffectDocumentEvent } from './effect'
 
 /* eslint-disable camelcase */
 type injectDataType = {
@@ -63,7 +61,7 @@ const unscopables = {
  */
 let macroTimer: number
 function macroTask (fn: TimerHandler): void {
-  if (macroTimer) clearTimeout(macroTimer)
+  macroTimer && clearTimeout(macroTimer)
   macroTimer = setTimeout(fn, 0)
 }
 
@@ -119,7 +117,7 @@ export default class SandBox implements SandBoxInterface {
 
         if (key === 'hasOwnProperty') return hasOwnProperty
 
-        if (key === 'document' || key === 'eval') {
+        if (key === 'document' || key === 'eval' || key === 'Image') {
           if (this.active) {
             setCurrentAppName(appName)
             ;(macro ? macroTask : defer)(() => setCurrentAppName(null))
@@ -129,6 +127,8 @@ export default class SandBox implements SandBoxInterface {
               return rawDocument
             case 'eval':
               return eval
+            case 'Image':
+              return globalEnv.ImageProxy
           }
         }
 
@@ -190,6 +190,8 @@ export default class SandBox implements SandBoxInterface {
         if (this.scopeProperties.includes(key)) return key in target
         return key in unscopables || key in target || key in rawWindow
       },
+      // Object.getOwnPropertyDescriptor(window, key)
+      // TODO: use set
       getOwnPropertyDescriptor: (target: microWindowType, key: PropertyKey): PropertyDescriptor|undefined => {
         if (target.hasOwnProperty(key)) {
           descriptorTargetMap.set(key, 'target')
@@ -197,6 +199,7 @@ export default class SandBox implements SandBoxInterface {
         }
 
         if (rawWindow.hasOwnProperty(key)) {
+          // like console, alert ...
           descriptorTargetMap.set(key, 'rawWindow')
           const descriptor = Object.getOwnPropertyDescriptor(rawWindow, key)
           if (descriptor && !descriptor.configurable) {
@@ -207,6 +210,7 @@ export default class SandBox implements SandBoxInterface {
 
         return undefined
       },
+      // Object.defineProperty(window, key, Descriptor)
       defineProperty: (target: microWindowType, key: PropertyKey, value: PropertyDescriptor): boolean => {
         const from = descriptorTargetMap.get(key)
         if (from === 'rawWindow') {
@@ -214,14 +218,14 @@ export default class SandBox implements SandBoxInterface {
         }
         return Reflect.defineProperty(target, key, value)
       },
+      // Object.getOwnPropertyNames(window)
       ownKeys: (target: microWindowType): Array<string | symbol> => {
         return unique(Reflect.ownKeys(rawWindow).concat(Reflect.ownKeys(target)))
       },
       deleteProperty: (target: microWindowType, key: PropertyKey): boolean => {
         if (target.hasOwnProperty(key)) {
-          if (this.escapeKeys.has(key)) {
-            Reflect.deleteProperty(rawWindow, key)
-          }
+          this.injectedKeys.has(key) && this.injectedKeys.delete(key)
+          this.escapeKeys.has(key) && Reflect.deleteProperty(rawWindow, key)
           return Reflect.deleteProperty(target, key)
         }
         return true
@@ -233,7 +237,8 @@ export default class SandBox implements SandBoxInterface {
     if (!this.active) {
       this.active = true
       this.microWindow.__MICRO_APP_BASE_ROUTE__ = this.microWindow.__MICRO_APP_BASE_URL__ = baseroute
-      if (globalEnv.rawWindow._babelPolyfill) globalEnv.rawWindow._babelPolyfill = false
+      // BUG FIX: bable-polyfill@6.x
+      globalEnv.rawWindow._babelPolyfill && (globalEnv.rawWindow._babelPolyfill = false)
       if (++SandBox.activeCount === 1) {
         effectDocumentEvent()
       }

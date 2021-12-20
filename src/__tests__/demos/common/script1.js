@@ -108,3 +108,19 @@ window.dispatchEvent(new CustomEvent('unmount-me'))
 Promise.resolve().then(() => {
   window.microApp && window.microApp.dispatch({ unmountMeAsync: true })
 })
+
+// 监听keep-alive模式下的app状态
+window.addEventListener("appstate-change", function (e) {
+  window.keepAliveListener && window.keepAliveListener(e.detail.appState)
+})
+
+// 20201.12.17 v0.6.1 new Image兼容测试
+const newImg = new Image()
+newImg.src = '/static/media/logo.6ce24c58.svg'
+document.body.appendChild(newImg)
+expect(newImg.__MICRO_APP_NAME__).toBe(window.__MICRO_APP_NAME__)
+
+// 测试 cloneNode
+var img2 = newImg.cloneNode(true)
+document.body.appendChild(img2)
+expect(img2.__MICRO_APP_NAME__).toBe(newImg.__MICRO_APP_NAME__)

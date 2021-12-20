@@ -46,3 +46,17 @@ test('log error message if config error tagName', () => {
 
   expect(console.error).toBeCalledWith('[micro-app] error-name is invalid tagName')
 })
+
+// 格式化插件系统的appName
+test('format appName for plugins modules', () => {
+  microApp.start({
+    tagName: 'micro-app-plugins-modules',
+    plugins: {
+      modules: {
+        '12$': [],
+        'special-&name': [],
+        'normal-name': []
+      }
+    }
+  })
+})

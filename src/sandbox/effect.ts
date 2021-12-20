@@ -53,9 +53,7 @@ function overwriteDocumentOnClick (): void {
     }
   })
 
-  if (rawOnClick) {
-    document.onclick = rawOnClick
-  }
+  rawOnClick && (document.onclick = rawOnClick)
 }
 
 /**
@@ -69,9 +67,7 @@ export function effectDocumentEvent (): void {
     rawDocumentRemoveEventListener,
   } = globalEnv
 
-  if (!hasRewriteDocumentOnClick) {
-    overwriteDocumentOnClick()
-  }
+  !hasRewriteDocumentOnClick && overwriteDocumentOnClick()
 
   document.addEventListener = function (
     type: string,
@@ -105,7 +101,7 @@ export function effectDocumentEvent (): void {
     options?: boolean | AddEventListenerOptions,
   ): void {
     const appName = getCurrentAppName()
-    if (appName) {
+    if (appName && !(appInstanceMap.get(appName)?.umdMode && isBoundFunction(listener))) {
       const appListenersMap = documentEventListenerMap.get(appName)
       if (appListenersMap) {
         const appListenerList = appListenersMap.get(type)
@@ -124,14 +120,17 @@ export function releaseEffectDocumentEvent (): void {
   document.removeEventListener = globalEnv.rawDocumentRemoveEventListener
 }
 
+// this events should be sent to the specified app
+const formatEventList = ['unmount', 'appstate-change']
+
 /**
  * Format event name
  * @param type event name
  * @param microWindow micro window
  */
 function formatEventType (type: string, microWindow: microWindowType): string {
-  if (type === 'unmount') {
-    return `unmount-${microWindow.__MICRO_APP_NAME__}`
+  if (formatEventList.includes(type)) {
+    return `${type}-${microWindow.__MICRO_APP_NAME__}`
   }
   return type
 }

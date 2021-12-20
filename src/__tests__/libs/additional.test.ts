@@ -1,4 +1,4 @@
-import { listenUmountOfNestedApp, replaseUnmountOfNestedApp } from '../../libs/additional'
+import { listenUmountOfNestedApp, releaseUnmountOfNestedApp } from '../../libs/additional'
 import CreateApp, { appInstanceMap } from '../../create_app'
 import { elementInstanceMap } from '../../micro_app_element'
 
@@ -46,12 +46,12 @@ describe('test additional', () => {
     expect(appInstanceMap.size).toBe(3)
 
     // 模拟非嵌套循环
-    replaseUnmountOfNestedApp()
+    releaseUnmountOfNestedApp()
     listenUmountOfNestedApp()
 
     // 模拟嵌套循环
     window.__MICRO_APP_ENVIRONMENT__ = true
-    replaseUnmountOfNestedApp()
+    releaseUnmountOfNestedApp()
     listenUmountOfNestedApp()
 
     // 模拟当前应用被卸载
@@ -77,7 +77,7 @@ describe('test additional', () => {
     // 模拟嵌套循环
     window.__MICRO_APP_ENVIRONMENT__ = true
     window.__MICRO_APP_UMD_MODE__ = true // 设置为umd模式
-    replaseUnmountOfNestedApp()
+    releaseUnmountOfNestedApp()
     listenUmountOfNestedApp()
 
     // 模拟当前应用被卸载

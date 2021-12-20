@@ -22,7 +22,7 @@ module.exports = {
     '/node_modules/',
   ],
   testPathIgnorePatterns: [
-    '/examples/',
+    '/dev/',
     '/scripts/',
   ],
   coveragePathIgnorePatterns: [

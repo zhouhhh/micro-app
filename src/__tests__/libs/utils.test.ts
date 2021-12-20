@@ -30,14 +30,14 @@ test('call function in micro task', () => {
   })
 })
 
-test('uitls ==> formatURL', () => {
-  expect(Utils.formatURL('http://localhost:3000/path-a')).toBe('http://localhost:3000/path-a/')
-  expect(Utils.formatURL('//localhost:3000/path-a/')).toBe('http://localhost:3000/path-a/')
-  expect(Utils.formatURL('http://localhost:3000/path-a/index.html')).toBe('http://localhost:3000/path-a/index.html')
-  expect(Utils.formatURL(null)).toBe('')
-  expect(Utils.formatURL('')).toBe('')
-  expect(Utils.formatURL('htt://abc')).toBe('')
-  expect(Utils.formatURL('abc')).toBe('')
+test('uitls ==> formatAppURL', () => {
+  expect(Utils.formatAppURL('http://localhost:3000/path-a')).toBe('http://localhost:3000/path-a/')
+  expect(Utils.formatAppURL('//localhost:3000/path-a/')).toBe('http://localhost:3000/path-a/')
+  expect(Utils.formatAppURL('http://localhost:3000/path-a/index.html')).toBe('http://localhost:3000/path-a/index.html')
+  expect(Utils.formatAppURL(null)).toBe('')
+  expect(Utils.formatAppURL('')).toBe('')
+  expect(Utils.formatAppURL('htt://abc')).toBe('')
+  expect(Utils.formatAppURL('abc')).toBe('')
   expect(console.error).toBeCalledWith('[micro-app]', expect.anything())
 })
 
@@ -186,4 +186,9 @@ test('coverage of isInvalidQuerySelectorKey', () => {
   expect(Utils.isInvalidQuerySelectorKey('a&bc')).toBeTruthy()
   // @ts-ignore
   window.__TEST__ = true
+})
+
+test('coverage of formatAppName', () => {
+  expect(Utils.formatAppName(null)).toBe('')
+  expect(Utils.formatAppName('')).toBe('')
 })

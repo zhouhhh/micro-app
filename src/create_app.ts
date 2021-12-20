@@ -8,17 +8,19 @@ import type {
 } from '@micro-app/types'
 import extractHtml from './source'
 import { execScripts } from './source/scripts'
-import { appStatus, lifeCycles } from './constants'
+import { appStates, lifeCycles, keepAliveStates } from './constants'
 import SandBox from './sandbox'
 import {
   isFunction,
-  cloneNode,
+  cloneContainer,
   isBoolean,
   isPromise,
   logError,
-  isShadowRoot,
+  logWarn,
+  getRootContainer,
+  formatAppName,
 } from './libs/utils'
-import dispatchLifecyclesEvent, { dispatchUnmountToMicroApp } from './interact/lifecycles_event'
+import dispatchLifecyclesEvent, { dispatchCustomEventToMicroApp } from './interact/lifecycles_event'
 import globalEnv from './libs/global_env'
 
 // micro app instances
@@ -28,6 +30,7 @@ export const appInstanceMap = new Map<string, AppInterface>()
 export interface CreateAppParam {
   name: string
   url: string
+  ssrUrl?: string
   scopecss: boolean
   useSandbox: boolean
   macro?: boolean
@@ -37,7 +40,9 @@ export interface CreateAppParam {
 }
 
 export default class CreateApp implements AppInterface {
-  private status: string = appStatus.NOT_LOADED
+  private state: string = appStates.NOT_LOADED
+  private keepAliveState: string | null = null
+  private keepAliveContainer: HTMLElement | null = null
   private loadSourceLevel: -1|0|1|2 = 0
   private umdHookMount: Func | null = null
   private umdHookUnmount: Func | null = null
@@ -46,6 +51,7 @@ export default class CreateApp implements AppInterface {
   isPrefetch = false
   name: string
   url: string
+  ssrUrl: string
   container: HTMLElement | ShadowRoot | null = null
   inline: boolean
   scopecss: boolean
@@ -55,10 +61,21 @@ export default class CreateApp implements AppInterface {
   source: sourceType
   sandBox: SandBoxInterface | null = null
 
-  constructor ({ name, url, container, inline, scopecss, useSandbox, macro, baseroute }: CreateAppParam) {
+  constructor ({
+    name,
+    url,
+    ssrUrl,
+    container,
+    inline,
+    scopecss,
+    useSandbox,
+    macro,
+    baseroute,
+  }: CreateAppParam) {
     this.container = container ?? null
     this.inline = inline ?? false
     this.baseroute = baseroute ?? ''
+    this.ssrUrl = ssrUrl ?? ''
     // optional during init👆
     this.name = name
     this.url = url
@@ -70,14 +87,12 @@ export default class CreateApp implements AppInterface {
       scripts: new Map<string, sourceScriptInfo>(),
     }
     this.loadSourceCode()
-    if (this.useSandbox) {
-      this.sandBox = new SandBox(name, url, this.macro)
-    }
+    this.useSandbox && (this.sandBox = new SandBox(name, url, this.macro))
   }
 
   // Load resources
   loadSourceCode (): void {
-    this.status = appStatus.LOADING_SOURCE_CODE
+    this.state = appStates.LOADING_SOURCE_CODE
     extractHtml(this)
   }
 
@@ -88,9 +103,9 @@ export default class CreateApp implements AppInterface {
     if (++this.loadSourceLevel === 2) {
       this.source.html = html
 
-      if (this.isPrefetch || appStatus.UNMOUNT === this.status) return
+      if (this.isPrefetch || appStates.UNMOUNT === this.state) return
 
-      this.status = appStatus.LOAD_SOURCE_FINISHED
+      this.state = appStates.LOAD_SOURCE_FINISHED
 
       this.mount()
     }
@@ -102,9 +117,9 @@ export default class CreateApp implements AppInterface {
    */
   onLoadError (e: Error): void {
     this.loadSourceLevel = -1
-    if (appStatus.UNMOUNT !== this.status) {
+    if (appStates.UNMOUNT !== this.state) {
       this.onerror(e)
-      this.status = appStatus.LOAD_SOURCE_ERROR
+      this.state = appStates.LOAD_SOURCE_ERROR
     }
   }
 
@@ -127,19 +142,19 @@ export default class CreateApp implements AppInterface {
     this.baseroute = baseroute ?? this.baseroute
 
     if (this.loadSourceLevel !== 2) {
-      this.status = appStatus.LOADING_SOURCE_CODE
+      this.state = appStates.LOADING_SOURCE_CODE
       return
     }
 
     dispatchLifecyclesEvent(
-      this.container as HTMLElement,
+      this.container,
       this.name,
       lifeCycles.BEFOREMOUNT,
     )
 
-    this.status = appStatus.MOUNTING
+    this.state = appStates.MOUNTING
 
-    cloneNode(this.source.html as Element, this.container as Element, !this.umdMode)
+    cloneContainer(this.source.html as Element, this.container as Element, !this.umdMode)
 
     this.sandBox?.start(this.baseroute)
 
@@ -199,31 +214,29 @@ export default class CreateApp implements AppInterface {
    * dispatch mounted event when app run finished
    */
   private dispatchMountedEvent (): void {
-    if (appStatus.UNMOUNT !== this.status) {
-      this.status = appStatus.MOUNTED
-      // remove defer in v0.4.2
-      // defer(() => {
-      //   if (appStatus.UNMOUNT !== this.status) {
+    if (appStates.UNMOUNT !== this.state) {
+      this.state = appStates.MOUNTED
       dispatchLifecyclesEvent(
-        this.container as HTMLElement,
+        this.container!,
         this.name,
         lifeCycles.MOUNTED,
       )
-      //   }
-      // })
     }
   }
 
   /**
    * unmount app
    * @param destroy completely destroy, delete cache resources
+   * @param unmountcb callback of unmount
    */
-  unmount (destroy: boolean): void {
-    if (this.status === appStatus.LOAD_SOURCE_ERROR) {
+  unmount (destroy: boolean, unmountcb?: CallableFunction): void {
+    if (this.state === appStates.LOAD_SOURCE_ERROR) {
       destroy = true
     }
 
-    this.status = appStatus.UNMOUNT
+    this.state = appStates.UNMOUNT
+    this.keepAliveState = null
+    this.keepAliveContainer = null
 
     // result of unmount function
     let umdHookUnmountResult: any
@@ -240,53 +253,128 @@ export default class CreateApp implements AppInterface {
     }
 
     // dispatch unmount event to micro app
-    dispatchUnmountToMicroApp(this.name)
+    dispatchCustomEventToMicroApp('unmount', this.name)
 
-    this.handleUnmounted(destroy, umdHookUnmountResult)
+    this.handleUnmounted(destroy, umdHookUnmountResult, unmountcb)
   }
 
   /**
    * handle for promise umdHookUnmount
+   * @param destroy completely destroy, delete cache resources
    * @param umdHookUnmountResult result of umdHookUnmount
+   * @param unmountcb callback of unmount
    */
-  private handleUnmounted (destroy: boolean, umdHookUnmountResult: any): void {
+  private handleUnmounted (
+    destroy: boolean,
+    umdHookUnmountResult: any,
+    unmountcb?: CallableFunction,
+  ): void {
     if (isPromise(umdHookUnmountResult)) {
       umdHookUnmountResult
-        .then(() => this.actionsForUnmount(destroy))
-        .catch(() => this.actionsForUnmount(destroy))
+        .then(() => this.actionsForUnmount(destroy, unmountcb))
+        .catch(() => this.actionsForUnmount(destroy, unmountcb))
     } else {
-      this.actionsForUnmount(destroy)
+      this.actionsForUnmount(destroy, unmountcb)
     }
   }
 
   /**
    * actions for unmount app
    * @param destroy completely destroy, delete cache resources
+   * @param unmountcb callback of unmount
    */
-  private actionsForUnmount (destroy: boolean): void {
+  private actionsForUnmount (destroy: boolean, unmountcb?: CallableFunction): void {
+    this.sandBox?.stop()
+    if (destroy) {
+      this.actionsForCompletelyDestory()
+    } else if (this.umdMode && (this.container as Element).childElementCount) {
+      cloneContainer(this.container as Element, this.source.html as Element, false)
+    }
+
     // dispatch unmount event to base app
     dispatchLifecyclesEvent(
-      this.container as HTMLElement,
+      this.container!,
       this.name,
       lifeCycles.UNMOUNT,
     )
 
-    this.sandBox?.stop()
-
-    // actions for completely destroy
-    if (destroy) {
-      if (!this.useSandbox && this.umdMode) {
-        delete window[this.libraryName as any]
-      }
-      appInstanceMap.delete(this.name)
-    } else if (this.umdMode && (this.container as Element).childElementCount) {
-      /**
-      * In umd mode, ui frameworks will no longer create style elements to head in lazy load page when render again, so we should save container to keep these elements
-      */
-      cloneNode(this.container as Element, this.source.html as Element, false)
-    }
-
+    this.container!.innerHTML = ''
     this.container = null
+
+    unmountcb && unmountcb()
+  }
+
+  // actions for completely destroy
+  actionsForCompletelyDestory (): void {
+    if (!this.useSandbox && this.umdMode) {
+      delete window[this.libraryName as any]
+    }
+    appInstanceMap.delete(this.name)
+  }
+
+  // hidden app when disconnectedCallback called with keep-alive
+  hiddenKeepAliveApp (): void {
+    const oldContainer = this.container
+
+    cloneContainer(
+      this.container as Element,
+      this.keepAliveContainer ? this.keepAliveContainer : (this.keepAliveContainer = document.createElement('div')),
+      false,
+    )
+
+    this.container = this.keepAliveContainer
+
+    this.keepAliveState = keepAliveStates.KEEP_ALIVE_HIDDEN
+
+    // event should dispatch before clone node
+    // dispatch afterhidden event to micro-app
+    dispatchCustomEventToMicroApp('appstate-change', this.name, {
+      appState: 'afterhidden',
+    })
+
+    // dispatch afterhidden event to base app
+    dispatchLifecyclesEvent(
+      oldContainer!,
+      this.name,
+      lifeCycles.AFTERHIDDEN,
+    )
+  }
+
+  // show app when connectedCallback called with keep-alive
+  showKeepAliveApp (container: HTMLElement | ShadowRoot): void {
+    // dispatch beforeshow event to micro-app
+    dispatchCustomEventToMicroApp('appstate-change', this.name, {
+      appState: 'beforeshow',
+    })
+
+    // dispatch beforeshow event to base app
+    dispatchLifecyclesEvent(
+      container,
+      this.name,
+      lifeCycles.BEFORESHOW,
+    )
+
+    cloneContainer(
+      this.container as Element,
+      container as Element,
+      false,
+    )
+
+    this.container = container
+
+    this.keepAliveState = keepAliveStates.KEEP_ALIVE_SHOW
+
+    // dispatch aftershow event to micro-app
+    dispatchCustomEventToMicroApp('appstate-change', this.name, {
+      appState: 'aftershow',
+    })
+
+    // dispatch aftershow event to base app
+    dispatchLifecyclesEvent(
+      this.container,
+      this.name,
+      lifeCycles.AFTERSHOW,
+    )
   }
 
   /**
@@ -295,28 +383,129 @@ export default class CreateApp implements AppInterface {
    */
   onerror (e: Error): void {
     dispatchLifecyclesEvent(
-      this.container as HTMLElement,
+      this.container!,
       this.name,
       lifeCycles.ERROR,
       e,
     )
   }
 
-  // get app status
-  getAppStatus (): string {
-    return this.status
+  // get app state
+  getAppState (): string {
+    return this.state
+  }
+
+  // get keep-alive state
+  getKeepAliveState (): string | null {
+    return this.keepAliveState
   }
 
   // get umd library, if it not exist, return empty object
   private getUmdLibraryHooks (): Record<string, unknown> {
     // after execScripts, the app maybe unmounted
-    if (appStatus.UNMOUNT !== this.status) {
+    if (appStates.UNMOUNT !== this.state) {
       const global = (this.sandBox?.proxyWindow ?? globalEnv.rawWindow) as any
-      this.libraryName = (isShadowRoot(this.container) ? (this.container as ShadowRoot).host : this.container as Element).getAttribute('library') || `micro-app-${this.name}`
+      this.libraryName = getRootContainer(this.container!).getAttribute('library') || `micro-app-${this.name}`
       // do not use isObject
       return typeof global[this.libraryName] === 'object' ? global[this.libraryName] : {}
     }
 
     return {}
   }
+}
+
+// if app not prefetch & not unmount, then app is active
+export function getActiveApps (): string[] {
+  const activeApps: string[] = []
+  appInstanceMap.forEach((app: AppInterface, appName: string) => {
+    if (appStates.UNMOUNT !== app.getAppState() && !app.isPrefetch) {
+      activeApps.push(appName)
+    }
+  })
+
+  return activeApps
+}
+
+// get all registered apps
+export function getAllApps (): string[] {
+  return Array.from(appInstanceMap.keys())
+}
+
+export interface unmountAppParams {
+  destroy?: boolean // destory app, default is false
+  clearAliveState?: boolean // clear keep-alive app state, default is false
+}
+
+/**
+ * unmount app by appname
+ * @param appName
+ * @param options unmountAppParams
+ * @returns Promise<void>
+ */
+export function unmountApp (appName: string, options?: unmountAppParams): Promise<void> {
+  const app = appInstanceMap.get(formatAppName(appName))
+  return new Promise((reslove) => { // eslint-disable-line
+    if (app) {
+      if (app.getAppState() === appStates.UNMOUNT || app.isPrefetch) {
+        if (options?.destroy) {
+          app.actionsForCompletelyDestory()
+        }
+        reslove()
+      } else if (app.getKeepAliveState() === keepAliveStates.KEEP_ALIVE_HIDDEN) {
+        if (options?.destroy) {
+          app.unmount(true, reslove)
+        } else if (options?.clearAliveState) {
+          app.unmount(false, reslove)
+        } else {
+          reslove()
+        }
+      } else {
+        const container = getRootContainer(app.container!)
+        const unmountHandler = () => {
+          container.removeEventListener('unmount', unmountHandler)
+          container.removeEventListener('afterhidden', afterhiddenHandler)
+          reslove()
+        }
+
+        const afterhiddenHandler = () => {
+          container.removeEventListener('unmount', unmountHandler)
+          container.removeEventListener('afterhidden', afterhiddenHandler)
+          reslove()
+        }
+
+        container.addEventListener('unmount', unmountHandler)
+        container.addEventListener('afterhidden', afterhiddenHandler)
+
+        if (options?.destroy) {
+          let destroyAttrValue, destoryAttrValue
+          container.hasAttribute('destroy') && (destroyAttrValue = container.getAttribute('destroy'))
+          container.hasAttribute('destory') && (destoryAttrValue = container.getAttribute('destory'))
+
+          container.setAttribute('destroy', 'true')
+          container.parentNode!.removeChild(container)
+          container.removeAttribute('destroy')
+
+          typeof destroyAttrValue === 'string' && container.setAttribute('destroy', destroyAttrValue)
+          typeof destoryAttrValue === 'string' && container.setAttribute('destory', destoryAttrValue)
+        } else if (options?.clearAliveState && container.hasAttribute('keep-alive')) {
+          const keepAliveAttrValue = container.getAttribute('keep-alive')!
+
+          container.removeAttribute('keep-alive')
+          container.parentNode!.removeChild(container)
+
+          container.setAttribute('keep-alive', keepAliveAttrValue)
+        } else {
+          container.parentNode!.removeChild(container)
+        }
+      }
+    } else {
+      logWarn(`app ${appName} does not exist`)
+      reslove()
+    }
+  })
+}
+
+// unmount all apps in turn
+export function unmountAllApps (options?: unmountAppParams): Promise<void> {
+  return Array.from(appInstanceMap.keys()).reduce((pre, next) => pre.then(() => unmountApp(next, options)), Promise.resolve())
 }

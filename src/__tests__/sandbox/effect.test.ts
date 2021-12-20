@@ -110,15 +110,18 @@ describe('sandbox effect', () => {
         // scene1 - app not exist
         appInstanceMap.delete('test-app4')
         document.addEventListener('click', boundFunc1, false)
+        document.removeEventListener('click', boundFunc1, false)
 
         // scene2 - app not umd mode
         app.umdMode = false
         appInstanceMap.set('test-app4', app)
         document.addEventListener('click', boundFunc2, false)
+        document.removeEventListener('click', boundFunc2, false)
 
         // scene3 - app is umd mode, and listener is bound function
         app.umdMode = true
         document.addEventListener('click', boundFunc3, false)
+        document.removeEventListener('click', boundFunc3, false)
 
         reslove(true)
       }, false)

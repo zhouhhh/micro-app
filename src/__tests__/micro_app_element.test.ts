@@ -9,6 +9,7 @@ describe('micro_app_element', () => {
   beforeAll(() => {
     commonStartEffect(ports.micro_app_element)
     appCon = document.querySelector('#app-container')!
+    window.keepAliveListener = jest.fn()
 
     microApp.start({
       preFetchApps: [
@@ -45,7 +46,7 @@ describe('micro_app_element', () => {
     })
   })
 
-  // 新建的app与预加载的app冲突
+  // 当新的app与旧的app name相同而url不同时，且旧app为预加载，则删除旧app的缓存，使用新app覆盖
   test('app3 has same name with prefetch app1 but the url is different', () => {
     const microappElement3 = document.createElement('micro-app')
     microappElement3.setAttribute('name', 'test-app1')
@@ -53,7 +54,7 @@ describe('micro_app_element', () => {
 
     appCon.appendChild(microappElement3)
 
-    expect(console.error).toHaveBeenCalledWith(`[micro-app] app test-app1: the url http://127.0.0.1:${ports.micro_app_element}/ssr-render/ is different from prefetch url http://127.0.0.1:${ports.micro_app_element}/common/`)
+    expect(console.warn).toHaveBeenCalled()
   })
 
   // name冲突
@@ -64,7 +65,7 @@ describe('micro_app_element', () => {
 
     appCon.appendChild(microappElement4)
 
-    expect(console.error).toHaveBeenCalledWith('[micro-app] app test-app2: an app named test-app2 already exists')
+    expect(console.error).toHaveBeenCalledWith('[micro-app] app test-app2: app name conflict, an app named test-app2 is running')
   })
 
   // 非法url
@@ -88,7 +89,7 @@ describe('micro_app_element', () => {
 
     await new Promise((reslove) => {
       defer(() => {
-        expect(console.error).toBeCalledWith('[micro-app] app test-app6: an app named test-app2 already exists')
+        expect(console.error).toBeCalledWith('[micro-app] app test-app6: app name conflict, an app named test-app2 is running')
         expect(microappElement6.getAttribute('name')).toBe('test-app6')
         reslove(true)
       })
@@ -171,10 +172,8 @@ describe('micro_app_element', () => {
     microappElement10.setAttribute('baseurl', '/baseurl')
 
     appCon.appendChild(microappElement10)
-    let mountCount = 0
     await new Promise((reslove) => {
       microappElement10.addEventListener('mounted', () => {
-        mountCount++
         reslove(true)
       }, false)
     })
@@ -182,13 +181,6 @@ describe('micro_app_element', () => {
     appCon.removeChild(microappElement10)
 
     appCon.appendChild(microappElement10)
-
-    await new Promise((reslove) => {
-      setTimeout(() => {
-        expect(mountCount).toBe(2) // 渲染2次
-        reslove(true)
-      }, 200)
-    })
 
     // 分支覆盖
     const microappElement11 = document.createElement('micro-app')
@@ -217,7 +209,11 @@ describe('micro_app_element', () => {
     await new Promise((reslove) => {
       function handleMounted () {
         microappElement13.removeEventListener('mounted', handleMounted)
-        microappElement13.setAttribute('name', 'test-app12')
+        // test-app12# 会格式化为 test-app12
+        microappElement13.setAttribute('name', 'test-app12#')
+        defer(() => {
+          expect(microappElement13.getAttribute('name')).toBe('test-app12')
+        })
         microappElement13.setAttribute('url', `http://127.0.0.1:${ports.micro_app_element}/common`)
         reslove(true)
       }
@@ -287,6 +283,202 @@ describe('micro_app_element', () => {
     await new Promise((reslove) => {
       microAppElement17.addEventListener('mounted', () => {
         expect(appInstanceMap.get('test-app16')!.url).toBe(`http://127.0.0.1:${ports.micro_app_element}/dynamic/`)
+        reslove(true)
+      })
+    })
+  })
+
+  // 测试一些带有特殊符号的name
+  test('test name with special characters', async () => {
+    // scene1: 格式化后name为空
+    const microAppElement18 = document.createElement('micro-app')
+    microAppElement18.setAttribute('name', '123$')
+    expect(console.error).toBeCalledWith('[micro-app] Invalid attribute name 123$')
+
+    // scene2: 前后name不一致，重新赋值
+    const microAppElement19 = document.createElement('micro-app')
+    microAppElement19.setAttribute('name', 'test-app19$')
+    expect(microAppElement19.getAttribute('name')).toBe('test-app19')
+  })
+
+  // 测试ssr配置
+  test('test ssr mode', async () => {
+    const microAppElement20 = document.createElement('micro-app')
+    microAppElement20.setAttribute('name', 'test-app20')
+    microAppElement20.setAttribute('url', `http://127.0.0.1:${ports.micro_app_element}/common`)
+    microAppElement20.setAttribute('ssr', 'true')
+
+    // 场景1: 测试正常渲染的ssr应用
+    appCon.appendChild(microAppElement20)
+
+    // connectedCallback中会对url地址进行格式化，因为jest环境下，location.pathname 默认为 '/'，所以/common被截掉
+    expect(microAppElement20.ssrUrl).toBe(`http://127.0.0.1:${ports.micro_app_element}/`)
+
+    // 场景2: 再次渲染时，去除ssr配置，如果有 ssrUrl，则进行删除
+    appCon.removeChild(microAppElement20)
+    microAppElement20.removeAttribute('ssr')
+    appCon.appendChild(microAppElement20)
+
+    expect(microAppElement20.ssrUrl).toBe('')
+
+    // 场景3: ssr模式下动态修改url的值，此时ssrUrl会进行同步更新
+    appCon.removeChild(microAppElement20)
+    microAppElement20.setAttribute('ssr', 'true')
+    appCon.appendChild(microAppElement20)
+
+    await new Promise((reslove) => {
+      microAppElement20.addEventListener('mounted', () => {
+        microAppElement20.setAttribute('url', `http://127.0.0.1:${ports.micro_app_element}/dynamic/`)
+        defer(() => {
+          expect(microAppElement20.ssrUrl).toBe(`http://127.0.0.1:${ports.micro_app_element}/`)
+          reslove(true)
+        })
+      })
+    })
+
+    // 场景4: ssr模式已经渲染，修改url的值的同时去除ssr配置，需要将ssrUrl的值删除
+    const microAppElement21 = document.createElement('micro-app')
+    microAppElement21.setAttribute('name', 'test-app21')
+    microAppElement21.setAttribute('url', `http://127.0.0.1:${ports.micro_app_element}/common`)
+    microAppElement21.setAttribute('ssr', 'true')
+
+    appCon.appendChild(microAppElement21)
+
+    await new Promise((reslove) => {
+      microAppElement21.addEventListener('mounted', () => {
+        microAppElement21.removeAttribute('ssr')
+        microAppElement21.setAttribute('url', `http://127.0.0.1:${ports.micro_app_element}/dynamic/`)
+        defer(() => {
+          expect(microAppElement21.ssrUrl).toBe('')
+          reslove(true)
+        })
+      })
+    })
+  })
+
+  // test keep-alive 场景1: 正常渲染、隐藏、重新渲染
+  test('normal process of keep-alive', async () => {
+    const microappElement22 = document.createElement('micro-app')
+    microappElement22.setAttribute('name', 'test-app22')
+    microappElement22.setAttribute('url', `http://127.0.0.1:${ports.micro_app_element}/common/`)
+    microappElement22.setAttribute('keep-alive', 'true')
+
+    appCon.appendChild(microappElement22)
+
+    await new Promise((reslove) => {
+      microappElement22.addEventListener('mounted', () => {
+        reslove(true)
+      })
+    })
+
+    const beforeShowListener = jest.fn()
+    const afterShowListener = jest.fn()
+    const afterHiddenListener = jest.fn()
+
+    microappElement22.addEventListener('beforeshow', beforeShowListener)
+    microappElement22.addEventListener('aftershow', afterShowListener)
+    microappElement22.addEventListener('afterhidden', afterHiddenListener)
+
+    appCon.removeChild(microappElement22)
+    // dispatch event afterhidden to base app and micro app
+    expect(afterHiddenListener).toBeCalledWith(expect.any(CustomEvent))
+    expect(window.keepAliveListener).toBeCalledWith('afterhidden')
+
+    appCon.appendChild(microappElement22)
+
+    defer(() => {
+      // dispatch event beforeshow to base app and micro app
+      expect(beforeShowListener).toBeCalledWith(expect.any(CustomEvent))
+      expect(window.keepAliveListener).toBeCalledWith('beforeshow')
+
+      // dispatch event aftershow to base app and micro app
+      expect(afterShowListener).toBeCalledWith(expect.any(CustomEvent))
+      expect(window.keepAliveListener).toBeCalledWith('aftershow')
+    })
+
+    // 分支覆盖之 keep-alive 模式下开启 shadowRoot
+    appCon.removeChild(microappElement22)
+    microappElement22.setAttribute('shadowDom', 'true')
+    appCon.appendChild(microappElement22)
+  })
+
+  // test keep-alive 场景2: 二次渲染时，url冲突，卸载旧应用，重新渲染
+  test('url conflict when remount of keep-alive', async () => {
+    const microappElement23 = document.createElement('micro-app')
+    microappElement23.setAttribute('name', 'test-app23')
+    microappElement23.setAttribute('url', `http://127.0.0.1:${ports.micro_app_element}/common/`)
+    microappElement23.setAttribute('keep-alive', 'true')
+
+    appCon.appendChild(microappElement23)
+
+    await new Promise((reslove) => {
+      microappElement23.addEventListener('mounted', () => {
+        reslove(true)
+      })
+    })
+
+    appCon.removeChild(microappElement23)
+
+    const microappElement24 = document.createElement('micro-app')
+    microappElement24.setAttribute('name', 'test-app23')
+    microappElement24.setAttribute('url', `http://127.0.0.1:${ports.micro_app_element}/dynamic/`)
+
+    appCon.appendChild(microappElement24)
+
+    expect(console.error).toHaveBeenCalledWith('[micro-app] app test-app23: app name conflict, an app named test-app23 is running')
+  })
+
+  // test keep-alive 场景3: 修改micro-app name、url属性相关操作
+  test('url conflict when remount of keep-alive', async () => {
+    const microappElement25 = document.createElement('micro-app')
+    microappElement25.setAttribute('name', 'test-app25')
+    microappElement25.setAttribute('url', `http://127.0.0.1:${ports.micro_app_element}/dynamic/`)
+    microappElement25.setAttribute('keep-alive', 'true')
+
+    appCon.appendChild(microappElement25)
+
+    await new Promise((reslove) => {
+      microappElement25.addEventListener('mounted', () => {
+        reslove(true)
+      })
+    })
+
+    // afterhidden事件指向test-app25
+    const afterHiddenListenerForTestApp25 = jest.fn()
+    microappElement25.addEventListener('afterhidden', afterHiddenListenerForTestApp25)
+
+    // beforeshow和aftershow事件指向test-app23
+    const beforeShowListenerForTestApp23 = jest.fn()
+    const afterShowListenerForTestApp23 = jest.fn()
+    microappElement25.addEventListener('beforeshow', beforeShowListenerForTestApp23)
+    microappElement25.addEventListener('aftershow', afterShowListenerForTestApp23)
+
+    // 修改name和url
+    microappElement25.setAttribute('name', 'test-app23')
+    microappElement25.setAttribute('url', `http://127.0.0.1:${ports.micro_app_element}/common/`)
+
+    await new Promise((reslove) => {
+      // name和url的修改是异步的，这里放在定时器中执行
+      setTimeout(() => {
+        // dispatch event afterhidden to base app
+        expect(afterHiddenListenerForTestApp25).toBeCalledWith(expect.any(CustomEvent))
+
+        // dispatch event beforeshow to base app
+        expect(beforeShowListenerForTestApp23).toBeCalledWith(expect.any(CustomEvent))
+
+        // dispatch event aftershow to base app
+        expect(afterShowListenerForTestApp23).toBeCalledWith(expect.any(CustomEvent))
+
+        reslove(true)
+      }, 50)
+    })
+
+    // 修改name为test-app25，test-app25为隐藏状态，但url没有修改，此时url冲突，keep-alive报错
+    microappElement25.setAttribute('name', 'test-app25')
+
+    await new Promise((reslove) => {
+      defer(() => {
+        expect(console.error).toHaveBeenCalledWith('[micro-app] app test-app25: app name conflict, an app named test-app25 is running')
         reslove(true)
       })
     })

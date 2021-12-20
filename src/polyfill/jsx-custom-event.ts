@@ -1,17 +1,26 @@
-// @ts-ignore
-import React from 'react'
+const React = require('react')
 
 type MicroElementType = HTMLElement & Record<string, unknown>
 
 // lifecycles
-const eventLifeCycles = ['oncreated', 'onbeforemount', 'onmounted', 'onunmount', 'onerror', 'ondatachange']
+const eventLifeCycles = [
+  'oncreated',
+  'onbeforemount',
+  'onmounted',
+  'onunmount',
+  'onerror',
+  'ondatachange',
+  'onbeforeshow',
+  'onaftershow',
+  'onafterhidden',
+]
 
-export default function jsxCustomEvent (
+function jsxCustomEvent (
   type: string | CallableFunction,
   props: Record<string, unknown> | null,
   ...children: any[]
 ): void {
-  if (typeof type !== 'string' || !/^micro-app(-\S+)?/.test(type as string) || !props) {
+  if (typeof type !== 'string' || !/^micro-app(-\S+)?/.test(type) || !props) {
     return React.createElement.apply(null, [type, props, ...children])
   }
 
@@ -54,3 +63,6 @@ export default function jsxCustomEvent (
 
   return React.createElement.apply(null, [type, newProps, ...children])
 }
+
+module.exports = jsxCustomEvent
+module.exports.default = jsxCustomEvent

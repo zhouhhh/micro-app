@@ -2,9 +2,10 @@
 
 ## name
 - Desc: `应用名称`
-- Type: `string`，不可以带有 `.`、`#` 等特殊符号。
+- Type: `string`
 - Default: `必传参数`
 - 使用方式: `<micro-app name='xx'></micro-app>`
+- 注意事项: 必须以字母开头，且不可以带有除中划线和下划线外的特殊符号
 
 每个`name`都对应一个应用，当多个应用同时渲染时，name不可以重复。
 
@@ -26,16 +27,9 @@
 - Default: `''`
 - 使用方式: `<micro-app name='xx' url='xx' baseroute='/my-page/'></micro-app>`
 
-在微前端环境下，子应用可以从window上获取baseroute的值，用于设置基础路由。
+在微前端环境下，子应用可以从window.__MICRO_APP_BASE_ROUTE__上获取baseroute的值，用于设置基础路由。
 
-以react-router为例，在子应用的路由中配置`basename`：
-```js
-<BrowserRouter basename={window.__MICRO_APP_BASE_ROUTE__ || '/'}>
-  <Switch>
-    ...
-  </Switch>
-</BrowserRouter>
-```
+如果基座应用是history路由，子应用是hash路由，则不需要设置baseroute。
 
 ## inline
 - Desc: `是否使用内联script`
@@ -46,13 +40,13 @@
 
 开启inline后，被提取的js会作为script标签插入应用中运行，在开发环境中更方便调试。
 
-> [!TIP]
+> [!NOTE]
 > 开启inline后会稍微损耗性能，一般在开发环境中使用。
 
-## destory
+## destroy
 - Desc: `卸载时是否强制删除缓存资源`
 - Default: `false`
-- 使用方式: `<micro-app name='xx' url='xx' destory></micro-app>`
+- 使用方式: `<micro-app name='xx' url='xx' destroy></micro-app>`
 
 默认情况下，子应用被卸载后会缓存静态资源，以便在重新渲染时获得更好的性能。
 
@@ -61,17 +55,14 @@
 ## disableScopecss
 - Desc: `禁用样式隔离`
 - Default: `false`
-- 使用方式: `<micro-app name='xx' url='xx' disableScopecss></micro-app>`
+- 使用方式: `<micro-app name='xx' url='xx' disableScopecss 或 disable-scopecss></micro-app>`
 
-在禁用样式隔离前，请确保基座应用和子应用，以及子应用之间样式不会相互污染。
-
-> [!NOTE]
-> 禁用样式隔离，CSS中的资源地址补全功能失效，需要设置[publicpath](/zh-cn/static-source?id=publicpath)防止资源加载失败。
+禁用样式隔离可以提升页面渲染速度，在此之前，请确保各应用之间样式不会相互污染。
 
 ## disableSandbox
 - Desc: `禁用js沙箱`
 - Default: `false`
-- 使用方式: `<micro-app name='xx' url='xx' disableSandbox></micro-app>`
+- 使用方式: `<micro-app name='xx' url='xx' disableSandbox 或 disable-sandbox></micro-app>`
 
 禁用沙箱可能会导致一些不可预料的问题，通常情况不建议这样做。
 
@@ -81,15 +72,33 @@
 > 1、样式隔离
 >
 > 2、元素隔离
-> 
-> 3、数据通信
 >
-> 4、静态资源地址补全
+> 3、静态资源路径补全
 >
-> 5、`__MICRO_APP_ENVIRONMENT__`、`__MICRO_APP_PUBLIC_PATH__`等全局变量
+> 4、`__MICRO_APP_ENVIRONMENT__`、`__MICRO_APP_PUBLIC_PATH__`等全局变量
 >
-> 6、baseroute
+> 5、baseroute
 
+
+## ssr
+- Desc: `是否开启ssr模式`
+- Type: `string(boolean)`
+- Default: `false`
+- 使用方式: `<micro-app name='xx' url='xx' ssr></micro-app>`
+- 版本要求: `0.5.3及以上版本`
+
+当子应用是ssr应用时，需要设置ssr属性，此时micro-app会根据ssr模式加载子应用。
+
+## keep-alive
+- Desc: `是否开启keep-alive模式`
+- Type: `string(boolean)`
+- Default: `false`
+- 使用方式: `<micro-app name='xx' url='xx' keep-alive></micro-app>`
+- 版本要求: `0.6.0及以上版本`
+
+开启keep-alive后，应用卸载时会进入缓存，而不是销毁它们，以便保留应用的状态和提升重复渲染的性能。
+
+keep-alive的优先级小于[destory](/zh-cn/configure?id=destroy)，当两者同时存在时，keep-alive将失效。
 
 ## shadowDOM
 - Desc: `是否开启shadowDOM`
@@ -101,21 +110,22 @@ shadowDOM具有更强的样式隔离能力，开启后，`<micro-app>`标签会�
 
 但shadowDOM在React框架及一些UI库中的兼容不是很好，请谨慎使用。
 
+
 ## 全局配置
-全局配置会影响每一个子应用，上述几个选项都可以配置到全局。
+全局配置会影响每一个子应用，请小心使用！
 
 **使用方式**
 
-只在入口文件定义一次，不要多次定义。
 ```js
 import microApp from '@micro-zoe/micro-app'
 
 microApp.start({
   inline: true, // 默认值false
-  destory: true, // 默认值false
+  destroy: true, // 默认值false
   disableScopecss: true, // 默认值false
   disableSandbox: true, // 默认值false
   shadowDOM: true, // 默认值false
+  ssr: true, // 默认值false
 })
 ```
 
@@ -125,10 +135,11 @@ microApp.start({
   name='xx' 
   url='xx' 
   inline='false'
-  destory='false'
+  destroy='false'
   disableScopecss='false'
   disableSandbox='false'
   shadowDOM='false'
+  ssr='false'
 ></micro-app>
 ```
 
@@ -183,5 +194,4 @@ jsonp会创建一个script元素加载数据，正常情况script会被拦截导
 // 修改jsonp方法，在创建script元素后添加ignore属性
 const script = document.createElement('script')
 script.setAttribute('ignore', 'true')
-...
 ```

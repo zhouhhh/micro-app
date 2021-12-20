@@ -31,14 +31,14 @@ yarn build:watch
 
 2、进入基座应用并启动
 ```
-cd examples/main-react16/
+cd dev/main-react16/
 
 yarn start
 ```
 
 3、进入某个子应用并启动
 ```
-cd examples/children/react16
+cd dev/children/react16
 
 yarn start
 ```

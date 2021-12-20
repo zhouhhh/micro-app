@@ -1,4 +1,4 @@
-import { isSupportModuleScript, isBrowser } from './utils'
+import { isSupportModuleScript, isBrowser, getCurrentAppName } from './utils'
 
 type RequestIdleCallbackOptions = {
   timeout: number
@@ -16,20 +16,19 @@ declare global {
       opts?: RequestIdleCallbackOptions,
     ): number
     _babelPolyfill: boolean
-    proxyWindow?: WindowProxy
     __MICRO_APP_ENVIRONMENT__?: boolean
     __MICRO_APP_UMD_MODE__?: boolean
     __MICRO_APP_BASE_APPLICATION__?: boolean
   }
-  interface Element {
-    __MICRO_APP_NAME__?: string
+
+  interface Node {
+    __MICRO_APP_NAME__?: string | null
     data?: any
   }
-  interface Node {
-    __MICRO_APP_NAME__?: string
-  }
+
   interface HTMLStyleElement {
-    linkpath?: string
+    __MICRO_APP_LINK_PATH__?: string
+    __MICRO_APP_HAS_SCOPED__?: boolean
   }
 }
 
@@ -42,12 +41,13 @@ export function initGlobalEnv (): void {
      * pay attention to this binding
      */
     const rawSetAttribute = Element.prototype.setAttribute
-    const rawAppendChild = Node.prototype.appendChild
-    const rawInsertBefore = Node.prototype.insertBefore
-    const rawReplaceChild = Node.prototype.replaceChild
-    const rawRemoveChild = Node.prototype.removeChild
+    const rawAppendChild = Element.prototype.appendChild
+    const rawInsertBefore = Element.prototype.insertBefore
+    const rawReplaceChild = Element.prototype.replaceChild
+    const rawRemoveChild = Element.prototype.removeChild
     const rawAppend = Element.prototype.append
     const rawPrepend = Element.prototype.prepend
+    const rawCloneNode = Element.prototype.cloneNode
 
     const rawCreateElement = Document.prototype.createElement
     const rawCreateElementNS = Document.prototype.createElementNS
@@ -58,6 +58,14 @@ export function initGlobalEnv (): void {
     const rawGetElementsByClassName = Document.prototype.getElementsByClassName
     const rawGetElementsByTagName = Document.prototype.getElementsByTagName
     const rawGetElementsByName = Document.prototype.getElementsByName
+
+    const ImageProxy = new Proxy(Image, {
+      construct (Target, args): HTMLImageElement {
+        const elementImage = new Target(...args)
+        elementImage.__MICRO_APP_NAME__ = getCurrentAppName()
+        return elementImage
+      },
+    })
 
     const rawWindow = Function('return window')()
     const rawDocument = Function('return document')()
@@ -90,6 +98,7 @@ export function initGlobalEnv (): void {
       rawRemoveChild,
       rawAppend,
       rawPrepend,
+      rawCloneNode,
       rawCreateElement,
       rawCreateElementNS,
       rawCreateDocumentFragment,
@@ -99,6 +108,7 @@ export function initGlobalEnv (): void {
       rawGetElementsByClassName,
       rawGetElementsByTagName,
       rawGetElementsByName,
+      ImageProxy,
 
       // common global vars
       rawWindow,

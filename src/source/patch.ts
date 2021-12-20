@@ -33,7 +33,7 @@ function handleNewNode (parent: Node, child: Node, app: AppInterface): Node {
       dynamicElementInMicroAppMap.set(child, replaceComment)
       return replaceComment
     } else if (app.scopecss && !child.hasAttribute('ignore')) {
-      return scopedCSS(child, app.name)
+      return scopedCSS(child, app)
     }
     return child
   } else if (child instanceof HTMLLinkElement) {
@@ -41,7 +41,7 @@ function handleNewNode (parent: Node, child: Node, app: AppInterface): Node {
       const linkReplaceComment = document.createComment('link element with exclude attribute ignored by micro-app')
       dynamicElementInMicroAppMap.set(child, linkReplaceComment)
       return linkReplaceComment
-    } else if (!app.scopecss || child.hasAttribute('ignore')) {
+    } else if (child.hasAttribute('ignore')) {
       return child
     }
 
@@ -49,13 +49,12 @@ function handleNewNode (parent: Node, child: Node, app: AppInterface): Node {
       child,
       parent,
       app,
-      null,
       true,
     )
 
     if (url && info) {
       const replaceStyle = pureCreateElement('style')
-      replaceStyle.linkpath = url
+      replaceStyle.__MICRO_APP_LINK_PATH__ = url
       foramtDynamicLink(url, info, app, child, replaceStyle)
       dynamicElementInMicroAppMap.set(child, replaceStyle)
       return replaceStyle
@@ -74,8 +73,8 @@ function handleNewNode (parent: Node, child: Node, app: AppInterface): Node {
     ) || {}
 
     if (url && info) {
-      if (info.code) { // inline script
-        const replaceElement = runScript(url, info.code, app, info.module, true)
+      if (!info.isExternal) { // inline script
+        const replaceElement = runScript(url, app, info, true)
         dynamicElementInMicroAppMap.set(child, replaceElement)
         return replaceElement
       } else { // remote script
@@ -223,7 +222,7 @@ export function patchElementPrototypeMethods (): void {
       }
     } else if (
       (
-        (key === 'src' && /^(img|script)$/i.test(this.tagName)) ||
+        ((key === 'src' || key === 'srcset') && /^(img|script)$/i.test(this.tagName)) ||
         (key === 'href' && /^link$/i.test(this.tagName))
       ) &&
       this.__MICRO_APP_NAME__ &&
@@ -237,15 +236,15 @@ export function patchElementPrototypeMethods (): void {
   }
 
   // prototype methods of add element👇
-  Node.prototype.appendChild = function appendChild<T extends Node> (newChild: T): T {
+  Element.prototype.appendChild = function appendChild<T extends Node> (newChild: T): T {
     return commonElementHander(this, newChild, null, globalEnv.rawAppendChild)
   }
 
-  Node.prototype.insertBefore = function insertBefore<T extends Node> (newChild: T, refChild: Node | null): T {
+  Element.prototype.insertBefore = function insertBefore<T extends Node> (newChild: T, refChild: Node | null): T {
     return commonElementHander(this, newChild, refChild, globalEnv.rawInsertBefore)
   }
 
-  Node.prototype.replaceChild = function replaceChild<T extends Node> (newChild: Node, oldChild: T): T {
+  Element.prototype.replaceChild = function replaceChild<T extends Node> (newChild: Node, oldChild: T): T {
     return commonElementHander(this, newChild, oldChild, globalEnv.rawReplaceChild)
   }
 
@@ -267,7 +266,7 @@ export function patchElementPrototypeMethods (): void {
   }
 
   // prototype methods of delete element👇
-  Node.prototype.removeChild = function removeChild<T extends Node> (oldChild: T): T {
+  Element.prototype.removeChild = function removeChild<T extends Node> (oldChild: T): T {
     if (oldChild?.__MICRO_APP_NAME__) {
       const app = appInstanceMap.get(oldChild.__MICRO_APP_NAME__)
       if (app?.container) {
@@ -282,6 +281,13 @@ export function patchElementPrototypeMethods (): void {
     }
 
     return globalEnv.rawRemoveChild.call(this, oldChild) as T
+  }
+
+  // patch cloneNode
+  Element.prototype.cloneNode = function cloneNode (deep?: boolean): Node {
+    const clonedNode = globalEnv.rawCloneNode.call(this, deep)
+    this.__MICRO_APP_NAME__ && (clonedNode.__MICRO_APP_NAME__ = this.__MICRO_APP_NAME__)
+    return clonedNode
   }
 }
 
@@ -425,12 +431,13 @@ export function releasePatches (): void {
   setCurrentAppName(null)
   releasePatchDocument()
   Element.prototype.setAttribute = globalEnv.rawSetAttribute
-  Node.prototype.appendChild = globalEnv.rawAppendChild
-  Node.prototype.insertBefore = globalEnv.rawInsertBefore
-  Node.prototype.replaceChild = globalEnv.rawReplaceChild
-  Node.prototype.removeChild = globalEnv.rawRemoveChild
+  Element.prototype.appendChild = globalEnv.rawAppendChild
+  Element.prototype.insertBefore = globalEnv.rawInsertBefore
+  Element.prototype.replaceChild = globalEnv.rawReplaceChild
+  Element.prototype.removeChild = globalEnv.rawRemoveChild
   Element.prototype.append = globalEnv.rawAppend
   Element.prototype.prepend = globalEnv.rawPrepend
+  Element.prototype.cloneNode = globalEnv.rawCloneNode
 }
 
 // Set the style of micro-app-head and micro-app-body

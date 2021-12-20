@@ -25,25 +25,26 @@
   </a>
 </p>
 
-[English](https://github.com/micro-zoe/micro-app)｜简体中文｜[官网文档](https://micro-zoe.github.io/micro-app/)｜[讨论组](https://github.com/micro-zoe/micro-app/discussions)｜[Gitter群聊](https://gitter.im/microzoe/micro-app)
+[English](https://github.com/micro-zoe/micro-app)｜简体中文｜[官网文档](https://micro-zoe.github.io/micro-app/)｜[讨论组](https://github.com/micro-zoe/micro-app/discussions)｜[聊天室](https://gitter.im/microzoe/micro-app)
 
 # 📖简介
 micro-app是京东零售推出的一款微前端框架，它基于类WebComponent进行渲染，从组件化的思维实现微前端，旨在降低上手难度、提升工作效率。它是目前接入微前端成本最低的框架，并且提供了JS沙箱、样式隔离、元素隔离、预加载、资源地址补全、插件系统、数据通信等一系列完善的功能。
 
-micro-app与技术栈无关，也不和业务绑定，可以用于任何前端框架。
+micro-app与技术栈无关，对前端框架没有限制，任何框架都可以作为基座应用嵌入任何类型的子应用。
 
-# 🔧开始使用
-微前端分为基座应用和子应用，我们分别列出基座应用和子应用需要进行的修改，具体介绍micro-app的使用方式。
+# 如何使用
+微前端分为基座应用（也可以叫做主应用）和子应用。
+
+这里以一种比较常见的情况举例：基座应用使用vue框架，采用history路由，子应用使用react框架，采用hash路由，我们分别列出基座应用和子应用需要进行的修改，具体介绍micro-app的使用方式。
 
 ## 基座应用
-> 基座应用以vue框架为例
 
-1、安装依赖
+**1、安装依赖**
 ```bash
 yarn add @micro-zoe/micro-app
 ```
 
-2、在入口处引入依赖
+**2、在入口文件引入**
 ```js
 // main.js
 import microApp from '@micro-zoe/micro-app'
@@ -51,63 +52,18 @@ import microApp from '@micro-zoe/micro-app'
 microApp.start()
 ```
 
-3、分配一个路由给子应用
-```js
-// router.js
-import Vue from 'vue'
-import VueRouter from 'vue-router' // vue-router@3.x
-import MyPage from './my-page.vue'
-
-Vue.use(VueRouter)
-
-const routes = [
-  {
-    // 👇 非严格匹配，/my-page/xxx 都将匹配到 MyPage 页面
-    path: '/my-page/*', 
-    name: 'my-page',
-    component: MyPage,
-  },
-]
-
-export default routes
-```
-
-4、在`MyPage`页面中嵌入微前端应用
+**3、在页面中嵌入微前端应用**
 ```html
 <!-- my-page.vue -->
 <template>
-  <div>
-    <h1>子应用</h1>
-    <!-- 👇 name为应用名称，url为html地址 -->
-    <micro-app name='app1' url='http://localhost:3000/' baseroute='/my-page'></micro-app>
-  </div>
+  <!-- 👇 name为应用名称，url为应用地址 -->
+  <micro-app name='my-app' url='http://localhost:3000/'></micro-app>
 </template>
 ```
 
-> url和子应用路由的关系请查看[路由一章](https://micro-zoe.github.io/micro-app/docs.html#/zh-cn/route)
-
 ## 子应用
-> 子应用以react框架为例
 
-1、设置基础路由(如果基座应用是history路由，子应用是hash路由，不需要设置基础路由，这一步可以省略)
-
-```js
-// router.js
-import { BrowserRouter, Switch, Route } from 'react-router-dom'
-
-export default function AppRoute () {
-  return (
-    // 👇 设置基础路由，子应用可以通过window.__MICRO_APP_BASE_ROUTE__获取基座应用下发的baseroute
-    <BrowserRouter basename={window.__MICRO_APP_BASE_ROUTE__ || '/'}>
-      <Switch>
-        ...
-      </Switch>
-    </BrowserRouter>
-  )
-}
-```
-
-2、在webpack-dev-server的headers中设置跨域支持。
+**在webpack-dev-server的headers中设置跨域支持。**
 ```js
 devServer: {
   headers: {
@@ -116,11 +72,9 @@ devServer: {
 },
 ```
 
-以上微前端就可以正常渲染，实现了在vue基座应用中嵌入react子应用，效果如下：
+以上微前端基本渲染完成，效果如下：
 
 <img src="https://img12.360buyimg.com/imagetools/jfs/t1/196940/34/1541/38365/610a14fcE46c21374/c321b9f8fa50a8fc.png" alt="result" width='900'/>
-
-上面列出了react和vue框架的使用方式，它们是可以自由组合的，比如基座应用是react，子应用是vue，或者基座应用是vue，子应用是react，或者基座应用和子应用都是react、vue。 micro-app对前端框架没有限制，任何框架都可以作为基座应用嵌入任何类型框架的子应用。
 
 更多详细配置可以查看[官网文档](https://micro-zoe.github.io/micro-app/docs.html#/zh-cn/start)
 
@@ -189,7 +143,13 @@ yarn start # 访问 http://localhost:3000
 <details>
   <summary>支持vite吗?</summary>
   
-  支持，详情请查看[适配vite](https://micro-zoe.github.io/micro-app/docs.html#/zh-cn/advanced?id=_2%e3%80%81%e9%80%82%e9%85%8dvite)
+  支持，详情请查看[适配vite](https://micro-zoe.github.io/micro-app/docs.html#/zh-cn/framework/vite)
+</details>
+
+<details>
+  <summary>支持ssr吗?</summary>
+  
+  支持，详情请查看[nextjs](https://micro-zoe.github.io/micro-app/docs.html#/zh-cn/framework/nextjs)、[nuxtjs](https://micro-zoe.github.io/micro-app/docs.html#/zh-cn/framework/nuxtjs)
 </details>
 
 # 贡献者们

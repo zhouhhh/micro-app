@@ -31,7 +31,6 @@ export function extractLinkFromHtml (
   link: HTMLLinkElement,
   parent: Node,
   app: AppInterface,
-  microAppHead: Element | null,
   isDynamic = false,
 ): any {
   const rel = link.getAttribute('rel')
@@ -41,12 +40,9 @@ export function extractLinkFromHtml (
     href = CompletionPath(href, app.url)
     if (!isDynamic) {
       replaceComment = document.createComment(`link element with href=${href} move to micro-app-head as style element`)
-      const placeholderComment = document.createComment(`placeholder for link with href=${href}`)
-      // all style elements insert into microAppHead
-      microAppHead!.appendChild(placeholderComment)
       app.source.links.set(href, {
         code: '',
-        placeholder: placeholderComment,
+        placeholder: replaceComment,
         isGlobal: link.hasAttribute('global'),
       })
     } else {
@@ -59,7 +55,7 @@ export function extractLinkFromHtml (
       }
     }
   } else if (rel && ['prefetch', 'preload', 'prerender', 'icon', 'apple-touch-icon'].includes(rel)) {
-    // preload prefetch  icon ....
+    // preload prefetch icon ....
     if (isDynamic) {
       replaceComment = document.createComment(`link element with rel=${rel}${href ? ' & href=' + href : ''} removed by micro-app`)
     } else {
@@ -131,9 +127,10 @@ export function fetchLinkSuccess (
 
   const styleLink = pureCreateElement('style')
   styleLink.textContent = data
-  styleLink.linkpath = url
+  styleLink.__MICRO_APP_LINK_PATH__ = url
+  styleLink.setAttribute('data-origin-href', url)
 
-  microAppHead.replaceChild(scopedCSS(styleLink, app.name), info.placeholder!)
+  microAppHead.replaceChild(scopedCSS(styleLink, app), info.placeholder!)
 
   info.placeholder = null
   info.code = data
@@ -156,7 +153,7 @@ export function foramtDynamicLink (
 ): void {
   if (app.source.links.has(url)) {
     replaceStyle.textContent = app.source.links.get(url)!.code
-    scopedCSS(replaceStyle, app.name)
+    scopedCSS(replaceStyle, app)
     defer(() => dispatchOnLoadEvent(originLink))
     return
   }
@@ -166,7 +163,7 @@ export function foramtDynamicLink (
     info.code = code
     app.source.links.set(url, info)
     replaceStyle.textContent = code
-    scopedCSS(replaceStyle, app.name)
+    scopedCSS(replaceStyle, app)
     defer(() => dispatchOnLoadEvent(originLink))
     return
   }
@@ -174,9 +171,9 @@ export function foramtDynamicLink (
   fetchSource(url, app.name).then((data: string) => {
     info.code = data
     app.source.links.set(url, info)
-    if (info.isGlobal) globalLinks.set(url, data)
+    info.isGlobal && globalLinks.set(url, data)
     replaceStyle.textContent = data
-    scopedCSS(replaceStyle, app.name)
+    scopedCSS(replaceStyle, app)
     dispatchOnLoadEvent(originLink)
   }).catch((err) => {
     logError(err, app.name)

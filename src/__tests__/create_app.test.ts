@@ -1,7 +1,7 @@
 /* eslint-disable promise/param-names */
 import { commonStartEffect, releaseAllEffect, ports } from './common/initial'
-import { appInstanceMap } from '../create_app'
-import { appStatus } from '../constants'
+import { appInstanceMap, unmountApp, unmountAllApps } from '../create_app'
+import { appStates, keepAliveStates } from '../constants'
 import microApp from '..'
 
 describe('create_app', () => {
@@ -30,10 +30,10 @@ describe('create_app', () => {
         createCount++
         expect(appInstanceMap.size).toBe(1)
         if (createCount === 1) {
-          expect(appInstanceMap.get('test-app1')!.getAppStatus()).toBe(appStatus.LOADING_SOURCE_CODE)
+          expect(appInstanceMap.get('test-app1')!.getAppState()).toBe(appStates.LOADING_SOURCE_CODE)
         } else {
           // 二次渲染时会异步执行mount，所以此时仍然是UNMOUNT
-          expect(appInstanceMap.get('test-app1')!.getAppStatus()).toBe(appStatus.UNMOUNT)
+          expect(appInstanceMap.get('test-app1')!.getAppState()).toBe(appStates.UNMOUNT)
         }
         reslove(true)
       }, false)
@@ -44,7 +44,7 @@ describe('create_app', () => {
     await new Promise((reslove) => {
       microappElement1.addEventListener('unmount', () => {
         const app = appInstanceMap.get('test-app1')!
-        expect(app.getAppStatus()).toBe(appStatus.UNMOUNT)
+        expect(app.getAppState()).toBe(appStates.UNMOUNT)
         // 因为应用还没渲染就卸载，所以active始终为false
         // @ts-ignore
         expect(app.sandBox!.active).toBeFalsy()
@@ -99,7 +99,7 @@ describe('create_app', () => {
       setTimeout(() => {
         expect(errorHandle).not.toBeCalled()
         reslove(true)
-      }, 100)
+      }, 200)
     })
   })
 
@@ -273,5 +273,188 @@ describe('create_app', () => {
 
     // @ts-ignore
     delete window.specialUmdMode
+  })
+
+  // 测试 unmountApp 方法
+  test('test unmountApp method', async () => {
+    // 场景1: 常规卸载操作
+    const microAppElement12 = document.createElement('micro-app')
+    microAppElement12.setAttribute('name', 'test-app12')
+    microAppElement12.setAttribute('url', `http://127.0.0.1:${ports.create_app}/common`)
+
+    appCon.appendChild(microAppElement12)
+
+    await new Promise((reslove) => {
+      microAppElement12.addEventListener('mounted', () => {
+        unmountApp('test-app12').then(reslove)
+      })
+    })
+
+    await new Promise((reslove) => {
+      unmountApp('not-exist').then(() => {
+        expect(console.warn).toHaveBeenCalledWith('[micro-app] app not-exist does not exist')
+        reslove(true)
+      })
+    })
+
+    // 场景2: 卸载已经卸载的应用
+    const microAppElement13 = document.createElement('micro-app')
+    microAppElement13.setAttribute('name', 'test-app13')
+    microAppElement13.setAttribute('url', `http://127.0.0.1:${ports.create_app}/common`)
+
+    appCon.appendChild(microAppElement13)
+
+    await new Promise((reslove) => {
+      microAppElement13.addEventListener('mounted', () => {
+        appCon.removeChild(microAppElement13)
+      })
+
+      // 应用已经卸载后执行unmountApp
+      microAppElement13.addEventListener('unmount', () => {
+        // 首次卸载不传 destroy，则直接返回，test-app13依然存在
+        unmountApp('test-app13').then(() => {
+          expect(appInstanceMap.has('test-app13')).toBeTruthy()
+          // 第二次卸载设置destroy，应用被删除
+          unmountApp('test-app13', {
+            destroy: true,
+          }).then(() => {
+            expect(appInstanceMap.has('test-app13')).toBeFalsy()
+            reslove(true)
+          })
+        })
+      })
+    })
+
+    // 场景3: 卸载已经推入后台的keep-alive应用
+    const microAppElement14 = document.createElement('micro-app')
+    microAppElement14.setAttribute('name', 'test-app14')
+    microAppElement14.setAttribute('url', `http://127.0.0.1:${ports.create_app}/common`)
+    microAppElement14.setAttribute('keep-alive', 'true')
+
+    appCon.appendChild(microAppElement14)
+
+    await new Promise((reslove) => {
+      microAppElement14.addEventListener('mounted', () => {
+        appCon.removeChild(microAppElement14)
+      })
+
+      // 应用已隐藏后执行unmountApp
+      microAppElement14.addEventListener('afterhidden', () => {
+        // 首次卸载不传 destroy，则直接返回，test-app14安然无恙
+        unmountApp('test-app14').then(() => {
+          expect(appInstanceMap.has('test-app14')).toBeTruthy()
+          // 第二次卸载设置clearAliveState，触发应用卸载操作，应用状态被清除
+          unmountApp('test-app14', {
+            clearAliveState: true,
+          }).then(() => {
+            expect(appInstanceMap.has('test-app14')).toBeTruthy()
+            expect(appInstanceMap.get('test-app14')?.getAppState()).toBe(appStates.UNMOUNT)
+            reslove(true)
+          })
+        })
+      })
+    })
+
+    // 场景4: 强制删除已经推入后台的keep-alive应用
+    const microAppElement15 = document.createElement('micro-app')
+    microAppElement15.setAttribute('name', 'test-app15')
+    microAppElement15.setAttribute('url', `http://127.0.0.1:${ports.create_app}/umd1`)
+    microAppElement15.setAttribute('keep-alive', 'true')
+
+    appCon.appendChild(microAppElement15)
+
+    await new Promise((reslove) => {
+      microAppElement15.addEventListener('mounted', () => {
+        appCon.removeChild(microAppElement15)
+      })
+
+      // 应用已隐藏后执行unmountApp
+      microAppElement15.addEventListener('afterhidden', () => {
+        unmountApp('test-app15', {
+          destroy: true,
+        }).then(() => {
+          expect(appInstanceMap.has('test-app15')).toBeFalsy()
+          reslove(true)
+        })
+      })
+    })
+
+    // 场景5: 强制删除正在运行的app
+    const microAppElement16 = document.createElement('micro-app')
+    microAppElement16.setAttribute('name', 'test-app16')
+    microAppElement16.setAttribute('url', `http://127.0.0.1:${ports.create_app}/common`)
+    microAppElement16.setAttribute('destroy', 'attr-of-destroy')
+    microAppElement16.setAttribute('destory', 'attr-of-destory')
+
+    appCon.appendChild(microAppElement16)
+
+    await new Promise((reslove) => {
+      microAppElement16.addEventListener('mounted', () => {
+        unmountApp('test-app16', {
+          destroy: true,
+        }).then(() => {
+          expect(appInstanceMap.has('test-app16')).toBeFalsy()
+          expect(microAppElement16.getAttribute('destroy')).toBe('attr-of-destroy')
+          expect(microAppElement16.getAttribute('destory')).toBe('attr-of-destory')
+          reslove(true)
+        })
+      })
+    })
+
+    // 场景6: 卸载正在运行的keep-alive应用并清空状态
+    const microAppElement17 = document.createElement('micro-app')
+    microAppElement17.setAttribute('name', 'test-app17')
+    microAppElement17.setAttribute('url', `http://127.0.0.1:${ports.create_app}/common`)
+    microAppElement17.setAttribute('keep-alive', 'attr-of-keep-alive')
+
+    appCon.appendChild(microAppElement17)
+
+    await new Promise((reslove) => {
+      microAppElement17.addEventListener('mounted', () => {
+        unmountApp('test-app17', {
+          clearAliveState: true,
+        }).then(() => {
+          expect(appInstanceMap.get('test-app17')?.getAppState()).toBe(appStates.UNMOUNT)
+          expect(microAppElement17.getAttribute('keep-alive')).toBe('attr-of-keep-alive')
+          reslove(true)
+        })
+      })
+    })
+
+    // 场景7: 正常卸载一个keep-alive应用，保留状态
+    const microAppElement18 = document.createElement('micro-app')
+    microAppElement18.setAttribute('name', 'test-app18')
+    microAppElement18.setAttribute('url', `http://127.0.0.1:${ports.create_app}/common`)
+    microAppElement18.setAttribute('keep-alive', 'true')
+
+    appCon.appendChild(microAppElement18)
+
+    await new Promise((reslove) => {
+      microAppElement18.addEventListener('mounted', () => {
+        unmountApp('test-app18').then(() => {
+          expect(appInstanceMap.get('test-app18')?.getKeepAliveState()).toBe(keepAliveStates.KEEP_ALIVE_HIDDEN)
+          reslove(true)
+        })
+      })
+    })
+  })
+
+  // 测试 unmountAllApps 方法
+  test('test unmountAllApps method', async () => {
+    const microAppElement19 = document.createElement('micro-app')
+    microAppElement19.setAttribute('name', 'test-app19')
+    microAppElement19.setAttribute('url', `http://127.0.0.1:${ports.create_app}/common`)
+    microAppElement19.setAttribute('destroy', 'true')
+
+    appCon.appendChild(microAppElement19)
+
+    await new Promise((reslove) => {
+      microAppElement19.addEventListener('mounted', () => {
+        unmountAllApps().then(() => {
+          expect(appInstanceMap.has('test-app19')).toBeFalsy()
+          reslove(true)
+        })
+      })
+    })
   })
 })
