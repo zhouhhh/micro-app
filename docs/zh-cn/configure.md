@@ -108,7 +108,7 @@ keep-alive的优先级小于[destory](/zh-cn/configure?id=destroy)，当两者�
 
 shadowDOM具有更强的样式隔离能力，开启后，`<micro-app>`标签会成为一个真正的WebComponent。
 
-但shadowDOM在React框架及一些UI库中的兼容不是很好，请谨慎使用。
+但shadowDOM在React框架及一些UI库中的兼容不是很好，经常会出现一些不可预料的问题，除非你很清楚它会带来的问题并有信心解决，否则不建议使用。
 
 
 ## 全局配置
