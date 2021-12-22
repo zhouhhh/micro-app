@@ -21,7 +21,7 @@ import {
   formatAppName,
 } from './libs/utils'
 import dispatchLifecyclesEvent, { dispatchCustomEventToMicroApp } from './interact/lifecycles_event'
-import globalEnv from './libs/global_env'
+import globalEnv, { setActiveProxyWindow, clearActiveProxyWindow } from './libs/global_env'
 
 // micro app instances
 export const appInstanceMap = new Map<string, AppInterface>()
@@ -33,7 +33,6 @@ export interface CreateAppParam {
   ssrUrl?: string
   scopecss: boolean
   useSandbox: boolean
-  macro?: boolean
   inline?: boolean
   baseroute?: string
   container?: HTMLElement | ShadowRoot
@@ -56,7 +55,6 @@ export default class CreateApp implements AppInterface {
   inline: boolean
   scopecss: boolean
   useSandbox: boolean
-  macro = false
   baseroute = ''
   source: sourceType
   sandBox: SandBoxInterface | null = null
@@ -69,7 +67,6 @@ export default class CreateApp implements AppInterface {
     inline,
     scopecss,
     useSandbox,
-    macro,
     baseroute,
   }: CreateAppParam) {
     this.container = container ?? null
@@ -81,13 +78,12 @@ export default class CreateApp implements AppInterface {
     this.url = url
     this.useSandbox = useSandbox
     this.scopecss = this.useSandbox && scopecss
-    this.macro = macro ?? false
     this.source = {
       links: new Map<string, sourceLinkInfo>(),
       scripts: new Map<string, sourceScriptInfo>(),
     }
     this.loadSourceCode()
-    this.useSandbox && (this.sandBox = new SandBox(name, url, this.macro))
+    this.useSandbox && (this.sandBox = new SandBox(name, url))
   }
 
   // Load resources
@@ -173,7 +169,9 @@ export default class CreateApp implements AppInterface {
             this.umdMode = true
             this.sandBox?.recordUmdSnapshot()
             try {
+              setActiveProxyWindow(this.sandBox?.proxyWindow, this.name)
               umdHookMountResult = this.umdHookMount()
+              clearActiveProxyWindow()
             } catch (e) {
               logError('an error occurred in the mount function \n', this.name, e)
             }
@@ -188,7 +186,9 @@ export default class CreateApp implements AppInterface {
     } else {
       this.sandBox?.rebuildUmdSnapshot()
       try {
+        setActiveProxyWindow(this.sandBox?.proxyWindow, this.name)
         umdHookMountResult = this.umdHookMount!()
+        clearActiveProxyWindow()
       } catch (e) {
         logError('an error occurred in the mount function \n', this.name, e)
       }
@@ -246,7 +246,9 @@ export default class CreateApp implements AppInterface {
      */
     if (this.umdHookUnmount) {
       try {
+        setActiveProxyWindow(this.sandBox?.proxyWindow, this.name)
         umdHookUnmountResult = this.umdHookUnmount()
+        clearActiveProxyWindow()
       } catch (e) {
         logError('an error occurred in the unmount function \n', this.name, e)
       }

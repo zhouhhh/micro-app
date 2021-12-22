@@ -17,7 +17,6 @@ test('just define micro-app in pure start', () => {
     inline: true,
     disableScopecss: false,
     disableSandbox: false,
-    macro: false
   })
 
   expect(Boolean(window.customElements.get('micro-app'))).toBeTruthy()

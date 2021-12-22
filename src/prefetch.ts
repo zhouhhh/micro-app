@@ -42,13 +42,12 @@ function filterPreFetchTarget<T extends prefetchParam> (apps: T[]): T[] {
  *    url: string,
  *    disableScopecss?: boolean,
  *    disableSandbox?: boolean,
- *    macro?: boolean,
  *  },
  *  ...
  * ])
  * Note:
  *  1: preFetch is asynchronous and is performed only when the browser is idle
- *  2: disableScopecss, disableSandbox, macro must be same with micro-app element, if conflict, the one who executes first shall prevail
+ *  2: disableScopecss, disableSandbox must be same with micro-app element, if conflict, the one who executes first shall prevail
  * @param apps micro apps
  */
 export default function preFetch (apps: prefetchParamList): void {
@@ -64,7 +63,6 @@ export default function preFetch (apps: prefetchParamList): void {
         url: item.url,
         scopecss: !(item.disableScopecss ?? microApp.disableScopecss),
         useSandbox: !(item.disableSandbox ?? microApp.disableSandbox),
-        macro: item.macro ?? microApp.macro,
       })
 
       app.isPrefetch = true

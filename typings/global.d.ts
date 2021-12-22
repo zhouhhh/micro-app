@@ -49,7 +49,6 @@ declare module '@micro-app/types' {
     inline: boolean //  whether js runs in inline script mode, default is false
     scopecss: boolean // whether use css scoped, default is true
     useSandbox: boolean // whether use js sandbox, default is true
-    macro: boolean // used to solve the async render problem of vue3, default is false
     baseroute: string // route prefix, default is ''
     source: sourceType // sources of css, js, html
     sandBox: SandBoxInterface | null // sanxbox
@@ -111,7 +110,6 @@ declare module '@micro-app/types' {
     url: string,
     disableScopecss?: boolean
     disableSandbox?: boolean
-    macro?: boolean
     shadowDOM?: boolean
   }
 
@@ -169,7 +167,6 @@ declare module '@micro-app/types' {
     inline?: boolean
     disableScopecss?: boolean
     disableSandbox?: boolean
-    macro?: boolean
     ssr?: boolean
     lifeCycles?: lifeCyclesType
     preFetchApps?: prefetchParamList
@@ -186,7 +183,6 @@ declare module '@micro-app/types' {
     inline?: boolean
     disableScopecss?: boolean
     disableSandbox?: boolean
-    macro?: boolean
     ssr?: boolean
     lifeCycles?: lifeCyclesType
     plugins?: plugins

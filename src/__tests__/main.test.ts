@@ -28,7 +28,6 @@ describe('main process', () => {
       // destroy: true,
       // disableScopecss: true,
       // disableSandbox: true,
-      // macro: true,
       lifeCycles: {
         // created () {
         //   console.log('created 全局监听')
@@ -82,7 +81,6 @@ describe('main process', () => {
             url: `http://127.0.0.1:${ports.main}/ssr-render`,
             disableScopecss: true,
             disableSandbox: true,
-            macro: true,
           },
           {
             name: 'app-test-error',
@@ -99,7 +97,6 @@ describe('main process', () => {
       url: `http://127.0.0.1:${ports.main}/common`,
       // disableScopecss: xx,
       // disableSandbox: xx,
-      // macro: xx,
       shadowDOM: true,
     }])
   })

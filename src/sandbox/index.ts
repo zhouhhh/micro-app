@@ -4,21 +4,20 @@ import {
 } from '../interact'
 import globalEnv from '../libs/global_env'
 import {
-  defer,
   getEffectivePath,
   isArray,
   isPlainObject,
   isString,
   removeDomScope,
-  setCurrentAppName,
   unique,
 } from '../libs/utils'
 import microApp from '../micro_app'
 import bindFunctionToRawWindow from './bind_function'
 import effect, { effectDocumentEvent, releaseEffectDocumentEvent } from './effect'
+import MicroAppDocument from './proxy_document'
 
 /* eslint-disable camelcase */
-type injectDataType = {
+export type injectDataType = {
   __MICRO_APP_ENVIRONMENT__: boolean
   __MICRO_APP_NAME__: string
   __MICRO_APP_PUBLIC_PATH__: string
@@ -30,6 +29,8 @@ type injectDataType = {
   rawDocument: Document
   removeDomScope: () => void
 }
+
+export type MicroAppWindowType = Window & injectDataType
 
 // Variables that can escape to rawWindow
 const staticEscapeProperties: PropertyKey[] = [
@@ -56,15 +57,6 @@ const unscopables = {
   Float32Array: true,
 }
 
-/**
- * macro task to solve the rendering problem of vue3
- */
-let macroTimer: number
-function macroTask (fn: TimerHandler): void {
-  macroTimer && clearTimeout(macroTimer)
-  macroTimer = setTimeout(fn, 0)
-}
-
 export default class SandBox implements SandBoxInterface {
   static activeCount = 0 // number of active sandbox
   // @ts-ignore
@@ -85,12 +77,11 @@ export default class SandBox implements SandBoxInterface {
   private recordUmdinjectedValues?: Map<PropertyKey, unknown>
   // sandbox state
   private active = false
-  proxyWindow: WindowProxy & injectDataType // Proxy
-  microWindow = {} as Window & injectDataType // Proxy target
+  proxyWindow: WindowProxy // Proxy
+  microWindow = {} as MicroAppWindowType // Proxy target
 
-  constructor (appName: string, url: string, macro: boolean) {
+  constructor (appName: string, url: string) {
     const rawWindow = globalEnv.rawWindow
-    const rawDocument = globalEnv.rawDocument
     const descriptorTargetMap = new Map<PropertyKey, 'target' | 'rawWindow'>()
     const hasOwnProperty = (key: PropertyKey) => this.microWindow.hasOwnProperty(key) || rawWindow.hasOwnProperty(key)
     // get scopeProperties and escapeProperties from plugins
@@ -99,9 +90,11 @@ export default class SandBox implements SandBoxInterface {
     this.inject(this.microWindow, appName, url)
     // Rewrite global event listener & timeout
     Object.assign(this, effect(this.microWindow))
+    const microAppDoc = new MicroAppDocument(appName)
 
     this.proxyWindow = new Proxy(this.microWindow, {
       get: (target: microWindowType, key: PropertyKey): unknown => {
+        // console.log(key)
         if (key === Symbol.unscopables) return unscopables
 
         if (['window', 'self', 'globalThis'].includes(key as string)) {
@@ -118,13 +111,13 @@ export default class SandBox implements SandBoxInterface {
         if (key === 'hasOwnProperty') return hasOwnProperty
 
         if (key === 'document' || key === 'eval' || key === 'Image') {
-          if (this.active) {
-            setCurrentAppName(appName)
-            ;(macro ? macroTask : defer)(() => setCurrentAppName(null))
-          }
+          // if (this.active) {
+          //   setCurrentAppName(appName)
+          //   ;(macro ? macroTask : defer)(() => setCurrentAppName(null))
+          // }
           switch (key) {
             case 'document':
-              return rawDocument
+              return microAppDoc.proxyDocument
             case 'eval':
               return eval
             case 'Image':

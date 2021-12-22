@@ -67,7 +67,6 @@ export function defineElement (tagName: string): void {
     // inline: whether js runs in inline script mode, default is false
     // disableScopecss: whether disable css scoped, default is false
     // disableSandbox: whether disable sandbox, default is false
-    // macro: used to solve the async render problem of vue3, default is false
     // baseRoute: route prefix, default is ''
     // keep-alive: open keep-alive mode
 
@@ -345,7 +344,6 @@ export function defineElement (tagName: string): void {
         inline: this.getDisposeResult('inline'),
         scopecss: !(this.getDisposeResult('disableScopecss') || this.getDisposeResult('shadowDOM')),
         useSandbox: !this.getDisposeResult('disableSandbox'),
-        macro: this.getDisposeResult('macro'),
         baseroute: this.getBaseRouteCompatible(),
       })
 

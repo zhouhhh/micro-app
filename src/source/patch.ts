@@ -1,4 +1,5 @@
 import type { Func, AppInterface } from '@micro-app/types'
+import type { microDocumentType } from '../sandbox/proxy_document'
 import { appInstanceMap } from '../create_app'
 import {
   CompletionPath,
@@ -294,124 +295,164 @@ export function patchElementPrototypeMethods (): void {
 /**
  * Mark the newly created element in the micro application
  * @param element new element
+ * @param appName app name
  */
-function markElement <T extends { __MICRO_APP_NAME__: string }> (element: T): T {
-  const appName = getCurrentAppName()
-  appName && (element.__MICRO_APP_NAME__ = appName)
+function markElement <T extends { __MICRO_APP_NAME__: string }> (
+  element: T,
+  appName: string | null,
+): T {
+  const currentAppName = appName || getCurrentAppName()
+  currentAppName && (element.__MICRO_APP_NAME__ = currentAppName)
   return element
+}
+
+function getInstanceDocument (target: Document): {
+  _this: Document,
+  appName: string | null,
+} {
+  if (target instanceof Document) {
+    return { _this: target, appName: null }
+  } else if (typeof target === 'object') {
+    return {
+      _this: globalEnv.rawDocument,
+      appName: (target as microDocumentType).__MICRO_APP_NAME__
+    }
+  }
+  return { _this: globalEnv.rawDocument, appName: null }
+}
+
+// create element 👇
+export function createElement (
+  this: Document,
+  tagName: string,
+  options?: ElementCreationOptions,
+): HTMLElement {
+  const { _this, appName } = getInstanceDocument(this)
+  const element = globalEnv.rawCreateElement.call(_this, tagName, options)
+  return markElement(element, appName)
+}
+
+export function createElementNS (
+  this: Document,
+  namespaceURI: string,
+  name: string,
+  options?: string | ElementCreationOptions,
+): any {
+  const { _this, appName } = getInstanceDocument(this)
+  const element = globalEnv.rawCreateElementNS.call(_this, namespaceURI, name, options)
+  return markElement(element, appName)
+}
+
+export function createDocumentFragment (this: Document): DocumentFragment {
+  const { _this, appName } = getInstanceDocument(this)
+  const element = globalEnv.rawCreateDocumentFragment.call(_this)
+  return markElement(element, appName)
+}
+
+// query element👇
+export function querySelector (this: Document, selectors: string): any {
+  const { _this, appName } = getInstanceDocument(this)
+  const currentAppName = appName || getCurrentAppName()
+  if (
+    !currentAppName ||
+    !selectors ||
+    isUniqueElement(selectors) ||
+    // see https://github.com/micro-zoe/micro-app/issues/56
+    globalEnv.rawDocument !== _this
+  ) {
+    return globalEnv.rawQuerySelector.call(_this, selectors)
+  }
+  return appInstanceMap.get(currentAppName)?.container?.querySelector(selectors) ?? null
+}
+
+export function querySelectorAll (this: Document, selectors: string): any {
+  const { _this, appName } = getInstanceDocument(this)
+  const currentAppName = appName || getCurrentAppName()
+  if (
+    !currentAppName ||
+    !selectors ||
+    isUniqueElement(selectors) ||
+    globalEnv.rawDocument !== _this
+  ) {
+    return globalEnv.rawQuerySelectorAll.call(_this, selectors)
+  }
+  return appInstanceMap.get(currentAppName)?.container?.querySelectorAll(selectors) ?? []
+}
+
+export function getElementById (this: Document, key: string): HTMLElement | null {
+  const { _this, appName } = getInstanceDocument(this)
+  const currentAppName = appName || getCurrentAppName()
+  if (!currentAppName || isInvalidQuerySelectorKey(key)) {
+    return globalEnv.rawGetElementById.call(_this, key)
+  }
+
+  try {
+    return querySelector.call(this, `#${key}`)
+  } catch {
+    return globalEnv.rawGetElementById.call(_this, key)
+  }
+}
+
+export function getElementsByClassName (this: Document, key: string): HTMLCollectionOf<Element> {
+  const { _this, appName } = getInstanceDocument(this)
+  const currentAppName = appName || getCurrentAppName()
+  if (!currentAppName || isInvalidQuerySelectorKey(key)) {
+    return globalEnv.rawGetElementsByClassName.call(_this, key)
+  }
+
+  try {
+    return querySelectorAll.call(this, `.${key}`)
+  } catch {
+    return globalEnv.rawGetElementsByClassName.call(_this, key)
+  }
+}
+
+export function getElementsByTagName (this: Document, key: string): HTMLCollectionOf<Element> {
+  const { _this, appName } = getInstanceDocument(this)
+  const currentAppName = appName || getCurrentAppName()
+  if (
+    !currentAppName ||
+    isUniqueElement(key) ||
+    isInvalidQuerySelectorKey(key) ||
+    (!appInstanceMap.get(currentAppName)?.inline && /^script$/i.test(key))
+  ) {
+    return globalEnv.rawGetElementsByTagName.call(_this, key)
+  }
+
+  try {
+    return querySelectorAll.call(this, key)
+  } catch {
+    return globalEnv.rawGetElementsByTagName.call(_this, key)
+  }
+}
+
+export function getElementsByName (this: Document, key: string): NodeListOf<HTMLElement> {
+  const { _this, appName } = getInstanceDocument(this)
+  const currentAppName = appName || getCurrentAppName()
+  if (!currentAppName || isInvalidQuerySelectorKey(key)) {
+    return globalEnv.rawGetElementsByName.call(_this, key)
+  }
+
+  try {
+    return querySelectorAll.call(this, `[name=${key}]`)
+  } catch {
+    return globalEnv.rawGetElementsByName.call(_this, key)
+  }
 }
 
 // methods of document
 function patchDocument () {
-  const rawDocument = globalEnv.rawDocument
-
   // create element 👇
-  Document.prototype.createElement = function createElement (
-    tagName: string,
-    options?: ElementCreationOptions,
-  ): HTMLElement {
-    const element = globalEnv.rawCreateElement.call(this, tagName, options)
-    return markElement(element)
-  }
-
-  Document.prototype.createElementNS = function createElementNS (
-    namespaceURI: string,
-    name: string,
-    options?: string | ElementCreationOptions,
-  ): any {
-    const element = globalEnv.rawCreateElementNS.call(this, namespaceURI, name, options)
-    return markElement(element)
-  }
-
-  Document.prototype.createDocumentFragment = function createDocumentFragment (): DocumentFragment {
-    const element = globalEnv.rawCreateDocumentFragment.call(this)
-    return markElement(element)
-  }
-
-  // query element👇
-  function querySelector (this: Document, selectors: string): any {
-    const appName = getCurrentAppName()
-    if (
-      !appName ||
-      !selectors ||
-      isUniqueElement(selectors) ||
-      // see https://github.com/micro-zoe/micro-app/issues/56
-      rawDocument !== this
-    ) {
-      return globalEnv.rawQuerySelector.call(this, selectors)
-    }
-    return appInstanceMap.get(appName)?.container?.querySelector(selectors) ?? null
-  }
-
-  function querySelectorAll (this: Document, selectors: string): any {
-    const appName = getCurrentAppName()
-    if (
-      !appName ||
-      !selectors ||
-      isUniqueElement(selectors) ||
-      rawDocument !== this
-    ) {
-      return globalEnv.rawQuerySelectorAll.call(this, selectors)
-    }
-    return appInstanceMap.get(appName)?.container?.querySelectorAll(selectors) ?? []
-  }
+  Document.prototype.createElement = createElement
+  Document.prototype.createElementNS = createElementNS
+  Document.prototype.createDocumentFragment = createDocumentFragment
 
   Document.prototype.querySelector = querySelector
   Document.prototype.querySelectorAll = querySelectorAll
-
-  Document.prototype.getElementById = function getElementById (key: string): HTMLElement | null {
-    if (!getCurrentAppName() || isInvalidQuerySelectorKey(key)) {
-      return globalEnv.rawGetElementById.call(this, key)
-    }
-
-    try {
-      return querySelector.call(this, `#${key}`)
-    } catch {
-      return globalEnv.rawGetElementById.call(this, key)
-    }
-  }
-
-  Document.prototype.getElementsByClassName = function getElementsByClassName (key: string): HTMLCollectionOf<Element> {
-    if (!getCurrentAppName() || isInvalidQuerySelectorKey(key)) {
-      return globalEnv.rawGetElementsByClassName.call(this, key)
-    }
-
-    try {
-      return querySelectorAll.call(this, `.${key}`)
-    } catch {
-      return globalEnv.rawGetElementsByClassName.call(this, key)
-    }
-  }
-
-  Document.prototype.getElementsByTagName = function getElementsByTagName (key: string): HTMLCollectionOf<Element> {
-    const appName = getCurrentAppName()
-    if (
-      !appName ||
-      isUniqueElement(key) ||
-      isInvalidQuerySelectorKey(key) ||
-      (!appInstanceMap.get(appName)?.inline && /^script$/i.test(key))
-    ) {
-      return globalEnv.rawGetElementsByTagName.call(this, key)
-    }
-
-    try {
-      return querySelectorAll.call(this, key)
-    } catch {
-      return globalEnv.rawGetElementsByTagName.call(this, key)
-    }
-  }
-
-  Document.prototype.getElementsByName = function getElementsByName (key: string): NodeListOf<HTMLElement> {
-    if (!getCurrentAppName() || isInvalidQuerySelectorKey(key)) {
-      return globalEnv.rawGetElementsByName.call(this, key)
-    }
-
-    try {
-      return querySelectorAll.call(this, `[name=${key}]`)
-    } catch {
-      return globalEnv.rawGetElementsByName.call(this, key)
-    }
-  }
+  Document.prototype.getElementById = getElementById
+  Document.prototype.getElementsByClassName = getElementsByClassName
+  Document.prototype.getElementsByTagName = getElementsByTagName
+  Document.prototype.getElementsByName = getElementsByName
 }
 
 function releasePatchDocument (): void {
