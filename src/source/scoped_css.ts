@@ -3,13 +3,6 @@ import { CompletionPath, isSafari, pureCreateElement, getLinkFileDir } from '../
 import microApp from '../micro_app'
 import globalEnv from '../libs/global_env'
 
-// https://developer.mozilla.org/zh-CN/docs/Web/API/CSSRule
-enum CSSRuleType {
-  STYLE_RULE = 1,
-  MEDIA_RULE = 4,
-  SUPPORTS_RULE = 12,
-}
-
 /**
  * Bind css scope
  * Special case:
@@ -102,14 +95,15 @@ function scopedPackRule (
 function scopedRule (rules: CSSRule[], prefix: string): string {
   let result = ''
   for (const rule of rules) {
-    switch (rule.type) {
-      case CSSRuleType.STYLE_RULE:
+    // https://developer.mozilla.org/zh-CN/docs/Web/API/CSSRule
+    switch (rule.constructor.name) {
+      case 'CSSStyleRule':
         result += scopedStyleRule(rule as CSSStyleRule, prefix)
         break
-      case CSSRuleType.MEDIA_RULE:
+      case 'CSSMediaRule':
         result += scopedPackRule(rule as CSSMediaRule, prefix, 'media')
         break
-      case CSSRuleType.SUPPORTS_RULE:
+      case 'CSSSupportsRule':
         result += scopedPackRule(rule as CSSSupportsRule, prefix, 'supports')
         break
       default:

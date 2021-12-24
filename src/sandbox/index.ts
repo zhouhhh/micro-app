@@ -15,7 +15,6 @@ import {
 import microApp from '../micro_app'
 import bindFunctionToRawWindow from './bind_function'
 import effect, { effectDocumentEvent, releaseEffectDocumentEvent } from './effect'
-// import MicroAppDocument from './proxy_document'
 
 /* eslint-disable camelcase */
 export type MicroAppWindowDataType = {
@@ -95,7 +94,6 @@ export default class SandBox implements SandBoxInterface {
     this.initMicroWindow(this.microWindow, appName, url)
     // Rewrite global event listener & timeout
     Object.assign(this, effect(this.microWindow))
-    // const microAppDoc = new MicroAppDocument(appName)
 
     this.proxyWindow = new Proxy(this.microWindow, {
       get: (target: microWindowType, key: PropertyKey): unknown => {
@@ -354,7 +352,7 @@ export default class SandBox implements SandBoxInterface {
     throttleDeferForSetAppName(appName)
     switch (key) {
       case 'document':
-        return globalEnv.rawDocument // globalEnv.rawDocument microAppDoc.proxyDocument
+        return globalEnv.rawDocument
       case 'eval':
         return eval
       case 'Image':

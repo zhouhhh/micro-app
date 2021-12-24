@@ -16,9 +16,7 @@ import {
   isBoolean,
   isPromise,
   logError,
-  logWarn,
   getRootContainer,
-  formatAppName,
 } from './libs/utils'
 import dispatchLifecyclesEvent, { dispatchCustomEventToMicroApp } from './interact/lifecycles_event'
 import globalEnv from './libs/global_env'
@@ -408,100 +406,4 @@ export default class CreateApp implements AppInterface {
 
     return {}
   }
-}
-
-// if app not prefetch & not unmount, then app is active
-export function getActiveApps (): string[] {
-  const activeApps: string[] = []
-  appInstanceMap.forEach((app: AppInterface, appName: string) => {
-    if (appStates.UNMOUNT !== app.getAppState() && !app.isPrefetch) {
-      activeApps.push(appName)
-    }
-  })
-
-  return activeApps
-}
-
-// get all registered apps
-export function getAllApps (): string[] {
-  return Array.from(appInstanceMap.keys())
-}
-
-export interface unmountAppParams {
-  destroy?: boolean // destory app, default is false
-  clearAliveState?: boolean // clear keep-alive app state, default is false
-}
-
-/**
- * unmount app by appname
- * @param appName
- * @param options unmountAppParams
- * @returns Promise<void>
- */
-export function unmountApp (appName: string, options?: unmountAppParams): Promise<void> {
-  const app = appInstanceMap.get(formatAppName(appName))
-  return new Promise((reslove) => { // eslint-disable-line
-    if (app) {
-      if (app.getAppState() === appStates.UNMOUNT || app.isPrefetch) {
-        if (options?.destroy) {
-          app.actionsForCompletelyDestory()
-        }
-        reslove()
-      } else if (app.getKeepAliveState() === keepAliveStates.KEEP_ALIVE_HIDDEN) {
-        if (options?.destroy) {
-          app.unmount(true, reslove)
-        } else if (options?.clearAliveState) {
-          app.unmount(false, reslove)
-        } else {
-          reslove()
-        }
-      } else {
-        const container = getRootContainer(app.container!)
-        const unmountHandler = () => {
-          container.removeEventListener('unmount', unmountHandler)
-          container.removeEventListener('afterhidden', afterhiddenHandler)
-          reslove()
-        }
-
-        const afterhiddenHandler = () => {
-          container.removeEventListener('unmount', unmountHandler)
-          container.removeEventListener('afterhidden', afterhiddenHandler)
-          reslove()
-        }
-
-        container.addEventListener('unmount', unmountHandler)
-        container.addEventListener('afterhidden', afterhiddenHandler)
-
-        if (options?.destroy) {
-          let destroyAttrValue, destoryAttrValue
-          container.hasAttribute('destroy') && (destroyAttrValue = container.getAttribute('destroy'))
-          container.hasAttribute('destory') && (destoryAttrValue = container.getAttribute('destory'))
-
-          container.setAttribute('destroy', 'true')
-          container.parentNode!.removeChild(container)
-          container.removeAttribute('destroy')
-
-          typeof destroyAttrValue === 'string' && container.setAttribute('destroy', destroyAttrValue)
-          typeof destoryAttrValue === 'string' && container.setAttribute('destory', destoryAttrValue)
-        } else if (options?.clearAliveState && container.hasAttribute('keep-alive')) {
-          const keepAliveAttrValue = container.getAttribute('keep-alive')!
-
-          container.removeAttribute('keep-alive')
-          container.parentNode!.removeChild(container)
-
-          container.setAttribute('keep-alive', keepAliveAttrValue)
-        } else {
-          container.parentNode!.removeChild(container)
-        }
-      }
-    } else {
-      logWarn(`app ${appName} does not exist`)
-      reslove()
-    }
-  })
-}
-
-// unmount all apps in turn
-export function unmountAllApps (options?: unmountAppParams): Promise<void> {
-  return Array.from(appInstanceMap.keys()).reduce((pre, next) => pre.then(() => unmountApp(next, options)), Promise.resolve())
 }
