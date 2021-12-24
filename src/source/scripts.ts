@@ -23,7 +23,7 @@ import {
   dispatchOnErrorEvent,
 } from './load_event'
 import microApp from '../micro_app'
-import globalEnv, { setActiveProxyWindow, clearActiveProxyWindow } from '../libs/global_env'
+import globalEnv from '../libs/global_env'
 
 type moduleCallBack = Func & { moduleCount?: number }
 
@@ -338,8 +338,6 @@ function runCode2InlineScript (
   if (!url.startsWith('inline-')) {
     scriptElement.setAttribute('data-origin-src', url)
   }
-
-  clearActiveProxyWindow()
 }
 
 // init & run code2Function
@@ -348,7 +346,6 @@ function runCode2Function (code: string, info: sourceScriptInfo) {
     info.code2Function = new Function(code)
   }
   info.code2Function.call(window)
-  clearActiveProxyWindow()
 }
 
 /**
@@ -368,10 +365,8 @@ function bindScope (
     code = usePlugins(url, code, app.name, microApp.plugins!)
   }
   if (app.sandBox && !module) {
-    setActiveProxyWindow(app.sandBox.proxyWindow, app.name)
-    return `;(function(window, self){with(window){
-      (function(document, undefined, Array, Object, String, Boolean, Math, Number, Symbol, parseFloat, Float32Array, parseInt, isNaN, Function, Reflect, performance, window, Set, Map, Element, Node, getComputedStyle, RegExp, Error, Document, Proxy, WeakMap, requestAnimationFrame){${code}})(document, undefined, Array, Object, String, Boolean, Math, Number, Symbol, parseFloat, Float32Array, parseInt, isNaN, Function, Reflect, performance, window, Set, Map, Element, Node, getComputedStyle, RegExp, Error, Document, Proxy, WeakMap, requestAnimationFrame)
-    }}).call(window.__MICRO_APP_PROXY_WINDOW__, window.__MICRO_APP_PROXY_WINDOW__, window.__MICRO_APP_PROXY_WINDOW__);`
+    globalEnv.rawWindow.__MICRO_APP_PROXY_WINDOW__ = app.sandBox.proxyWindow
+    return `;(function(window, self){with(window, window.microAppPerTarget){(function(undefined, Array, Object, String, Boolean, Math, Number, Symbol, parseFloat, Float32Array, parseInt, isNaN, Function, Reflect, performance, window, Set, Map, Element, Node, getComputedStyle, RegExp, Error, Document, Proxy, WeakMap, requestAnimationFrame){${code}})(undefined, Array, Object, String, Boolean, Math, Number, Symbol, parseFloat, Float32Array, parseInt, isNaN, Function, Reflect, performance, window, Set, Map, Element, Node, getComputedStyle, RegExp, Error, Document, Proxy, WeakMap, requestAnimationFrame)}}).call(window.__MICRO_APP_PROXY_WINDOW__, window.__MICRO_APP_PROXY_WINDOW__, window.__MICRO_APP_PROXY_WINDOW__);`
   }
   return code
 }

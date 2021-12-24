@@ -1,37 +1,23 @@
 import globalEnv from '../libs/global_env'
-import {
-  createElement,
-  createElementNS,
-  createDocumentFragment,
-  querySelector,
-  querySelectorAll,
-  getElementById,
-  getElementsByClassName,
-  getElementsByTagName,
-  getElementsByName,
-} from '../source/patch'
-
-// import { appInstanceMap } from '../create_app'
 // import {
-//   isUniqueElement,
-//   isInvalidQuerySelectorKey,
-// } from '../libs/utils'
-
-// vite子应用循环潜逃如何处理？？？
-if (!window.__MICRO_APP_ENVIRONMENT__) {
-  Object.defineProperty(Element.prototype, 'ownerDocument', {
-    get () {
-      if (globalEnv.rawWindow.__MICRO_APP_PROXY_WINDOW__) {
-        return globalEnv.rawWindow.__MICRO_APP_PROXY_WINDOW__.document
-      }
-      return globalEnv.rawDocument
-    },
-    set () {
-      return true
-    },
-    configurable: false,
-  })
-}
+//   createElement,
+//   createElementNS,
+//   createDocumentFragment,
+//   querySelector,
+//   querySelectorAll,
+//   getElementById,
+//   getElementsByClassName,
+//   getElementsByTagName,
+//   getElementsByName,
+// } from '../source/patch'
+import {
+  // isUniqueElement,
+  // isInvalidQuerySelectorKey,
+  // throttleDeferForSetAppName,
+  defer,
+  setCurrentAppName,
+  getCurrentAppName,
+} from '../libs/utils'
 
 // function querySelector (this: microDocumentType, selectors: string): any {
 //   if (!selectors || isUniqueElement(selectors)) {
@@ -128,6 +114,38 @@ if (!window.__MICRO_APP_ENVIRONMENT__) {
 //   return element
 // }
 
+let isWaitingForReset = false
+function throttleDeferPatchDocument (appName: string, proxyDocument: Document) {
+  if (!isWaitingForReset || getCurrentAppName() !== appName) {
+    isWaitingForReset = true
+    setCurrentAppName(appName)
+    Object.defineProperty(Element.prototype, 'ownerDocument', {
+      value: proxyDocument,
+      configurable: true,
+    })
+
+    const html = document.children[0]
+    Object.defineProperty(html, 'parentNode', {
+      value: proxyDocument,
+      configurable: true,
+    })
+
+    defer(() => {
+      isWaitingForReset = false
+      setCurrentAppName(null)
+      Object.defineProperty(Element.prototype, 'ownerDocument', {
+        value: globalEnv.rawDocument,
+        configurable: true,
+      })
+
+      Object.defineProperty(html, 'parentNode', {
+        value: globalEnv.rawDocument,
+        configurable: true,
+      })
+    })
+  }
+}
+
 /* eslint-disable camelcase */
 export type injectDocumentDataType = {
   __MICRO_APP_NAME__: string
@@ -141,38 +159,41 @@ export default class MicroAppDocument {
 
   constructor (appName: string) {
     this.microDocument.__MICRO_APP_NAME__ = appName
-    this.proxyDocument = new Proxy(document, {
+    // const fakeDocument = createFakeObject(document);
+    this.proxyDocument = new Proxy(globalEnv.rawDocument, {
       get: (_target: Document, key: PropertyKey) => {
-        switch (key) {
-          case 'createElement':
-            return createElement.bind(this.microDocument)
-          case 'createElementNS':
-            return createElementNS.bind(this.microDocument)
-          case 'createDocumentFragment':
-            return createDocumentFragment.bind(this.microDocument)
-          case 'querySelector':
-            return querySelector.bind(this.microDocument)
-          case 'querySelectorAll':
-            return querySelectorAll.bind(this.microDocument)
-          case 'getElementById':
-            return getElementById.bind(this.microDocument)
-          case 'getElementsByClassName':
-            return getElementsByClassName.bind(this.microDocument)
-          case 'getElementsByTagName':
-            return getElementsByTagName.bind(this.microDocument)
-          case 'getElementsByName':
-            return getElementsByName.bind(this.microDocument)
-        }
+        throttleDeferPatchDocument(appName, this.proxyDocument)
+        // switch (key) {
+        //   case 'createElement':
+        //     return createElement.bind(this.microDocument)
+        //   case 'createElementNS':
+        //     return createElementNS.bind(this.microDocument)
+        //   case 'createDocumentFragment':
+        //     return createDocumentFragment.bind(this.microDocument)
+        //   case 'querySelector':
+        //     return querySelector.bind(this.microDocument)
+        //   case 'querySelectorAll':
+        //     return querySelectorAll.bind(this.microDocument)
+        //   case 'getElementById':
+        //     return getElementById.bind(this.microDocument)
+        //   case 'getElementsByClassName':
+        //     return getElementsByClassName.bind(this.microDocument)
+        //   case 'getElementsByTagName':
+        //     return getElementsByTagName.bind(this.microDocument)
+        //   case 'getElementsByName':
+        //     return getElementsByName.bind(this.microDocument)
+        // }
 
         if (typeof globalEnv.rawDocument[key] === 'function') {
           return globalEnv.rawDocument[key].bind(globalEnv.rawDocument)
         }
-        return globalEnv.rawDocument[key]
+
+        return Reflect.get(globalEnv.rawDocument, key)
       },
       set (_target: Document, key: PropertyKey, value: unknown) {
         Reflect.set(globalEnv.rawDocument, key, value)
         return true
-      }
+      },
     })
   }
 }

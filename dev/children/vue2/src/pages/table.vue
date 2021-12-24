@@ -343,7 +343,6 @@ export default {
     fetchData() {
       this.listLoading = true;
       const list = []
-      console.time('render')
       setTimeout(() => {
         const item = {
           'baseSalesNO': '@id',
@@ -385,6 +384,7 @@ export default {
           'shipmentStatusName': '未关联'
         }
 
+        console.time('render')
         for (let i = 0; i < 500; i++) {
           list.push(Object.assign({}, item, {
             baseSalesNO: 1000000000 + i
@@ -394,6 +394,7 @@ export default {
         this.listLoading = false;
         this.$nextTick(function () {
           console.timeEnd('render')
+          // console.log(window.a1)
         })
       }, 100);
     },

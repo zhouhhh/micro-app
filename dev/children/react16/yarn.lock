@@ -1315,6 +1315,71 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
+"@garfish/bridge@^1.2.10":
+  version "1.2.10"
+  resolved "https://registry.npmjs.org/@garfish/bridge/-/bridge-1.2.10.tgz#9e29185bb7f0ebdf2cbbe169b7aa33132b4db406"
+  integrity sha512-lP2tjyGHHKjr6BSpWFtvDmBMp0Zh+25B7M/6go8QlbCvZkVrIoV9Wld6DFg7Azda3zgLhPisp+sf0ISjWfrSVQ==
+  dependencies:
+    "@garfish/browser-snapshot" "1.2.10"
+    "@garfish/browser-vm" "1.2.10"
+    "@garfish/core" "1.2.10"
+    "@garfish/router" "1.2.10"
+    "@garfish/utils" "1.2.10"
+
+"@garfish/browser-snapshot@1.2.10":
+  version "1.2.10"
+  resolved "https://registry.npmjs.org/@garfish/browser-snapshot/-/browser-snapshot-1.2.10.tgz#cc7b381e81e5e26d7a2c3a264ee2a69b7028d652"
+  integrity sha512-MNfGoSD15MOfWGli0QrakH6eJZl9O72kTeKVX9vqZcGmXu6oYg/ZWPu9TCg80Fvy+l6fmghNf3E7SlhnTf1Yhw==
+  dependencies:
+    "@garfish/core" "1.2.10"
+    "@garfish/utils" "1.2.10"
+
+"@garfish/browser-vm@1.2.10":
+  version "1.2.10"
+  resolved "https://registry.npmjs.org/@garfish/browser-vm/-/browser-vm-1.2.10.tgz#de75f77907c04ac049a787a807d79ce4ec422f9d"
+  integrity sha512-n74s4oNQyHH4af1H8oi3m12luwDbqUBeNY3aaeQBDTW7Fol7Y0/DCaU1YJEpoTlIDBhxand91fP1MkalTRiO3g==
+  dependencies:
+    "@garfish/core" "1.2.10"
+    "@garfish/hooks" "1.2.10"
+    "@garfish/loader" "1.2.10"
+    "@garfish/utils" "1.2.10"
+
+"@garfish/core@1.2.10":
+  version "1.2.10"
+  resolved "https://registry.npmjs.org/@garfish/core/-/core-1.2.10.tgz#f60fba5060c5b965f88b2559cb71bee43be848cc"
+  integrity sha512-E3f8EoMDIdqjib+aCDxRKNiL5s3EDk2/JL0BidTvbp7ij1VmmSjx6tyHysOflwSL95/MlYeoNfr9gjCGtB4pXg==
+  dependencies:
+    "@garfish/hooks" "1.2.10"
+    "@garfish/loader" "1.2.10"
+    "@garfish/utils" "1.2.10"
+    eventemitter2 "^6.4.5"
+
+"@garfish/hooks@1.2.10":
+  version "1.2.10"
+  resolved "https://registry.npmjs.org/@garfish/hooks/-/hooks-1.2.10.tgz#ac202489c31346444617f39f8ac93a049e948150"
+  integrity sha512-/3XOcHCYp8FowQmfb9X3Rt2TAvfbiI4WTUgWlof1nX1TBTbMoBFYuutq4BbzzkGW9/GO9eMBieBMV2upYosOmQ==
+
+"@garfish/loader@1.2.10":
+  version "1.2.10"
+  resolved "https://registry.npmjs.org/@garfish/loader/-/loader-1.2.10.tgz#e14d5d4415c2e5363835ed44fa01f46b4d30d2a0"
+  integrity sha512-STg7jAha2XWWZNGu7q+K1KOAniAIuob2BhDOTrnMIusNPgk2ReSCdgQjh/wXNNzQ9Dd78y8/omI9n3zoZpHddA==
+  dependencies:
+    "@garfish/hooks" "1.2.10"
+    "@garfish/utils" "1.2.10"
+
+"@garfish/router@1.2.10":
+  version "1.2.10"
+  resolved "https://registry.npmjs.org/@garfish/router/-/router-1.2.10.tgz#2ebf18acebbabff7d81ad047cd140d2fa23e0244"
+  integrity sha512-JYbA6/SN9teDu/sTtGmrNxQCypDFhf4mjMQuDkVAPwrBZX9epw0jdntw2Aud9rlJkh/2q4Ly+MufoRh2kfheOQ==
+  dependencies:
+    "@garfish/core" "1.2.10"
+    "@garfish/utils" "1.2.10"
+
+"@garfish/utils@1.2.10":
+  version "1.2.10"
+  resolved "https://registry.npmjs.org/@garfish/utils/-/utils-1.2.10.tgz#45ad905954570b2a477c9cc25acddfafc8fcad6f"
+  integrity sha512-BgW5s1aA63SQUSDIuuz+T86FnO9ZYv6y8/SiLWUEm5F0123dpk8SyZUr4DYeJYU5KNDwUeG5jB3jA4b8Fmc0Wg==
+
 "@hapi/address@2.x.x":
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/@hapi/address/-/address-2.1.4.tgz#5d67ed43f3fd41a69d4b9ff7b56e7c0d1d0a81e5"
@@ -4970,6 +5035,11 @@ etag@~1.8.1:
   version "1.8.1"
   resolved "https://registry.yarnpkg.com/etag/-/etag-1.8.1.tgz#41ae2eeb65efa62268aebfea83ac7d79299b0887"
   integrity sha1-Qa4u62XvpiJorr/qg6x9eSmbCIc=
+
+eventemitter2@^6.4.5:
+  version "6.4.5"
+  resolved "https://registry.npmjs.org/eventemitter2/-/eventemitter2-6.4.5.tgz#97380f758ae24ac15df8353e0cc27f8b95644655"
+  integrity sha512-bXE7Dyc1i6oQElDG0jMRZJrRAn9QR2xyyFGmBdZleNmyQX0FqGYmhZIrIrpPfm/w//LTo4tVQGOGQcGCb5q9uw==
 
 eventemitter3@^4.0.0:
   version "4.0.7"

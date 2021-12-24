@@ -8,6 +8,7 @@ import './index.css';
 import Router from './router';
 import { Modal, notification } from 'antd';
 import subMicroApp from '@micro-zoe/micro-app'
+import { reactBridge } from '@garfish/bridge';
 
 // 循环内嵌
 subMicroApp.start({
@@ -165,3 +166,31 @@ console.timeEnd('react#16');
 // // 测试 cloneNode
 // var img2 = newImg.cloneNode(true)
 // document.body.appendChild(img2)
+
+
+
+// setInterval(() => {
+//   console.log(4444444, document.activeElement)
+// }, 3000);
+
+// function App({ basename }) {
+//   return (
+//     <React.StrictMode>
+//       <Router />
+//     </React.StrictMode>
+//   );
+// }
+
+// export const provider = reactBridge({
+//   React,
+//   ReactDOM,
+//   el: '#root',
+//   rootComponent: App,
+// });
+
+
+
+// setTimeout(() => {
+//   console.log(document)
+//   console.log(window.document)
+// }, 5000);

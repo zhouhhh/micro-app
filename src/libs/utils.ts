@@ -281,6 +281,18 @@ export function setCurrentAppName (appName: string | null): void {
   currentMicroAppName = appName
 }
 
+let isWaitingForReset = false
+export function throttleDeferForSetAppName (appName: string) {
+  if (!isWaitingForReset || currentMicroAppName !== appName) {
+    isWaitingForReset = true
+    setCurrentAppName(appName)
+    defer(() => {
+      isWaitingForReset = false
+      setCurrentAppName(null)
+    })
+  }
+}
+
 // get the currently running app.name
 export function getCurrentAppName (): string | null {
   return currentMicroAppName

@@ -10,14 +10,15 @@ import {
   isString,
   removeDomScope,
   unique,
+  throttleDeferForSetAppName,
 } from '../libs/utils'
 import microApp from '../micro_app'
 import bindFunctionToRawWindow from './bind_function'
 import effect, { effectDocumentEvent, releaseEffectDocumentEvent } from './effect'
-import MicroAppDocument from './proxy_document'
+// import MicroAppDocument from './proxy_document'
 
 /* eslint-disable camelcase */
-export type injectDataType = {
+export type MicroAppWindowDataType = {
   __MICRO_APP_ENVIRONMENT__: boolean
   __MICRO_APP_NAME__: string
   __MICRO_APP_PUBLIC_PATH__: string
@@ -28,9 +29,10 @@ export type injectDataType = {
   rawWindow: Window
   rawDocument: Document
   removeDomScope: () => void
+  microAppPerTarget: Record<string, any>
 }
 
-export type MicroAppWindowType = Window & injectDataType
+export type MicroAppWindowType = Window & MicroAppWindowDataType
 
 // Variables that can escape to rawWindow
 const staticEscapeProperties: PropertyKey[] = [
@@ -57,6 +59,9 @@ const unscopables = {
   Float32Array: true,
 }
 
+const hijackPropertyList: Array<PropertyKey> = ['document', 'eval', 'Image']
+const globalPropertyList: Array<PropertyKey> = ['window', 'self', 'globalThis']
+
 export default class SandBox implements SandBoxInterface {
   static activeCount = 0 // number of active sandbox
   // @ts-ignore
@@ -78,7 +83,7 @@ export default class SandBox implements SandBoxInterface {
   // sandbox state
   private active = false
   proxyWindow: WindowProxy // Proxy
-  microWindow = {} as MicroAppWindowType // Proxy target
+  microWindow = { microAppPerTarget: {} } as MicroAppWindowType // Proxy target
 
   constructor (appName: string, url: string) {
     const rawWindow = globalEnv.rawWindow
@@ -87,47 +92,29 @@ export default class SandBox implements SandBoxInterface {
     // get scopeProperties and escapeProperties from plugins
     this.getScopeProperties(appName)
     // inject global properties
-    this.inject(this.microWindow, appName, url)
+    this.initMicroWindow(this.microWindow, appName, url)
     // Rewrite global event listener & timeout
     Object.assign(this, effect(this.microWindow))
-    const microAppDoc = new MicroAppDocument(appName)
+    // const microAppDoc = new MicroAppDocument(appName)
 
     this.proxyWindow = new Proxy(this.microWindow, {
       get: (target: microWindowType, key: PropertyKey): unknown => {
-        // console.log(key)
         if (key === Symbol.unscopables) return unscopables
-
-        if (['window', 'self', 'globalThis'].includes(key as string)) {
-          return this.proxyWindow
-        }
 
         if (key === 'top' || key === 'parent') {
           if (rawWindow === rawWindow.parent) { // not in iframe
             return this.proxyWindow
           }
-          return Reflect.get(rawWindow, key) // iframe
+          return Reflect.get(rawWindow, key) // in iframe
         }
 
         if (key === 'hasOwnProperty') return hasOwnProperty
 
-        if (key === 'document' || key === 'eval' || key === 'Image') {
-          // if (this.active) {
-          //   setCurrentAppName(appName)
-          //   ;(macro ? macroTask : defer)(() => setCurrentAppName(null))
-          // }
-          switch (key) {
-            case 'document':
-              return microAppDoc.proxyDocument
-            case 'eval':
-              return eval
-            case 'Image':
-              return globalEnv.ImageProxy
-          }
-        }
+        if (globalPropertyList.includes(key)) return this.proxyWindow
 
-        if (Reflect.has(target, key)) {
-          return Reflect.get(target, key)
-        }
+        if (hijackPropertyList.includes(key)) return this.handleHijackProperty(key, appName)
+
+        if (Reflect.has(target, key)) return Reflect.get(target, key)
 
         if (
           this.scopeProperties.includes(key) ||
@@ -322,7 +309,7 @@ export default class SandBox implements SandBoxInterface {
    * @param appName app name
    * @param url app url
    */
-  private inject (microWindow: microWindowType, appName: string, url: string): void {
+  private initMicroWindow (microWindow: microWindowType, appName: string, url: string): void {
     microWindow.__MICRO_APP_ENVIRONMENT__ = true
     microWindow.__MICRO_APP_NAME__ = appName
     microWindow.__MICRO_APP_PUBLIC_PATH__ = getEffectivePath(url)
@@ -330,5 +317,48 @@ export default class SandBox implements SandBoxInterface {
     microWindow.rawWindow = globalEnv.rawWindow
     microWindow.rawDocument = globalEnv.rawDocument
     microWindow.removeDomScope = removeDomScope
+    this.initMicroAppPerTarget(microWindow, appName)
+  }
+
+  // set hijack Property to microAppPerTarget
+  private initMicroAppPerTarget (microWindow: microWindowType, appName: string) {
+    Object.defineProperties(microWindow.microAppPerTarget, {
+      document: {
+        get () {
+          throttleDeferForSetAppName(appName)
+          return globalEnv.rawDocument
+        },
+        configurable: true,
+      },
+      eval: {
+        get () {
+          throttleDeferForSetAppName(appName)
+          return eval
+        },
+        configurable: true,
+      },
+      Image: {
+        get () {
+          throttleDeferForSetAppName(appName)
+          return globalEnv.ImageProxy
+        },
+        configurable: true,
+      },
+    })
+  }
+
+  /**
+   * set current appName when catch hijack key
+   */
+  private handleHijackProperty (key: PropertyKey, appName: string) {
+    throttleDeferForSetAppName(appName)
+    switch (key) {
+      case 'document':
+        return globalEnv.rawDocument // globalEnv.rawDocument microAppDoc.proxyDocument
+      case 'eval':
+        return eval
+      case 'Image':
+        return globalEnv.ImageProxy
+    }
   }
 }

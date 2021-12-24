@@ -29,6 +29,7 @@ export default {
     }
   },
   created () {
+    console.timeEnd('vue2')
     window.microApp && window.microApp.addDataListener(this.handleDataChange, true)
   },
   beforeDestroy () {

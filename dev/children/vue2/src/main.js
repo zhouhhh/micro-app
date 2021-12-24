@@ -25,7 +25,6 @@ let app = null
 //   router,
 //   render: h => h(App),
 // }).$mount('#app')
-// console.timeEnd('vue2')
 
 // // 监听卸载
 // window.addEventListener('unmount', function () {
@@ -42,7 +41,6 @@ export async function mount (props) {
     router,
     render: h => h(App),
   }).$mount(props?.container?.querySelector('#app') || '#app')
-  console.timeEnd('vue2')
   console.log("微应用vue2渲染了 -- 来自umd-mount")
 }
 
@@ -66,9 +64,12 @@ export async function bootstrap() {
 //   mount()
 // }
 
-
-window['micro-app-vue2'] = {
-  mount,
-  unmount,
-  bootstrap,
+if (window.__MICRO_APP_ENVIRONMENT__ || window.__POWERED_BY_QIANKUN__) {
+  window['micro-app-vue2'] = {
+    mount,
+    unmount,
+    bootstrap,
+  }
+} else {
+  mount()
 }

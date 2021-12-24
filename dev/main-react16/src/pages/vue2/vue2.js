@@ -6,8 +6,8 @@ import { Button, Spin } from 'antd'
 import { LoadingOutlined } from '@ant-design/icons'
 import config from '../../config'
 import './vue2.less'
-import { start, loadMicroApp } from 'qiankun'
-start()
+// import { start, loadMicroApp } from 'qiankun'
+// start()
 
 const antIcon = <LoadingOutlined style={{ fontSize: 30 }} spin />
 
@@ -16,13 +16,13 @@ function Vue2 () {
   const [showLoading, hideLoading] = useState(true)
 
   function mounted () {
-    console.timeEnd('mounted-vue2')
-    console.log('生命周期：mounted -- vue2', document.querySelector('micro-app'))
+    // console.timeEnd('mounted-vue2')
+    // console.log('生命周期：mounted -- vue2', document.querySelector('micro-app'))
     hideLoading(false)
   }
 
   function unmount () {
-    console.log('生命周期：unmount -- vue2', document.querySelector('#micro-app-template-style'))
+    // console.log('生命周期：unmount -- vue2', document.querySelector('#micro-app-template-style'))
   }
 
   useEffect(() => {

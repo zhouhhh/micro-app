@@ -1,4 +1,4 @@
-import { isSupportModuleScript, isBrowser, getCurrentAppName, setCurrentAppName } from './utils'
+import { isSupportModuleScript, isBrowser, getCurrentAppName } from './utils'
 
 type RequestIdleCallbackOptions = {
   timeout: number
@@ -131,21 +131,6 @@ export function initGlobalEnv (): void {
       rawDocumentRemoveEventListener,
     })
   }
-}
-
-export function setActiveProxyWindow (
-  proxyWindow: WindowProxy | undefined,
-  appName: string,
-): void {
-  if (proxyWindow) {
-    globalEnv.rawWindow.__MICRO_APP_PROXY_WINDOW__ = proxyWindow
-    setCurrentAppName(appName)
-  }
-}
-
-export function clearActiveProxyWindow (): void {
-  delete globalEnv.rawWindow.__MICRO_APP_PROXY_WINDOW__
-  setCurrentAppName(null)
 }
 
 export default globalEnv

@@ -21,7 +21,7 @@ import {
   formatAppName,
 } from './libs/utils'
 import dispatchLifecyclesEvent, { dispatchCustomEventToMicroApp } from './interact/lifecycles_event'
-import globalEnv, { setActiveProxyWindow, clearActiveProxyWindow } from './libs/global_env'
+import globalEnv from './libs/global_env'
 
 // micro app instances
 export const appInstanceMap = new Map<string, AppInterface>()
@@ -169,9 +169,7 @@ export default class CreateApp implements AppInterface {
             this.umdMode = true
             this.sandBox?.recordUmdSnapshot()
             try {
-              setActiveProxyWindow(this.sandBox?.proxyWindow, this.name)
               umdHookMountResult = this.umdHookMount()
-              clearActiveProxyWindow()
             } catch (e) {
               logError('an error occurred in the mount function \n', this.name, e)
             }
@@ -186,9 +184,7 @@ export default class CreateApp implements AppInterface {
     } else {
       this.sandBox?.rebuildUmdSnapshot()
       try {
-        setActiveProxyWindow(this.sandBox?.proxyWindow, this.name)
         umdHookMountResult = this.umdHookMount!()
-        clearActiveProxyWindow()
       } catch (e) {
         logError('an error occurred in the mount function \n', this.name, e)
       }
@@ -246,9 +242,7 @@ export default class CreateApp implements AppInterface {
      */
     if (this.umdHookUnmount) {
       try {
-        setActiveProxyWindow(this.sandBox?.proxyWindow, this.name)
         umdHookUnmountResult = this.umdHookUnmount()
-        clearActiveProxyWindow()
       } catch (e) {
         logError('an error occurred in the unmount function \n', this.name, e)
       }

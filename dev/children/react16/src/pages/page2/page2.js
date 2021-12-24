@@ -53,13 +53,17 @@ const Page2 = () => {
     message.success('This is a success message');
   };
 
+  const testClick = () => {
+    console.log(444444444)
+  }
+
   return (
     <div>
       <div>
         <p>styled-component👇</p>
         <StyledButton>按钮</StyledButton>
       </div>
-      <div className="test-btn">test</div>
+      <div className="test-btn" onClick={testClick}>test</div>
       <Form
         name="validate_other"
         {...formItemLayout}
