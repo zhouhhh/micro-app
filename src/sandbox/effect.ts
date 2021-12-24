@@ -5,10 +5,9 @@ import {
   logWarn,
   isFunction,
   isBoundFunction,
-  // throttleDeferForSetAppName,
 } from '../libs/utils'
 import { appInstanceMap } from '../create_app'
-// import { getActiveApps } from '../micro_app'
+import { getActiveApps } from '../micro_app'
 import globalEnv from '../libs/global_env'
 
 type MicroEventListener = EventListenerOrEventListenerObject & Record<string, any>
@@ -342,31 +341,31 @@ export default function effect (microWindow: microWindowType): Record<string, Ca
   }
 }
 
-// window.addEventListener('mousedown', (e: Event) => {
-//   const targetNode = e.target
-//   const activeApps = getActiveApps(true)
-//   let hitContainer = false
-//   for (const appName of activeApps) {
-//     const app = appInstanceMap.get(appName)!
-//     if (targetNode instanceof Node && app.container!.contains(targetNode)) {
-//       hitContainer = true
-//       console.log(111111, appName)
-//       setCurrentAppName(appName)
-//       break
-//     }
-//   }
-//   if (!hitContainer) {
-//     setCurrentAppName(null)
-//   }
-// }, false)
+window.addEventListener('mousedown', (e: Event) => {
+  const targetNode = e.target
+  const activeApps = getActiveApps(true)
+  let isScopeOfMicroApp = false
+  for (const appName of activeApps) {
+    const app = appInstanceMap.get(appName)!
+    if (targetNode instanceof Node && app.container!.contains(targetNode)) {
+      isScopeOfMicroApp = true
+      // console.log(111111, appName)
+      setCurrentAppName(appName)
+      break
+    }
+  }
+  if (!isScopeOfMicroApp) {
+    setCurrentAppName(null)
+  }
+}, false)
 
-// let mouseupTimer: NodeJS.Timeout | null = null
-// window.addEventListener('mouseup', () => {
-//   if (mouseupTimer) {
-//     clearTimeout(mouseupTimer)
-//   }
-//   mouseupTimer = setTimeout(() => {
-//     setCurrentAppName(null)
-//     mouseupTimer = null
-//   })
-// }, false)
+let isWaitingForMacroReset = false
+window.addEventListener('mouseup', () => {
+  if (!isWaitingForMacroReset && getCurrentAppName()) {
+    isWaitingForMacroReset = true
+    setTimeout(() => {
+      setCurrentAppName(null)
+      isWaitingForMacroReset = false
+    })
+  }
+}, false)

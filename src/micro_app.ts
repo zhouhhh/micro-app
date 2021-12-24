@@ -12,7 +12,7 @@ import { appStates, keepAliveStates } from './constants'
  * @param excludeHiddenApp exclude hidden keep-alive app
  * @returns active apps
  */
-export function getActiveApps (excludeHiddenApp: boolean): string[] {
+export function getActiveApps (excludeHiddenApp?: boolean): string[] {
   const activeApps: string[] = []
   appInstanceMap.forEach((app: AppInterface, appName: string) => {
     if (

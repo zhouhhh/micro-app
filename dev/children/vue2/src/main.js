@@ -64,7 +64,9 @@ export async function bootstrap() {
 //   mount()
 // }
 
-if (window.__MICRO_APP_ENVIRONMENT__ || window.__POWERED_BY_QIANKUN__) {
+if (window.__MICRO_APP_ENVIRONMENT__) {
+  window[`micro-app-${window.__MICRO_APP_NAME__}`] = { mount, unmount }
+} else if (window.__POWERED_BY_QIANKUN__) {
   window['micro-app-vue2'] = {
     mount,
     unmount,
