@@ -106,9 +106,9 @@ microApp.start({
     let config = null
     if (url === 'http://localhost:3001/micro-app/react16/?a=1') {
       config = {
-        headers: {
-          'custom-head': 'custom-head',
-        },
+        // headers: {
+        //   'custom-head': 'custom-head',
+        // },
         // micro-app默认不带cookie，如果需要添加cookie需要设置credentials
         // credentials: 'include',
       }

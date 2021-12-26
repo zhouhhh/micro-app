@@ -194,3 +194,27 @@ if (window.__MICRO_APP_ENVIRONMENT__) {
 //   console.log(document)
 //   console.log(window.document)
 // }, 5000);
+
+// window.a = 1111111
+// console.log(a, alert, window.alert) // eslint-disable-line
+
+// window.abc1111111111111()
+// abc1111111111111() // eslint-disable-line
+
+// window.abc222 = function () {
+//   console.log(33333333, this)
+// }
+
+// window.abc222()
+
+// abc222() // eslint-disable-line
+
+// console.log(
+//   66666,
+//   window.hasOwnProperty('microApp'),
+//   window.top,
+//   window.parent,
+//   window.window,
+//   window.self,
+//   window.globalThis,
+// )

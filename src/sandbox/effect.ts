@@ -5,6 +5,7 @@ import {
   logWarn,
   isFunction,
   isBoundFunction,
+  rawDefineProperty,
 } from '../libs/utils'
 import { appInstanceMap } from '../create_app'
 import { getActiveApps } from '../micro_app'
@@ -38,7 +39,7 @@ function overwriteDocumentOnClick (): void {
     })
   }
 
-  Object.defineProperty(document, 'onclick', {
+  rawDefineProperty(document, 'onclick', {
     configurable: true,
     enumerable: true,
     get () {

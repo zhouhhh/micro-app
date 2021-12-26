@@ -82,7 +82,7 @@ declare module '@micro-app/types' {
     getKeepAliveState(): string | null
 
     // actions for completely destroy
-    actionsForCompletelyDestory (): void
+    actionsForCompletelyDestroy (): void
 
     // hidden app when disconnectedCallback with keep-alive
     hiddenKeepAliveApp (): void

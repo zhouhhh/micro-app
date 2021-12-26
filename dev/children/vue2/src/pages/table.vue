@@ -395,6 +395,7 @@ export default {
         this.$nextTick(function () {
           console.timeEnd('render')
           // console.log(window.a1)
+          // console.log(window.a2)
         })
       }, 100);
     },

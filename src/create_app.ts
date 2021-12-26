@@ -280,7 +280,7 @@ export default class CreateApp implements AppInterface {
   private actionsForUnmount (destroy: boolean, unmountcb?: CallableFunction): void {
     this.sandBox?.stop()
     if (destroy) {
-      this.actionsForCompletelyDestory()
+      this.actionsForCompletelyDestroy()
     } else if (this.umdMode && (this.container as Element).childElementCount) {
       cloneContainer(this.container as Element, this.source.html as Element, false)
     }
@@ -299,7 +299,7 @@ export default class CreateApp implements AppInterface {
   }
 
   // actions for completely destroy
-  actionsForCompletelyDestory (): void {
+  actionsForCompletelyDestroy (): void {
     if (!this.useSandbox && this.umdMode) {
       delete window[this.libraryName as any]
     }

@@ -126,7 +126,7 @@ window.eventCenterForAppName = new EventCenterForMicroApp(appName)
 // unmountApp 参数配置
 interface unmountAppParams {
   /**
-   * destory: 是否强制卸载应用并删除缓存资源，默认值：false
+   * destroy: 是否强制卸载应用并删除缓存资源，默认值：false
    * 优先级: 高于 clearAliveState
    * 场景1: 当子应用已经卸载或keep-alive应用已经推入后台，则清除应用状态及缓存资源
    * 场景2: 当子应用正在运行，则卸载应用并删除状态及缓存资源
@@ -149,7 +149,7 @@ function unmountApp(appName: string, options?: unmountAppParams): Promise<void>
 unmountApp(子应用名称).then(() => console.log('卸载成功'))
 
 // 卸载应用并清空缓存资源
-unmountApp(子应用名称, { destory: true }).then(() => console.log('卸载成功'))
+unmountApp(子应用名称, { destroy: true }).then(() => console.log('卸载成功'))
 
 // 如果子应用是keep-alive应用，则卸载并清空状态，如果子应用不是keep-alive应用，则正常卸载
 unmountApp(子应用名称, { clearAliveState: true }).then(() => console.log('卸载成功'))
@@ -165,7 +165,7 @@ unmountApp(子应用名称, { clearAliveState: true }).then(() => console.log('�
 // unmountAllApps 参数配置
 interface unmountAppParams {
   /**
-   * destory: 是否强制卸载应用并删除缓存资源，默认值：false
+   * destroy: 是否强制卸载应用并删除缓存资源，默认值：false
    * 优先级: 高于 clearAliveState
    * 场景1: 当子应用已经卸载或keep-alive应用已经推入后台，则清除应用状态及缓存资源
    * 场景2: 当子应用正在运行，则卸载应用并删除状态及缓存资源
@@ -188,7 +188,7 @@ function unmountAllApps(appName: string, options?: unmountAppParams): Promise<vo
 unmountAllApps().then(() => console.log('卸载成功'))
 
 // 卸载所有应用并清空缓存资源
-unmountAllApps({ destory: true }).then(() => console.log('卸载成功'))
+unmountAllApps({ destroy: true }).then(() => console.log('卸载成功'))
 
 // 如果子应用是keep-alive应用，则卸载并清空状态，如果子应用不是keep-alive应用，则正常卸载
 unmountAllApps({ clearAliveState: true }).then(() => console.log('卸载成功'))

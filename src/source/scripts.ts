@@ -366,7 +366,7 @@ function bindScope (
   }
   if (app.sandBox && !module) {
     globalEnv.rawWindow.__MICRO_APP_PROXY_WINDOW__ = app.sandBox.proxyWindow
-    return `;(function(window, self){with(window, window.microAppPerTarget){(function(undefined, Array, Object, String, Boolean, Math, Number, Symbol, parseFloat, Float32Array, parseInt, isNaN, Function, Reflect, performance, window, Set, Map, Element, Node, getComputedStyle, RegExp, Error, Document, Proxy, WeakMap, requestAnimationFrame){${code}})(undefined, Array, Object, String, Boolean, Math, Number, Symbol, parseFloat, Float32Array, parseInt, isNaN, Function, Reflect, performance, window, Set, Map, Element, Node, getComputedStyle, RegExp, Error, Document, Proxy, WeakMap, requestAnimationFrame)}}).call(window.__MICRO_APP_PROXY_WINDOW__, window.__MICRO_APP_PROXY_WINDOW__, window.__MICRO_APP_PROXY_WINDOW__);`
+    return `;(function(window, self){with(window.__MICRO_APP_WINDOW__){(function(undefined, Array, Object, String, Boolean, Math, Number, Symbol, parseFloat, Float32Array, parseInt, isNaN, Function, Reflect, performance, window, Set, Map, Element, Node, getComputedStyle, RegExp, Error, Document, Proxy, WeakMap, requestAnimationFrame, console, JSON){${code}})(undefined, Array, Object, String, Boolean, Math, Number, Symbol, parseFloat, Float32Array, parseInt, isNaN, Function, Reflect, performance, window, Set, Map, Element, Node, getComputedStyle, RegExp, Error, Document, Proxy, WeakMap, requestAnimationFrame, console, JSON)}}).call(window.__MICRO_APP_PROXY_WINDOW__, window.__MICRO_APP_PROXY_WINDOW__, window.__MICRO_APP_PROXY_WINDOW__);`
   }
   return code
 }

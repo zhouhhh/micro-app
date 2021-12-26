@@ -65,6 +65,10 @@ export function isShadowRoot (target: unknown): boolean {
   return typeof ShadowRoot !== 'undefined' && target instanceof ShadowRoot
 }
 
+export const rawDefineProperty = Object.defineProperty
+
+export const rawDefineProperties = Object.defineProperties
+
 /**
  * format error log
  * @param msg message

@@ -11,6 +11,8 @@ import {
   removeDomScope,
   unique,
   throttleDeferForSetAppName,
+  rawDefineProperty,
+  rawDefineProperties,
 } from '../libs/utils'
 import microApp from '../micro_app'
 import bindFunctionToRawWindow from './bind_function'
@@ -28,7 +30,6 @@ export type MicroAppWindowDataType = {
   rawWindow: Window
   rawDocument: Document
   removeDomScope: () => void
-  microAppPerTarget: Record<string, any>
 }
 
 export type MicroAppWindowType = Window & MicroAppWindowDataType
@@ -37,7 +38,6 @@ export type MicroAppWindowType = Window & MicroAppWindowDataType
 const staticEscapeProperties: PropertyKey[] = [
   'System',
   '__cjsWrapper',
-  '__REACT_ERROR_OVERLAY_GLOBAL_HOOK__',
 ]
 
 // Variables that can only assigned to rawWindow
@@ -45,20 +45,6 @@ const escapeSetterKeyList: PropertyKey[] = [
   'location',
 ]
 
-const unscopables = {
-  undefined: true,
-  Array: true,
-  Object: true,
-  String: true,
-  Boolean: true,
-  Math: true,
-  Number: true,
-  Symbol: true,
-  parseFloat: true,
-  Float32Array: true,
-}
-
-const hijackPropertyList: Array<PropertyKey> = ['document', 'eval', 'Image']
 const globalPropertyList: Array<PropertyKey> = ['window', 'self', 'globalThis']
 
 export default class SandBox implements SandBoxInterface {
@@ -82,44 +68,26 @@ export default class SandBox implements SandBoxInterface {
   // sandbox state
   private active = false
   proxyWindow: WindowProxy // Proxy
-  microWindow = { microAppPerTarget: {} } as MicroAppWindowType // Proxy target
+  microWindow = {} as MicroAppWindowType // Proxy target
 
   constructor (appName: string, url: string) {
     const rawWindow = globalEnv.rawWindow
-    const descriptorTargetMap = new Map<PropertyKey, 'target' | 'rawWindow'>()
-    const hasOwnProperty = (key: PropertyKey) => this.microWindow.hasOwnProperty(key) || rawWindow.hasOwnProperty(key)
     // get scopeProperties and escapeProperties from plugins
     this.getScopeProperties(appName)
-    // inject global properties
-    this.initMicroWindow(this.microWindow, appName, url)
     // Rewrite global event listener & timeout
     Object.assign(this, effect(this.microWindow))
 
+    // window.xxx will trigger proxy
     this.proxyWindow = new Proxy(this.microWindow, {
       get: (target: microWindowType, key: PropertyKey): unknown => {
-        if (key === Symbol.unscopables) return unscopables
-
-        if (key === 'top' || key === 'parent') {
-          if (rawWindow === rawWindow.parent) { // not in iframe
-            return this.proxyWindow
-          }
-          return Reflect.get(rawWindow, key) // in iframe
-        }
-
-        if (key === 'hasOwnProperty') return hasOwnProperty
-
+        // faster than defineProperty to microWindow
         if (globalPropertyList.includes(key)) return this.proxyWindow
 
-        if (hijackPropertyList.includes(key)) return this.handleHijackProperty(key, appName)
-
-        if (Reflect.has(target, key)) return Reflect.get(target, key)
-
         if (
-          this.scopeProperties.includes(key) ||
-          (isString(key) && /^__MICRO_APP_/.test(key))
-        ) {
-          return Reflect.get(target, key)
-        }
+          Reflect.has(target, key) ||
+          (isString(key) && /^__MICRO_APP_/.test(key)) ||
+          this.scopeProperties.includes(key)
+        ) return Reflect.get(target, key)
 
         const rawValue = Reflect.get(rawWindow, key)
 
@@ -137,7 +105,7 @@ export default class SandBox implements SandBoxInterface {
             const descriptor = Object.getOwnPropertyDescriptor(rawWindow, key)
             const { writable, configurable, enumerable } = descriptor!
             if (writable) {
-              Object.defineProperty(target, key, {
+              rawDefineProperty(target, key, {
                 configurable,
                 enumerable,
                 writable,
@@ -166,35 +134,20 @@ export default class SandBox implements SandBoxInterface {
       },
       has: (target: microWindowType, key: PropertyKey): boolean => {
         if (this.scopeProperties.includes(key)) return key in target
-        return key in unscopables || key in target || key in rawWindow
+        return key in target || key in rawWindow
       },
       // Object.getOwnPropertyDescriptor(window, key)
-      // TODO: use set
       getOwnPropertyDescriptor: (target: microWindowType, key: PropertyKey): PropertyDescriptor|undefined => {
         if (target.hasOwnProperty(key)) {
-          descriptorTargetMap.set(key, 'target')
           return Object.getOwnPropertyDescriptor(target, key)
         }
 
         if (rawWindow.hasOwnProperty(key)) {
-          // like console, alert ...
-          descriptorTargetMap.set(key, 'rawWindow')
-          const descriptor = Object.getOwnPropertyDescriptor(rawWindow, key)
-          if (descriptor && !descriptor.configurable) {
-            descriptor.configurable = true
-          }
-          return descriptor
+          // console, alert ...
+          return Object.getOwnPropertyDescriptor(rawWindow, key)
         }
 
         return undefined
-      },
-      // Object.defineProperty(window, key, Descriptor)
-      defineProperty: (target: microWindowType, key: PropertyKey, value: PropertyDescriptor): boolean => {
-        const from = descriptorTargetMap.get(key)
-        if (from === 'rawWindow') {
-          return Reflect.defineProperty(rawWindow, key, value)
-        }
-        return Reflect.defineProperty(target, key, value)
       },
       // Object.getOwnPropertyNames(window)
       ownKeys: (target: microWindowType): Array<string | symbol> => {
@@ -209,6 +162,9 @@ export default class SandBox implements SandBoxInterface {
         return true
       },
     })
+
+    // inject global properties
+    this.initMicroWindow(this.microWindow, appName, url)
   }
 
   start (baseroute: string): void {
@@ -311,52 +267,89 @@ export default class SandBox implements SandBoxInterface {
     microWindow.__MICRO_APP_ENVIRONMENT__ = true
     microWindow.__MICRO_APP_NAME__ = appName
     microWindow.__MICRO_APP_PUBLIC_PATH__ = getEffectivePath(url)
+    microWindow.__MICRO_APP_WINDOW__ = microWindow
     microWindow.microApp = new EventCenterForMicroApp(appName)
     microWindow.rawWindow = globalEnv.rawWindow
     microWindow.rawDocument = globalEnv.rawDocument
     microWindow.removeDomScope = removeDomScope
-    this.initMicroAppPerTarget(microWindow, appName)
+    microWindow.hasOwnProperty = (key: PropertyKey) => Object.prototype.hasOwnProperty.call(microWindow, key) || Object.prototype.hasOwnProperty.call(globalEnv.rawWindow, key)
+    this.setMappingPropertiesWithRawDescriptor(microWindow)
+    this.setHijackProperties(microWindow, appName)
   }
 
-  // set hijack Property to microAppPerTarget
-  private initMicroAppPerTarget (microWindow: microWindowType, appName: string) {
-    Object.defineProperties(microWindow.microAppPerTarget, {
+  // properties associated with the native window
+  private setMappingPropertiesWithRawDescriptor (microWindow: microWindowType) {
+    let topValue: Window, parentValue: Window
+    const rawWindow = globalEnv.rawWindow
+    if (rawWindow === rawWindow.parent) { // not in iframe
+      topValue = parentValue = this.proxyWindow
+    } else { // in iframe
+      topValue = rawWindow.top
+      parentValue = rawWindow.parent
+    }
+
+    rawDefineProperty(
+      microWindow,
+      'top',
+      this.createDescriptorForMicroWindow('top', topValue)
+    )
+
+    rawDefineProperty(
+      microWindow,
+      'parent',
+      this.createDescriptorForMicroWindow('parent', parentValue)
+    )
+  }
+
+  private createDescriptorForMicroWindow (key: PropertyKey, value: unknown): PropertyDescriptor {
+    const { configurable, enumerable, writable, set } = Object.getOwnPropertyDescriptor(globalEnv.rawWindow, key) || {}
+    const descriptor: PropertyDescriptor = {
+      value,
+      configurable,
+      enumerable,
+    }
+
+    if (writable || set) {
+      descriptor.writable = true
+    }
+
+    return descriptor
+  }
+
+  // set hijack Properties to microWindow
+  private setHijackProperties (microWindow: microWindowType, appName: string) {
+    let modifiedEval: unknown, modifiedImage: unknown
+    rawDefineProperties(microWindow, {
       document: {
         get () {
           throttleDeferForSetAppName(appName)
           return globalEnv.rawDocument
         },
-        configurable: true,
+        configurable: false,
+        enumerable: true,
       },
       eval: {
         get () {
           throttleDeferForSetAppName(appName)
-          return eval
+          return modifiedEval || eval
+        },
+        set (value) {
+          modifiedEval = value
         },
         configurable: true,
+        enumerable: false,
       },
       Image: {
         get () {
           throttleDeferForSetAppName(appName)
-          return globalEnv.ImageProxy
+          return modifiedImage || globalEnv.ImageProxy
+        },
+        set (value) {
+          modifiedImage = value
         },
         configurable: true,
+        enumerable: false,
       },
     })
-  }
-
-  /**
-   * set current appName when catch hijack key
-   */
-  private handleHijackProperty (key: PropertyKey, appName: string) {
-    throttleDeferForSetAppName(appName)
-    switch (key) {
-      case 'document':
-        return globalEnv.rawDocument
-      case 'eval':
-        return eval
-      case 'Image':
-        return globalEnv.ImageProxy
-    }
   }
 }

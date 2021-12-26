@@ -36,7 +36,7 @@ export function getAllApps (): string[] {
 }
 
 export interface unmountAppParams {
-  destroy?: boolean // destory app, default is false
+  destroy?: boolean // destroy app, default is false
   clearAliveState?: boolean // clear keep-alive app state, default is false
 }
 
@@ -52,7 +52,7 @@ export function unmountApp (appName: string, options?: unmountAppParams): Promis
     if (app) {
       if (app.getAppState() === appStates.UNMOUNT || app.isPrefetch) {
         if (options?.destroy) {
-          app.actionsForCompletelyDestory()
+          app.actionsForCompletelyDestroy()
         }
         reslove()
       } else if (app.getKeepAliveState() === keepAliveStates.KEEP_ALIVE_HIDDEN) {

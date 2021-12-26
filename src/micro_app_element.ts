@@ -333,7 +333,7 @@ export function defineElement (tagName: string): void {
        * fix of unmounted umd app with disableSandbox
        */
       if (appInstanceMap.has(this.appName)) {
-        appInstanceMap.get(this.appName)!.actionsForCompletelyDestory()
+        appInstanceMap.get(this.appName)!.actionsForCompletelyDestroy()
       }
 
       const instance: AppInterface = new CreateApp({
