@@ -219,4 +219,11 @@ if (window.__MICRO_APP_ENVIRONMENT__) {
 //   window.globalThis,
 // )
 
-console.log(55555555, this)
+// Object.defineProperty(window, 'aaa', {
+//   value: 111,
+// })
+// console.log(55555555, this, aaa, undefined, null) // eslint-disable-line
+
+// requestAnimationFrame(() => {
+//   console.log(444444)
+// })

@@ -269,6 +269,10 @@ export default class SandBox implements SandBoxInterface {
     microAppWindow.rawWindow = globalEnv.rawWindow
     microAppWindow.rawDocument = globalEnv.rawDocument
     microAppWindow.removeDomScope = removeDomScope
+    // Symbol.unscopables to reduce the number of document get executions
+    // microAppWindow[Symbol.unscopables] = {
+    //   document: false,
+    // }
     microAppWindow.hasOwnProperty = (key: PropertyKey) => Object.prototype.hasOwnProperty.call(microAppWindow, key) || Object.prototype.hasOwnProperty.call(globalEnv.rawWindow, key)
     this.setMappingPropertiesWithRawDescriptor(microAppWindow)
     this.setHijackProperties(microAppWindow, appName)
@@ -323,30 +327,30 @@ export default class SandBox implements SandBoxInterface {
     let modifiedEval: unknown, modifiedImage: unknown
     rawDefineProperties(microAppWindow, {
       document: {
-        get () {
-          throttleDeferForSetAppName(appName)
+        get: () => {
+          this.commonHandlerForSetAppName(microAppWindow, appName)
           return globalEnv.rawDocument
         },
-        configurable: false,
+        configurable: true,
         enumerable: true,
       },
       eval: {
-        get () {
-          throttleDeferForSetAppName(appName)
+        get: () => {
+          this.commonHandlerForSetAppName(microAppWindow, appName)
           return modifiedEval || eval
         },
-        set (value) {
+        set: (value) => {
           modifiedEval = value
         },
         configurable: true,
         enumerable: false,
       },
       Image: {
-        get () {
-          throttleDeferForSetAppName(appName)
+        get: () => {
+          this.commonHandlerForSetAppName(microAppWindow, appName)
           return modifiedImage || globalEnv.ImageProxy
         },
-        set (value) {
+        set: (value) => {
           modifiedImage = value
         },
         configurable: true,
@@ -354,4 +358,36 @@ export default class SandBox implements SandBoxInterface {
       },
     })
   }
+
+  private commonHandlerForSetAppName (microAppWindow: microAppWindowType, appName: string): void {
+    rawDefineProperty(microAppWindow, 'document', {
+      value: globalEnv.rawDocument,
+      configurable: true,
+      enumerable: true,
+    })
+    throttleDeferForSetAppName(appName, () => {
+      rawDefineProperty(microAppWindow, 'document', {
+        get: () => {
+          this.commonHandlerForSetAppName(microAppWindow, appName)
+          return globalEnv.rawDocument
+        },
+        configurable: true,
+        enumerable: true,
+      })
+    })
+  }
 }
+
+// 不设：94 106 97 103 97 94 105 101 127 101
+// 设置：99 99 100 106 96 104 97 104 106 101
+// 对的：95 99 91 92 98 95 91 92 92 98
+// 1537 1524 1522 1551 1554 1633 1493 1548 1531 1514 总合：15407 --> 1540
+// 1583 1554 1545 1559 1522 1535 1580 1488 1562 1491 总合：15419 --> 1541
+
+// 原生：67 70 69 64 62 68 66 67 59 68 总合：660 --> 66
+// 原生：1383 1350 1354 1351 1366 1346 1357 1377 1415 1344 总合：13643 --> 1364
+
+// 现在：98 102 95 92 92 101 90 92 99 90 总合：951 --> 95
+// 降级：99 91 97 93 94 100 100 109 99 97 总合：979 --> 97
+
+// DefineProperty：91 91 88 89 90 99 96 92 90 94 总合：920 --> 92

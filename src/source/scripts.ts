@@ -24,6 +24,7 @@ import {
 } from './load_event'
 import microApp from '../micro_app'
 import globalEnv from '../libs/global_env'
+import { globalKeyToBeCached } from '../constants'
 
 type moduleCallBack = Func & { moduleCount?: number }
 
@@ -367,7 +368,7 @@ function bindScope (
 
   if (app.sandBox && !module) {
     globalEnv.rawWindow.__MICRO_APP_PROXY_WINDOW__ = app.sandBox.proxyWindow
-    return `;(function(proxyWindow){with(proxyWindow.__MICRO_APP_WINDOW__){(function(window, self, globalThis, undefined, Array, Object, String, Boolean, Math, Number, Symbol, parseFloat, Float32Array, parseInt, isNaN, Function, Reflect, performance, Set, Map, Element, Node, getComputedStyle, RegExp, Error, Document, Proxy, WeakMap, requestAnimationFrame, console, JSON){${code}}).call(proxyWindow, window, self, globalThis, undefined, Array, Object, String, Boolean, Math, Number, Symbol, parseFloat, Float32Array, parseInt, isNaN, Function, Reflect, performance, Set, Map, Element, Node, getComputedStyle, RegExp, Error, Document, Proxy, WeakMap, requestAnimationFrame, console, JSON)}})(window.__MICRO_APP_PROXY_WINDOW__);`
+    return `;(function(proxyWindow){with(proxyWindow.__MICRO_APP_WINDOW__){(function(${globalKeyToBeCached}){${code}}).call(proxyWindow,${globalKeyToBeCached})}})(window.__MICRO_APP_PROXY_WINDOW__);`
   }
 
   return code
