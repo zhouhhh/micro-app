@@ -3,11 +3,11 @@ declare module '@micro-app/types' {
 
   type Func = (...rest: any[]) => void
 
-  type microWindowType = Window & any
+  type microAppWindowType = Window & any
 
   interface SandBoxInterface {
     proxyWindow: WindowProxy
-    microWindow: Window // Proxy target
+    microAppWindow: Window // Proxy target
     start (baseroute: string): void
     stop (): void
     // record umd snapshot before the first execution of umdHookMount

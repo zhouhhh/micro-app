@@ -218,3 +218,5 @@ if (window.__MICRO_APP_ENVIRONMENT__) {
 //   window.self,
 //   window.globalThis,
 // )
+
+console.log(55555555, this)

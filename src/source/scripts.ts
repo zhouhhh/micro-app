@@ -364,10 +364,12 @@ function bindScope (
   if (isPlainObject(microApp.plugins)) {
     code = usePlugins(url, code, app.name, microApp.plugins!)
   }
+
   if (app.sandBox && !module) {
     globalEnv.rawWindow.__MICRO_APP_PROXY_WINDOW__ = app.sandBox.proxyWindow
-    return `;(function(window, self){with(window.__MICRO_APP_WINDOW__){(function(undefined, Array, Object, String, Boolean, Math, Number, Symbol, parseFloat, Float32Array, parseInt, isNaN, Function, Reflect, performance, window, Set, Map, Element, Node, getComputedStyle, RegExp, Error, Document, Proxy, WeakMap, requestAnimationFrame, console, JSON){${code}})(undefined, Array, Object, String, Boolean, Math, Number, Symbol, parseFloat, Float32Array, parseInt, isNaN, Function, Reflect, performance, window, Set, Map, Element, Node, getComputedStyle, RegExp, Error, Document, Proxy, WeakMap, requestAnimationFrame, console, JSON)}}).call(window.__MICRO_APP_PROXY_WINDOW__, window.__MICRO_APP_PROXY_WINDOW__, window.__MICRO_APP_PROXY_WINDOW__);`
+    return `;(function(proxyWindow){with(proxyWindow.__MICRO_APP_WINDOW__){(function(window, self, globalThis, undefined, Array, Object, String, Boolean, Math, Number, Symbol, parseFloat, Float32Array, parseInt, isNaN, Function, Reflect, performance, Set, Map, Element, Node, getComputedStyle, RegExp, Error, Document, Proxy, WeakMap, requestAnimationFrame, console, JSON){${code}}).call(proxyWindow, window, self, globalThis, undefined, Array, Object, String, Boolean, Math, Number, Symbol, parseFloat, Float32Array, parseInt, isNaN, Function, Reflect, performance, Set, Map, Element, Node, getComputedStyle, RegExp, Error, Document, Proxy, WeakMap, requestAnimationFrame, console, JSON)}})(window.__MICRO_APP_PROXY_WINDOW__);`
   }
+
   return code
 }
 

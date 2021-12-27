@@ -1,7 +1,7 @@
 /* eslint-disable no-new-func, indent, @typescript-eslint/explicit-module-boundary-types */
 import type { Func } from '@micro-app/types'
 
-export const version = '__VERSION__'
+export const version = '__MICRO_APP_VERSION__'
 
 // do not use isUndefined
 export const isBrowser = typeof window !== 'undefined'

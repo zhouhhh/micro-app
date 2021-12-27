@@ -32,7 +32,7 @@ const commonPlugins = [
   }),
   replace({
     preventAssignment: true,
-    __VERSION__: version,
+    __MICRO_APP_VERSION__: version,
     __TEST__: 'false',
   })
 ]

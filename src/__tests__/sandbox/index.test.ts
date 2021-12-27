@@ -142,7 +142,7 @@ describe('sandbox', () => {
   })
 
   // 逃离属性可以逃逸到外层真实window上&卸载时清空escapeKeys
-  test('escapeProperties should escape from microWindow to rawWindow', () => {
+  test('escapeProperties should escape from microAppWindow to rawWindow', () => {
     const sandbox = new Sandbox('test-app-escapeProperties', `http://127.0.0.1:${ports.sandbox}/common/`)
     sandbox.start('')
     const proxyWindow: any = sandbox.proxyWindow
@@ -195,7 +195,7 @@ describe('sandbox', () => {
 
     proxyWindow.location = 'https://www.micro-app-test.com'
 
-    expect(sandbox.microWindow.location).toBeUndefined()
+    expect(sandbox.microAppWindow.location).toBeUndefined()
   })
 
   // has方法从proxyWindow和rawWindow上同时判断

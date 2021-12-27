@@ -1,4 +1,4 @@
-import type { microWindowType } from '@micro-app/types'
+import type { microAppWindowType } from '@micro-app/types'
 import {
   getCurrentAppName,
   setCurrentAppName,
@@ -8,7 +8,7 @@ import {
   rawDefineProperty,
 } from '../libs/utils'
 import { appInstanceMap } from '../create_app'
-import { getActiveApps } from '../micro_app'
+// import { getActiveApps } from '../micro_app'
 import globalEnv from '../libs/global_env'
 
 type MicroEventListener = EventListenerOrEventListenerObject & Record<string, any>
@@ -134,21 +134,21 @@ const formatEventList = ['unmount', 'appstate-change']
 /**
  * Format event name
  * @param type event name
- * @param microWindow micro window
+ * @param microAppWindow micro window
  */
-function formatEventType (type: string, microWindow: microWindowType): string {
+function formatEventType (type: string, microAppWindow: microAppWindowType): string {
   if (formatEventList.includes(type)) {
-    return `${type}-${microWindow.__MICRO_APP_NAME__}`
+    return `${type}-${microAppWindow.__MICRO_APP_NAME__}`
   }
   return type
 }
 
 /**
  * Rewrite side-effect events
- * @param microWindow micro window
+ * @param microAppWindow micro window
  */
-export default function effect (microWindow: microWindowType): Record<string, CallableFunction> {
-  const appName = microWindow.__MICRO_APP_NAME__
+export default function effect (microAppWindow: microAppWindowType): Record<string, CallableFunction> {
+  const appName = microAppWindow.__MICRO_APP_NAME__
   const eventListenerMap = new Map<string, Set<MicroEventListener>>()
   const intervalIdMap = new Map<number, timeInfo>()
   const timeoutIdMap = new Map<number, timeInfo>()
@@ -165,12 +165,12 @@ export default function effect (microWindow: microWindowType): Record<string, Ca
   } = globalEnv
 
   // listener may be null, e.g test-passive
-  microWindow.addEventListener = function (
+  microAppWindow.addEventListener = function (
     type: string,
     listener: MicroEventListener,
     options?: boolean | AddEventListenerOptions,
   ): void {
-    type = formatEventType(type, microWindow)
+    type = formatEventType(type, microAppWindow)
     const listenerList = eventListenerMap.get(type)
     if (listenerList) {
       listenerList.add(listener)
@@ -181,12 +181,12 @@ export default function effect (microWindow: microWindowType): Record<string, Ca
     rawWindowAddEventListener.call(rawWindow, type, listener, options)
   }
 
-  microWindow.removeEventListener = function (
+  microAppWindow.removeEventListener = function (
     type: string,
     listener: MicroEventListener,
     options?: boolean | AddEventListenerOptions,
   ): void {
-    type = formatEventType(type, microWindow)
+    type = formatEventType(type, microAppWindow)
     const listenerList = eventListenerMap.get(type)
     if (listenerList?.size && listenerList.has(listener)) {
       listenerList.delete(listener)
@@ -194,7 +194,7 @@ export default function effect (microWindow: microWindowType): Record<string, Ca
     rawWindowRemoveEventListener.call(rawWindow, type, listener, options)
   }
 
-  microWindow.setInterval = function (
+  microAppWindow.setInterval = function (
     handler: TimerHandler,
     timeout?: number,
     ...args: any[]
@@ -204,7 +204,7 @@ export default function effect (microWindow: microWindowType): Record<string, Ca
     return intervalId
   }
 
-  microWindow.setTimeout = function (
+  microAppWindow.setTimeout = function (
     handler: TimerHandler,
     timeout?: number,
     ...args: any[]
@@ -214,12 +214,12 @@ export default function effect (microWindow: microWindowType): Record<string, Ca
     return timeoutId
   }
 
-  microWindow.clearInterval = function (intervalId: number) {
+  microAppWindow.clearInterval = function (intervalId: number) {
     intervalIdMap.delete(intervalId)
     rawClearInterval.call(rawWindow, intervalId)
   }
 
-  microWindow.clearTimeout = function (timeoutId: number) {
+  microAppWindow.clearTimeout = function (timeoutId: number) {
     timeoutIdMap.delete(timeoutId)
     rawClearTimeout.call(rawWindow, timeoutId)
   }
@@ -267,17 +267,17 @@ export default function effect (microWindow: microWindowType): Record<string, Ca
     // rebuild window event
     umdWindowListenerMap.forEach((listenerList, type) => {
       for (const listener of listenerList) {
-        microWindow.addEventListener(type, listener, listener?.__MICRO_MARK_OPTIONS__)
+        microAppWindow.addEventListener(type, listener, listener?.__MICRO_MARK_OPTIONS__)
       }
     })
 
     // rebuild timer
     umdIntervalIdMap.forEach((info: timeInfo) => {
-      microWindow.setInterval(info.handler, info.timeout, ...info.args)
+      microAppWindow.setInterval(info.handler, info.timeout, ...info.args)
     })
 
     umdTimeoutIdMap.forEach((info: timeInfo) => {
-      microWindow.setTimeout(info.handler, info.timeout, ...info.args)
+      microAppWindow.setTimeout(info.handler, info.timeout, ...info.args)
     })
 
     // rebuild onclick event
@@ -342,31 +342,31 @@ export default function effect (microWindow: microWindowType): Record<string, Ca
   }
 }
 
-window.addEventListener('mousedown', (e: Event) => {
-  const targetNode = e.target
-  const activeApps = getActiveApps(true)
-  let isScopeOfMicroApp = false
-  for (const appName of activeApps) {
-    const app = appInstanceMap.get(appName)!
-    if (targetNode instanceof Node && app.container!.contains(targetNode)) {
-      isScopeOfMicroApp = true
-      // console.log(111111, appName)
-      setCurrentAppName(appName)
-      break
-    }
-  }
-  if (!isScopeOfMicroApp) {
-    setCurrentAppName(null)
-  }
-}, false)
+// window.addEventListener('mousedown', (e: Event) => {
+//   const targetNode = e.target
+//   const activeApps = getActiveApps(true)
+//   let isScopeOfMicroApp = false
+//   for (const appName of activeApps) {
+//     const app = appInstanceMap.get(appName)!
+//     if (targetNode instanceof Node && app.container!.contains(targetNode)) {
+//       isScopeOfMicroApp = true
+//       // console.log(111111, appName)
+//       setCurrentAppName(appName)
+//       break
+//     }
+//   }
+//   if (!isScopeOfMicroApp) {
+//     setCurrentAppName(null)
+//   }
+// }, false)
 
-let isWaitingForMacroReset = false
-window.addEventListener('mouseup', () => {
-  if (!isWaitingForMacroReset && getCurrentAppName()) {
-    isWaitingForMacroReset = true
-    setTimeout(() => {
-      setCurrentAppName(null)
-      isWaitingForMacroReset = false
-    })
-  }
-}, false)
+// let isWaitingForMacroReset = false
+// window.addEventListener('mouseup', () => {
+//   if (!isWaitingForMacroReset && getCurrentAppName()) {
+//     isWaitingForMacroReset = true
+//     setTimeout(() => {
+//       setCurrentAppName(null)
+//       isWaitingForMacroReset = false
+//     })
+//   }
+// }, false)

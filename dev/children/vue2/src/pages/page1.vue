@@ -12,6 +12,12 @@
       <use xlink:href="#zoe-ui-right"></use>
     </svg>
     <div class='test-safari-before' title='sdfsfs'></div>
+    <div class="pt60">
+      <ul class="wrapper">
+        <li v-for="item in aaa" :key="item">{{ item }}</li>
+      </ul>
+      <button @click="test">test</button>
+    </div>
   </div>
 </template>
 
@@ -26,6 +32,7 @@ export default {
       version: Vue.version,
       centerDialogVisible: false,
       microDataStr: '',
+      aaa: 1,
     }
   },
   created () {
@@ -43,7 +50,20 @@ export default {
       console.log('vue2 来自基座应用的数据', data)
       this.centerDialogVisible = true
       this.microDataStr = JSON.stringify(data)
-    }
+    },
+    test() {
+      console.time("run loop", 10000);
+
+      for (let index = 2; index < 1 * 10000; index++) {
+        this.aaa = index;
+      }
+
+      console.timeLog("run loop", 10000);
+
+      this.$nextTick(() => {
+        console.timeEnd("run loop", 10000);
+      });
+    },
   }
 }
 </script>
