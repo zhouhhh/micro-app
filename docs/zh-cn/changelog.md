@@ -10,6 +10,21 @@
 
 ### 0.6.2
 
+`2021-12-30`
+
+- **New**
+
+  - 🆕  新增Api，对外export `MicroApp`类。
+
+- **Update**
+
+  - 🚀 沙箱重构，性能优化。
+  - 🚀 优化了`execScripts`方法，不再使用`Promise.all`，防止单文件加载错误导致后续文件无法执行的问题。
+  - 🚀 优化了`getActiveApps`方法，增加对过滤keep-alive应用的支持。
+
+
+### 0.6.2
+
 `2021-12-19`
 
 - **Bug Fix**
