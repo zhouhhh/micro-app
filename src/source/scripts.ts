@@ -26,7 +26,7 @@ import microApp from '../micro_app'
 import globalEnv from '../libs/global_env'
 import { globalKeyToBeCached } from '../constants'
 
-type moduleCallBack = Func & { moduleCount?: number }
+type moduleCallBack = Func & { moduleCount?: number, errorCount?: number }
 
 // Global scripts, reuse across apps
 export const globalScripts = new Map<string, string>()
@@ -199,18 +199,36 @@ export function execScripts (
   }
 
   if (deferScriptPromise.length) {
-    Promise.all(deferScriptPromise).then((res: string[]) => {
-      res.forEach((code, index) => {
-        const [url, info] = deferScriptInfo[index]
-        info.code = info.code || code
-        runScript(url, app, info, false, initedHook)
-        !info.module && initedHook(false)
-      })
-      initedHook(isUndefined(initedHook.moduleCount))
-    }).catch((err) => {
+    promiseStream<string>(deferScriptPromise, (res: {data: string, index: number}) => {
+      const info = deferScriptInfo[res.index][1]
+      info.code = info.code || res.data
+    }, (err: {error: Error, index: number}) => {
+      initedHook.errorCount = initedHook.errorCount ? ++initedHook.errorCount : 1
       logError(err, app.name)
-      initedHook(true)
+    }, () => {
+      deferScriptInfo.forEach(([url, info]) => {
+        if (info.code) {
+          runScript(url, app, info, false, initedHook)
+          !info.module && initedHook(false)
+        }
+      })
+      initedHook(
+        isUndefined(initedHook.moduleCount) ||
+        initedHook.errorCount === deferScriptPromise.length
+      )
     })
+    // Promise.all(deferScriptPromise).then((res: string[]) => {
+    //   res.forEach((code, index) => {
+    //     const [url, info] = deferScriptInfo[index]
+    //     info.code = info.code || code
+    //     runScript(url, app, info, false, initedHook)
+    //     !info.module && initedHook(false)
+    //   })
+    //   initedHook(isUndefined(initedHook.moduleCount))
+    // }).catch((err) => {
+    //   logError(err, app.name)
+    //   initedHook(true)
+    // })
   } else {
     initedHook(true)
   }
@@ -368,7 +386,7 @@ function bindScope (
 
   if (app.sandBox && !module) {
     globalEnv.rawWindow.__MICRO_APP_PROXY_WINDOW__ = app.sandBox.proxyWindow
-    return `;(function(proxyWindow){with(proxyWindow.__MICRO_APP_WINDOW__){(function(${globalKeyToBeCached}){${code}}).call(proxyWindow,${globalKeyToBeCached})}})(window.__MICRO_APP_PROXY_WINDOW__);`
+    return `;(function(proxyWindow){with(proxyWindow.__MICRO_APP_WINDOW__){(function(${globalKeyToBeCached}){;${code}\n}).call(proxyWindow,${globalKeyToBeCached})}})(window.__MICRO_APP_PROXY_WINDOW__);`
   }
 
   return code
