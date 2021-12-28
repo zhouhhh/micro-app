@@ -286,17 +286,13 @@ export function setCurrentAppName (appName: string | null): void {
 }
 
 let isWaitingForReset = false
-export function throttleDeferForSetAppName (
-  appName: string,
-  cb?: CallableFunction,
-) {
+export function throttleDeferForSetAppName (appName: string) {
   if (!isWaitingForReset || currentMicroAppName !== appName) {
     isWaitingForReset = true
     setCurrentAppName(appName)
     defer(() => {
       isWaitingForReset = false
       setCurrentAppName(null)
-      cb && cb()
     })
   }
 }

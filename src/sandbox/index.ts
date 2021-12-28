@@ -13,6 +13,7 @@ import {
   throttleDeferForSetAppName,
   rawDefineProperty,
   rawDefineProperties,
+  isFunction,
 } from '../libs/utils'
 import microApp from '../micro_app'
 import bindFunctionToRawWindow from './bind_function'
@@ -88,7 +89,7 @@ export default class SandBox implements SandBoxInterface {
 
         const rawValue = Reflect.get(rawWindow, key)
 
-        return bindFunctionToRawWindow(rawWindow, rawValue)
+        return isFunction(rawValue) ? bindFunctionToRawWindow(rawWindow, rawValue) : rawValue
       },
       set: (target: microAppWindowType, key: PropertyKey, value: unknown): boolean => {
         if (this.active) {
@@ -327,16 +328,16 @@ export default class SandBox implements SandBoxInterface {
     let modifiedEval: unknown, modifiedImage: unknown
     rawDefineProperties(microAppWindow, {
       document: {
-        get: () => {
-          this.commonHandlerForSetAppName(microAppWindow, appName)
+        get () {
+          throttleDeferForSetAppName(appName)
           return globalEnv.rawDocument
         },
-        configurable: true,
+        configurable: false,
         enumerable: true,
       },
       eval: {
-        get: () => {
-          this.commonHandlerForSetAppName(microAppWindow, appName)
+        get () {
+          throttleDeferForSetAppName(appName)
           return modifiedEval || eval
         },
         set: (value) => {
@@ -346,8 +347,8 @@ export default class SandBox implements SandBoxInterface {
         enumerable: false,
       },
       Image: {
-        get: () => {
-          this.commonHandlerForSetAppName(microAppWindow, appName)
+        get () {
+          throttleDeferForSetAppName(appName)
           return modifiedImage || globalEnv.ImageProxy
         },
         set: (value) => {
@@ -356,24 +357,6 @@ export default class SandBox implements SandBoxInterface {
         configurable: true,
         enumerable: false,
       },
-    })
-  }
-
-  private commonHandlerForSetAppName (microAppWindow: microAppWindowType, appName: string): void {
-    rawDefineProperty(microAppWindow, 'document', {
-      value: globalEnv.rawDocument,
-      configurable: true,
-      enumerable: true,
-    })
-    throttleDeferForSetAppName(appName, () => {
-      rawDefineProperty(microAppWindow, 'document', {
-        get: () => {
-          this.commonHandlerForSetAppName(microAppWindow, appName)
-          return globalEnv.rawDocument
-        },
-        configurable: true,
-        enumerable: true,
-      })
     })
   }
 }

@@ -1,61 +1,47 @@
-import type { Func } from '@micro-app/types'
-import { isFunction, isBoundFunction } from '../libs/utils'
+/* eslint-disable no-return-assign */
+import { isBoundFunction, rawDefineProperty, isBoolean } from '../libs/utils'
 
-const boundedMap = new WeakMap<CallableFunction, boolean>()
-export function isBoundedFunction (value: CallableFunction): boolean {
-  if (boundedMap.has(value)) {
-    return boundedMap.get(value)!
-  }
-
-  // bind function
-  const boundFunction = isBoundFunction(value)
-
-  boundedMap.set(value, boundFunction)
-
-  return boundFunction
+function isBoundedFunction (value: CallableFunction & {__MICRO_APP_ISBOUND_FUNCTION: boolean}): boolean {
+  if (isBoolean(value.__MICRO_APP_ISBOUND_FUNCTION)) return value.__MICRO_APP_ISBOUND_FUNCTION
+  return value.__MICRO_APP_ISBOUND_FUNCTION = isBoundFunction(value)
 }
 
-const constructorMap = new WeakMap<Func | FunctionConstructor, boolean>()
-function isConstructor (value: Func | FunctionConstructor) {
-  if (constructorMap.has(value)) {
-    return constructorMap.get(value)
-  }
+function isConstructor (value: FunctionConstructor & {__MICRO_APP_ISCONSTRUCTOR: boolean}) {
+  if (isBoolean(value.__MICRO_APP_ISCONSTRUCTOR)) return value.__MICRO_APP_ISCONSTRUCTOR
 
   const valueStr = value.toString()
 
   const result = (
-    value.prototype &&
-    value.prototype.constructor === value &&
+    value.prototype?.constructor === value &&
     Object.getOwnPropertyNames(value.prototype).length > 1
   ) ||
     /^function\s+[A-Z]/.test(valueStr) ||
     /^class\s+/.test(valueStr)
 
-  constructorMap.set(value, result)
-
-  return result
+  return value.__MICRO_APP_ISCONSTRUCTOR = result
 }
 
-const rawWindowMethodMap = new WeakMap<CallableFunction, CallableFunction>()
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default function bindFunctionToRawWindow (rawWindow: Window, value: any): unknown {
-  if (rawWindowMethodMap.has(value)) {
-    return rawWindowMethodMap.get(value)
-  }
+  if (value.__MICRO_APP_BOUND_WINDOW_FUNCTION) return value.__MICRO_APP_BOUND_WINDOW_FUNCTION
 
-  if (isFunction(value) && !isConstructor(value) && !isBoundedFunction(value)) {
+  if (!isConstructor(value) && !isBoundedFunction(value)) {
     const bindRawWindowValue = value.bind(rawWindow)
 
     for (const key in value) {
       bindRawWindowValue[key] = value[key]
     }
 
-    if (value.hasOwnProperty('prototype') && !bindRawWindowValue.hasOwnProperty('prototype')) {
-      bindRawWindowValue.prototype = value.prototype
+    if (value.hasOwnProperty('prototype')) {
+      rawDefineProperty(bindRawWindowValue, 'prototype', {
+        value: value.prototype,
+        configurable: true,
+        enumerable: false,
+        writable: true,
+      })
     }
 
-    rawWindowMethodMap.set(value, bindRawWindowValue)
-    return bindRawWindowValue
+    return value.__MICRO_APP_BOUND_WINDOW_FUNCTION = bindRawWindowValue
   }
 
   return value
