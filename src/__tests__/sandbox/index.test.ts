@@ -125,6 +125,13 @@ describe('sandbox', () => {
       }
     })
 
+    Object.defineProperty(window, 'qqqqqqqqqq', {
+      value: 11,
+      configurable: false,
+      enumerable: true,
+      writable: true,
+    })
+
     // proxyWindow 无法继承原window上被隔离的变量
     expect(proxyWindow.scopeProperty1).toBeUndefined()
     expect(proxyWindow.scopeProperty2).toBeUndefined()
@@ -136,7 +143,8 @@ describe('sandbox', () => {
     const proxyScopedPro1Desc = Object.getOwnPropertyDescriptor(proxyWindow, 'scopeProperty1')
     expect(proxyScopedPro1Desc?.configurable).toBeTruthy()
 
-    proxyWindow.notScopedProperty = 'not-ScopedProperty'
+    proxyWindow.notScopedProperty = 'not-ScopedProperty-value'
+    proxyWindow.qqqqqqqqqq = 11
     const proxyNotScopedProDesc = Object.getOwnPropertyDescriptor(proxyWindow, 'notScopedProperty')
     expect(proxyNotScopedProDesc?.configurable).toBeFalsy()
   })
@@ -228,6 +236,7 @@ describe('sandbox', () => {
         value: 'value3',
         configurable: true,
         writable: true,
+        enumerable: true,
       },
     })
 
@@ -342,8 +351,8 @@ describe('sandbox', () => {
     proxyWindow['descriptor-key2'] = 'new-descriptor-key2'
 
     expect(proxyWindow['descriptor-key1']).toBe('new-descriptor-key1')
-    // writable为false，赋值无效
-    expect(proxyWindow['descriptor-key2']).toBe('descriptor-key2')
+    // 原生window有相同值，且writable为false，vlaue依然可以定义到proxyWindow上
+    expect(proxyWindow['descriptor-key2']).toBe('new-descriptor-key2')
   })
 
   // 将原window上的_babelPolyfill设置为false
@@ -367,5 +376,48 @@ describe('sandbox', () => {
 
     expect(proxyWindow.boundFunction.name).toBe('bound willbind')
     expect(proxyWindow.boundFunction).toBe(boundFunction)
+  })
+
+  // 测试重写eval、Image方法
+  test('test set eval & Image', () => {
+    const sandbox = new Sandbox('test-set-eval&Image', `http://127.0.0.1:${ports.sandbox}/common/`)
+    sandbox.start('')
+    const proxyWindow: any = sandbox.proxyWindow
+
+    proxyWindow.eval = 'neweval'
+    expect(proxyWindow.eval).toBe('neweval')
+
+    proxyWindow.Image = 'newimage'
+    expect(proxyWindow.Image).toBe('newimage')
+  })
+
+  // 分支覆盖 proxyWindow getter方法
+  test('coverage: proxyWindow getter', () => {
+    const sandbox = new Sandbox('test-coverage-proxy-getter', `http://127.0.0.1:${ports.sandbox}/common/`)
+    sandbox.start('')
+    const proxyWindow: any = sandbox.proxyWindow
+
+    Object.defineProperties(window, {
+      'key1-for-proxy-getter': {
+        get () {
+          return 'key1-proxy-getter-value'
+        },
+        set () {},
+        configurable: true,
+        enumerable: true,
+      },
+    })
+
+    proxyWindow['key1-for-proxy-getter'] = 'set value to proxyWindow'
+    expect(Object.getOwnPropertyDescriptor(proxyWindow, 'key1-for-proxy-getter')?.writable).toBeTruthy()
+  })
+
+  // 分支覆盖: 在createDescriptorFormicroAppWindow 获取descriptor为空
+  test('coverage: empty descriptor in createDescriptorFormicroAppWindow ', () => {
+    // @ts-ignore
+    delete window.parent
+    const sandbox = new Sandbox('empty-descriptor-createDescriptorFormicroAppWindow', `http://127.0.0.1:${ports.sandbox}/common/`)
+    sandbox.start('')
+    expect(Object.getOwnPropertyDescriptor(window, 'parent')).toBeUndefined()
   })
 })

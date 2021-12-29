@@ -68,6 +68,7 @@ export function isShadowRoot (target: unknown): boolean {
 export const rawDefineProperty = Object.defineProperty
 
 export const rawDefineProperties = Object.defineProperties
+export const rawHasOwnProperty = Object.prototype.hasOwnProperty
 
 /**
  * format error log

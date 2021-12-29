@@ -10,12 +10,18 @@ describe('source scripts', () => {
     commonStartEffect(ports.source_scripts)
     microApp.start({
       plugins: {
-        global: [{
-          loader (code, _url, _options) {
-            // console.log('全局插件', _url)
-            return code
-          }
-        }],
+        global: [
+          {
+            loader (code, _url, _options) {
+              // console.log('全局插件', _url)
+              return code
+            }
+          },
+          {
+            loader: 'invalid loader' as any,
+          },
+          'invalid plugin' as any,
+        ],
         modules: {
           'test-app1': [
             {
@@ -190,7 +196,7 @@ describe('source scripts', () => {
     await new Promise((reslove) => {
       microappElement9.addEventListener('mounted', () => {
         setTimeout(() => {
-          expect(console.error).toHaveBeenLastCalledWith('[micro-app] app test-app9:', expect.any(Error))
+          expect(console.error).toHaveBeenLastCalledWith('[micro-app] app test-app9:', expect.any(Object))
           reslove(true)
         }, 100)
       }, false)
@@ -298,6 +304,36 @@ describe('source scripts', () => {
         dynamicScript.onload = () => {
           expect(globalScripts.get(`http://127.0.0.1:${ports.source_scripts}/dynamic/script1.js`)).toBe(expect.any(String))
         }
+        reslove(true)
+      }, false)
+    })
+  })
+
+  // 初始化渲染时，某个js文件报错
+  test('an error occurs at the first rendering', async () => {
+    const microappElement15 = document.createElement('micro-app')
+    microappElement15.setAttribute('name', 'test-app15')
+    microappElement15.setAttribute('url', `http://127.0.0.1:${ports.source_scripts}/dynamic/errorjs.html`)
+
+    appCon.appendChild(microappElement15)
+    await new Promise((reslove) => {
+      microappElement15.addEventListener('mounted', () => {
+        expect(console.error).toHaveBeenLastCalledWith('[micro-app from runScript] app test-app15: ', expect.any(Error))
+        reslove(true)
+      }, false)
+    })
+  })
+
+  // 分支覆盖：初始化获取 defer js 文件失败
+  test('coverage: failed to get defer js file', async () => {
+    const microappElement16 = document.createElement('micro-app')
+    microappElement16.setAttribute('name', 'test-app16')
+    microappElement16.setAttribute('url', `http://127.0.0.1:${ports.source_scripts}/special-html/notexistdefer.html`)
+
+    appCon.appendChild(microappElement16)
+    await new Promise((reslove) => {
+      microappElement16.addEventListener('mounted', () => {
+        expect(console.error).toHaveBeenLastCalledWith('[micro-app] app test-app16:', expect.any(Object))
         reslove(true)
       }, false)
     })

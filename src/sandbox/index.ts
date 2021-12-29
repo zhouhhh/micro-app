@@ -14,6 +14,7 @@ import {
   rawDefineProperty,
   rawDefineProperties,
   isFunction,
+  rawHasOwnProperty,
 } from '../libs/utils'
 import microApp from '../micro_app'
 import bindFunctionToRawWindow from './bind_function'
@@ -74,12 +75,12 @@ export default class SandBox implements SandBoxInterface {
   constructor (appName: string, url: string) {
     // get scopeProperties and escapeProperties from plugins
     this.getScopeProperties(appName)
-    // Rewrite global event listener & timeout
-    Object.assign(this, effect(this.microAppWindow))
     // create proxyWindow with Proxy(microAppWindow)
     this.proxyWindow = this.createProxyWindow()
     // inject global properties
     this.initMicroAppWindow(this.microAppWindow, appName, url)
+    // Rewrite global event listener & timeout
+    Object.assign(this, effect(this.microAppWindow))
   }
 
   start (baseroute: string): void {
@@ -175,6 +176,7 @@ export default class SandBox implements SandBoxInterface {
   // create proxyWindow with Proxy(microAppWindow)
   private createProxyWindow () {
     const rawWindow = globalEnv.rawWindow
+    const descriptorTargetMap = new Map<PropertyKey, 'target' | 'rawWindow'>()
     // window.xxx will trigger proxy
     return new Proxy(this.microAppWindow, {
       get: (target: microAppWindowType, key: PropertyKey): unknown => {
@@ -193,8 +195,9 @@ export default class SandBox implements SandBoxInterface {
           if (escapeSetterKeyList.includes(key)) {
             Reflect.set(rawWindow, key, value)
           } else if (
-            !target.hasOwnProperty(key) &&
-            rawWindow.hasOwnProperty(key) &&
+            // target.hasOwnProperty has been rewritten
+            !rawHasOwnProperty.call(target, key) &&
+            rawHasOwnProperty.call(rawWindow, key) &&
             !this.scopeProperties.includes(key)
           ) {
             const descriptor = Object.getOwnPropertyDescriptor(rawWindow, key)
@@ -233,23 +236,36 @@ export default class SandBox implements SandBoxInterface {
       },
       // Object.getOwnPropertyDescriptor(window, key)
       getOwnPropertyDescriptor: (target: microAppWindowType, key: PropertyKey): PropertyDescriptor|undefined => {
-        if (target.hasOwnProperty(key)) {
+        if (rawHasOwnProperty.call(target, key)) {
+          descriptorTargetMap.set(key, 'target')
           return Object.getOwnPropertyDescriptor(target, key)
         }
 
-        if (rawWindow.hasOwnProperty(key)) {
-          // console, alert ...
-          return Object.getOwnPropertyDescriptor(rawWindow, key)
+        if (rawHasOwnProperty.call(rawWindow, key)) {
+          descriptorTargetMap.set(key, 'rawWindow')
+          const descriptor = Object.getOwnPropertyDescriptor(rawWindow, key)
+          if (descriptor && !descriptor.configurable) {
+            descriptor.configurable = true
+          }
+          return descriptor
         }
 
         return undefined
+      },
+      // Object.defineProperty(window, key, Descriptor)
+      defineProperty: (target: microAppWindowType, key: PropertyKey, value: PropertyDescriptor): boolean => {
+        const from = descriptorTargetMap.get(key)
+        if (from === 'rawWindow') {
+          return Reflect.defineProperty(rawWindow, key, value)
+        }
+        return Reflect.defineProperty(target, key, value)
       },
       // Object.getOwnPropertyNames(window)
       ownKeys: (target: microAppWindowType): Array<string | symbol> => {
         return unique(Reflect.ownKeys(rawWindow).concat(Reflect.ownKeys(target)))
       },
       deleteProperty: (target: microAppWindowType, key: PropertyKey): boolean => {
-        if (target.hasOwnProperty(key)) {
+        if (rawHasOwnProperty.call(target, key)) {
           this.injectedKeys.has(key) && this.injectedKeys.delete(key)
           this.escapeKeys.has(key) && Reflect.deleteProperty(rawWindow, key)
           return Reflect.deleteProperty(target, key)
@@ -274,7 +290,7 @@ export default class SandBox implements SandBoxInterface {
     microAppWindow.rawWindow = globalEnv.rawWindow
     microAppWindow.rawDocument = globalEnv.rawDocument
     microAppWindow.removeDomScope = removeDomScope
-    microAppWindow.hasOwnProperty = (key: PropertyKey) => Object.prototype.hasOwnProperty.call(microAppWindow, key) || Object.prototype.hasOwnProperty.call(globalEnv.rawWindow, key)
+    microAppWindow.hasOwnProperty = (key: PropertyKey) => rawHasOwnProperty.call(microAppWindow, key) || rawHasOwnProperty.call(globalEnv.rawWindow, key)
     this.setMappingPropertiesWithRawDescriptor(microAppWindow)
     this.setHijackProperties(microAppWindow, appName)
   }

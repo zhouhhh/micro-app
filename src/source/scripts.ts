@@ -217,18 +217,6 @@ export function execScripts (
         initedHook.errorCount === deferScriptPromise.length
       )
     })
-    // Promise.all(deferScriptPromise).then((res: string[]) => {
-    //   res.forEach((code, index) => {
-    //     const [url, info] = deferScriptInfo[index]
-    //     info.code = info.code || code
-    //     runScript(url, app, info, false, initedHook)
-    //     !info.module && initedHook(false)
-    //   })
-    //   initedHook(isUndefined(initedHook.moduleCount))
-    // }).catch((err) => {
-    //   logError(err, app.name)
-    //   initedHook(true)
-    // })
   } else {
     initedHook(true)
   }

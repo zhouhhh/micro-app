@@ -2,7 +2,7 @@
 import { commonStartEffect, releaseAllEffect, ports } from './common/initial'
 import { appInstanceMap } from '../create_app'
 import { appStates, keepAliveStates } from '../constants'
-import microApp, { unmountApp, unmountAllApps } from '..'
+import microApp, { unmountApp, unmountAllApps, getActiveApps } from '..'
 
 describe('create_app', () => {
   let appCon: Element
@@ -456,5 +456,11 @@ describe('create_app', () => {
         })
       })
     })
+  })
+
+  // 测试getActiveApps方法
+  test('test getActiveApps method', async () => {
+    // 因为上面已经执行unmountAllApps卸载了所有应用，所以这里长度为0
+    expect(getActiveApps(true).length).toBe(0)
   })
 })
