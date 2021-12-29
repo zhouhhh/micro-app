@@ -6,8 +6,6 @@ import { Button, Spin } from 'antd'
 import { LoadingOutlined } from '@ant-design/icons'
 import config from '../../config'
 import './vue2.less'
-// import { start, loadMicroApp } from 'qiankun'
-// start()
 
 const antIcon = <LoadingOutlined style={{ fontSize: 30 }} spin />
 
@@ -28,14 +26,6 @@ function Vue2 () {
   useEffect(() => {
     console.time('vue2')
     console.time('mounted-vue2')
-    // loadMicroApp({
-    //   name: 'micro-app-vue2',
-    //   entry: 'http://localhost:4001/micro-app/vue2/',
-    //   container: '#qiankun-con',
-    // }, {
-    //   sandbox: true,
-    //   // sandbox: { experimentalStyleIsolation: true },
-    // })
   }, [])
   return (
     <div>
@@ -67,7 +57,6 @@ function Vue2 () {
         // disableSandbox
       >
       </micro-app>
-      <div id='qiankun-con'></div>
     </div>
   )
 }
