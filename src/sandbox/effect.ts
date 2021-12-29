@@ -98,7 +98,7 @@ export function effectDocumentEvent (): void {
       } else {
         documentEventListenerMap.set(appName, new Map([[type, new Set([listener])]]))
       }
-      listener && (listener.__MICRO_MARK_OPTIONS__ = options)
+      listener && (listener.__MICRO_APP_MARK_OPTIONS__ = options)
     }
     rawDocumentAddEventListener.call(rawDocument, type, listener, options)
   }
@@ -177,7 +177,7 @@ export default function effect (microAppWindow: microAppWindowType): Record<stri
     } else {
       eventListenerMap.set(type, new Set([listener]))
     }
-    listener && (listener.__MICRO_MARK_OPTIONS__ = options)
+    listener && (listener.__MICRO_APP_MARK_OPTIONS__ = options)
     rawWindowAddEventListener.call(rawWindow, type, listener, options)
   }
 
@@ -267,7 +267,7 @@ export default function effect (microAppWindow: microAppWindowType): Record<stri
     // rebuild window event
     umdWindowListenerMap.forEach((listenerList, type) => {
       for (const listener of listenerList) {
-        microAppWindow.addEventListener(type, listener, listener?.__MICRO_MARK_OPTIONS__)
+        microAppWindow.addEventListener(type, listener, listener?.__MICRO_APP_MARK_OPTIONS__)
       }
     })
 
@@ -287,7 +287,7 @@ export default function effect (microAppWindow: microAppWindowType): Record<stri
     setCurrentAppName(appName)
     umdDocumentListenerMap.forEach((listenerList, type) => {
       for (const listener of listenerList) {
-        document.addEventListener(type, listener, listener?.__MICRO_MARK_OPTIONS__)
+        document.addEventListener(type, listener, listener?.__MICRO_APP_MARK_OPTIONS__)
       }
     })
     setCurrentAppName(null)

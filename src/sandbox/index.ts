@@ -72,97 +72,14 @@ export default class SandBox implements SandBoxInterface {
   microAppWindow = {} as MicroAppWindowType // Proxy target
 
   constructor (appName: string, url: string) {
-    const rawWindow = globalEnv.rawWindow
     // get scopeProperties and escapeProperties from plugins
     this.getScopeProperties(appName)
     // Rewrite global event listener & timeout
     Object.assign(this, effect(this.microAppWindow))
-
-    // window.xxx will trigger proxy
-    this.proxyWindow = new Proxy(this.microAppWindow, {
-      get: (target: microAppWindowType, key: PropertyKey): unknown => {
-        if (
-          Reflect.has(target, key) ||
-          (isString(key) && /^__MICRO_APP_/.test(key)) ||
-          this.scopeProperties.includes(key)
-        ) return Reflect.get(target, key)
-
-        const rawValue = Reflect.get(rawWindow, key)
-
-        return isFunction(rawValue) ? bindFunctionToRawWindow(rawWindow, rawValue) : rawValue
-      },
-      set: (target: microAppWindowType, key: PropertyKey, value: unknown): boolean => {
-        if (this.active) {
-          if (escapeSetterKeyList.includes(key)) {
-            Reflect.set(rawWindow, key, value)
-          } else if (
-            !target.hasOwnProperty(key) &&
-            rawWindow.hasOwnProperty(key) &&
-            !this.scopeProperties.includes(key)
-          ) {
-            const descriptor = Object.getOwnPropertyDescriptor(rawWindow, key)
-            const { configurable, enumerable, writable, set } = descriptor!
-            // set value because it can be set
-            rawDefineProperty(target, key, {
-              value,
-              configurable,
-              enumerable,
-              writable: writable ?? !!set,
-            })
-
-            this.injectedKeys.add(key)
-          } else {
-            Reflect.set(target, key, value)
-            this.injectedKeys.add(key)
-          }
-
-          if (
-            (
-              this.escapeProperties.includes(key) ||
-              (staticEscapeProperties.includes(key) && !Reflect.has(rawWindow, key))
-            ) &&
-            !this.scopeProperties.includes(key)
-          ) {
-            Reflect.set(rawWindow, key, value)
-            this.escapeKeys.add(key)
-          }
-        }
-
-        return true
-      },
-      has: (target: microAppWindowType, key: PropertyKey): boolean => {
-        if (this.scopeProperties.includes(key)) return key in target
-        return key in target || key in rawWindow
-      },
-      // Object.getOwnPropertyDescriptor(window, key)
-      getOwnPropertyDescriptor: (target: microAppWindowType, key: PropertyKey): PropertyDescriptor|undefined => {
-        if (target.hasOwnProperty(key)) {
-          return Object.getOwnPropertyDescriptor(target, key)
-        }
-
-        if (rawWindow.hasOwnProperty(key)) {
-          // console, alert ...
-          return Object.getOwnPropertyDescriptor(rawWindow, key)
-        }
-
-        return undefined
-      },
-      // Object.getOwnPropertyNames(window)
-      ownKeys: (target: microAppWindowType): Array<string | symbol> => {
-        return unique(Reflect.ownKeys(rawWindow).concat(Reflect.ownKeys(target)))
-      },
-      deleteProperty: (target: microAppWindowType, key: PropertyKey): boolean => {
-        if (target.hasOwnProperty(key)) {
-          this.injectedKeys.has(key) && this.injectedKeys.delete(key)
-          this.escapeKeys.has(key) && Reflect.deleteProperty(rawWindow, key)
-          return Reflect.deleteProperty(target, key)
-        }
-        return true
-      },
-    })
-
+    // create proxyWindow with Proxy(microAppWindow)
+    this.proxyWindow = this.createProxyWindow()
     // inject global properties
-    this.initmicroAppWindow(this.microAppWindow, appName, url)
+    this.initMicroAppWindow(this.microAppWindow, appName, url)
   }
 
   start (baseroute: string): void {
@@ -255,13 +172,100 @@ export default class SandBox implements SandBoxInterface {
     }
   }
 
+  // create proxyWindow with Proxy(microAppWindow)
+  private createProxyWindow () {
+    const rawWindow = globalEnv.rawWindow
+    // window.xxx will trigger proxy
+    return new Proxy(this.microAppWindow, {
+      get: (target: microAppWindowType, key: PropertyKey): unknown => {
+        if (
+          Reflect.has(target, key) ||
+          (isString(key) && /^__MICRO_APP_/.test(key)) ||
+          this.scopeProperties.includes(key)
+        ) return Reflect.get(target, key)
+
+        const rawValue = Reflect.get(rawWindow, key)
+
+        return isFunction(rawValue) ? bindFunctionToRawWindow(rawWindow, rawValue) : rawValue
+      },
+      set: (target: microAppWindowType, key: PropertyKey, value: unknown): boolean => {
+        if (this.active) {
+          if (escapeSetterKeyList.includes(key)) {
+            Reflect.set(rawWindow, key, value)
+          } else if (
+            !target.hasOwnProperty(key) &&
+            rawWindow.hasOwnProperty(key) &&
+            !this.scopeProperties.includes(key)
+          ) {
+            const descriptor = Object.getOwnPropertyDescriptor(rawWindow, key)
+            const { configurable, enumerable, writable, set } = descriptor!
+            // set value because it can be set
+            rawDefineProperty(target, key, {
+              value,
+              configurable,
+              enumerable,
+              writable: writable ?? !!set,
+            })
+
+            this.injectedKeys.add(key)
+          } else {
+            Reflect.set(target, key, value)
+            this.injectedKeys.add(key)
+          }
+
+          if (
+            (
+              this.escapeProperties.includes(key) ||
+              (staticEscapeProperties.includes(key) && !Reflect.has(rawWindow, key))
+            ) &&
+            !this.scopeProperties.includes(key)
+          ) {
+            Reflect.set(rawWindow, key, value)
+            this.escapeKeys.add(key)
+          }
+        }
+
+        return true
+      },
+      has: (target: microAppWindowType, key: PropertyKey): boolean => {
+        if (this.scopeProperties.includes(key)) return key in target
+        return key in target || key in rawWindow
+      },
+      // Object.getOwnPropertyDescriptor(window, key)
+      getOwnPropertyDescriptor: (target: microAppWindowType, key: PropertyKey): PropertyDescriptor|undefined => {
+        if (target.hasOwnProperty(key)) {
+          return Object.getOwnPropertyDescriptor(target, key)
+        }
+
+        if (rawWindow.hasOwnProperty(key)) {
+          // console, alert ...
+          return Object.getOwnPropertyDescriptor(rawWindow, key)
+        }
+
+        return undefined
+      },
+      // Object.getOwnPropertyNames(window)
+      ownKeys: (target: microAppWindowType): Array<string | symbol> => {
+        return unique(Reflect.ownKeys(rawWindow).concat(Reflect.ownKeys(target)))
+      },
+      deleteProperty: (target: microAppWindowType, key: PropertyKey): boolean => {
+        if (target.hasOwnProperty(key)) {
+          this.injectedKeys.has(key) && this.injectedKeys.delete(key)
+          this.escapeKeys.has(key) && Reflect.deleteProperty(rawWindow, key)
+          return Reflect.deleteProperty(target, key)
+        }
+        return true
+      },
+    })
+  }
+
   /**
    * inject global properties to microAppWindow
    * @param microAppWindow micro window
    * @param appName app name
    * @param url app url
    */
-  private initmicroAppWindow (microAppWindow: microAppWindowType, appName: string, url: string): void {
+  private initMicroAppWindow (microAppWindow: microAppWindowType, appName: string, url: string): void {
     microAppWindow.__MICRO_APP_ENVIRONMENT__ = true
     microAppWindow.__MICRO_APP_NAME__ = appName
     microAppWindow.__MICRO_APP_PUBLIC_PATH__ = getEffectivePath(url)
@@ -270,10 +274,6 @@ export default class SandBox implements SandBoxInterface {
     microAppWindow.rawWindow = globalEnv.rawWindow
     microAppWindow.rawDocument = globalEnv.rawDocument
     microAppWindow.removeDomScope = removeDomScope
-    // Symbol.unscopables to reduce the number of document get executions
-    // microAppWindow[Symbol.unscopables] = {
-    //   document: false,
-    // }
     microAppWindow.hasOwnProperty = (key: PropertyKey) => Object.prototype.hasOwnProperty.call(microAppWindow, key) || Object.prototype.hasOwnProperty.call(globalEnv.rawWindow, key)
     this.setMappingPropertiesWithRawDescriptor(microAppWindow)
     this.setHijackProperties(microAppWindow, appName)
@@ -360,17 +360,3 @@ export default class SandBox implements SandBoxInterface {
     })
   }
 }
-
-// 不设：94 106 97 103 97 94 105 101 127 101
-// 设置：99 99 100 106 96 104 97 104 106 101
-// 对的：95 99 91 92 98 95 91 92 92 98
-// 1537 1524 1522 1551 1554 1633 1493 1548 1531 1514 总合：15407 --> 1540
-// 1583 1554 1545 1559 1522 1535 1580 1488 1562 1491 总合：15419 --> 1541
-
-// 原生：67 70 69 64 62 68 66 67 59 68 总合：660 --> 66
-// 原生：1383 1350 1354 1351 1366 1346 1357 1377 1415 1344 总合：13643 --> 1364
-
-// 现在：98 102 95 92 92 101 90 92 99 90 总合：951 --> 95
-// 降级：99 91 97 93 94 100 100 109 99 97 总合：979 --> 97
-
-// DefineProperty：91 91 88 89 90 99 96 92 90 94 总合：920 --> 92
