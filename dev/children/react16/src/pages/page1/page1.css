@@ -49,6 +49,12 @@
   /* 这两个规则同时出现，会导致CSSRules异常 */
   border: 1px solid var(--color-a);
   border-top-color: var(--color-b);
+
+  /* 非var变量正常渲染 */
+  /*
+  border: 1px solid red;
+  border-top-color: yellow;
+  */
 }
 
 /*
