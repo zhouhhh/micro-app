@@ -130,7 +130,11 @@ export function fetchLinkSuccess (
   styleLink.__MICRO_APP_LINK_PATH__ = url
   styleLink.setAttribute('data-origin-href', url)
 
-  microAppHead.replaceChild(scopedCSS(styleLink, app), info.placeholder!)
+  if (info.placeholder!.parentNode) {
+    info.placeholder!.parentNode.replaceChild(scopedCSS(styleLink, app), info.placeholder!)
+  } else {
+    microAppHead.appendChild(scopedCSS(styleLink, app))
+  }
 
   info.placeholder = null
   info.code = data
