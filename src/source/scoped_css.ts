@@ -53,7 +53,7 @@ function scopedHost (
   linkpath?: string,
 ) {
   return cssText.replace(/url\(["']?([^)"']+)["']?\)/gm, (all, $1) => {
-    if (/^(data|blob):/.test($1)) {
+    if (/^(data|blob):|#/.test($1)) {
       return all
     } else if (/^(https?:)?\/\//.test($1)) {
       if (isSafari()) {
