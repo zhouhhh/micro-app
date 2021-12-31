@@ -328,7 +328,7 @@ export default class SandBox implements SandBoxInterface {
   }
 
   private createDescriptorFormicroAppWindow (key: PropertyKey, value: unknown): PropertyDescriptor {
-    const { configurable = true, enumerable = true, writable, set } = Object.getOwnPropertyDescriptor(globalEnv.rawWindow, key) || {}
+    const { configurable = true, enumerable = true, writable, set } = Object.getOwnPropertyDescriptor(globalEnv.rawWindow, key) || { writable: true }
     const descriptor: PropertyDescriptor = {
       value,
       configurable,
