@@ -1,7 +1,7 @@
 /* eslint-disable promise/param-names */
 import { commonStartEffect, releaseAllEffect, ports, setAppName } from '../common/initial'
 import { appInstanceMap } from '../../create_app'
-import { globalLinks } from '../../source/links'
+import { globalLinks, fetchLinkSuccess } from '../../source/links'
 import microApp from '../..'
 
 describe('source links', () => {
@@ -181,5 +181,22 @@ describe('source links', () => {
         reslove(true)
       }, false)
     })
+  })
+
+  // 请求css成功后处理时，parent为空
+  test('empty parentNode when fetch css sucess', () => {
+    const microAppHead = document.createElement('micro-app-head')
+    const info = { placeholder: document.createComment('link comment') } as any
+    const app = { scopecss: false } as any
+
+    fetchLinkSuccess(
+      'http://empty.parentNode.com/test.css',
+      info,
+      'css-text',
+      microAppHead,
+      app,
+    )
+
+    expect(microAppHead.children[0] instanceof HTMLStyleElement).toBeTruthy()
   })
 })
