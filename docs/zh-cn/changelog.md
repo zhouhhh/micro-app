@@ -15,7 +15,7 @@
 - **Bug Fix**
 
   - 🐞 修复了link标签在非head时样式丢失的问题
-  - 🐞 修复了错误补全svg地址的问题。
+  - 🐞 修复了错误补全svg地址的问题，PR [#207](https://github.com/micro-zoe/micro-app/pull/207) by [icksky](https://github.com/icksky)。
   - 🐞 修复了在部分浏览器下报`WeakRef is not defined`错误的问题。
 
 
