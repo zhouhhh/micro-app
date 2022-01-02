@@ -14,13 +14,13 @@ function Vue2 () {
   const [showLoading, hideLoading] = useState(true)
 
   function mounted () {
-    // console.timeEnd('mounted-vue2')
-    // console.log('生命周期：mounted -- vue2', document.querySelector('micro-app'))
+    console.timeEnd('mounted-vue2')
+    console.log('生命周期：mounted -- vue2', document.querySelector('micro-app'))
     hideLoading(false)
   }
 
   function unmount () {
-    // console.log('生命周期：unmount -- vue2', document.querySelector('#micro-app-template-style'))
+    console.log('生命周期：unmount -- vue2', document.querySelector('#micro-app-template-style'))
   }
 
   useEffect(() => {

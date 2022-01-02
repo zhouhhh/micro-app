@@ -8,7 +8,6 @@ import './index.css';
 import Router from './router';
 import { Modal, notification } from 'antd';
 import subMicroApp from '@micro-zoe/micro-app'
-import { reactBridge } from '@garfish/bridge';
 
 // 循环内嵌
 subMicroApp.start({
@@ -180,15 +179,6 @@ if (window.__MICRO_APP_ENVIRONMENT__) {
 //     </React.StrictMode>
 //   );
 // }
-
-// export const provider = reactBridge({
-//   React,
-//   ReactDOM,
-//   el: '#root',
-//   rootComponent: App,
-// });
-
-
 
 // setTimeout(() => {
 //   console.log(document)
