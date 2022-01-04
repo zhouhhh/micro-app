@@ -186,3 +186,11 @@ window.addEventListener('unmount', function () {
 ```html
 <micro-app name='xx' url='xx' disableScopecss></micro-app>
 ```
+
+#### 3、通过micro-app数据通信修改angular组件数据后视图不更新
+
+**原因：**因为在angular区域外调用了内部的代码(基座和子应用属于不同的angular区域)，angular无法知道状态发生了变化。
+
+**解决方式：**通过`ngZone.run()`触发更改检测，具体方式如下：
+
+![angular-question3](../../static/images/angular-1.png ':size=800')
