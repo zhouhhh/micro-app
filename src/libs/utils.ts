@@ -370,3 +370,7 @@ export function isUniqueElement (key: string): boolean {
 export function getRootContainer (target: HTMLElement | ShadowRoot): HTMLElement {
   return (isShadowRoot(target) ? (target as ShadowRoot).host : target) as HTMLElement
 }
+
+export function trim (str: string): string {
+  return str ? str.replace(/^\s+|\s+$/g, '') : ''
+}
