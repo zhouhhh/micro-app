@@ -19,6 +19,15 @@ module.exports = {
   configureWebpack: {
     output: {
       jsonpFunction: `webpackJsonp-chile-vue3`,
+    },
+    module: {
+      rules: [
+        {
+          test: /\.mjs$/,
+          include: /node_modules/,
+          type: "javascript/auto"
+        }
+      ]
     }
   },
 }

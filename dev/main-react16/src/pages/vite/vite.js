@@ -49,7 +49,7 @@ function vite () {
         onMounted={handleMounted}
         onDataChange={handleDataChange}
         // destroy
-        // inline
+        inline
         disableSandbox
       >
       </micro-app>

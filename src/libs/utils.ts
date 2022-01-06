@@ -371,6 +371,9 @@ export function getRootContainer (target: HTMLElement | ShadowRoot): HTMLElement
   return (isShadowRoot(target) ? (target as ShadowRoot).host : target) as HTMLElement
 }
 
+/**
+ * trim start & end
+ */
 export function trim (str: string): string {
   return str ? str.replace(/^\s+|\s+$/g, '') : ''
 }

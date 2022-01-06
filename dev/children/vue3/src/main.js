@@ -2,7 +2,7 @@ import './public-path'
 import { createApp } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import ElementPlus from 'element-plus'
-import 'element-plus/lib/theme-chalk/index.css'
+import 'element-plus/dist/index.css'
 import routes from './router'
 import App from './App.vue'
 

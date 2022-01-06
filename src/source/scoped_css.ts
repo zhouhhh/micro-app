@@ -4,8 +4,8 @@ import { CompletionPath, getLinkFileDir, logError, trim } from '../libs/utils'
 import microApp from '../micro_app'
 
 // common reg
-const rootSelectorREG = /(^|\s+)(html|:root)(?=[\s>~]+|$)/
-const bodySelectorREG = /(^|\s+)((html[\s>~]+body)|body)(?=[\s>~]+|$)/
+const rootSelectorREG = /(^|\s+)(html|:root)(?=[\s>~[.#:]+|$)/
+const bodySelectorREG = /(^|\s+)((html[\s>~]+body)|body)(?=[\s>~[.#:]+|$)/
 const cssUrlREG = /url\(["']?([^)"']+)["']?\)/gm
 
 type parseErrorType = Error & { reason: string, filename?: string }
@@ -20,13 +20,20 @@ function parseError (msg: string, linkpath?: string): void {
   throw err
 }
 
-// css parser
+/**
+ * CSSParser mainly deals with 3 scenes: styleRule, @, and comment
+ * And scopecss deals with 2 scenes: selector & url
+ * It can also disable scopecss with inline comments
+ */
 class CSSParser {
   private cssText = '' // css content
   private prefix = '' // prefix as micro-app[name=xxx]
   private baseURI = '' // domain name
   private linkpath = '' // link resource address, if it is the style converted from link, it will have linkpath
   private result = '' // parsed cssText
+  private scopecssDisable = false
+  private scopecssDisableSelectors: Array<string> = []
+  private scopecssDisableNextLine = false
 
   public exec (
     cssText: string,
@@ -59,74 +66,12 @@ class CSSParser {
     }
   }
 
-  private commonMatch (reg: RegExp, skip = false): RegExpExecArray | void {
-    const matchArray = reg.exec(this.cssText)
-    if (!matchArray) return
-    const matchStr = matchArray[0]
-    this.cssText = this.cssText.slice(matchStr.length)
-    if (!skip) this.result += matchStr
-    return matchArray
-  }
-
-  private matchOpenBrace () {
-    return this.commonMatch(/^{\s*/)
-  }
-
-  private matchCloseBrace () {
-    return this.commonMatch(/^}/)
-  }
-
-  // match and slice the leading spaces
-  private matchLeadingSpaces (): void {
-    this.commonMatch(/^\s*/)
-  }
-
-  // match and slice comments
-  private matchComments (): void {
-    while (this.matchComment());
-  }
-
-  // css comment
-  private matchComment (): boolean | void {
-    if (this.cssText.charAt(0) !== '/' || this.cssText.charAt(1) !== '*') return false
-
-    let i = 2
-    while (this.cssText.charAt(i) !== '' && (this.cssText.charAt(i) !== '*' || this.cssText.charAt(i + 1) !== '/')) ++i
-    i += 2
-
-    if (this.cssText.charAt(i - 1) === '') {
-      return parseError('End of comment missing', this.linkpath)
-    }
-
-    // get comment content
-    this.result += this.cssText.slice(0, i)
-
-    this.cssText = this.cssText.slice(i)
-
-    this.matchLeadingSpaces()
-
-    return true
-  }
-
-  private matchAtRule (): boolean | void {
-    if (this.cssText[0] !== '@') return false
-
-    return this.keyframesRule() ||
-      this.mediaRule() ||
-      this.custommediaRule() ||
-      this.supportsRule() ||
-      this.importRule() ||
-      this.charsetRule() ||
-      this.namespaceRule() ||
-      this.documentRule() ||
-      this.pageRule() ||
-      this.hostRule() ||
-      this.fontfaceRule()
-  }
-
   // https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleRule
   private matchStyleRule (): boolean | void {
     const selectorList = this.formatSelector()
+
+    // reset scopecssDisableNextLine
+    this.scopecssDisableNextLine = false
 
     if (!selectorList) return parseError('selector missing')
 
@@ -137,41 +82,6 @@ class CSSParser {
     this.styleDeclarations()
 
     this.matchLeadingSpaces()
-
-    return true
-  }
-
-  // match one styleDeclaration at a time
-  private styleDeclaration (): boolean | void {
-    // css property
-    if (!this.commonMatch(/^(\*?[-#\/\*\\\w]+(\[[0-9a-z_-]+\])?)\s*/)) return false
-
-    // match :
-    if (!this.commonMatch(/^:\s*/)) return parseError("property missing ':'")
-
-    // match css value
-    const r = this.commonMatch(/^((?:'(?:\\'|.)*?'|"(?:\\"|.)*?"|\([^\)]*?\)|[^};])+)/, true)
-
-    let cssValue = r ? r[0] : ''
-
-    cssValue = cssValue.replace(cssUrlREG, (all, $1) => {
-      if (/^((data|blob):|#)/.test($1) || /^(https?:)?\/\//.test($1)) {
-        return all
-      }
-
-      // ./a/b.png  ../a/b.png  a/b.png
-      if (/^((\.\.?\/)|[^/])/.test($1) && this.linkpath) {
-        this.baseURI = getLinkFileDir(this.linkpath)
-      }
-
-      return `url("${CompletionPath($1, this.baseURI)}")`
-    })
-
-    this.result += cssValue
-
-    this.matchLeadingSpaces()
-
-    this.commonMatch(/^[;\s]*/)
 
     return true
   }
@@ -191,6 +101,49 @@ class CSSParser {
     return true
   }
 
+  // match one styleDeclaration at a time
+  private styleDeclaration (): boolean | void {
+    // css property
+    if (!this.commonMatch(/^(\*?[-#\/\*\\\w]+(\[[0-9a-z_-]+\])?)\s*/)) return false
+
+    // match :
+    if (!this.commonMatch(/^:\s*/)) return parseError("property missing ':'")
+
+    // match css value
+    const r = this.commonMatch(/^((?:'(?:\\'|.)*?'|"(?:\\"|.)*?"|\([^\)]*?\)|[^};])+)/, true)
+
+    let cssValue = r ? r[0] : ''
+
+    if (
+      !this.scopecssDisableNextLine &&
+      (!this.scopecssDisable || this.scopecssDisableSelectors.length)
+    ) {
+      cssValue = cssValue.replace(cssUrlREG, (all, $1) => {
+        if (/^((data|blob):|#)/.test($1) || /^(https?:)?\/\//.test($1)) {
+          return all
+        }
+
+        // ./a/b.png  ../a/b.png  a/b.png
+        if (/^((\.\.?\/)|[^/])/.test($1) && this.linkpath) {
+          this.baseURI = getLinkFileDir(this.linkpath)
+        }
+
+        return `url("${CompletionPath($1, this.baseURI)}")`
+      })
+    }
+
+    // reset scopecssDisableNextLine
+    this.scopecssDisableNextLine = false
+
+    this.result += cssValue
+
+    this.matchLeadingSpaces()
+
+    this.commonMatch(/^[;\s]*/)
+
+    return true
+  }
+
   private formatSelector (): boolean | Array<string> {
     const m = this.commonMatch(/^([^{]+)/, true)
     if (!m) return false
@@ -202,15 +155,66 @@ class CSSParser {
       .split(/\s*(?![^(]*\)),\s*/)
       .map((s: string) => {
         const selectorText = s.replace(/\u200C/g, ',')
+        if (this.scopecssDisableNextLine) {
+          return selectorText
+        } else if (this.scopecssDisable) {
+          if (
+            !this.scopecssDisableSelectors.length ||
+            this.scopecssDisableSelectors.includes(selectorText)
+          ) {
+            return selectorText
+          }
+        }
+
         if (selectorText === '*') {
           return this.prefix + ' *'
         } else if (bodySelectorREG.test(selectorText)) {
           return selectorText.replace(bodySelectorREG, this.prefix + ' micro-app-body')
-        } else if (rootSelectorREG.test(selectorText)) {
-          return selectorText.replace(rootSelectorREG, this.prefix)
+        } else if (rootSelectorREG.test(selectorText)) { // ignore root selector
+          return selectorText
         }
         return this.prefix + ' ' + selectorText
       })
+  }
+
+  private matchAtRule (): boolean | void {
+    if (this.cssText[0] !== '@') return false
+    // reset scopecssDisableNextLine
+    this.scopecssDisableNextLine = false
+
+    return this.keyframesRule() ||
+      this.mediaRule() ||
+      this.custommediaRule() ||
+      this.supportsRule() ||
+      this.importRule() ||
+      this.charsetRule() ||
+      this.namespaceRule() ||
+      this.documentRule() ||
+      this.pageRule() ||
+      this.hostRule() ||
+      this.fontfaceRule()
+  }
+
+  // https://developer.mozilla.org/en-US/docs/Web/API/CSSKeyframesRule
+  private keyframesRule (): boolean | void {
+    if (!this.commonMatch(/^@([-\w]+)?keyframes\s*/)) return false
+
+    if (!this.commonMatch(/^([-\w]+)\s*/)) return parseError('@keyframes missing name')
+
+    this.matchComments()
+
+    if (!this.matchOpenBrace()) return parseError("@keyframes missing '{'")
+
+    this.matchComments()
+    while (this.keyframeRule()) {
+      this.matchComments()
+    }
+
+    if (!this.matchCloseBrace()) return parseError("@keyframes missing '}'")
+
+    this.matchLeadingSpaces()
+
+    return true
   }
 
   private keyframeRule (): boolean {
@@ -230,27 +234,6 @@ class CSSParser {
     return true
   }
 
-  // https://developer.mozilla.org/en-US/docs/Web/API/CSSKeyframesRule
-  private keyframesRule (): boolean | void {
-    if (!this.commonMatch(/^@([-\w]+)?keyframes\s*/)) return false
-
-    if (!this.commonMatch(/^([-\w]+)\s*/)) return parseError('@keyframes missing name')
-
-    // TODO: bug of comments before name
-    if (!this.matchOpenBrace()) return parseError("@keyframes missing '{'")
-
-    this.matchComments()
-    while (this.keyframeRule()) {
-      this.matchComments()
-    }
-
-    if (!this.matchCloseBrace()) return parseError("@keyframes missing '}'")
-
-    this.matchLeadingSpaces()
-
-    return true
-  }
-
   private custommediaRule (): boolean {
     if (!this.commonMatch(/^@custom-media\s+(--[^\s]+)\s*([^{;]+);/)) return false
 
@@ -264,6 +247,9 @@ class CSSParser {
     if (!this.commonMatch(/^@page */)) return false
 
     this.formatSelector()
+
+    // reset scopecssDisableNextLine
+    this.scopecssDisableNextLine = false
 
     return this.commonHandlerForAtRuleWithSelfRule('page')
   }
@@ -333,6 +319,79 @@ class CSSParser {
 
     return true
   }
+
+  // match and slice comments
+  private matchComments (): void {
+    while (this.matchComment());
+  }
+
+  // css comment
+  private matchComment (): boolean | void {
+    if (this.cssText.charAt(0) !== '/' || this.cssText.charAt(1) !== '*') return false
+    // reset scopecssDisableNextLine
+    this.scopecssDisableNextLine = false
+
+    let i = 2
+    while (this.cssText.charAt(i) !== '' && (this.cssText.charAt(i) !== '*' || this.cssText.charAt(i + 1) !== '/')) ++i
+    i += 2
+
+    if (this.cssText.charAt(i - 1) === '') {
+      return parseError('End of comment missing', this.linkpath)
+    }
+
+    // get comment content
+    let commentText = this.cssText.slice(2, i - 2)
+
+    this.result += `/*${commentText}*/`
+
+    commentText = trim(commentText.replace(/^\s*!/, ''))
+
+    // set ignore config
+    if (commentText === 'scopecss-disable-next-line') {
+      this.scopecssDisableNextLine = true
+    } else if (/^scopecss-disable/.test(commentText)) {
+      if (commentText === 'scopecss-disable') {
+        this.scopecssDisable = true
+      } else {
+        this.scopecssDisable = true
+        const ignoreRules = commentText.replace('scopecss-disable', '').split(',')
+        ignoreRules.forEach((rule: string) => {
+          this.scopecssDisableSelectors.push(trim(rule))
+        })
+      }
+    } else if (commentText === 'scopecss-enable') {
+      this.scopecssDisable = false
+      this.scopecssDisableSelectors = []
+    }
+
+    this.cssText = this.cssText.slice(i)
+
+    this.matchLeadingSpaces()
+
+    return true
+  }
+
+  private commonMatch (reg: RegExp, skip = false): RegExpExecArray | void {
+    const matchArray = reg.exec(this.cssText)
+    if (!matchArray) return
+    const matchStr = matchArray[0]
+    this.cssText = this.cssText.slice(matchStr.length)
+    if (!skip) this.result += matchStr
+    return matchArray
+  }
+
+  private matchOpenBrace () {
+    return this.commonMatch(/^{\s*/)
+  }
+
+  private matchCloseBrace () {
+    return this.commonMatch(/^}/)
+  }
+
+  // match and slice the leading spaces
+  private matchLeadingSpaces (): void {
+    this.commonMatch(/^\s*/)
+  }
 }
 
 let parser: CSSParser
@@ -392,7 +451,7 @@ function commonAction (
 ) {
   if (!styleElement.__MICRO_APP_HAS_SCOPED__) {
     styleElement.__MICRO_APP_HAS_SCOPED__ = true
-    let result = ''
+    let result: string | null = null
     try {
       result = parser.exec(
         styleElement.textContent!,
@@ -403,7 +462,7 @@ function commonAction (
       parser.reset()
     } catch (e) {
       parser.reset()
-      logError('An error occurred while parsing CSS', appName, e)
+      logError('CSSParser: An error occurred while parsing CSS', appName, e)
     }
 
     if (result) styleElement.textContent = result
