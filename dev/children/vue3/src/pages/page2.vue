@@ -12,12 +12,12 @@
       <el-form-item label="Activity name" prop="name">
         <el-input v-model="ruleForm.name"></el-input>
       </el-form-item>
-      <!-- <el-form-item label="Activity zone" prop="region">
+      <el-form-item label="Activity zone" prop="region">
         <el-select v-model="ruleForm.region" placeholder="Activity zone">
           <el-option label="Zone one" value="shanghai"></el-option>
           <el-option label="Zone two" value="beijing"></el-option>
         </el-select>
-      </el-form-item> -->
+      </el-form-item>
       <el-form-item label="Activity time" required>
         <el-col :span="11">
           <el-form-item prop="date1">
