@@ -86,8 +86,8 @@ export default {
     margin: 0 auto;
   }
 
-  /* .test-safari-before::before {
+  .test-safari-before::before {
     content: 'ddddd';
     color: red;
-  } */
+  }
 </style>

@@ -192,3 +192,8 @@ test('coverage of formatAppName', () => {
   expect(Utils.formatAppName(null)).toBe('')
   expect(Utils.formatAppName('')).toBe('')
 })
+
+test('coverage of trim', () => {
+  // @ts-ignore
+  expect(Utils.trim()).toBe('')
+})

@@ -74,7 +74,6 @@ export function initGlobalEnv (): void {
     const rawWindow = Function('return window')()
     const rawDocument = Function('return document')()
     const supportModuleScript = isSupportModuleScript()
-    const templateStyle: HTMLStyleElement = rawDocument.body.querySelector('#micro-app-template-style')
 
     /**
      * save effect raw methods
@@ -118,7 +117,6 @@ export function initGlobalEnv (): void {
       rawWindow,
       rawDocument,
       supportModuleScript,
-      templateStyle,
 
       // sandbox/effect
       rawWindowAddEventListener,

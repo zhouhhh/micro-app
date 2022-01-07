@@ -13,7 +13,7 @@
         <el-input v-model="ruleForm.name"></el-input>
       </el-form-item>
       <el-form-item label="Activity zone" prop="region">
-        <el-select v-model="ruleForm.region" placeholder="Activity zone">
+        <el-select v-model="ruleForm.region" placeholder="Activity zone" :popper-append-to-body="false">
           <el-option label="Zone one" value="shanghai"></el-option>
           <el-option label="Zone two" value="beijing"></el-option>
         </el-select>
