@@ -24,7 +24,7 @@ function Vue3 () {
         onMounted={() => hideLoading(false)}
         onBeforeshow={() => hideLoading(false)}
         baseRoute='/micro-app/demo/vue3'
-        disableScopecss
+        // disableScopecss
         // keep-alive
         // inline
         // destroy

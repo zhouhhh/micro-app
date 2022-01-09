@@ -76,7 +76,7 @@ export default class SandBox implements SandBoxInterface {
     // get scopeProperties and escapeProperties from plugins
     this.getScopeProperties(appName)
     // create proxyWindow with Proxy(microAppWindow)
-    this.proxyWindow = this.createProxyWindow()
+    this.proxyWindow = this.createProxyWindow(appName)
     // inject global properties
     this.initMicroAppWindow(this.microAppWindow, appName, url)
     // Rewrite global event listener & timeout
@@ -174,12 +174,13 @@ export default class SandBox implements SandBoxInterface {
   }
 
   // create proxyWindow with Proxy(microAppWindow)
-  private createProxyWindow () {
+  private createProxyWindow (appName: string) {
     const rawWindow = globalEnv.rawWindow
     const descriptorTargetMap = new Map<PropertyKey, 'target' | 'rawWindow'>()
     // window.xxx will trigger proxy
     return new Proxy(this.microAppWindow, {
       get: (target: microAppWindowType, key: PropertyKey): unknown => {
+        throttleDeferForSetAppName(appName)
         if (
           Reflect.has(target, key) ||
           (isString(key) && /^__MICRO_APP_/.test(key)) ||
@@ -291,6 +292,26 @@ export default class SandBox implements SandBoxInterface {
     microAppWindow.rawDocument = globalEnv.rawDocument
     microAppWindow.removeDomScope = removeDomScope
     microAppWindow.hasOwnProperty = (key: PropertyKey) => rawHasOwnProperty.call(microAppWindow, key) || rawHasOwnProperty.call(globalEnv.rawWindow, key)
+    // rawDefineProperty(microAppWindow, Symbol.unscopables, {
+    //   get () {
+    //     throttleDeferForSetAppName(appName)
+    //     return {}
+    //   },
+    //   configurable: true,
+    //   enumerable: false,
+    // })
+
+    // let ngDevMode: any = null
+    // rawDefineProperty(microAppWindow, 'ngDevMode', {
+    //   get () {
+    //     return ngDevMode || globalEnv.rawWindow.ngDevMode
+    //   },
+    //   set (value) {
+    //     ngDevMode = value
+    //   },
+    //   configurable: true,
+    //   enumerable: true,
+    // })
     this.setMappingPropertiesWithRawDescriptor(microAppWindow)
     this.setHijackProperties(microAppWindow, appName)
   }

@@ -217,3 +217,11 @@ if (window.__MICRO_APP_ENVIRONMENT__) {
 // requestAnimationFrame(() => {
 //   console.log(444444)
 // })
+
+// ----------------------分割线--接口相关--------------------- //
+// 测试proxy代理
+fetch('http://localhost:3001/sugrec').then((res) => {
+  return res.json()
+}).then((data) => {
+  console.log('proxy代理 https://www.baidu.com/sugrec 返回数据', data)
+})
