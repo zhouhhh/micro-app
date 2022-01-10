@@ -18,7 +18,15 @@ import {
 } from '../libs/utils'
 import microApp from '../micro_app'
 import bindFunctionToRawWindow from './bind_function'
-import effect, { effectDocumentEvent, releaseEffectDocumentEvent } from './effect'
+import effect, {
+  effectDocumentEvent,
+  releaseEffectDocumentEvent,
+  temporarySolutionForDomscope,
+} from './effect'
+import {
+  patchElementPrototypeMethods,
+  releasePatches,
+} from '../source/patch'
 
 /* eslint-disable camelcase */
 export type MicroAppWindowDataType = {
@@ -51,12 +59,10 @@ const globalPropertyList: Array<PropertyKey> = ['window', 'self', 'globalThis']
 
 export default class SandBox implements SandBoxInterface {
   static activeCount = 0 // number of active sandbox
-  // @ts-ignore
-  private recordUmdEffect: CallableFunction
-  // @ts-ignore
-  private rebuildUmdEffect: CallableFunction
-  // @ts-ignore
-  private releaseEffect: CallableFunction
+  private recordUmdEffect!: CallableFunction
+  private rebuildUmdEffect!: CallableFunction
+  private releaseEffect!: CallableFunction
+  private relaseSolutionForDomscope!: CallableFunction
   // Scoped global Properties(Properties that can only get and set in microAppWindow, will not escape to rawWindow)
   private scopeProperties: PropertyKey[] = ['webpackJsonp']
   // Properties that can be escape to rawWindow
@@ -91,6 +97,8 @@ export default class SandBox implements SandBoxInterface {
       globalEnv.rawWindow._babelPolyfill && (globalEnv.rawWindow._babelPolyfill = false)
       if (++SandBox.activeCount === 1) {
         effectDocumentEvent()
+        this.relaseSolutionForDomscope = temporarySolutionForDomscope()
+        patchElementPrototypeMethods()
       }
     }
   }
@@ -114,6 +122,8 @@ export default class SandBox implements SandBoxInterface {
 
       if (--SandBox.activeCount === 0) {
         releaseEffectDocumentEvent()
+        this.relaseSolutionForDomscope()
+        releasePatches()
       }
     }
   }
@@ -292,26 +302,6 @@ export default class SandBox implements SandBoxInterface {
     microAppWindow.rawDocument = globalEnv.rawDocument
     microAppWindow.removeDomScope = removeDomScope
     microAppWindow.hasOwnProperty = (key: PropertyKey) => rawHasOwnProperty.call(microAppWindow, key) || rawHasOwnProperty.call(globalEnv.rawWindow, key)
-    // rawDefineProperty(microAppWindow, Symbol.unscopables, {
-    //   get () {
-    //     throttleDeferForSetAppName(appName)
-    //     return {}
-    //   },
-    //   configurable: true,
-    //   enumerable: false,
-    // })
-
-    // let ngDevMode: any = null
-    // rawDefineProperty(microAppWindow, 'ngDevMode', {
-    //   get () {
-    //     return ngDevMode || globalEnv.rawWindow.ngDevMode
-    //   },
-    //   set (value) {
-    //     ngDevMode = value
-    //   },
-    //   configurable: true,
-    //   enumerable: true,
-    // })
     this.setMappingPropertiesWithRawDescriptor(microAppWindow)
     this.setHijackProperties(microAppWindow, appName)
   }

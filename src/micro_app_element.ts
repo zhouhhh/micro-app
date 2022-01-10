@@ -17,21 +17,10 @@ import {
   keepAliveStates,
 } from './constants'
 import CreateApp, { appInstanceMap } from './create_app'
-import {
-  patchElementPrototypeMethods,
-  releasePatches,
-  rejectMicroAppStyle,
-} from './source/patch'
-import {
-  listenUmountOfNestedApp,
-  releaseUnmountOfNestedApp,
-} from './libs/additional'
+import { patchSetAttribute } from './source/patch'
 import microApp from './micro_app'
 import dispatchLifecyclesEvent from './interact/lifecycles_event'
 import globalEnv from './libs/global_env'
-
-// record all micro-app elements
-export const elementInstanceMap = new Map<Element, boolean>()
 
 /**
  * define element
@@ -45,10 +34,7 @@ export function defineElement (tagName: string): void {
 
     constructor () {
       super()
-      // cloned node of umd container also trigger constructor, we should skip
-      if (!this.querySelector('micro-app-head')) {
-        this.performWhenFirstCreated()
-      }
+      patchSetAttribute()
     }
 
     private isWating = false
@@ -72,9 +58,6 @@ export function defineElement (tagName: string): void {
 
     connectedCallback (): void {
       this.hasConnected = true
-      if (!elementInstanceMap.has(this)) {
-        this.performWhenFirstCreated()
-      }
 
       defer(() => dispatchLifecyclesEvent(
         this,
@@ -91,15 +74,7 @@ export function defineElement (tagName: string): void {
       if (this.getKeepAliveModeResult()) {
         this.handleHiddenKeepAliveApp()
       } else {
-        elementInstanceMap.delete(this)
-        this.handleUnmount(
-          this.getDestroyCompatibleResult(),
-          () => {
-            if (elementInstanceMap.size === 0) {
-              releasePatches()
-            }
-          }
-        )
+        this.handleUnmount(this.getDestroyCompatibleResult())
       }
     }
 
@@ -142,16 +117,6 @@ export function defineElement (tagName: string): void {
     // handle for connectedCallback run before attributeChangedCallback
     private handleInitialNameAndUrl (): void {
       this.hasConnected && this.initialMount()
-    }
-
-    // Perform global initialization when the element count is 1
-    private performWhenFirstCreated (): void {
-      if (elementInstanceMap.set(this, true).size === 1) {
-        patchElementPrototypeMethods()
-        rejectMicroAppStyle()
-        releaseUnmountOfNestedApp()
-        listenUmountOfNestedApp()
-      }
     }
 
     /**

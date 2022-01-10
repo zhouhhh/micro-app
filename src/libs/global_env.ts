@@ -1,4 +1,6 @@
 import { isSupportModuleScript, isBrowser, getCurrentAppName } from './utils'
+import { rejectMicroAppStyle } from '../source/patch'
+import { listenUmountOfNestedApp, releaseUnmountOfNestedApp } from '../libs/additional'
 
 type RequestIdleCallbackOptions = {
   timeout: number
@@ -128,6 +130,11 @@ export function initGlobalEnv (): void {
       rawDocumentAddEventListener,
       rawDocumentRemoveEventListener,
     })
+
+    // global effect
+    rejectMicroAppStyle()
+    releaseUnmountOfNestedApp()
+    listenUmountOfNestedApp()
   }
 }
 

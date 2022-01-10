@@ -9,7 +9,7 @@ import { appStates, keepAliveStates } from './constants'
 
 /**
  * if app not prefetch & not unmount, then app is active
- * @param excludeHiddenApp exclude hidden keep-alive app
+ * @param excludeHiddenApp exclude hidden keep-alive app, default is false
  * @returns active apps
  */
 export function getActiveApps (excludeHiddenApp?: boolean): string[] {

@@ -7,8 +7,8 @@ MicroApp的样式隔离是默认开启的，开启后会以`<micro-app>`标签�
   color: red;
 }
 
-转换为
-micro-app[name=xxx].test {
+/* 转换为 */
+micro-app[name=xxx] .test {
   color: red;
 }
 ```
@@ -27,11 +27,12 @@ import microApp from '@micro-zoe/micro-app'
 microApp.start({
   disableScopecss: true, // 默认值false
 })
-
-// 如果希望在某个应用中不受全局配置控制，可以设置`disableScopecss='false'`：
-// <micro-app name='xx' url='xx' disableScopecss='false'></micro-app>
 ```
 
+如果希望在某个应用中不受全局配置控制，可以设置`disableScopecss='false'`
+```html
+<micro-app name='xx' url='xx' disableScopecss='false'></micro-app>
+```
 
 #### 2、在某一个应用中禁用
 
@@ -45,7 +46,7 @@ microApp.start({
 可以在你的css文件中使用以下格式的注释来禁用样式隔离：
 ```css
 /* ! scopecss-disable */
-.test {
+.test1 {
   color: red;
 }
 /* ! scopecss-enable */

@@ -205,36 +205,6 @@ function commonElementHander (
 export function patchElementPrototypeMethods (): void {
   patchDocument()
 
-  // Rewrite setAttribute
-  Element.prototype.setAttribute = function setAttribute (key: string, value: string): void {
-    if (/^micro-app(-\S+)?/i.test(this.tagName) && key === 'data') {
-      if (isPlainObject(value)) {
-        const cloneValue: Record<PropertyKey, unknown> = {}
-        Object.getOwnPropertyNames(value).forEach((propertyKey: PropertyKey) => {
-          if (!(isString(propertyKey) && propertyKey.indexOf('__') === 0)) {
-            // @ts-ignore
-            cloneValue[propertyKey] = value[propertyKey]
-          }
-        })
-        this.data = cloneValue
-      } else if (value !== '[object Object]') {
-        logWarn('property data must be an object', this.getAttribute('name'))
-      }
-    } else if (
-      (
-        ((key === 'src' || key === 'srcset') && /^(img|script)$/i.test(this.tagName)) ||
-        (key === 'href' && /^link$/i.test(this.tagName))
-      ) &&
-      this.__MICRO_APP_NAME__ &&
-      appInstanceMap.has(this.__MICRO_APP_NAME__)
-    ) {
-      const app = appInstanceMap.get(this.__MICRO_APP_NAME__)
-      globalEnv.rawSetAttribute.call(this, key, CompletionPath(value, app!.url))
-    } else {
-      globalEnv.rawSetAttribute.call(this, key, value)
-    }
-  }
-
   // prototype methods of add element👇
   Element.prototype.appendChild = function appendChild<T extends Node> (newChild: T): T {
     return commonElementHander(this, newChild, null, globalEnv.rawAppendChild)
@@ -414,6 +384,50 @@ function patchDocument () {
   }
 }
 
+/**
+ * patchSetAttribute is different from other patch
+ * it not dependent on sandbox
+ * it should exect when micro-app first created & release when all app unmounted
+ */
+let hasRewriteSetAttribute = false
+export function patchSetAttribute (): void {
+  if (hasRewriteSetAttribute) return
+  hasRewriteSetAttribute = true
+  Element.prototype.setAttribute = function setAttribute (key: string, value: string): void {
+    if (/^micro-app(-\S+)?/i.test(this.tagName) && key === 'data') {
+      if (isPlainObject(value)) {
+        const cloneValue: Record<PropertyKey, unknown> = {}
+        Object.getOwnPropertyNames(value).forEach((propertyKey: PropertyKey) => {
+          if (!(isString(propertyKey) && propertyKey.indexOf('__') === 0)) {
+            // @ts-ignore
+            cloneValue[propertyKey] = value[propertyKey]
+          }
+        })
+        this.data = cloneValue
+      } else if (value !== '[object Object]') {
+        logWarn('property data must be an object', this.getAttribute('name'))
+      }
+    } else if (
+      (
+        ((key === 'src' || key === 'srcset') && /^(img|script)$/i.test(this.tagName)) ||
+        (key === 'href' && /^link$/i.test(this.tagName))
+      ) &&
+      this.__MICRO_APP_NAME__ &&
+      appInstanceMap.has(this.__MICRO_APP_NAME__)
+    ) {
+      const app = appInstanceMap.get(this.__MICRO_APP_NAME__)
+      globalEnv.rawSetAttribute.call(this, key, CompletionPath(value, app!.url))
+    } else {
+      globalEnv.rawSetAttribute.call(this, key, value)
+    }
+  }
+}
+
+export function releasePatchSetAttribute (): void {
+  hasRewriteSetAttribute = false
+  Element.prototype.setAttribute = globalEnv.rawSetAttribute
+}
+
 function releasePatchDocument (): void {
   Document.prototype.createElement = globalEnv.rawCreateElement
   Document.prototype.createElementNS = globalEnv.rawCreateElementNS
@@ -430,7 +444,7 @@ function releasePatchDocument (): void {
 export function releasePatches (): void {
   setCurrentAppName(null)
   releasePatchDocument()
-  Element.prototype.setAttribute = globalEnv.rawSetAttribute
+
   Element.prototype.appendChild = globalEnv.rawAppendChild
   Element.prototype.insertBefore = globalEnv.rawInsertBefore
   Element.prototype.replaceChild = globalEnv.rawReplaceChild
@@ -446,7 +460,7 @@ export function rejectMicroAppStyle (): void {
   if (!hasRejectMicroAppStyle) {
     hasRejectMicroAppStyle = true
     const style = pureCreateElement('style')
-    style.setAttribute('type', 'text/css')
+    globalEnv.rawSetAttribute.call(style, 'type', 'text/css')
     style.textContent = `\n${microApp.tagName}, micro-app-body { display: block; } \nmicro-app-head { display: none; }`
     globalEnv.rawDocument.head.appendChild(style)
   }

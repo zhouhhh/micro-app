@@ -67,8 +67,19 @@
           >Create</el-button
         >
         <el-button @click="resetForm(ruleFormRef)">Reset</el-button>
+        <el-button ref="buttonRef" v-click-outside="onClickOutside">el-popover</el-button>
+        <el-popover
+          ref="popoverRef"
+          :virtual-ref="buttonRef"
+          trigger="click"
+          title="With title"
+          virtual-triggering
+        >
+          <span> Some content </span>
+        </el-popover>
       </el-form-item>
     </el-form>
+
     <router-link to="/">
       <el-button type="primary" plain>返回首页</el-button>
     </router-link>
@@ -76,9 +87,10 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue'
+import { reactive, ref, unref } from 'vue'
 // More info see https://github.com/element-plus/element-plus/blob/dev/docs/examples/form/utils.ts
 import { resetForm, submitForm } from '../utils'
+import { ClickOutside as vClickOutside } from 'element-plus'
 
 const formSize = ref('')
 
@@ -154,6 +166,13 @@ const rules = reactive({
     },
   ],
 })
+
+const buttonRef = ref()
+const popoverRef = ref()
+const onClickOutside = () => {
+  unref(popoverRef).popperRef?.delayHide?.()
+}
+
 </script>
 
 <style scoped>

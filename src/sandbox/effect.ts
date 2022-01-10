@@ -6,9 +6,10 @@ import {
   isFunction,
   isBoundFunction,
   rawDefineProperty,
+  isMobile,
 } from '../libs/utils'
 import { appInstanceMap } from '../create_app'
-// import { getActiveApps } from '../micro_app'
+import { getActiveApps } from '../micro_app'
 import globalEnv from '../libs/global_env'
 
 type MicroEventListener = EventListenerOrEventListenerObject & Record<string, any>
@@ -342,31 +343,45 @@ export default function effect (microAppWindow: microAppWindowType): Record<stri
   }
 }
 
-// window.addEventListener('mousedown', (e: Event) => {
-//   const targetNode = e.target
-//   const activeApps = getActiveApps(true)
-//   let isScopeOfMicroApp = false
-//   for (const appName of activeApps) {
-//     const app = appInstanceMap.get(appName)!
-//     if (targetNode instanceof Node && app.container!.contains(targetNode)) {
-//       isScopeOfMicroApp = true
-//       // console.log(111111, appName)
-//       setCurrentAppName(appName)
-//       break
-//     }
-//   }
-//   if (!isScopeOfMicroApp) {
-//     setCurrentAppName(null)
-//   }
-// }, false)
+/**
+ * scope dom if eventTarget is childNode of micro-app
+ * this is temporary solution
+ * attention:
+ * 1、if another child app is react@16 or less and use umd mode, this method will not work
+ * 2、the callback of the main app called from the sub app are scope dom trigger by mouse/touch event
+ */
+export function temporarySolutionForDomscope (): () => void {
+  const openEventName = isMobile() ? 'touchstart' : 'mousedown'
+  const closeEventName = isMobile() ? 'touchend' : 'mouseup'
 
-// let isWaitingForMacroReset = false
-// window.addEventListener('mouseup', () => {
-//   if (!isWaitingForMacroReset && getCurrentAppName()) {
-//     isWaitingForMacroReset = true
-//     setTimeout(() => {
-//       setCurrentAppName(null)
-//       isWaitingForMacroReset = false
-//     })
-//   }
-// }, false)
+  function handleMousedown (e: Event) {
+    const targetNode = e.target
+    if (targetNode instanceof Node) {
+      const activeApps = getActiveApps(true)
+      for (const appName of activeApps) {
+        const app = appInstanceMap.get(appName)!
+        if (app.container!.contains(targetNode)) {
+          return setCurrentAppName(appName)
+        }
+      }
+
+      setCurrentAppName(null)
+    }
+  }
+
+  function handleMouseup () {
+    if (getCurrentAppName()) {
+      setTimeout(() => {
+        setCurrentAppName(null)
+      })
+    }
+  }
+
+  window.addEventListener(openEventName, handleMousedown, false)
+  window.addEventListener(closeEventName, handleMouseup, false)
+
+  return () => {
+    window.removeEventListener(openEventName, handleMousedown)
+    window.removeEventListener(closeEventName, handleMouseup)
+  }
+}

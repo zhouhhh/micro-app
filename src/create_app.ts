@@ -20,6 +20,8 @@ import {
 } from './libs/utils'
 import dispatchLifecyclesEvent, { dispatchCustomEventToMicroApp } from './interact/lifecycles_event'
 import globalEnv from './libs/global_env'
+import { releasePatchSetAttribute } from './source/patch'
+import { getActiveApps } from './micro_app'
 
 // micro app instances
 export const appInstanceMap = new Map<string, AppInterface>()
@@ -279,6 +281,9 @@ export default class CreateApp implements AppInterface {
    */
   private actionsForUnmount (destroy: boolean, unmountcb?: CallableFunction): void {
     this.sandBox?.stop()
+    if (!getActiveApps().length) {
+      releasePatchSetAttribute()
+    }
     if (destroy) {
       this.actionsForCompletelyDestroy()
     } else if (this.umdMode && (this.container as Element).childElementCount) {
