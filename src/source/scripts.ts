@@ -388,21 +388,21 @@ function bindScope (
  * @param plugins plugin list
  */
 function usePlugins (url: string, code: string, appName: string, plugins: plugins): string {
-  if (isArray(plugins.global)) {
-    for (const plugin of plugins.global) {
-      if (isPlainObject(plugin) && isFunction(plugin.loader)) {
-        code = plugin.loader!(code, url, plugin.options)
-      }
-    }
+  const newCode = processCode(plugins.global, code, url)
+
+  return processCode(plugins.modules?.[appName], newCode, url)
+}
+
+function processCode (configs: plugins['global'], code: string, url: string) {
+  if (!isArray(configs)) {
+    return code
   }
 
-  if (isArray(plugins.modules?.[appName])) {
-    for (const plugin of plugins.modules![appName]) {
-      if (isPlainObject(plugin) && isFunction(plugin.loader)) {
-        code = plugin.loader!(code, url, plugin.options)
-      }
+  return configs.reduce((preCode, config) => {
+    if (isPlainObject(config) && isFunction(config.loader)) {
+      return config.loader!(preCode, url, config.options)
     }
-  }
 
-  return code
+    return preCode
+  }, code)
 }
