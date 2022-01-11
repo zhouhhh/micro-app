@@ -41,40 +41,40 @@ export interface unmountAppParams {
 }
 
 /**
- * unmount app by appname
+ * unmount app by appName
  * @param appName
  * @param options unmountAppParams
  * @returns Promise<void>
  */
 export function unmountApp (appName: string, options?: unmountAppParams): Promise<void> {
   const app = appInstanceMap.get(formatAppName(appName))
-  return new Promise((reslove) => { // eslint-disable-line
+  return new Promise((resolve) => { // eslint-disable-line
     if (app) {
       if (app.getAppState() === appStates.UNMOUNT || app.isPrefetch) {
         if (options?.destroy) {
           app.actionsForCompletelyDestroy()
         }
-        reslove()
+        resolve()
       } else if (app.getKeepAliveState() === keepAliveStates.KEEP_ALIVE_HIDDEN) {
         if (options?.destroy) {
-          app.unmount(true, reslove)
+          app.unmount(true, resolve)
         } else if (options?.clearAliveState) {
-          app.unmount(false, reslove)
+          app.unmount(false, resolve)
         } else {
-          reslove()
+          resolve()
         }
       } else {
         const container = getRootContainer(app.container!)
         const unmountHandler = () => {
           container.removeEventListener('unmount', unmountHandler)
           container.removeEventListener('afterhidden', afterhiddenHandler)
-          reslove()
+          resolve()
         }
 
         const afterhiddenHandler = () => {
           container.removeEventListener('unmount', unmountHandler)
           container.removeEventListener('afterhidden', afterhiddenHandler)
-          reslove()
+          resolve()
         }
 
         container.addEventListener('unmount', unmountHandler)
@@ -104,7 +104,7 @@ export function unmountApp (appName: string, options?: unmountAppParams): Promis
       }
     } else {
       logWarn(`app ${appName} does not exist`)
-      reslove()
+      resolve()
     }
   })
 }

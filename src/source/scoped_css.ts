@@ -9,12 +9,12 @@ const bodySelectorREG = /(^|\s+)((html[\s>~]+body)|body)(?=[\s>~[.#:]+|$)/
 const cssUrlREG = /url\(["']?([^)"']+)["']?\)/gm
 
 type parseErrorType = Error & { reason: string, filename?: string }
-function parseError (msg: string, linkpath?: string): void {
-  msg = linkpath ? `${linkpath}:${msg}` : msg
+function parseError (msg: string, linkPath?: string): void {
+  msg = linkPath ? `${linkPath}:${msg}` : msg
   const err = new Error(msg) as parseErrorType
   err.reason = msg
-  if (linkpath) {
-    err.filename = linkpath
+  if (linkPath) {
+    err.filename = linkPath
   }
 
   throw err
@@ -30,7 +30,7 @@ class CSSParser {
   private cssText = '' // css content
   private prefix = '' // prefix as micro-app[name=xxx]
   private baseURI = '' // domain name
-  private linkpath = '' // link resource address, if it is the style converted from link, it will have linkpath
+  private linkPath = '' // link resource address, if it is the style converted from link, it will have linkPath
   private result = '' // parsed cssText
   private scopecssDisable = false // use block comments /* scopecss-disable */ to disable scopecss in your file, and use /* scopecss-enable */ to enable scopecss
   private scopecssDisableSelectors: Array<string> = [] // disable or enable scopecss for specific selectors
@@ -40,18 +40,18 @@ class CSSParser {
     cssText: string,
     prefix: string,
     baseURI: string,
-    linkpath?: string,
+    linkPath?: string,
   ): string {
     this.cssText = cssText
     this.prefix = prefix
     this.baseURI = baseURI
-    this.linkpath = linkpath || ''
+    this.linkPath = linkPath || ''
     this.matchRules()
     return this.result
   }
 
   public reset (): void {
-    this.cssText = this.prefix = this.baseURI = this.linkpath = this.result = ''
+    this.cssText = this.prefix = this.baseURI = this.linkPath = this.result = ''
     this.scopecssDisable = this.scopecssDisableNextLine = false
     this.scopecssDisableSelectors = []
   }
@@ -76,7 +76,7 @@ class CSSParser {
     // reset scopecssDisableNextLine
     this.scopecssDisableNextLine = false
 
-    if (!selectorList) return parseError('selector missing', this.linkpath)
+    if (!selectorList) return parseError('selector missing', this.linkPath)
 
     this.result += (selectorList as Array<string>).join(', ')
 
@@ -91,7 +91,7 @@ class CSSParser {
 
   // https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleDeclaration
   private styleDeclarations (): boolean | void {
-    if (!this.matchOpenBrace()) return parseError("Declaration missing '{'", this.linkpath)
+    if (!this.matchOpenBrace()) return parseError("Declaration missing '{'", this.linkPath)
 
     this.matchComments()
 
@@ -99,7 +99,7 @@ class CSSParser {
       this.matchComments()
     }
 
-    if (!this.matchCloseBrace()) return parseError("Declaration missing '}'", this.linkpath)
+    if (!this.matchCloseBrace()) return parseError("Declaration missing '}'", this.linkPath)
 
     return true
   }
@@ -110,7 +110,7 @@ class CSSParser {
     if (!this.commonMatch(/^(\*?[-#\/\*\\\w]+(\[[0-9a-z_-]+\])?)\s*/)) return false
 
     // match :
-    if (!this.commonMatch(/^:\s*/)) return parseError("property missing ':'", this.linkpath)
+    if (!this.commonMatch(/^:\s*/)) return parseError("property missing ':'", this.linkPath)
 
     // match css value
     const r = this.commonMatch(/^((?:'(?:\\'|.)*?'|"(?:\\"|.)*?"|\([^\)]*?\)|[^};])+)/, true)
@@ -127,8 +127,8 @@ class CSSParser {
         }
 
         // ./a/b.png  ../a/b.png  a/b.png
-        if (/^((\.\.?\/)|[^/])/.test($1) && this.linkpath) {
-          this.baseURI = getLinkFileDir(this.linkpath)
+        if (/^((\.\.?\/)|[^/])/.test($1) && this.linkPath) {
+          this.baseURI = getLinkFileDir(this.linkPath)
         }
 
         return `url("${CompletionPath($1, this.baseURI)}")`
@@ -187,7 +187,7 @@ class CSSParser {
 
     return this.keyframesRule() ||
       this.mediaRule() ||
-      this.custommediaRule() ||
+      this.customMediaRule() ||
       this.supportsRule() ||
       this.importRule() ||
       this.charsetRule() ||
@@ -195,25 +195,25 @@ class CSSParser {
       this.documentRule() ||
       this.pageRule() ||
       this.hostRule() ||
-      this.fontfaceRule()
+      this.fontFaceRule()
   }
 
   // https://developer.mozilla.org/en-US/docs/Web/API/CSSKeyframesRule
   private keyframesRule (): boolean | void {
     if (!this.commonMatch(/^@([-\w]+)?keyframes\s*/)) return false
 
-    if (!this.commonMatch(/^([-\w]+)\s*/)) return parseError('@keyframes missing name', this.linkpath)
+    if (!this.commonMatch(/^([-\w]+)\s*/)) return parseError('@keyframes missing name', this.linkPath)
 
     this.matchComments()
 
-    if (!this.matchOpenBrace()) return parseError("@keyframes missing '{'", this.linkpath)
+    if (!this.matchOpenBrace()) return parseError("@keyframes missing '{'", this.linkPath)
 
     this.matchComments()
     while (this.keyframeRule()) {
       this.matchComments()
     }
 
-    if (!this.matchCloseBrace()) return parseError("@keyframes missing '}'", this.linkpath)
+    if (!this.matchCloseBrace()) return parseError("@keyframes missing '}'", this.linkPath)
 
     this.matchLeadingSpaces()
 
@@ -238,7 +238,7 @@ class CSSParser {
   }
 
   // https://github.com/postcss/postcss-custom-media
-  private custommediaRule (): boolean {
+  private customMediaRule (): boolean {
     if (!this.commonMatch(/^@custom-media\s+(--[^\s]+)\s*([^{;]+);/)) return false
 
     this.matchLeadingSpaces()
@@ -259,7 +259,7 @@ class CSSParser {
   }
 
   // https://developer.mozilla.org/en-US/docs/Web/API/CSSFontFaceRule
-  private fontfaceRule (): boolean | void {
+  private fontFaceRule (): boolean | void {
     if (!this.commonMatch(/^@font-face\s*/)) return false
 
     return this.commonHandlerForAtRuleWithSelfRule('font-face')
@@ -283,13 +283,13 @@ class CSSParser {
     return () => {
       if (!this.commonMatch(reg)) return false
 
-      if (!this.matchOpenBrace()) return parseError(`@${name} missing '{'`, this.linkpath)
+      if (!this.matchOpenBrace()) return parseError(`@${name} missing '{'`, this.linkPath)
 
       this.matchComments()
 
       this.matchRules()
 
-      if (!this.matchCloseBrace()) return parseError(`@${name} missing '}'`, this.linkpath)
+      if (!this.matchCloseBrace()) return parseError(`@${name} missing '}'`, this.linkPath)
 
       this.matchLeadingSpaces()
 
@@ -309,7 +309,7 @@ class CSSParser {
 
   // common handler for @font-face, @page
   private commonHandlerForAtRuleWithSelfRule (name: string): boolean | void {
-    if (!this.matchOpenBrace()) return parseError(`@${name} missing '{'`, this.linkpath)
+    if (!this.matchOpenBrace()) return parseError(`@${name} missing '{'`, this.linkPath)
 
     this.matchComments()
 
@@ -317,7 +317,7 @@ class CSSParser {
       this.matchComments()
     }
 
-    if (!this.matchCloseBrace()) return parseError(`@${name} missing '}'`, this.linkpath)
+    if (!this.matchCloseBrace()) return parseError(`@${name} missing '}'`, this.linkPath)
 
     this.matchLeadingSpaces()
 
@@ -340,7 +340,7 @@ class CSSParser {
     i += 2
 
     if (this.cssText.charAt(i - 1) === '') {
-      return parseError('End of comment missing', this.linkpath)
+      return parseError('End of comment missing', this.linkPath)
     }
 
     // get comment content
@@ -406,7 +406,7 @@ function commonAction (
   appName: string,
   prefix: string,
   baseURI: string,
-  linkpath?: string,
+  linkPath?: string,
 ) {
   if (!styleElement.__MICRO_APP_HAS_SCOPED__) {
     styleElement.__MICRO_APP_HAS_SCOPED__ = true
@@ -416,7 +416,7 @@ function commonAction (
         styleElement.textContent!,
         prefix,
         baseURI,
-        linkpath,
+        linkPath,
       )
       parser.reset()
     } catch (e) {

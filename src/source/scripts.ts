@@ -169,12 +169,12 @@ export function fetchScriptSuccess (
  * Execute js in the mount lifecycle
  * @param scriptList script list
  * @param app app
- * @param initedHook callback for umd mode
+ * @param initHook callback for umd mode
  */
 export function execScripts (
   scriptList: Map<string, sourceScriptInfo>,
   app: AppInterface,
-  initedHook: moduleCallBack,
+  initHook: moduleCallBack,
 ): void {
   const scriptListEntries: Array<[string, sourceScriptInfo]> = Array.from(scriptList.entries())
   const deferScriptPromise: Array<Promise<string>|string> = []
@@ -190,10 +190,10 @@ export function execScripts (
         }
         deferScriptInfo.push([url, info])
 
-        info.module && (initedHook.moduleCount = initedHook.moduleCount ? ++initedHook.moduleCount : 1)
+        info.module && (initHook.moduleCount = initHook.moduleCount ? ++initHook.moduleCount : 1)
       } else {
         runScript(url, app, info, false)
-        initedHook(false)
+        initHook(false)
       }
     }
   }
@@ -203,22 +203,22 @@ export function execScripts (
       const info = deferScriptInfo[res.index][1]
       info.code = info.code || res.data
     }, (err: {error: Error, index: number}) => {
-      initedHook.errorCount = initedHook.errorCount ? ++initedHook.errorCount : 1
+      initHook.errorCount = initHook.errorCount ? ++initHook.errorCount : 1
       logError(err, app.name)
     }, () => {
       deferScriptInfo.forEach(([url, info]) => {
         if (info.code) {
-          runScript(url, app, info, false, initedHook)
-          !info.module && initedHook(false)
+          runScript(url, app, info, false, initHook)
+          !info.module && initHook(false)
         }
       })
-      initedHook(
-        isUndefined(initedHook.moduleCount) ||
-        initedHook.errorCount === deferScriptPromise.length
+      initHook(
+        isUndefined(initHook.moduleCount) ||
+        initHook.errorCount === deferScriptPromise.length
       )
     })
   } else {
-    initedHook(true)
+    initHook(true)
   }
 }
 

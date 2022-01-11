@@ -1,13 +1,13 @@
 /* eslint-disable no-return-assign */
 import { isBoundFunction, rawDefineProperty, isBoolean } from '../libs/utils'
 
-function isBoundedFunction (value: CallableFunction & {__MICRO_APP_ISBOUND_FUNCTION: boolean}): boolean {
-  if (isBoolean(value.__MICRO_APP_ISBOUND_FUNCTION)) return value.__MICRO_APP_ISBOUND_FUNCTION
-  return value.__MICRO_APP_ISBOUND_FUNCTION = isBoundFunction(value)
+function isBoundedFunction (value: CallableFunction & {__MICRO_APP_IS_BOUND_FUNCTION__: boolean}): boolean {
+  if (isBoolean(value.__MICRO_APP_IS_BOUND_FUNCTION__)) return value.__MICRO_APP_IS_BOUND_FUNCTION__
+  return value.__MICRO_APP_IS_BOUND_FUNCTION__ = isBoundFunction(value)
 }
 
-function isConstructor (value: FunctionConstructor & {__MICRO_APP_ISCONSTRUCTOR: boolean}) {
-  if (isBoolean(value.__MICRO_APP_ISCONSTRUCTOR)) return value.__MICRO_APP_ISCONSTRUCTOR
+function isConstructor (value: FunctionConstructor & {__MICRO_APP_IS_CONSTRUCTOR__: boolean}) {
+  if (isBoolean(value.__MICRO_APP_IS_CONSTRUCTOR__)) return value.__MICRO_APP_IS_CONSTRUCTOR__
 
   const valueStr = value.toString()
 
@@ -18,12 +18,12 @@ function isConstructor (value: FunctionConstructor & {__MICRO_APP_ISCONSTRUCTOR:
     /^function\s+[A-Z]/.test(valueStr) ||
     /^class\s+/.test(valueStr)
 
-  return value.__MICRO_APP_ISCONSTRUCTOR = result
+  return value.__MICRO_APP_IS_CONSTRUCTOR__ = result
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default function bindFunctionToRawWindow (rawWindow: Window, value: any): unknown {
-  if (value.__MICRO_APP_BOUND_WINDOW_FUNCTION) return value.__MICRO_APP_BOUND_WINDOW_FUNCTION
+  if (value.__MICRO_APP_BOUND_WINDOW_FUNCTION__) return value.__MICRO_APP_BOUND_WINDOW_FUNCTION__
 
   if (!isConstructor(value) && !isBoundedFunction(value)) {
     const bindRawWindowValue = value.bind(rawWindow)
@@ -41,7 +41,7 @@ export default function bindFunctionToRawWindow (rawWindow: Window, value: any):
       })
     }
 
-    return value.__MICRO_APP_BOUND_WINDOW_FUNCTION = bindRawWindowValue
+    return value.__MICRO_APP_BOUND_WINDOW_FUNCTION__ = bindRawWindowValue
   }
 
   return value

@@ -37,7 +37,7 @@ export function defineElement (tagName: string): void {
       patchSetAttribute()
     }
 
-    private isWating = false
+    private isWaiting = false
     private cacheData: Record<PropertyKey, unknown> | null = null
     private hasConnected = false
     appName = '' // app name
@@ -107,8 +107,8 @@ export function defineElement (tagName: string): void {
             this.setAttribute('name', this.appName)
           }
           this.handleInitialNameAndUrl()
-        } else if (!this.isWating) {
-          this.isWating = true
+        } else if (!this.isWaiting) {
+          this.isWaiting = true
           defer(this.handleAttributeUpdate)
         }
       }
@@ -168,10 +168,10 @@ export function defineElement (tagName: string): void {
     }
 
     /**
-     * handle for change of name an url after element inited
+     * handle for change of name an url after element init
      */
     private handleAttributeUpdate = (): void => {
-      this.isWating = false
+      this.isWaiting = false
       const formatAttrName = formatAppName(this.getAttribute('name'))
       const formatAttrUrl = formatAppURL(this.getAttribute('url'), this.appName)
       if (this.legalAttribute('name', formatAttrName) && this.legalAttribute('url', formatAttrUrl)) {
@@ -339,7 +339,7 @@ export function defineElement (tagName: string): void {
 
     // show app when connectedCallback called with keep-alive
     private handleShowKeepAliveApp (app: AppInterface) {
-      // must be asnyc
+      // must be async
       defer(() => app.showKeepAliveApp(this.shadowRoot ?? this))
     }
 
@@ -350,7 +350,7 @@ export function defineElement (tagName: string): void {
      */
     private getDisposeResult (name: string): boolean {
       // @ts-ignore
-      return (this.compatibleSpecialProperties(name) || microApp[name]) && this.compatibleDisablSpecialProperties(name)
+      return (this.compatibleSpecialProperties(name) || microApp[name]) && this.compatibleDisableSpecialProperties(name)
     }
 
     // compatible of disableScopecss & disableSandbox
@@ -364,7 +364,7 @@ export function defineElement (tagName: string): void {
     }
 
     // compatible of disableScopecss & disableSandbox
-    private compatibleDisablSpecialProperties (name: string): boolean {
+    private compatibleDisableSpecialProperties (name: string): boolean {
       if (name === 'disableScopecss') {
         return this.getAttribute('disableScopecss') !== 'false' && this.getAttribute('disable-scopecss') !== 'false'
       } else if (name === 'disableSandbox') {

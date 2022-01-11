@@ -225,3 +225,19 @@ fetch('http://localhost:3001/sugrec').then((res) => {
 }).then((data) => {
   console.log('proxy代理 https://www.baidu.com/sugrec 返回数据', data)
 })
+
+
+// ----------------------分割线--插件相关--------------------- //
+window.scopeKey1 = 'scopeKey1'
+window.scopeKey2 = 'scopeKey2'
+window.scopeKey3 = 'scopeKey3'
+window.scopeKey4 = 'scopeKey4'
+window.scopeKey5 = 'scopeKey5'
+window.scopeKey6 = 'scopeKey6'
+
+window.escapeKey1 = 'escapeKey1'
+window.escapeKey2 = 'escapeKey2'
+window.escapeKey3 = 'escapeKey3'
+window.escapeKey4 = 'escapeKey4'
+window.escapeKey5 = 'escapeKey5' // should be undefined in rawWindow
+window.escapeKey6 = 'escapeKey6' // should be undefined in rawWindow

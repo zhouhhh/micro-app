@@ -30,8 +30,8 @@ microApp.start({
   plugins: {
     global: [
       {
-        scopeProperties: ['1', '2'],
-        escapeProperties: ['aaa', 'b'],
+        scopeProperties: ['scopeKey1', 'scopeKey2'],
+        escapeProperties: ['escapeKey1', 'escapeKey2'],
         options: {a: 1,},
         loader(code, url, options) {
           // console.log('vue2插件', url, options)
@@ -53,8 +53,8 @@ microApp.start({
     ],
     modules: {
       react16: [{
-        scopeProperties: ['3', '4'],
-        escapeProperties: ['ccc', 'd'],
+        scopeProperties: ['scopeKey3', 'scopeKey4'],
+        escapeProperties: ['escapeKey3', 'escapeKey4'],
         loader(code, url) {
           if (process.env.NODE_ENV === 'development' && code.indexOf('sockjs-node') > -1) {
             console.log('react16插件', url)
@@ -73,8 +73,8 @@ microApp.start({
         }
       }],
       vue2: [{
-        scopeProperties: ['5', '6'],
-        escapeProperties: ['e', 'f'],
+        scopeProperties: ['scopeKey5', 'scopeKey6'],
+        escapeProperties: ['escapeKey5', 'escapeKey6'],
         loader(code, url) {
           // console.log('vue2插件', url)
           return code
@@ -120,6 +120,7 @@ microApp.start({
   },
 })
 
+// ----------------------分割线--测试全局方法--------------------- //
 // setTimeout(() => {
 //   unmountAllApps({
 //     destroy: true,

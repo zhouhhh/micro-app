@@ -205,37 +205,37 @@ export class EventCenterForMicroApp extends EventCenterForGlobal {
 
 /**
  * Record UMD function before exec umdHookMount
- * @param microAppEventCneter
+ * @param microAppEventCenter
  */
-export function recordDataCenterSnapshot (microAppEventCneter: EventCenterForMicroApp): void {
-  const appName = microAppEventCneter.appName
-  microAppEventCneter.umdDataListeners = { global: new Set(), normal: new Set() }
+export function recordDataCenterSnapshot (microAppEventCenter: EventCenterForMicroApp): void {
+  const appName = microAppEventCenter.appName
+  microAppEventCenter.umdDataListeners = { global: new Set(), normal: new Set() }
 
   const globalEventInfo = eventCenter.eventList.get('global')
   if (globalEventInfo) {
     for (const cb of globalEventInfo.callbacks) {
       if (appName === cb.__APP_NAME__) {
-        microAppEventCneter.umdDataListeners.global.add(cb)
+        microAppEventCenter.umdDataListeners.global.add(cb)
       }
     }
   }
 
   const subAppEventInfo = eventCenter.eventList.get(formatEventName(appName, true))
   if (subAppEventInfo) {
-    microAppEventCneter.umdDataListeners.normal = new Set(subAppEventInfo.callbacks)
+    microAppEventCenter.umdDataListeners.normal = new Set(subAppEventInfo.callbacks)
   }
 }
 
 /**
  * Rebind the UMD function of the record before remount
- * @param microAppEventCneter instance of EventCenterForMicroApp
+ * @param microAppEventCenter instance of EventCenterForMicroApp
  */
-export function rebuildDataCenterSnapshot (microAppEventCneter: EventCenterForMicroApp): void {
-  for (const cb of microAppEventCneter.umdDataListeners!.global) {
-    microAppEventCneter.addGlobalDataListener(cb, cb.__AUTO_TRIGGER__)
+export function rebuildDataCenterSnapshot (microAppEventCenter: EventCenterForMicroApp): void {
+  for (const cb of microAppEventCenter.umdDataListeners!.global) {
+    microAppEventCenter.addGlobalDataListener(cb, cb.__AUTO_TRIGGER__)
   }
 
-  for (const cb of microAppEventCneter.umdDataListeners!.normal) {
-    microAppEventCneter.addDataListener(cb, cb.__AUTO_TRIGGER__)
+  for (const cb of microAppEventCenter.umdDataListeners!.normal) {
+    microAppEventCenter.addDataListener(cb, cb.__AUTO_TRIGGER__)
   }
 }

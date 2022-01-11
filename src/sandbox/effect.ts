@@ -350,7 +350,7 @@ export default function effect (microAppWindow: microAppWindowType): Record<stri
  * 1、if another child app is react@16 or less and use umd mode, this method will not work
  * 2、the callback of the main app called from the sub app are scope dom trigger by mouse/touch event
  */
-export function temporarySolutionForDomscope (): () => void {
+export function temporarySolutionForDomScope (): () => void {
   const openEventName = isMobile() ? 'touchstart' : 'mousedown'
   const closeEventName = isMobile() ? 'touchend' : 'mouseup'
 

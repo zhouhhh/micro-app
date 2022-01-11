@@ -8,7 +8,7 @@ declare module '@micro-app/types' {
   interface SandBoxInterface {
     proxyWindow: WindowProxy
     microAppWindow: Window // Proxy target
-    start (baseroute: string): void
+    start (baseRoute: string): void
     stop (): void
     // record umd snapshot before the first execution of umdHookMount
     recordUmdSnapshot (): void
@@ -51,7 +51,7 @@ declare module '@micro-app/types' {
     useSandbox: boolean // whether use js sandbox, default is true
     baseroute: string // route prefix, default is ''
     source: sourceType // sources of css, js, html
-    sandBox: SandBoxInterface | null // sanxbox
+    sandBox: SandBoxInterface | null // sandbox
     umdMode: boolean // is umd mode
 
     // Load resources

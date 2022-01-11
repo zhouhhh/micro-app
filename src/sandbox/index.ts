@@ -1,4 +1,4 @@
-import type { microAppWindowType, SandBoxInterface } from '@micro-app/types'
+import type { microAppWindowType, SandBoxInterface, plugins } from '@micro-app/types'
 import {
   EventCenterForMicroApp, rebuildDataCenterSnapshot, recordDataCenterSnapshot
 } from '../interact'
@@ -21,21 +21,20 @@ import bindFunctionToRawWindow from './bind_function'
 import effect, {
   effectDocumentEvent,
   releaseEffectDocumentEvent,
-  temporarySolutionForDomscope,
+  temporarySolutionForDomScope,
 } from './effect'
 import {
   patchElementPrototypeMethods,
   releasePatches,
 } from '../source/patch'
 
-/* eslint-disable camelcase */
 export type MicroAppWindowDataType = {
   __MICRO_APP_ENVIRONMENT__: boolean
   __MICRO_APP_NAME__: string
   __MICRO_APP_PUBLIC_PATH__: string
   __MICRO_APP_BASE_URL__: string
   __MICRO_APP_BASE_ROUTE__: string
-  __MICRO_APP_UMDMODE__: boolean
+  __MICRO_APP_UMD_MODE__: boolean
   microApp: EventCenterForMicroApp
   rawWindow: Window
   rawDocument: Document
@@ -62,7 +61,7 @@ export default class SandBox implements SandBoxInterface {
   private recordUmdEffect!: CallableFunction
   private rebuildUmdEffect!: CallableFunction
   private releaseEffect!: CallableFunction
-  private relaseSolutionForDomscope!: CallableFunction
+  private releaseSolutionForDomScope!: CallableFunction
   // Scoped global Properties(Properties that can only get and set in microAppWindow, will not escape to rawWindow)
   private scopeProperties: PropertyKey[] = ['webpackJsonp']
   // Properties that can be escape to rawWindow
@@ -72,7 +71,7 @@ export default class SandBox implements SandBoxInterface {
   // Properties escape to rawWindow, cleared when unmount
   private escapeKeys = new Set<PropertyKey>()
   // record injected values before the first execution of umdHookMount and rebuild before remount umd app
-  private recordUmdinjectedValues?: Map<PropertyKey, unknown>
+  private recordUmdInjectedValues?: Map<PropertyKey, unknown>
   // sandbox state
   private active = false
   proxyWindow: WindowProxy // Proxy
@@ -80,7 +79,7 @@ export default class SandBox implements SandBoxInterface {
 
   constructor (appName: string, url: string) {
     // get scopeProperties and escapeProperties from plugins
-    this.getScopeProperties(appName)
+    this.getSpecialPropertiesFromPlugins(appName)
     // create proxyWindow with Proxy(microAppWindow)
     this.proxyWindow = this.createProxyWindow(appName)
     // inject global properties
@@ -89,15 +88,15 @@ export default class SandBox implements SandBoxInterface {
     Object.assign(this, effect(this.microAppWindow))
   }
 
-  start (baseroute: string): void {
+  start (baseRoute: string): void {
     if (!this.active) {
       this.active = true
-      this.microAppWindow.__MICRO_APP_BASE_ROUTE__ = this.microAppWindow.__MICRO_APP_BASE_URL__ = baseroute
+      this.microAppWindow.__MICRO_APP_BASE_ROUTE__ = this.microAppWindow.__MICRO_APP_BASE_URL__ = baseRoute
       // BUG FIX: bable-polyfill@6.x
       globalEnv.rawWindow._babelPolyfill && (globalEnv.rawWindow._babelPolyfill = false)
       if (++SandBox.activeCount === 1) {
         effectDocumentEvent()
-        this.relaseSolutionForDomscope = temporarySolutionForDomscope()
+        this.releaseSolutionForDomScope = temporarySolutionForDomScope()
         patchElementPrototypeMethods()
       }
     }
@@ -122,7 +121,7 @@ export default class SandBox implements SandBoxInterface {
 
       if (--SandBox.activeCount === 0) {
         releaseEffectDocumentEvent()
-        this.relaseSolutionForDomscope()
+        this.releaseSolutionForDomScope()
         releasePatches()
       }
     }
@@ -134,15 +133,15 @@ export default class SandBox implements SandBoxInterface {
     this.recordUmdEffect()
     recordDataCenterSnapshot(this.microAppWindow.microApp)
 
-    this.recordUmdinjectedValues = new Map<PropertyKey, unknown>()
+    this.recordUmdInjectedValues = new Map<PropertyKey, unknown>()
     this.injectedKeys.forEach((key: PropertyKey) => {
-      this.recordUmdinjectedValues!.set(key, Reflect.get(this.microAppWindow, key))
+      this.recordUmdInjectedValues!.set(key, Reflect.get(this.microAppWindow, key))
     })
   }
 
   // rebuild umd snapshot before remount umd app
   rebuildUmdSnapshot (): void {
-    this.recordUmdinjectedValues!.forEach((value: unknown, key: PropertyKey) => {
+    this.recordUmdInjectedValues!.forEach((value: unknown, key: PropertyKey) => {
       Reflect.set(this.proxyWindow, key, value)
     })
     this.rebuildUmdEffect()
@@ -153,24 +152,17 @@ export default class SandBox implements SandBoxInterface {
    * get scopeProperties and escapeProperties from plugins
    * @param appName app name
    */
-  private getScopeProperties (appName: string): void {
+  private getSpecialPropertiesFromPlugins (appName: string): void {
     if (!isPlainObject(microApp.plugins)) return
 
-    if (isArray(microApp.plugins!.global)) {
-      for (const plugin of microApp.plugins!.global) {
-        if (isPlainObject(plugin)) {
-          if (isArray(plugin.scopeProperties)) {
-            this.scopeProperties = this.scopeProperties.concat(plugin.scopeProperties!)
-          }
-          if (isArray(plugin.escapeProperties)) {
-            this.escapeProperties = this.escapeProperties.concat(plugin.escapeProperties!)
-          }
-        }
-      }
-    }
+    this.commonActionForSpecialProperties(microApp.plugins!.global)
+    this.commonActionForSpecialProperties(microApp.plugins!.modules?.[appName])
+  }
 
-    if (isArray(microApp.plugins!.modules?.[appName])) {
-      for (const plugin of microApp.plugins!.modules![appName]) {
+  // common action for global plugins and module plugins
+  private commonActionForSpecialProperties (plugins: plugins['global']) {
+    if (isArray(plugins)) {
+      for (const plugin of plugins) {
         if (isPlainObject(plugin)) {
           if (isArray(plugin.scopeProperties)) {
             this.scopeProperties = this.scopeProperties.concat(plugin.scopeProperties!)
@@ -320,25 +312,25 @@ export default class SandBox implements SandBoxInterface {
     rawDefineProperty(
       microAppWindow,
       'top',
-      this.createDescriptorFormicroAppWindow('top', topValue)
+      this.createDescriptorForMicroAppWindow('top', topValue)
     )
 
     rawDefineProperty(
       microAppWindow,
       'parent',
-      this.createDescriptorFormicroAppWindow('parent', parentValue)
+      this.createDescriptorForMicroAppWindow('parent', parentValue)
     )
 
     globalPropertyList.forEach((key: PropertyKey) => {
       rawDefineProperty(
         microAppWindow,
         key,
-        this.createDescriptorFormicroAppWindow(key, this.proxyWindow)
+        this.createDescriptorForMicroAppWindow(key, this.proxyWindow)
       )
     })
   }
 
-  private createDescriptorFormicroAppWindow (key: PropertyKey, value: unknown): PropertyDescriptor {
+  private createDescriptorForMicroAppWindow (key: PropertyKey, value: unknown): PropertyDescriptor {
     const { configurable = true, enumerable = true, writable, set } = Object.getOwnPropertyDescriptor(globalEnv.rawWindow, key) || { writable: true }
     const descriptor: PropertyDescriptor = {
       value,

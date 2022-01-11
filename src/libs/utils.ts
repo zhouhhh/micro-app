@@ -194,10 +194,10 @@ export function CompletionPath (path: string, baseURI: string): string {
 /**
  * Get the folder where the link resource is located,
  * which is used to complete the relative address in the css
- * @param linkpath full link address
+ * @param linkPath full link address
  */
-export function getLinkFileDir (linkpath: string): string {
-  const pathArr = linkpath.split('/')
+export function getLinkFileDir (linkPath: string): string {
+  const pathArr = linkPath.split('/')
   pathArr.pop()
   return addProtocol(pathArr.join('/') + '/')
 }

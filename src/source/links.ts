@@ -148,7 +148,7 @@ export function fetchLinkSuccess (
  * @param originLink origin link element
  * @param replaceStyle style element which replaced origin link
  */
-export function foramtDynamicLink (
+export function formatDynamicLink (
   url: string,
   info: sourceLinkInfo,
   app: AppInterface,

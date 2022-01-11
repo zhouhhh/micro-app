@@ -12,7 +12,7 @@ import {
   isUniqueElement,
 } from '../libs/utils'
 import scopedCSS from './scoped_css'
-import { extractLinkFromHtml, foramtDynamicLink } from './links'
+import { extractLinkFromHtml, formatDynamicLink } from './links'
 import { extractScriptElement, runScript, runDynamicRemoteScript } from './scripts'
 import microApp from '../micro_app'
 import globalEnv from '../libs/global_env'
@@ -55,7 +55,7 @@ function handleNewNode (parent: Node, child: Node, app: AppInterface): Node {
     if (url && info) {
       const replaceStyle = pureCreateElement('style')
       replaceStyle.__MICRO_APP_LINK_PATH__ = url
-      foramtDynamicLink(url, info, app, child, replaceStyle)
+      formatDynamicLink(url, info, app, child, replaceStyle)
       dynamicElementInMicroAppMap.set(child, replaceStyle)
       return replaceStyle
     } else if (replaceComment) {
@@ -115,7 +115,7 @@ function invokePrototypeMethod (
   if (parent === document.head) {
     const microAppHead = app.container!.querySelector('micro-app-head')!
     /**
-     * 1. If passivechild exists, it must be insertBefore or replacechild
+     * 1. If passiveChild exists, it must be insertBefore or replaceChild
      * 2. When removeChild, targetChild may not be in microAppHead or head
      */
     if (passiveChild && !microAppHead.contains(passiveChild)) {
@@ -159,9 +159,9 @@ function getMappingNode (node: Node): Node {
  * @param parent parent node
  * @param newChild new node
  * @param passiveChild passive node
- * @param rawMethodraw method
+ * @param rawMethod method
  */
-function commonElementHander (
+function commonElementHandler (
   parent: Node,
   newChild: Node,
   passiveChild: Node | null,
@@ -207,22 +207,22 @@ export function patchElementPrototypeMethods (): void {
 
   // prototype methods of add element👇
   Element.prototype.appendChild = function appendChild<T extends Node> (newChild: T): T {
-    return commonElementHander(this, newChild, null, globalEnv.rawAppendChild)
+    return commonElementHandler(this, newChild, null, globalEnv.rawAppendChild)
   }
 
   Element.prototype.insertBefore = function insertBefore<T extends Node> (newChild: T, refChild: Node | null): T {
-    return commonElementHander(this, newChild, refChild, globalEnv.rawInsertBefore)
+    return commonElementHandler(this, newChild, refChild, globalEnv.rawInsertBefore)
   }
 
   Element.prototype.replaceChild = function replaceChild<T extends Node> (newChild: Node, oldChild: T): T {
-    return commonElementHander(this, newChild, oldChild, globalEnv.rawReplaceChild)
+    return commonElementHandler(this, newChild, oldChild, globalEnv.rawReplaceChild)
   }
 
   Element.prototype.append = function append (...nodes: (Node | string)[]): void {
     let i = 0
     const length = nodes.length
     while (i < length) {
-      commonElementHander(this, nodes[i] as Node, null, globalEnv.rawAppend)
+      commonElementHandler(this, nodes[i] as Node, null, globalEnv.rawAppend)
       i++
     }
   }
@@ -230,7 +230,7 @@ export function patchElementPrototypeMethods (): void {
   Element.prototype.prepend = function prepend (...nodes: (Node | string)[]): void {
     let i = nodes.length
     while (i > 0) {
-      commonElementHander(this, nodes[i - 1] as Node, null, globalEnv.rawPrepend)
+      commonElementHandler(this, nodes[i - 1] as Node, null, globalEnv.rawPrepend)
       i--
     }
   }
@@ -387,7 +387,7 @@ function patchDocument () {
 /**
  * patchSetAttribute is different from other patch
  * it not dependent on sandbox
- * it should exect when micro-app first created & release when all app unmounted
+ * it should exec when micro-app first created & release when all app unmounted
  */
 let hasRewriteSetAttribute = false
 export function patchSetAttribute (): void {

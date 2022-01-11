@@ -1,6 +1,5 @@
 import { listenUmountOfNestedApp, releaseUnmountOfNestedApp } from '../../libs/additional'
 import CreateApp, { appInstanceMap } from '../../create_app'
-import { elementInstanceMap } from '../../micro_app_element'
 
 describe('test additional', () => {
   // 卸载循环内嵌的子应用
@@ -18,7 +17,6 @@ describe('test additional', () => {
       container: con1.shadowRoot,
     }
     appInstanceMap.set('test-app1', app1 as CreateApp)
-    elementInstanceMap.set(con1, true)
 
     // test-app2模拟正常未卸载孙应用
     const con2 = document.createElement('micro-app')
@@ -32,7 +30,6 @@ describe('test additional', () => {
       container: con2,
     }
     appInstanceMap.set('test-app2', app2 as CreateApp)
-    elementInstanceMap.set(con2, true)
 
     // test-app3模拟已卸载孙应用(没有container)
     const app3 = {
