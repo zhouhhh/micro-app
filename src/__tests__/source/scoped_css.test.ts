@@ -17,13 +17,13 @@ describe('source scoped_css', () => {
 
   // 动态插入style标签，先插入后赋值
   test('set textContent after style element append to html', async () => {
-    const microappElement1 = document.createElement('micro-app')
-    microappElement1.setAttribute('name', 'test-app1')
-    microappElement1.setAttribute('url', `http://127.0.0.1:${ports.scoped_css}/dynamic/`)
+    const microAppElement1 = document.createElement('micro-app')
+    microAppElement1.setAttribute('name', 'test-app1')
+    microAppElement1.setAttribute('url', `http://127.0.0.1:${ports.scoped_css}/dynamic/`)
 
-    appCon.appendChild(microappElement1)
-    await new Promise((reslove) => {
-      microappElement1.addEventListener('mounted', () => {
+    appCon.appendChild(microAppElement1)
+    await new Promise((resolve) => {
+      microAppElement1.addEventListener('mounted', () => {
         setAppName('test-app1')
         // 动态创建style
         const dynamicStyle = document.createElement('style')
@@ -33,7 +33,7 @@ describe('source scoped_css', () => {
 
         defer(() => {
           expect(dynamicStyle.textContent).toBe('micro-app[name=test-app1] *{margin: 0;} micro-app[name=test-app1] .test, html > .abc{color: red;}')
-          reslove(true)
+          resolve(true)
         })
       }, false)
     })
@@ -49,13 +49,13 @@ describe('source scoped_css', () => {
       configurable: true,
     })
 
-    const microappElement2 = document.createElement('micro-app')
-    microappElement2.setAttribute('name', 'test-app2')
-    microappElement2.setAttribute('url', `http://127.0.0.1:${ports.scoped_css}/dynamic/`)
+    const microAppElement2 = document.createElement('micro-app')
+    microAppElement2.setAttribute('name', 'test-app2')
+    microAppElement2.setAttribute('url', `http://127.0.0.1:${ports.scoped_css}/dynamic/`)
 
-    appCon.appendChild(microappElement2)
-    await new Promise((reslove) => {
-      microappElement2.addEventListener('mounted', () => {
+    appCon.appendChild(microAppElement2)
+    await new Promise((resolve) => {
+      microAppElement2.addEventListener('mounted', () => {
         setAppName('test-app2')
         // 动态创建style
         const dynamicStyle = document.createElement('style')
@@ -65,7 +65,7 @@ describe('source scoped_css', () => {
 
         defer(() => {
           expect(dynamicStyle.textContent).toBe('micro-app[name=test-app2] .test-content1 {content: no quota;} micro-app[name=test-app2] .test-content2 {content: none;} micro-app[name=test-app2] .test-content3 {content: url(http://www.micro-app-test.com/);}')
-          reslove(true)
+          resolve(true)
         })
       }, false)
     })
@@ -77,15 +77,15 @@ describe('source scoped_css', () => {
     })
   })
 
-  // 一些cssrules需要特殊处理
+  // 一些cssRules需要特殊处理
   test('some CSSRuleType should special handling', async () => {
-    const microappElement3 = document.createElement('micro-app')
-    microappElement3.setAttribute('name', 'test-app3')
-    microappElement3.setAttribute('url', `http://127.0.0.1:${ports.scoped_css}/dynamic/`)
+    const microAppElement3 = document.createElement('micro-app')
+    microAppElement3.setAttribute('name', 'test-app3')
+    microAppElement3.setAttribute('url', `http://127.0.0.1:${ports.scoped_css}/dynamic/`)
 
-    appCon.appendChild(microappElement3)
-    await new Promise((reslove) => {
-      microappElement3.addEventListener('mounted', () => {
+    appCon.appendChild(microAppElement3)
+    await new Promise((resolve) => {
+      microAppElement3.addEventListener('mounted', () => {
         setAppName('test-app3')
         // 动态创建style
         const dynamicStyle = document.createElement('style')
@@ -95,7 +95,7 @@ describe('source scoped_css', () => {
 
         defer(() => {
           expect(dynamicStyle.textContent).toBe('@font-face {font-family: test-font;} @media screen and (max-width: 300px) {micro-app[name=test-app3] micro-app-body{background:lightblue;}} @supports (display: grid) {micro-app[name=test-app3] div{display: grid;}}')
-          reslove(true)
+          resolve(true)
         })
       }, false)
     })
@@ -111,13 +111,13 @@ describe('source scoped_css', () => {
       }
       return rewIndexOf.call(this, searchString)
     }
-    const microappElement4 = document.createElement('micro-app')
-    microappElement4.setAttribute('name', 'test-app4')
-    microappElement4.setAttribute('url', `http://127.0.0.1:${ports.scoped_css}/dynamic/`)
+    const microAppElement4 = document.createElement('micro-app')
+    microAppElement4.setAttribute('name', 'test-app4')
+    microAppElement4.setAttribute('url', `http://127.0.0.1:${ports.scoped_css}/dynamic/`)
 
-    appCon.appendChild(microappElement4)
-    await new Promise((reslove) => {
-      microappElement4.addEventListener('mounted', () => {
+    appCon.appendChild(microAppElement4)
+    await new Promise((resolve) => {
+      microAppElement4.addEventListener('mounted', () => {
         setAppName('test-app4')
         // 动态创建style
         const dynamicStyle1 = document.createElement('style')
@@ -128,7 +128,7 @@ describe('source scoped_css', () => {
         document.head.appendChild(dynamicStyle1)
         expect(dynamicStyle1.textContent).toBe('micro-app[name=test-app4] .static-path1{ background: url(http://www.micro-app-test.com/img.jpeg)} micro-app[name=test-app4] .static-path2{ background: url(data:image/png;base64,iVB...)} micro-app[name=test-app4] .static-path3{ background: url("http://www.micro-app-test.com/path1/img.png")} micro-app[name=test-app4] .static-path4{ background: url("http://www.micro-app-test.com/css/path1/img.png")}')
 
-        reslove(true)
+        resolve(true)
       }, false)
     })
 
@@ -138,25 +138,25 @@ describe('source scoped_css', () => {
   // 分支覆盖
   test('covering special branches', async () => {
     // 执行样式隔离时app已经被卸载
-    const microappElement5 = document.createElement('micro-app')
-    microappElement5.setAttribute('name', 'test-app5')
-    microappElement5.setAttribute('url', `http://127.0.0.1:${ports.scoped_css}/common/`)
-    microappElement5.setAttribute('destroy', 'true')
+    const microAppElement5 = document.createElement('micro-app')
+    microAppElement5.setAttribute('name', 'test-app5')
+    microAppElement5.setAttribute('url', `http://127.0.0.1:${ports.scoped_css}/common/`)
+    microAppElement5.setAttribute('destroy', 'true')
 
-    appCon.appendChild(microappElement5)
-    appCon.removeChild(microappElement5)
+    appCon.appendChild(microAppElement5)
+    appCon.removeChild(microAppElement5)
   })
 
   // styled-component降级处理
   test('temporary handle for styled component', async () => {
-    const microappElement7 = document.createElement('micro-app')
-    microappElement7.setAttribute('name', 'test-app7')
-    microappElement7.setAttribute('url', `http://127.0.0.1:${ports.scoped_css}/common/`)
+    const microAppElement7 = document.createElement('micro-app')
+    microAppElement7.setAttribute('name', 'test-app7')
+    microAppElement7.setAttribute('url', `http://127.0.0.1:${ports.scoped_css}/common/`)
 
-    appCon.appendChild(microappElement7)
+    appCon.appendChild(microAppElement7)
 
-    await new Promise((reslove) => {
-      microappElement7.addEventListener('mounted', () => {
+    await new Promise((resolve) => {
+      microAppElement7.addEventListener('mounted', () => {
         setAppName('test-app7')
         // 模拟生产环境styled-component style标签
         const dynamicStyle1 = document.createElement('style')
@@ -187,21 +187,21 @@ describe('source scoped_css', () => {
           expect(dynamicStyle3.textContent).toBe('')
         }, 10)
 
-        reslove(true)
+        resolve(true)
       }, false)
     })
   })
 
   // 分支覆盖 -- 同一个style元素被执行了两次 -- styleElement.__MICRO_APP_HAS_SCOPED__
   test('coverage: styleElement.__MICRO_APP_HAS_SCOPED__', async () => {
-    const microappElement8 = document.createElement('micro-app')
-    microappElement8.setAttribute('name', 'test-app8')
-    microappElement8.setAttribute('url', `http://127.0.0.1:${ports.scoped_css}/dynamic/`)
+    const microAppElement8 = document.createElement('micro-app')
+    microAppElement8.setAttribute('name', 'test-app8')
+    microAppElement8.setAttribute('url', `http://127.0.0.1:${ports.scoped_css}/dynamic/`)
 
-    appCon.appendChild(microappElement8)
+    appCon.appendChild(microAppElement8)
 
-    await new Promise((reslove) => {
-      microappElement8.addEventListener('mounted', () => {
+    await new Promise((resolve) => {
+      microAppElement8.addEventListener('mounted', () => {
         setAppName('test-app8')
         const dynamicStyle1 = document.createElement('style')
         document.head.appendChild(dynamicStyle1)
@@ -210,21 +210,21 @@ describe('source scoped_css', () => {
         document.head.appendChild(dynamicStyle1)
 
         expect(dynamicStyle1.textContent).toBe('micro-app[name=test-app8] div{color: red}')
-        reslove(true)
+        resolve(true)
       }, false)
     })
   })
 
   // 使用large.css提升覆盖率
   test('coverage: use large.css improves coverage', async () => {
-    const microappElement9 = document.createElement('micro-app')
-    microappElement9.setAttribute('name', 'test-app9')
-    microappElement9.setAttribute('url', `http://127.0.0.1:${ports.scoped_css}/dynamic/`)
+    const microAppElement9 = document.createElement('micro-app')
+    microAppElement9.setAttribute('name', 'test-app9')
+    microAppElement9.setAttribute('url', `http://127.0.0.1:${ports.scoped_css}/dynamic/`)
 
-    appCon.appendChild(microappElement9)
+    appCon.appendChild(microAppElement9)
 
-    await new Promise((reslove) => {
-      microappElement9.addEventListener('mounted', () => {
+    await new Promise((resolve) => {
+      microAppElement9.addEventListener('mounted', () => {
         setAppName('test-app9')
         const dynamicLink = document.createElement('link')
         dynamicLink.setAttribute('href', `http://127.0.0.1:${ports.scoped_css}/common/large.css`)
@@ -233,7 +233,7 @@ describe('source scoped_css', () => {
         document.head.appendChild(dynamicLink)
 
         dynamicLink.onload = () => {
-          reslove(true)
+          resolve(true)
         }
       }, false)
     })
@@ -241,14 +241,14 @@ describe('source scoped_css', () => {
 
   // 处理所有错误情况
   test('coverage of all failures', async () => {
-    const microappElement10 = document.createElement('micro-app')
-    microappElement10.setAttribute('name', 'test-app10')
-    microappElement10.setAttribute('url', `http://127.0.0.1:${ports.scoped_css}/dynamic/`)
+    const microAppElement10 = document.createElement('micro-app')
+    microAppElement10.setAttribute('name', 'test-app10')
+    microAppElement10.setAttribute('url', `http://127.0.0.1:${ports.scoped_css}/dynamic/`)
 
-    appCon.appendChild(microappElement10)
+    appCon.appendChild(microAppElement10)
 
-    await new Promise((reslove) => {
-      microappElement10.addEventListener('mounted', () => {
+    await new Promise((resolve) => {
+      microAppElement10.addEventListener('mounted', () => {
         setAppName('test-app10')
         const dynamicStyle1 = document.createElement('style')
         // error of selector
@@ -329,21 +329,21 @@ describe('source scoped_css', () => {
         document.head.appendChild(dynamicStyle13)
         expect(console.error).toBeCalledWith(expect.any(String), expect.any(Error))
 
-        reslove(true)
+        resolve(true)
       }, false)
     })
   })
 
   // 通过注释实现的内置的控制规则
   test('Using configuration comments', async () => {
-    const microappElement11 = document.createElement('micro-app')
-    microappElement11.setAttribute('name', 'test-app11')
-    microappElement11.setAttribute('url', `http://127.0.0.1:${ports.scoped_css}/dynamic/`)
+    const microAppElement11 = document.createElement('micro-app')
+    microAppElement11.setAttribute('name', 'test-app11')
+    microAppElement11.setAttribute('url', `http://127.0.0.1:${ports.scoped_css}/dynamic/`)
 
-    appCon.appendChild(microappElement11)
+    appCon.appendChild(microAppElement11)
 
-    await new Promise((reslove) => {
-      microappElement11.addEventListener('mounted', () => {
+    await new Promise((resolve) => {
+      microAppElement11.addEventListener('mounted', () => {
         setAppName('test-app11')
         // scopecss-disable-next-line
         const dynamicStyle1 = document.createElement('style')
@@ -375,7 +375,7 @@ describe('source scoped_css', () => {
         document.head.appendChild(dynamicStyle5)
         expect(dynamicStyle5.textContent).toBe('micro-app[name=test-app11] div{/* scopecss-disable-next-line */background: url(/test.png);}micro-app[name=test-app11] span{}micro-app[name=test-app11] header{}')
 
-        reslove(true)
+        resolve(true)
       }, false)
     })
   })

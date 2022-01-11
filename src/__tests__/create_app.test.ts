@@ -18,15 +18,15 @@ describe('create_app', () => {
 
   // 在子应用加载完静态资源之前就卸载，然后重新渲染
   test('unmount app before end of loading resource and remount', async () => {
-    const microappElement1 = document.createElement('micro-app')
-    microappElement1.setAttribute('name', 'test-app1')
-    microappElement1.setAttribute('url', `http://127.0.0.1:${ports.create_app}/common/`)
+    const microAppElement1 = document.createElement('micro-app')
+    microAppElement1.setAttribute('name', 'test-app1')
+    microAppElement1.setAttribute('url', `http://127.0.0.1:${ports.create_app}/common/`)
 
     let createCount = 0
-    await new Promise((reslove) => {
+    await new Promise((resolve) => {
       // 元素被插入到文档中，此时已经开始请求资源
       // created 将会被执行两次
-      microappElement1.addEventListener('created', () => {
+      microAppElement1.addEventListener('created', () => {
         createCount++
         expect(appInstanceMap.size).toBe(1)
         if (createCount === 1) {
@@ -35,14 +35,14 @@ describe('create_app', () => {
           // 二次渲染时会异步执行mount，所以此时仍然是UNMOUNT
           expect(appInstanceMap.get('test-app1')!.getAppState()).toBe(appStates.UNMOUNT)
         }
-        reslove(true)
+        resolve(true)
       }, false)
 
-      appCon.appendChild(microappElement1)
+      appCon.appendChild(microAppElement1)
     })
 
-    await new Promise((reslove) => {
-      microappElement1.addEventListener('unmount', () => {
+    await new Promise((resolve) => {
+      microAppElement1.addEventListener('unmount', () => {
         const app = appInstanceMap.get('test-app1')!
         expect(app.getAppState()).toBe(appStates.UNMOUNT)
         // 因为应用还没渲染就卸载，所以active始终为false
@@ -50,123 +50,123 @@ describe('create_app', () => {
         expect(app.sandBox!.active).toBeFalsy()
         Promise.resolve().then(() => {
           expect(app.container).toBeNull()
-          reslove(true)
+          resolve(true)
         })
       }, false)
-      appCon.removeChild(microappElement1)
+      appCon.removeChild(microAppElement1)
     })
 
-    await new Promise((reslove) => {
-      microappElement1.addEventListener('mounted', () => {
+    await new Promise((resolve) => {
+      microAppElement1.addEventListener('mounted', () => {
         expect(createCount).toBe(2)
       }, false)
-      appCon.appendChild(microappElement1)
-      reslove(true)
+      appCon.appendChild(microAppElement1)
+      resolve(true)
     })
   })
 
   // 关闭沙箱
   test('disableSandbox in this app', async () => {
-    const microappElement2 = document.createElement('micro-app')
-    microappElement2.setAttribute('name', 'test-app2')
-    microappElement2.setAttribute('url', `http://127.0.0.1:${ports.create_app}/dynamic/`)
-    microappElement2.setAttribute('disableSandbox', 'true')
+    const microAppElement2 = document.createElement('micro-app')
+    microAppElement2.setAttribute('name', 'test-app2')
+    microAppElement2.setAttribute('url', `http://127.0.0.1:${ports.create_app}/dynamic/`)
+    microAppElement2.setAttribute('disableSandbox', 'true')
 
-    appCon.appendChild(microappElement2)
-    await new Promise((reslove) => {
-      microappElement2.addEventListener('mounted', () => {
+    appCon.appendChild(microAppElement2)
+    await new Promise((resolve) => {
+      microAppElement2.addEventListener('mounted', () => {
         expect(appInstanceMap.get('test-app2')!.useSandbox).toBeFalsy()
-        reslove(true)
+        resolve(true)
       }, false)
     })
 
-    appCon.removeChild(microappElement2)
+    appCon.removeChild(microAppElement2)
   })
 
   // 组件卸载后获取html失败
   test('unmount app before fetch html failed', async () => {
-    const microappElement3 = document.createElement('micro-app')
-    microappElement3.setAttribute('name', 'test-app3')
-    microappElement3.setAttribute('url', 'http://www.not-exist.com/')
+    const microAppElement3 = document.createElement('micro-app')
+    microAppElement3.setAttribute('name', 'test-app3')
+    microAppElement3.setAttribute('url', 'http://www.not-exist.com/')
 
     const errorHandle = jest.fn()
-    microappElement3.addEventListener('error', errorHandle)
+    microAppElement3.addEventListener('error', errorHandle)
 
-    appCon.appendChild(microappElement3)
-    appCon.removeChild(microappElement3)
+    appCon.appendChild(microAppElement3)
+    appCon.removeChild(microAppElement3)
 
-    await new Promise((reslove) => {
+    await new Promise((resolve) => {
       setTimeout(() => {
         expect(errorHandle).not.toBeCalled()
-        reslove(true)
+        resolve(true)
       }, 200)
     })
   })
 
   // 发送mounted事件时app已被卸载
   test('coverage branch of dispatch mounted event when app has unmounted', async () => {
-    const microappElement4 = document.createElement('micro-app')
-    microappElement4.setAttribute('name', 'test-app4')
-    microappElement4.setAttribute('url', `http://127.0.0.1:${ports.create_app}/common/`)
+    const microAppElement4 = document.createElement('micro-app')
+    microAppElement4.setAttribute('name', 'test-app4')
+    microAppElement4.setAttribute('url', `http://127.0.0.1:${ports.create_app}/common/`)
 
-    appCon.appendChild(microappElement4)
+    appCon.appendChild(microAppElement4)
 
     const mountedHandler1 = jest.fn()
-    microappElement4.addEventListener('mounted', mountedHandler1)
+    microAppElement4.addEventListener('mounted', mountedHandler1)
 
     function unmountTestApp4 () {
-      appCon.removeChild(microappElement4)
+      appCon.removeChild(microAppElement4)
       window.removeEventListener('unmount-me', unmountTestApp4)
     }
     window.addEventListener('unmount-me', unmountTestApp4)
 
     // 子应用通过数据通信异步通知基座卸载自己，但异步优先于mounted执行
-    const microappElement5 = document.createElement('micro-app')
-    microappElement5.setAttribute('name', 'test-app5')
-    microappElement5.setAttribute('url', `http://127.0.0.1:${ports.create_app}/common/`)
+    const microAppElement5 = document.createElement('micro-app')
+    microAppElement5.setAttribute('name', 'test-app5')
+    microAppElement5.setAttribute('url', `http://127.0.0.1:${ports.create_app}/common/`)
 
-    appCon.appendChild(microappElement5)
+    appCon.appendChild(microAppElement5)
 
     const mountedHandler2 = jest.fn()
-    microappElement5.addEventListener('mounted', mountedHandler2)
+    microAppElement5.addEventListener('mounted', mountedHandler2)
 
     function unmountTestApp5 (data: Record<string, unknown>) {
       if (data.unmountMeAsync === true) {
-        appCon.removeChild(microappElement5)
+        appCon.removeChild(microAppElement5)
         microApp.removeDataListener('test-app5', unmountTestApp5)
       }
     }
     microApp.addDataListener('test-app5', unmountTestApp5)
 
-    await new Promise((reslove) => {
+    await new Promise((resolve) => {
       setTimeout(() => {
         // mounted 钩子不执行
         expect(mountedHandler1).not.toBeCalled()
         expect(mountedHandler2).not.toBeCalled()
-        reslove(true)
+        resolve(true)
       }, 200)
     })
   })
 
   // 非沙箱环境的umd，在destroy卸载时，注册在window的函数应该删除
-  test('render umd app with disablesandbox & destroy', async () => {
+  test('render umd app with disableSandbox & destroy', async () => {
     const microAppElement6 = document.createElement('micro-app')
     microAppElement6.setAttribute('name', 'test-app6')
     microAppElement6.setAttribute('library', 'umd-app1') // 自定义umd名称
     microAppElement6.setAttribute('url', `http://127.0.0.1:${ports.create_app}/umd1`)
-    microAppElement6.setAttribute('disablesandbox', 'true')
+    microAppElement6.setAttribute('disableSandbox', 'true')
     microAppElement6.setAttribute('destroy', 'true')
 
     appCon.appendChild(microAppElement6)
 
-    await new Promise((reslove) => {
+    await new Promise((resolve) => {
       microAppElement6.addEventListener('mounted', () => {
         // @ts-ignore
         expect(window['umd-app1']).not.toBeUndefined()
         appCon.removeChild(microAppElement6)
         // @ts-ignore
         expect(window['umd-app1']).toBeUndefined()
-        reslove(true)
+        resolve(true)
       })
     })
   })
@@ -180,10 +180,10 @@ describe('create_app', () => {
 
     appCon.appendChild(microAppElement7)
 
-    await new Promise((reslove) => {
+    await new Promise((resolve) => {
       microAppElement7.addEventListener('mounted', () => {
         microAppElement7.addEventListener('unmount', () => {
-          reslove(true)
+          resolve(true)
         })
         appCon.removeChild(microAppElement7)
       })
@@ -197,9 +197,9 @@ describe('create_app', () => {
 
     appCon.appendChild(microAppElement8)
 
-    await new Promise((reslove) => {
+    await new Promise((resolve) => {
       microAppElement8.addEventListener('mounted', () => {
-        reslove(true)
+        resolve(true)
       })
     })
   })
@@ -215,7 +215,7 @@ describe('create_app', () => {
     window.specialUmdMode = 'error-hook'
     appCon.appendChild(microAppElement9)
 
-    await new Promise((reslove) => {
+    await new Promise((resolve) => {
       microAppElement9.addEventListener('mounted', () => {
         // 渲染时打印错误日志
         expect(console.error).toHaveBeenCalledWith('[micro-app] app test-app9: an error occurred in the mount function \n', expect.any(Error))
@@ -225,7 +225,7 @@ describe('create_app', () => {
         // 卸载时打印错误日志
         expect(console.error).toHaveBeenCalledWith('[micro-app] app test-app9: an error occurred in the unmount function \n', expect.any(Error))
 
-        reslove(true)
+        resolve(true)
       })
     })
 
@@ -236,11 +236,11 @@ describe('create_app', () => {
 
     appCon.appendChild(microAppElement10)
 
-    await new Promise((reslove) => {
+    await new Promise((resolve) => {
       microAppElement10.addEventListener('mounted', () => {
         // 再次渲染时打印错误日志
         expect(console.error).toHaveBeenCalledWith('[micro-app] app test-app9: an error occurred in the mount function \n', expect.any(Error))
-        reslove(true)
+        resolve(true)
       })
     })
 
@@ -259,12 +259,12 @@ describe('create_app', () => {
     window.specialUmdMode = 'error-promise-hook'
     appCon.appendChild(microAppElement11)
 
-    await new Promise((reslove) => {
+    await new Promise((resolve) => {
       // promise.reject 会触发error事件，不会触发mounted事件
       microAppElement11.addEventListener('error', () => {
         // promise.reject 会正常触发unmount事件
         microAppElement11.addEventListener('unmount', () => {
-          reslove(true)
+          resolve(true)
         })
 
         appCon.removeChild(microAppElement11)
@@ -284,16 +284,16 @@ describe('create_app', () => {
 
     appCon.appendChild(microAppElement12)
 
-    await new Promise((reslove) => {
+    await new Promise((resolve) => {
       microAppElement12.addEventListener('mounted', () => {
-        unmountApp('test-app12').then(reslove)
+        unmountApp('test-app12').then(resolve)
       })
     })
 
-    await new Promise((reslove) => {
+    await new Promise((resolve) => {
       unmountApp('not-exist').then(() => {
         expect(console.warn).toHaveBeenCalledWith('[micro-app] app not-exist does not exist')
-        reslove(true)
+        resolve(true)
       })
     })
 
@@ -304,7 +304,7 @@ describe('create_app', () => {
 
     appCon.appendChild(microAppElement13)
 
-    await new Promise((reslove) => {
+    await new Promise((resolve) => {
       microAppElement13.addEventListener('mounted', () => {
         appCon.removeChild(microAppElement13)
       })
@@ -319,7 +319,7 @@ describe('create_app', () => {
             destroy: true,
           }).then(() => {
             expect(appInstanceMap.has('test-app13')).toBeFalsy()
-            reslove(true)
+            resolve(true)
           })
         })
       })
@@ -333,7 +333,7 @@ describe('create_app', () => {
 
     appCon.appendChild(microAppElement14)
 
-    await new Promise((reslove) => {
+    await new Promise((resolve) => {
       microAppElement14.addEventListener('mounted', () => {
         appCon.removeChild(microAppElement14)
       })
@@ -349,7 +349,7 @@ describe('create_app', () => {
           }).then(() => {
             expect(appInstanceMap.has('test-app14')).toBeTruthy()
             expect(appInstanceMap.get('test-app14')?.getAppState()).toBe(appStates.UNMOUNT)
-            reslove(true)
+            resolve(true)
           })
         })
       })
@@ -363,7 +363,7 @@ describe('create_app', () => {
 
     appCon.appendChild(microAppElement15)
 
-    await new Promise((reslove) => {
+    await new Promise((resolve) => {
       microAppElement15.addEventListener('mounted', () => {
         appCon.removeChild(microAppElement15)
       })
@@ -374,7 +374,7 @@ describe('create_app', () => {
           destroy: true,
         }).then(() => {
           expect(appInstanceMap.has('test-app15')).toBeFalsy()
-          reslove(true)
+          resolve(true)
         })
       })
     })
@@ -388,7 +388,7 @@ describe('create_app', () => {
 
     appCon.appendChild(microAppElement16)
 
-    await new Promise((reslove) => {
+    await new Promise((resolve) => {
       microAppElement16.addEventListener('mounted', () => {
         unmountApp('test-app16', {
           destroy: true,
@@ -396,7 +396,7 @@ describe('create_app', () => {
           expect(appInstanceMap.has('test-app16')).toBeFalsy()
           expect(microAppElement16.getAttribute('destroy')).toBe('attr-of-destroy')
           expect(microAppElement16.getAttribute('destory')).toBe('attr-of-destory')
-          reslove(true)
+          resolve(true)
         })
       })
     })
@@ -409,14 +409,14 @@ describe('create_app', () => {
 
     appCon.appendChild(microAppElement17)
 
-    await new Promise((reslove) => {
+    await new Promise((resolve) => {
       microAppElement17.addEventListener('mounted', () => {
         unmountApp('test-app17', {
           clearAliveState: true,
         }).then(() => {
           expect(appInstanceMap.get('test-app17')?.getAppState()).toBe(appStates.UNMOUNT)
           expect(microAppElement17.getAttribute('keep-alive')).toBe('attr-of-keep-alive')
-          reslove(true)
+          resolve(true)
         })
       })
     })
@@ -429,11 +429,11 @@ describe('create_app', () => {
 
     appCon.appendChild(microAppElement18)
 
-    await new Promise((reslove) => {
+    await new Promise((resolve) => {
       microAppElement18.addEventListener('mounted', () => {
         unmountApp('test-app18').then(() => {
           expect(appInstanceMap.get('test-app18')?.getKeepAliveState()).toBe(keepAliveStates.KEEP_ALIVE_HIDDEN)
-          reslove(true)
+          resolve(true)
         })
       })
     })
@@ -448,11 +448,11 @@ describe('create_app', () => {
 
     appCon.appendChild(microAppElement19)
 
-    await new Promise((reslove) => {
+    await new Promise((resolve) => {
       microAppElement19.addEventListener('mounted', () => {
         unmountAllApps().then(() => {
           expect(appInstanceMap.has('test-app19')).toBeFalsy()
-          reslove(true)
+          resolve(true)
         })
       })
     })

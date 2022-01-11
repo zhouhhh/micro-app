@@ -24,7 +24,7 @@ test('just define micro-app in pure start', () => {
 
 // 在不支持customElements的环境下打印错误信息
 test('log error message if customElements is not supported in this environment', () => {
-  const rawcustomElements = window.customElements
+  const rawCustomElements = window.customElements
   Object.defineProperty(window, 'customElements', {
     value: undefined,
     writable: true,
@@ -34,7 +34,7 @@ test('log error message if customElements is not supported in this environment',
   microApp.start()
   expect(console.error).toBeCalledWith('[micro-app] micro-app is not supported in this environment')
 
-  window.customElements = rawcustomElements
+  window.customElements = rawCustomElements
 })
 
 // tagName非法

@@ -16,13 +16,13 @@ describe('source load_event', () => {
 
   // 支持使用两种方式监听error事件
   test('dispatchOnErrorEvent should support two ways', async () => {
-    const microappElement1 = document.createElement('micro-app')
-    microappElement1.setAttribute('name', 'test-app1')
-    microappElement1.setAttribute('url', `http://127.0.0.1:${ports.load_event}/dynamic/`)
+    const microAppElement1 = document.createElement('micro-app')
+    microAppElement1.setAttribute('name', 'test-app1')
+    microAppElement1.setAttribute('url', `http://127.0.0.1:${ports.load_event}/dynamic/`)
 
-    appCon.appendChild(microappElement1)
-    await new Promise((reslove) => {
-      microappElement1.addEventListener('mounted', () => {
+    appCon.appendChild(microAppElement1)
+    await new Promise((resolve) => {
+      microAppElement1.addEventListener('mounted', () => {
         setAppName('test-app1')
         // 动态创建link
         const dynamicLink1 = document.createElement('link')
@@ -44,20 +44,20 @@ describe('source load_event', () => {
           expect(event.srcElement).toBe(dynamicLink2)
           expect(event.target).toBe(dynamicLink2)
         })
-        reslove(true)
+        resolve(true)
       }, false)
     })
   })
 
   // 支持使用两种方式监听load事件
   test('dispatchOnLoadEvent should support two ways', async () => {
-    const microappElement2 = document.createElement('micro-app')
-    microappElement2.setAttribute('name', 'test-app2')
-    microappElement2.setAttribute('url', `http://127.0.0.1:${ports.load_event}/dynamic/`)
+    const microAppElement2 = document.createElement('micro-app')
+    microAppElement2.setAttribute('name', 'test-app2')
+    microAppElement2.setAttribute('url', `http://127.0.0.1:${ports.load_event}/dynamic/`)
 
-    appCon.appendChild(microappElement2)
-    await new Promise((reslove) => {
-      microappElement2.addEventListener('mounted', () => {
+    appCon.appendChild(microAppElement2)
+    await new Promise((resolve) => {
+      microAppElement2.addEventListener('mounted', () => {
         setAppName('test-app2')
         // 动态创建link
         const dynamicLink1 = document.createElement('link')
@@ -77,7 +77,7 @@ describe('source load_event', () => {
           expect(event.srcElement).toBe(dynamicLink2)
           expect(event.target).toBe(dynamicLink2)
         })
-        reslove(true)
+        resolve(true)
       }, false)
     })
   })

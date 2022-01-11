@@ -17,17 +17,17 @@ describe('lifecycles_event', () => {
 
   // 生命周期函数测试覆盖
   test('render common app', async () => {
-    const microappElement = document.createElement('micro-app')
-    microappElement.setAttribute('name', 'test-app')
-    microappElement.setAttribute('url', `http://127.0.0.1:${ports.lifecycles_event}/common/`)
+    const microAppElement = document.createElement('micro-app')
+    microAppElement.setAttribute('name', 'test-app')
+    microAppElement.setAttribute('url', `http://127.0.0.1:${ports.lifecycles_event}/common/`)
 
-    appCon.appendChild(microappElement)
+    appCon.appendChild(microAppElement)
 
-    await new Promise((reslove) => {
-      microappElement.addEventListener('mounted', (e) => {
-        expect(e.currentTarget).toBe(microappElement)
-        expect(e.target).toBe(microappElement)
-        reslove(true)
+    await new Promise((resolve) => {
+      microAppElement.addEventListener('mounted', (e) => {
+        expect(e.currentTarget).toBe(microAppElement)
+        expect(e.target).toBe(microAppElement)
+        resolve(true)
       }, false)
     })
   })

@@ -69,7 +69,7 @@ describe('sandbox', () => {
     return releaseAllEffect()
   })
 
-  // 一些需要返回 proxywindow 的变量
+  // 一些需要返回 proxyWindow 的变量
   test('which keys should return proxyWindow in sandbox', () => {
     const proxyWindow = new Sandbox('test-app2', `http://127.0.0.1:${ports.sandbox}/common/`).proxyWindow
     expect(proxyWindow.window).toBe(proxyWindow)
@@ -351,7 +351,7 @@ describe('sandbox', () => {
     proxyWindow['descriptor-key2'] = 'new-descriptor-key2'
 
     expect(proxyWindow['descriptor-key1']).toBe('new-descriptor-key1')
-    // 原生window有相同值，且writable为false，vlaue依然可以定义到proxyWindow上
+    // 原生window有相同值，且writable为false，value依然可以定义到proxyWindow上
     expect(proxyWindow['descriptor-key2']).toBe('new-descriptor-key2')
   })
 
@@ -370,11 +370,11 @@ describe('sandbox', () => {
     sandbox.start('')
     const proxyWindow: any = sandbox.proxyWindow
 
-    function willbind () {}
-    const boundFunction = willbind.bind(window)
+    function willBind () {}
+    const boundFunction = willBind.bind(window)
     window.boundFunction = boundFunction
 
-    expect(proxyWindow.boundFunction.name).toBe('bound willbind')
+    expect(proxyWindow.boundFunction.name).toBe('bound willBind')
     expect(proxyWindow.boundFunction).toBe(boundFunction)
   })
 
@@ -384,11 +384,11 @@ describe('sandbox', () => {
     sandbox.start('')
     const proxyWindow: any = sandbox.proxyWindow
 
-    proxyWindow.eval = 'neweval'
-    expect(proxyWindow.eval).toBe('neweval')
+    proxyWindow.eval = 'new-eval'
+    expect(proxyWindow.eval).toBe('new-eval')
 
-    proxyWindow.Image = 'newimage'
-    expect(proxyWindow.Image).toBe('newimage')
+    proxyWindow.Image = 'new-image'
+    expect(proxyWindow.Image).toBe('new-image')
   })
 
   // 分支覆盖 proxyWindow getter方法
@@ -412,11 +412,11 @@ describe('sandbox', () => {
     expect(Object.getOwnPropertyDescriptor(proxyWindow, 'key1-for-proxy-getter')?.writable).toBeTruthy()
   })
 
-  // 分支覆盖: 在createDescriptorFormicroAppWindow 获取descriptor为空
-  test('coverage: empty descriptor in createDescriptorFormicroAppWindow ', () => {
+  // 分支覆盖: 在createDescriptorForMicroAppWindow 获取descriptor为空
+  test('coverage: empty descriptor in createDescriptorForMicroAppWindow ', () => {
     // @ts-ignore
     delete window.parent
-    const sandbox = new Sandbox('empty-descriptor-createDescriptorFormicroAppWindow', `http://127.0.0.1:${ports.sandbox}/common/`)
+    const sandbox = new Sandbox('empty-descriptor-createDescriptorForMicroAppWindow', `http://127.0.0.1:${ports.sandbox}/common/`)
     sandbox.start('')
     expect(Object.getOwnPropertyDescriptor(window, 'parent')).toBeUndefined()
   })

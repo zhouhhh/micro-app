@@ -117,31 +117,31 @@ describe('main process', () => {
    * ]
    */
   test('main process of micro-app', async () => {
-    const microappElement1 = document.createElement('micro-app')
-    microappElement1.setAttribute('name', 'test-app1')
-    microappElement1.setAttribute('url', `http://127.0.0.1:${ports.main}/common`)
-    microappElement1.setAttribute('inline', 'true')
+    const microAppElement1 = document.createElement('micro-app')
+    microAppElement1.setAttribute('name', 'test-app1')
+    microAppElement1.setAttribute('url', `http://127.0.0.1:${ports.main}/common`)
+    microAppElement1.setAttribute('inline', 'true')
 
-    appCon.appendChild(microappElement1)
+    appCon.appendChild(microAppElement1)
 
-    await new Promise((reslove) => {
-      microappElement1.addEventListener('mounted', () => {
+    await new Promise((resolve) => {
+      microAppElement1.addEventListener('mounted', () => {
         expect(appInstanceMap.size).toBe(prefetchAppNum + 1)
         expect(getActiveApps().length).toBe(1)
         expect(getAllApps().length).toBe(prefetchAppNum + 1)
-        reslove(true)
+        resolve(true)
       }, false)
     })
 
-    await new Promise((reslove) => {
-      microappElement1.addEventListener('unmount', () => {
+    await new Promise((resolve) => {
+      microAppElement1.addEventListener('unmount', () => {
         defer(() => {
           expect(appInstanceMap.size).toBe(prefetchAppNum + 1)
-          reslove(true)
+          resolve(true)
         })
       }, false)
 
-      appCon.removeChild(microappElement1)
+      appCon.removeChild(microAppElement1)
     })
 
     removeDomScope()
@@ -158,16 +158,16 @@ describe('main process', () => {
    */
   test('app that stay active all the time', async () => {
     expect(getCurrentAppName()).toBeNull()
-    const microappElement2 = document.createElement('micro-app')
-    microappElement2.setAttribute('name', 'test-app2')
-    microappElement2.setAttribute('url', `http://127.0.0.1:${ports.main}/ssr-render`)
+    const microAppElement2 = document.createElement('micro-app')
+    microAppElement2.setAttribute('name', 'test-app2')
+    microAppElement2.setAttribute('url', `http://127.0.0.1:${ports.main}/ssr-render`)
 
-    appCon.appendChild(microappElement2)
+    appCon.appendChild(microAppElement2)
 
-    await new Promise((reslove) => {
-      microappElement2.addEventListener('mounted', () => {
+    await new Promise((resolve) => {
+      microAppElement2.addEventListener('mounted', () => {
         expect(appInstanceMap.size).toBe(prefetchAppNum + 2)
-        reslove(true)
+        resolve(true)
       }, false)
     })
   })
@@ -183,25 +183,25 @@ describe('main process', () => {
    * ]
    */
   test('render an unstable app with special attribute', async () => {
-    const microappElement3 = document.createElement('micro-app')
-    expect(microappElement3.data).toBeNull()
+    const microAppElement3 = document.createElement('micro-app')
+    expect(microAppElement3.data).toBeNull()
     // @ts-ignore
-    microappElement3.setAttribute('data', { count: 'count-1' })
-    expect(microappElement3.data.count).toBe('count-1')
-    microappElement3.setAttribute('name', 'test-app3')
-    microappElement3.setAttribute('url', `http://127.0.0.1:${ports.main}/common`)
-    microappElement3.setAttribute('destroy', 'true')
-    microappElement3.setAttribute('shadowDOM', 'true')
-    microappElement3.setAttribute('inline', 'true')
+    microAppElement3.setAttribute('data', { count: 'count-1' })
+    expect(microAppElement3.data.count).toBe('count-1')
+    microAppElement3.setAttribute('name', 'test-app3')
+    microAppElement3.setAttribute('url', `http://127.0.0.1:${ports.main}/common`)
+    microAppElement3.setAttribute('destroy', 'true')
+    microAppElement3.setAttribute('shadowDOM', 'true')
+    microAppElement3.setAttribute('inline', 'true')
     // @ts-ignore
-    microappElement3.setAttribute('data', { count: 'count-2' })
-    expect(microappElement3.data.count).toBe('count-2')
+    microAppElement3.setAttribute('data', { count: 'count-2' })
+    expect(microAppElement3.data.count).toBe('count-2')
     let mountCount = 0
 
-    appCon.appendChild(microappElement3)
+    appCon.appendChild(microAppElement3)
 
-    await new Promise((reslove) => {
-      microappElement3.addEventListener('mounted', () => {
+    await new Promise((resolve) => {
+      microAppElement3.addEventListener('mounted', () => {
         const microElem = document.querySelectorAll('micro-app')[1]
         expect(microElem.shadowRoot instanceof ShadowRoot).toBeTruthy()
 
@@ -210,27 +210,27 @@ describe('main process', () => {
           expect(appInstanceMap.size).toBe(prefetchAppNum + 2)
           // 等懒加载资源执行完
           setTimeout(() => {
-            microappElement3.setAttribute('name', 'test-app1')
-            microappElement3.setAttribute('url', `http://127.0.0.1:${ports.main}/ssr-render`)
+            microAppElement3.setAttribute('name', 'test-app1')
+            microAppElement3.setAttribute('url', `http://127.0.0.1:${ports.main}/ssr-render`)
           }, 500)
         } else {
           // 预加载app test-app3，设置了destroy，name切换时被彻底删除
           expect(appInstanceMap.size).toBe(3)
-          reslove(true)
+          resolve(true)
         }
       }, false)
     })
 
-    await new Promise((reslove) => {
-      microappElement3.addEventListener('unmount', () => {
+    await new Promise((resolve) => {
+      microAppElement3.addEventListener('unmount', () => {
         defer(() => {
           // test-app1也被删除
           expect(appInstanceMap.size).toBe(2)
-          reslove(true)
+          resolve(true)
         })
       }, false)
 
-      appCon.removeChild(microappElement3)
+      appCon.removeChild(microAppElement3)
     })
   })
 
@@ -247,10 +247,10 @@ describe('main process', () => {
     microAppElement4.setAttribute('name', 'test-app4')
     microAppElement4.setAttribute('url', 'http://not-exist.com/xx')
 
-    await new Promise((reslove) => {
+    await new Promise((resolve) => {
       microAppElement4.addEventListener('error', () => {
         expect(console.error).toHaveBeenCalledWith('[micro-app] app test-app4: Failed to fetch data from http://not-exist.com/xx/, micro-app stop rendering', expect.any(Error))
-        reslove(true)
+        resolve(true)
       }, false)
       appCon.appendChild(microAppElement4)
     })
@@ -272,7 +272,7 @@ describe('main process', () => {
     microAppElement6.setAttribute('library', 'umd-app1') // 自定义umd名称
     microAppElement6.setAttribute('url', `http://127.0.0.1:${ports.main}/umd1`)
 
-    let commonReslove: CallableFunction
+    let commonSolve: CallableFunction
     function firstMountHandler () {
       window.dispatchEvent(new CustomEvent('umd-window-event'))
       expect(console.warn).toHaveBeenCalledWith('umd-window-event is triggered')
@@ -280,23 +280,23 @@ describe('main process', () => {
       expect(console.warn).toHaveBeenCalledWith('click event from umd init env')
       microAppElement6.removeEventListener('mounted', firstMountHandler)
       appCon.removeChild(microAppElement6)
-      commonReslove(true)
+      commonSolve(true)
     }
 
     microAppElement6.addEventListener('mounted', firstMountHandler)
 
-    await new Promise((reslove) => {
-      commonReslove = reslove
+    await new Promise((resolve) => {
+      commonSolve = resolve
       appCon.appendChild(microAppElement6)
     })
 
-    await new Promise((reslove) => {
+    await new Promise((resolve) => {
       microAppElement6.addEventListener('mounted', () => {
         window.dispatchEvent(new CustomEvent('umd-window-event'))
         expect(console.warn).toHaveBeenCalledWith('umd-window-event is triggered')
         document.dispatchEvent(new CustomEvent('click'))
         expect(console.warn).toHaveBeenCalledWith('click event from umd init env')
-        reslove(true)
+        resolve(true)
       })
       // 再次渲染
       appCon.appendChild(microAppElement6)
@@ -314,34 +314,34 @@ describe('main process', () => {
    *
    * 关闭沙箱后，micro-app只渲染umd app，快照功能失效
    */
-  test('render umd app with disablesandbox', async () => {
+  test('render umd app with disableSandbox', async () => {
     const microAppElement7 = document.createElement('micro-app')
     microAppElement7.setAttribute('name', 'test-app7')
     microAppElement7.setAttribute('library', 'umd-app1') // 自定义umd名称
     microAppElement7.setAttribute('url', `http://127.0.0.1:${ports.main}/umd1`)
-    microAppElement7.setAttribute('disablesandbox', 'true')
+    microAppElement7.setAttribute('disableSandbox', 'true')
 
-    let commonReslove: CallableFunction
+    let commonSolve: CallableFunction
     function firstMountHandler () {
       window.dispatchEvent(new CustomEvent('umd-window-event'))
       expect(console.warn).toHaveBeenCalledWith('umd-window-event is triggered')
       microAppElement7.removeEventListener('mounted', firstMountHandler)
       appCon.removeChild(microAppElement7)
-      commonReslove(true)
+      commonSolve(true)
     }
 
     microAppElement7.addEventListener('mounted', firstMountHandler)
 
-    await new Promise((reslove) => {
-      commonReslove = reslove
+    await new Promise((resolve) => {
+      commonSolve = resolve
       appCon.appendChild(microAppElement7)
     })
 
-    await new Promise((reslove) => {
+    await new Promise((resolve) => {
       microAppElement7.addEventListener('mounted', () => {
         window.dispatchEvent(new CustomEvent('umd-window-event'))
         expect(console.warn).toHaveBeenCalledWith('umd-window-event is triggered')
-        reslove(true)
+        resolve(true)
       })
       // 再次渲染
       appCon.appendChild(microAppElement7)

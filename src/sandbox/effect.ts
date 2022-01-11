@@ -377,8 +377,8 @@ export function temporarySolutionForDomScope (): () => void {
     }
   }
 
-  window.addEventListener(openEventName, handleMousedown, false)
-  window.addEventListener(closeEventName, handleMouseup, false)
+  window.addEventListener(openEventName, handleMousedown)
+  window.addEventListener(closeEventName, handleMouseup)
 
   return () => {
     window.removeEventListener(openEventName, handleMousedown)

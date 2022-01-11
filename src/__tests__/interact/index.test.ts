@@ -72,11 +72,11 @@ describe('data center', () => {
     const app2GlobalCbAutoTrigger = jest.fn()
 
     // 数据对象
-    const dataToApp1One = { info: 'data to app1 from baseapp' }
-    const dataToApp1Two = { info: 'data to app1 from baseapp' }
+    const dataToApp1One = { info: 'data to app1 from baseApp' }
+    const dataToApp1Two = { info: 'data to app1 from baseApp' }
     const dataFromApp1 = { info: 'data from app1' }
-    const dataToApp2One = { info: 'data to app2 from baseapp' }
-    const dataToApp2Two = { info: 'data to app2 from baseapp 2' }
+    const dataToApp2One = { info: 'data to app2 from baseApp' }
+    const dataToApp2Two = { info: 'data to app2 from baseApp 2' }
     const dataFromApp2 = { info: 'data from app2' }
     const dataFromApp2Two = { info: 'data from app2 2' }
     const dataFromApp2Three = { info: 'data from app2 3' }
@@ -87,9 +87,9 @@ describe('data center', () => {
 
     // dispatch是异步执行的，所以等待下一帧后执行后续操作
     microApp2.dispatch(dataFromApp2)
-    await new Promise((reslove) => {
+    await new Promise((resolve) => {
       defer(() => {
-        reslove(true)
+        resolve(true)
       })
     })
 
@@ -139,9 +139,9 @@ describe('data center', () => {
     microApp1.dispatch(dataFromApp1)
     microApp1.dispatch(dataFromApp1)
     microApp1.dispatch('11' as any)
-    await new Promise((reslove) => {
+    await new Promise((resolve) => {
       defer(() => {
-        reslove(true)
+        resolve(true)
       })
     })
     expect(console.error).toBeCalledWith('[micro-app] event-center: data must be object')
@@ -166,9 +166,9 @@ describe('data center', () => {
     // 基座应用卸载单个test-app2的监听
     baseApp.removeDataListener('test-app2', cbForApp2)
     microApp2.dispatch(dataFromApp2Two)
-    await new Promise((reslove) => {
+    await new Promise((resolve) => {
       defer(() => {
-        reslove(true)
+        resolve(true)
       })
     })
     expect(cbForApp2).not.toBeCalled()
@@ -180,9 +180,9 @@ describe('data center', () => {
     // 基座应用卸载所有test-app2的监听
     baseApp.clearDataListener('test-app2')
     microApp2.dispatch(dataFromApp2Three)
-    await new Promise((reslove) => {
+    await new Promise((resolve) => {
       defer(() => {
-        reslove(true)
+        resolve(true)
       })
     })
     expect(cbForApp2).not.toBeCalled()
@@ -267,9 +267,9 @@ describe('data center', () => {
 
     appInstanceMap.get('test-app2')!.container = null
     microApp2.dispatch({ info: '容器被清空后发送数据' })
-    await new Promise((reslove) => {
+    await new Promise((resolve) => {
       defer(() => {
-        reslove(true)
+        resolve(true)
       })
     })
     expect(app2EventHandler).not.toBeCalled()
@@ -286,7 +286,7 @@ describe('data center', () => {
   })
 
   // 测试带有特殊符号的 appName
-  test('test specail appName', () => {
+  test('test special appName', () => {
     // 初始化子应用数据对象 - 带有特殊符号，被格式化的appName
     const specialNameApp1 = new EventCenterForMicroApp('special-name_$#1')
     expect(specialNameApp1.appName).toBe('special-name_1')

@@ -24,16 +24,16 @@ describe('sandbox effect2', () => {
       value: null,
     })
 
-    const microappElement1 = document.createElement('micro-app')
-    microappElement1.setAttribute('name', 'test-app1')
-    microappElement1.setAttribute('url', `http://127.0.0.1:${ports.effect2}/common/`)
+    const microAppElement1 = document.createElement('micro-app')
+    microAppElement1.setAttribute('name', 'test-app1')
+    microAppElement1.setAttribute('url', `http://127.0.0.1:${ports.effect2}/common/`)
 
-    appCon.appendChild(microappElement1)
+    appCon.appendChild(microAppElement1)
 
-    await new Promise((reslove) => {
-      microappElement1.addEventListener('mounted', () => {
+    await new Promise((resolve) => {
+      microAppElement1.addEventListener('mounted', () => {
         expect(appInstanceMap.size).toBe(1)
-        reslove(true)
+        resolve(true)
       }, false)
     })
   })

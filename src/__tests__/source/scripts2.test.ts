@@ -22,13 +22,13 @@ describe('source scripts2', () => {
   })
 
   // 支持module的环境
-  test('support module envrionment', async () => {
-    const microappElement1 = document.createElement('micro-app')
-    microappElement1.setAttribute('name', 'test-app1')
-    microappElement1.setAttribute('url', `http://127.0.0.1:${ports.source_scripts2}/common/`)
+  test('support module environment', async () => {
+    const microAppElement1 = document.createElement('micro-app')
+    microAppElement1.setAttribute('name', 'test-app1')
+    microAppElement1.setAttribute('url', `http://127.0.0.1:${ports.source_scripts2}/common/`)
 
-    appCon.appendChild(microappElement1)
-    await new Promise((reslove) => {
+    appCon.appendChild(microAppElement1)
+    await new Promise((resolve) => {
       setTimeout(() => {
         // module在jest环境无法执行，所以不会触发mounted事件，这里使用setTimeout代替
         setAppName('test-app1')
@@ -51,22 +51,22 @@ describe('source scripts2', () => {
         // dynamicScript3.setAttribute('type', 'module')
         // dynamicScript3.setAttribute('src', '/common/script3.js')
         // document.head.appendChild(dynamicScript3)
-        reslove(true)
+        resolve(true)
       }, 200)
     })
   })
 
   // 在inline模式下开启module
   test('use module in inline mode', async () => {
-    const microappElement2 = document.createElement('micro-app')
-    microappElement2.setAttribute('name', 'test-app2')
-    microappElement2.setAttribute('url', `http://127.0.0.1:${ports.source_scripts2}/dynamic/`)
-    microappElement2.setAttribute('inline', 'true')
-    microappElement2.setAttribute('disablesandbox', 'true')
+    const microAppElement2 = document.createElement('micro-app')
+    microAppElement2.setAttribute('name', 'test-app2')
+    microAppElement2.setAttribute('url', `http://127.0.0.1:${ports.source_scripts2}/dynamic/`)
+    microAppElement2.setAttribute('inline', 'true')
+    microAppElement2.setAttribute('disableSandbox', 'true')
 
-    appCon.appendChild(microappElement2)
-    await new Promise((reslove) => {
-      microappElement2.addEventListener('mounted', () => {
+    appCon.appendChild(microAppElement2)
+    await new Promise((resolve) => {
+      microAppElement2.addEventListener('mounted', () => {
         setAppName('test-app2')
 
         const dynamicScript1 = document.createElement('script')
@@ -92,7 +92,7 @@ describe('source scripts2', () => {
         document.head.appendChild(dynamicScript4)
 
         // expect(console.warn).toBeCalledWith('inline module')
-        reslove(true)
+        resolve(true)
       }, false)
     })
   })

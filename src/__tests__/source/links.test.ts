@@ -24,14 +24,14 @@ describe('source links', () => {
   })
 
   // 创建一个动态的无效的link标签
-  test('append a link with error herf', async () => {
-    const microappElement1 = document.createElement('micro-app')
-    microappElement1.setAttribute('name', 'test-app1')
-    microappElement1.setAttribute('url', `http://127.0.0.1:${ports.source_links}/dynamic/`)
+  test('append a link with error href', async () => {
+    const microAppElement1 = document.createElement('micro-app')
+    microAppElement1.setAttribute('name', 'test-app1')
+    microAppElement1.setAttribute('url', `http://127.0.0.1:${ports.source_links}/dynamic/`)
 
-    appCon.appendChild(microappElement1)
-    await new Promise((reslove) => {
-      microappElement1.addEventListener('mounted', () => {
+    appCon.appendChild(microAppElement1)
+    await new Promise((resolve) => {
+      microAppElement1.addEventListener('mounted', () => {
         setAppName('test-app1')
         // 动态创建link
         const dynamicLink = document.createElement('link')
@@ -41,20 +41,20 @@ describe('source links', () => {
         dynamicLink.onerror = function () {
           expect(console.error).toBeCalledWith('[micro-app] app test-app1:', expect.any(Error))
         }
-        reslove(true)
+        resolve(true)
       }, false)
     })
   })
 
   // 创建一个动态的非常规link
   test('append an unusual link', async () => {
-    const microappElement2 = document.createElement('micro-app')
-    microappElement2.setAttribute('name', 'test-app2')
-    microappElement2.setAttribute('url', `http://127.0.0.1:${ports.source_links}/dynamic/`)
+    const microAppElement2 = document.createElement('micro-app')
+    microAppElement2.setAttribute('name', 'test-app2')
+    microAppElement2.setAttribute('url', `http://127.0.0.1:${ports.source_links}/dynamic/`)
 
-    appCon.appendChild(microappElement2)
-    await new Promise((reslove) => {
-      microappElement2.addEventListener('mounted', () => {
+    appCon.appendChild(microAppElement2)
+    await new Promise((resolve) => {
+      microAppElement2.addEventListener('mounted', () => {
         setAppName('test-app2')
         // 动态创建link
         const dynamicLink = document.createElement('link')
@@ -64,47 +64,47 @@ describe('source links', () => {
         document.head.appendChild(dynamicLink)
 
         expect(document.getElementById('dynamic-link-preload')).toBeNull()
-        reslove(true)
+        resolve(true)
       }, false)
     })
   })
 
   // html中加载错误的css资源
   test('load css error in html', async () => {
-    const microappElement3 = document.createElement('micro-app')
-    microappElement3.setAttribute('name', 'test-app3')
-    microappElement3.setAttribute('url', `http://127.0.0.1:${ports.source_links}/special-html/notexist-css.html`)
+    const microAppElement3 = document.createElement('micro-app')
+    microAppElement3.setAttribute('name', 'test-app3')
+    microAppElement3.setAttribute('url', `http://127.0.0.1:${ports.source_links}/special-html/notexist-css.html`)
 
-    appCon.appendChild(microappElement3)
-    await new Promise((reslove) => {
-      microappElement3.addEventListener('mounted', () => {
+    appCon.appendChild(microAppElement3)
+    await new Promise((resolve) => {
+      microAppElement3.addEventListener('mounted', () => {
         expect(console.error).toBeCalled()
-        reslove(true)
+        resolve(true)
       }, false)
     })
   }, 10000)
 
   // 从自身缓存/全局缓存中获取css资源
   test('get css code from cache', async () => {
-    const microappElement4 = document.createElement('micro-app')
-    microappElement4.setAttribute('name', 'test-app4')
-    microappElement4.setAttribute('url', `http://127.0.0.1:${ports.source_links}/element-config`)
+    const microAppElement4 = document.createElement('micro-app')
+    microAppElement4.setAttribute('name', 'test-app4')
+    microAppElement4.setAttribute('url', `http://127.0.0.1:${ports.source_links}/element-config`)
 
-    appCon.appendChild(microappElement4)
-    await new Promise((reslove) => {
-      microappElement4.addEventListener('mounted', () => {
+    appCon.appendChild(microAppElement4)
+    await new Promise((resolve) => {
+      microAppElement4.addEventListener('mounted', () => {
         expect(globalLinks.size).toBe(1)
-        reslove(true)
+        resolve(true)
       }, false)
     })
 
-    const microappElement5 = document.createElement('micro-app')
-    microappElement5.setAttribute('name', 'test-app5')
-    microappElement5.setAttribute('url', `http://127.0.0.1:${ports.source_links}/dynamic`)
+    const microAppElement5 = document.createElement('micro-app')
+    microAppElement5.setAttribute('name', 'test-app5')
+    microAppElement5.setAttribute('url', `http://127.0.0.1:${ports.source_links}/dynamic`)
 
-    appCon.appendChild(microappElement5)
-    await new Promise((reslove) => {
-      microappElement5.addEventListener('mounted', () => {
+    appCon.appendChild(microAppElement5)
+    await new Promise((resolve) => {
+      microAppElement5.addEventListener('mounted', () => {
         setAppName('test-app5')
 
         // 从全局缓存中获取css文件内容
@@ -122,42 +122,42 @@ describe('source links', () => {
         dynamicLink2.setAttribute('href', '/element-config/link1.css')
         document.head.appendChild(dynamicLink2)
 
-        reslove(true)
+        resolve(true)
       }, false)
     })
   })
 
   // 测试分支覆盖 html自带css从全局缓存取值&创建新的动态全局css缓存
   test('coverage of static html global & dynamic global css', async () => {
-    const microappElement6 = document.createElement('micro-app')
-    microappElement6.setAttribute('name', 'test-app6')
-    microappElement6.setAttribute('url', `http://127.0.0.1:${ports.source_links}/common`)
+    const microAppElement6 = document.createElement('micro-app')
+    microAppElement6.setAttribute('name', 'test-app6')
+    microAppElement6.setAttribute('url', `http://127.0.0.1:${ports.source_links}/common`)
 
-    appCon.appendChild(microappElement6)
-    await new Promise((reslove) => {
-      microappElement6.addEventListener('mounted', () => {
-        reslove(true)
+    appCon.appendChild(microAppElement6)
+    await new Promise((resolve) => {
+      microAppElement6.addEventListener('mounted', () => {
+        resolve(true)
       }, false)
     })
 
-    const microappElement7 = document.createElement('micro-app')
-    microappElement7.setAttribute('name', 'test-app7')
-    microappElement7.setAttribute('url', `http://127.0.0.1:${ports.source_links}/element-config`)
+    const microAppElement7 = document.createElement('micro-app')
+    microAppElement7.setAttribute('name', 'test-app7')
+    microAppElement7.setAttribute('url', `http://127.0.0.1:${ports.source_links}/element-config`)
 
-    appCon.appendChild(microappElement7)
-    await new Promise((reslove) => {
-      microappElement7.addEventListener('mounted', () => {
-        reslove(true)
+    appCon.appendChild(microAppElement7)
+    await new Promise((resolve) => {
+      microAppElement7.addEventListener('mounted', () => {
+        resolve(true)
       }, false)
     })
 
-    const microappElement8 = document.createElement('micro-app')
-    microappElement8.setAttribute('name', 'test-app8')
-    microappElement8.setAttribute('url', `http://127.0.0.1:${ports.source_links}/dynamic`)
+    const microAppElement8 = document.createElement('micro-app')
+    microAppElement8.setAttribute('name', 'test-app8')
+    microAppElement8.setAttribute('url', `http://127.0.0.1:${ports.source_links}/dynamic`)
 
-    appCon.appendChild(microappElement8)
-    await new Promise((reslove) => {
-      microappElement8.addEventListener('mounted', () => {
+    appCon.appendChild(microAppElement8)
+    await new Promise((resolve) => {
+      microAppElement8.addEventListener('mounted', () => {
         setAppName('test-app8')
 
         // 动态创建全局缓存文件
@@ -178,13 +178,13 @@ describe('source links', () => {
         dynamicLink1.setAttribute('href', './test.js')
         document.head.appendChild(dynamicLink3)
 
-        reslove(true)
+        resolve(true)
       }, false)
     })
   })
 
   // 请求css成功后处理时，parent为空
-  test('empty parentNode when fetch css sucess', () => {
+  test('empty parentNode when fetch css success', () => {
     const microAppHead = document.createElement('micro-app-head')
     const info = { placeholder: document.createComment('link comment') } as any
     const app = { scopecss: false } as any

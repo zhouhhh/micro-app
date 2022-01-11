@@ -10,7 +10,7 @@ afterAll(() => {
   releaseConsole()
 })
 
-test('uitls ==> logError & logWarn', () => {
+test('utils ==> logError & logWarn', () => {
   Utils.logError('msg')
   expect(console.error).toHaveBeenLastCalledWith('[micro-app] msg')
   Utils.logError(new Error('123'), 'appName', 111)
@@ -30,7 +30,7 @@ test('call function in micro task', () => {
   })
 })
 
-test('uitls ==> formatAppURL', () => {
+test('utils ==> formatAppURL', () => {
   expect(Utils.formatAppURL('http://localhost:3000/path-a')).toBe('http://localhost:3000/path-a/')
   expect(Utils.formatAppURL('//localhost:3000/path-a/')).toBe('http://localhost:3000/path-a/')
   expect(Utils.formatAppURL('http://localhost:3000/path-a/index.html')).toBe('http://localhost:3000/path-a/index.html')
@@ -41,7 +41,7 @@ test('uitls ==> formatAppURL', () => {
   expect(console.error).toBeCalledWith('[micro-app]', expect.anything())
 })
 
-test('uitls ==> getEffectivePath', () => {
+test('utils ==> getEffectivePath', () => {
   expect(Utils.getEffectivePath('http://abc/index.html')).toBe('http://abc/')
   expect(Utils.getEffectivePath('http://abc/index.node')).toBe('http://abc/')
   expect(Utils.getEffectivePath('http://abc/index.php')).toBe('http://abc/')
@@ -49,29 +49,29 @@ test('uitls ==> getEffectivePath', () => {
   expect(Utils.getEffectivePath('http://abc/?a=1#page1')).toBe('http://abc/')
 })
 
-test('uitls ==> CompletionPath', () => {
+test('utils ==> CompletionPath', () => {
   expect(Utils.CompletionPath('http://abc/img.png', 'http://localhost:3000/')).toBe('http://abc/img.png')
   expect(Utils.CompletionPath('/img.png', 'http://localhost:3000/path/')).toBe('http://localhost:3000/img.png')
 })
 
-test('uitls ==> getLinkFileDir', () => {
+test('utils ==> getLinkFileDir', () => {
   expect(Utils.getLinkFileDir('https://localhost:3000/path/css/filename.css')).toBe('https://localhost:3000/path/css/')
 })
 
-test('uitls ==> promiseStream', async () => {
+test('utils ==> promiseStream', async () => {
   const successFn = jest.fn()
   const errorFn = jest.fn()
   const finallyCb = jest.fn()
   const promiseList: Array<Promise<string> | string> = []
-  promiseList.push(new Promise((reslove) => {
+  promiseList.push(new Promise((resolve) => {
     setTimeout(() => {
-      reslove('1')
+      resolve('1')
     }, 200)
   }))
 
-  promiseList.push(new Promise((reslove) => {
+  promiseList.push(new Promise((resolve) => {
     setTimeout(() => {
-      reslove('2')
+      resolve('2')
     }, 100)
   }))
 
@@ -93,11 +93,11 @@ test('uitls ==> promiseStream', async () => {
     expect(successFn).toHaveBeenCalledWith({ data: '1', index: 0 })
   }, 250)
 
-  await new Promise((reslove) => {
+  await new Promise((resolve) => {
     setTimeout(() => {
       expect(errorFn).toHaveBeenCalledWith({ error: e, index: 2 })
       expect(finallyCb).toHaveBeenCalled()
-      reslove(true)
+      resolve(true)
     }, 350)
   })
 })
@@ -119,10 +119,10 @@ test('polyfill for requestIdleCallback', async () => {
   const mockFn = jest.fn()
   Utils.requestIdleCallback(mockFn)
   expect(mockFn).not.toBeCalled()
-  await new Promise((reslove) => {
+  await new Promise((resolve) => {
     setTimeout(() => {
       expect(mockFn).toBeCalled()
-      reslove(true)
+      resolve(true)
     }, 100)
   })
 
@@ -140,17 +140,17 @@ test('polyfill for requestIdleCallback', async () => {
     expect(param.timeRemaining()).toBeLessThan(51)
   })
   expect(mockFn2).not.toBeCalled()
-  await new Promise((reslove) => {
+  await new Promise((resolve) => {
     setTimeout(() => {
       expect(mockFn2).toBeCalled()
-      reslove(true)
+      resolve(true)
     }, 100)
   })
 })
 
-test('mark the active appname', () => {
-  Utils.setCurrentAppName('appname')
-  expect(Utils.getCurrentAppName()).toBe('appname')
+test('mark the active appName', () => {
+  Utils.setCurrentAppName('appName')
+  expect(Utils.getCurrentAppName()).toBe('appName')
   Utils.removeDomScope()
   expect(Utils.getCurrentAppName()).toBe(null)
 })

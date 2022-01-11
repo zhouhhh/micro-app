@@ -58,10 +58,10 @@ const globalPropertyList: Array<PropertyKey> = ['window', 'self', 'globalThis']
 
 export default class SandBox implements SandBoxInterface {
   static activeCount = 0 // number of active sandbox
+  static releaseSolutionForDomScope: CallableFunction | null = null
   private recordUmdEffect!: CallableFunction
   private rebuildUmdEffect!: CallableFunction
   private releaseEffect!: CallableFunction
-  private releaseSolutionForDomScope!: CallableFunction
   // Scoped global Properties(Properties that can only get and set in microAppWindow, will not escape to rawWindow)
   private scopeProperties: PropertyKey[] = ['webpackJsonp']
   // Properties that can be escape to rawWindow
@@ -96,8 +96,8 @@ export default class SandBox implements SandBoxInterface {
       globalEnv.rawWindow._babelPolyfill && (globalEnv.rawWindow._babelPolyfill = false)
       if (++SandBox.activeCount === 1) {
         effectDocumentEvent()
-        this.releaseSolutionForDomScope = temporarySolutionForDomScope()
         patchElementPrototypeMethods()
+        SandBox.releaseSolutionForDomScope = temporarySolutionForDomScope()
       }
     }
   }
@@ -121,8 +121,9 @@ export default class SandBox implements SandBoxInterface {
 
       if (--SandBox.activeCount === 0) {
         releaseEffectDocumentEvent()
-        this.releaseSolutionForDomScope()
         releasePatches()
+        SandBox.releaseSolutionForDomScope!()
+        SandBox.releaseSolutionForDomScope = null
       }
     }
   }

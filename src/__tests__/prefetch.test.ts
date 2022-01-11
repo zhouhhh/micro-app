@@ -31,13 +31,13 @@ describe('prefetch', () => {
     return releaseAllEffect()
   })
 
-  // sepecial case
+  // special case
   test('coverage branch for prefetch', async () => {
     preFetch(123 as any) // 非法的入参
     preFetch([{ name: 'test-app1', url: 'http://www.micro-app-test.com' }]) // 正常入参
-    await new Promise((reslove) => {
+    await new Promise((resolve) => {
       setTimeout(() => {
-        reslove(true)
+        resolve(true)
       }, 100)
     })
   })
@@ -46,9 +46,9 @@ describe('prefetch', () => {
   test('globalAssets should work normal', async () => {
     expect(globalLinks.get(`http://127.0.0.1:${ports.prefetch}/common/link1.css`)).not.toBeNull()
     expect(globalScripts.get(`http://127.0.0.1:${ports.prefetch}/common/script1.js`)).not.toBeNull()
-    await new Promise((reslove) => {
+    await new Promise((resolve) => {
       setTimeout(() => {
-        reslove(true)
+        resolve(true)
       }, 100)
     })
   })

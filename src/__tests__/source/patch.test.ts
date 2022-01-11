@@ -17,13 +17,13 @@ describe('source patch', () => {
 
   // 子应用中操作元素的行为需要被拦截和处理
   test('element query', async () => {
-    const microappElement1 = document.createElement('micro-app')
-    microappElement1.setAttribute('name', 'test-app1')
-    microappElement1.setAttribute('url', `http://127.0.0.1:${ports.source_patch}/ssr-render/`)
+    const microAppElement1 = document.createElement('micro-app')
+    microAppElement1.setAttribute('name', 'test-app1')
+    microAppElement1.setAttribute('url', `http://127.0.0.1:${ports.source_patch}/ssr-render/`)
 
-    appCon.appendChild(microappElement1)
-    await new Promise((reslove) => {
-      microappElement1.addEventListener('mounted', () => {
+    appCon.appendChild(microAppElement1)
+    await new Promise((resolve) => {
+      microAppElement1.addEventListener('mounted', () => {
         const app1 = appInstanceMap.get('test-app1')!
         const saveContainer = app1.container!
         const microAppBody = app1.container!.querySelector('micro-app-body')!
@@ -162,41 +162,41 @@ describe('source patch', () => {
         /**
          * setAttribute
          */
-        microappElement1.setAttribute('data', 'not object')
+        microAppElement1.setAttribute('data', 'not object')
         expect(console.warn).toHaveBeenLastCalledWith('[micro-app] app test-app1: property data must be an object')
         // 模拟将对象类型转换为字符串
-        microappElement1.setAttribute('data', '[object Object]')
+        microAppElement1.setAttribute('data', '[object Object]')
         // @ts-ignore
-        microappElement1.setAttribute('data', {
+        microAppElement1.setAttribute('data', {
           __selfName: '',
           1: 'number key',
         })
 
         /**
-         * commonElementHander
+         * commonElementHandler
          */
         // 模拟app被卸载
         document.body.appendChild(microSvg)
         app1.container = null
 
         setAppName('test-app1')
-        const commonElementHanderDom1 = document.createElement('div')
-        const commonElementHanderDom2 = document.createElement('div')
-        document.body.appendChild(commonElementHanderDom1)
-        document.body.append(commonElementHanderDom2)
-        expect(microAppBody.contains(commonElementHanderDom1)).toBeFalsy()
-        expect(microAppBody.contains(commonElementHanderDom2)).toBeFalsy()
+        const commonElementHandlerDom1 = document.createElement('div')
+        const commonElementHandlerDom2 = document.createElement('div')
+        document.body.appendChild(commonElementHandlerDom1)
+        document.body.append(commonElementHandlerDom2)
+        expect(microAppBody.contains(commonElementHandlerDom1)).toBeFalsy()
+        expect(microAppBody.contains(commonElementHandlerDom2)).toBeFalsy()
 
         app1.container = saveContainer
-        // appname存在，且插入类型不属于node类型，此时走到兜底处理
+        // appName存在，且插入类型不属于node类型，此时走到兜底处理
         document.body.children[0]?.prepend('123')
 
         // 模拟app不存在
         setAppName('not-exist')
         document.body.prepend('123')
-        const commonElementHanderDom3 = document.createElement('div')
-        commonElementHanderDom3.__MICRO_APP_NAME__ = 'not-exist'
-        document.body.prepend(commonElementHanderDom3)
+        const commonElementHandlerDom3 = document.createElement('div')
+        commonElementHandlerDom3.__MICRO_APP_NAME__ = 'not-exist'
+        document.body.prepend(commonElementHandlerDom3)
 
         // 目标元素不存在
         document.body.prepend(null as any)
@@ -286,21 +286,21 @@ describe('source patch', () => {
         document.head.appendChild(handleNewNodeDom6)
         expect(microAppHead.contains(handleNewNodeDom6)).toBeTruthy()
 
-        reslove(true)
+        resolve(true)
       }, false)
     })
   })
 
   // 分支覆盖 - document 原型方法的 this 指向
   test('coverage of document this', async () => {
-    const microappElement2 = document.createElement('micro-app')
-    microappElement2.setAttribute('name', 'test-app2')
-    microappElement2.setAttribute('url', `http://127.0.0.1:${ports.source_patch}/ssr-render/`)
+    const microAppElement2 = document.createElement('micro-app')
+    microAppElement2.setAttribute('name', 'test-app2')
+    microAppElement2.setAttribute('url', `http://127.0.0.1:${ports.source_patch}/ssr-render/`)
 
-    appCon.appendChild(microappElement2)
+    appCon.appendChild(microAppElement2)
 
-    await new Promise((reslove) => {
-      microappElement2.addEventListener('mounted', () => {
+    await new Promise((resolve) => {
+      microAppElement2.addEventListener('mounted', () => {
         setAppName('test-app2')
         const fakerDoc = new Document()
 
@@ -310,28 +310,28 @@ describe('source patch', () => {
         const querySelectorAll = Document.prototype.querySelectorAll
         querySelectorAll.call(fakerDoc, 'div')
 
-        reslove(true)
+        resolve(true)
       })
     })
   })
 
   // 分支覆盖 - 错误的 querySelector key
   test('coverage of error querySelector key', async () => {
-    const microappElement3 = document.createElement('micro-app')
-    microappElement3.setAttribute('name', 'test-app3')
-    microappElement3.setAttribute('url', `http://127.0.0.1:${ports.source_patch}/ssr-render/`)
+    const microAppElement3 = document.createElement('micro-app')
+    microAppElement3.setAttribute('name', 'test-app3')
+    microAppElement3.setAttribute('url', `http://127.0.0.1:${ports.source_patch}/ssr-render/`)
 
-    appCon.appendChild(microappElement3)
+    appCon.appendChild(microAppElement3)
 
-    await new Promise((reslove) => {
-      microappElement3.addEventListener('mounted', () => {
+    await new Promise((resolve) => {
+      microAppElement3.addEventListener('mounted', () => {
         setAppName('test-app3')
         document.getElementById('sd$fs')
         document.getElementsByClassName('sd$fs')
         document.getElementsByTagName('sd$fs')
         document.getElementsByName('sd$fs')
 
-        reslove(true)
+        resolve(true)
       })
     })
   })

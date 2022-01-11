@@ -20,7 +20,7 @@ function Vue2 () {
   }
 
   function unmount () {
-    console.log('生命周期：unmount -- vue2', document.querySelector('#micro-app-template-style'))
+    console.log('生命周期：unmount -- vue2')
   }
 
   useEffect(() => {
