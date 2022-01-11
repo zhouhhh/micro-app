@@ -79,7 +79,7 @@ export default class SandBox implements SandBoxInterface {
 
   constructor (appName: string, url: string) {
     // get scopeProperties and escapeProperties from plugins
-    this.getSpecialPropertiesFromPlugins(appName)
+    this.getSpecialProperties(appName)
     // create proxyWindow with Proxy(microAppWindow)
     this.proxyWindow = this.createProxyWindow(appName)
     // inject global properties
@@ -152,7 +152,7 @@ export default class SandBox implements SandBoxInterface {
    * get scopeProperties and escapeProperties from plugins
    * @param appName app name
    */
-  private getSpecialPropertiesFromPlugins (appName: string): void {
+  private getSpecialProperties (appName: string): void {
     if (!isPlainObject(microApp.plugins)) return
 
     this.commonActionForSpecialProperties(microApp.plugins!.global)

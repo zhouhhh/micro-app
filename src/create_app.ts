@@ -280,14 +280,16 @@ export default class CreateApp implements AppInterface {
    * @param unmountcb callback of unmount
    */
   private actionsForUnmount (destroy: boolean, unmountcb?: CallableFunction): void {
-    this.sandBox?.stop()
-    if (!getActiveApps().length) {
-      releasePatchSetAttribute()
-    }
     if (destroy) {
       this.actionsForCompletelyDestroy()
     } else if (this.umdMode && (this.container as Element).childElementCount) {
       cloneContainer(this.container as Element, this.source.html as Element, false)
+    }
+
+    // this.container maybe contains micro-app element, stop sandbox should exec after cloneContainer
+    this.sandBox?.stop()
+    if (!getActiveApps().length) {
+      releasePatchSetAttribute()
     }
 
     // dispatch unmount event to base app

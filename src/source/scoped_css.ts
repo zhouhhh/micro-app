@@ -24,7 +24,7 @@ function parseError (msg: string, linkPath?: string): void {
  * Reference resources https://github.com/reworkcss/css
  * CSSParser mainly deals with 3 scenes: styleRule, @, and comment
  * And scopecss deals with 2 scenes: selector & url
- * It can also disable scopecss with inline comments
+ * And can also disable scopecss with inline comments
  */
 class CSSParser {
   private cssText = '' // css content
