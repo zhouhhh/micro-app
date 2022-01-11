@@ -256,7 +256,7 @@ export default defineConfig({
 ```
 <!-- tabs:end -->
 
-#### 2、子应用中element-plus部分弹框样式失效
+<!-- #### 2、子应用中element-plus部分弹框样式失效
 
 **原因：**element-plus中部分组件，如`Select`, `TimePicker`的弹框元素会脱离micro-app的范围逃逸到外层body上，导致样式失效。
 
@@ -264,10 +264,10 @@ export default defineConfig({
 
   1、关闭样式隔离[disablescopecss](/zh-cn/configure?id=disablescopecss)
 
-  2、部分组件，如`Select`提供了`popper-append-to-body`配置，用于设置弹框不插入body，可以避免这个问题。如果组件没有提供类似的功能，则暂且只能通过关闭样式隔离解决。
+  2、部分组件，如`Select`提供了`popper-append-to-body`配置，用于设置弹框不插入body，可以避免这个问题。如果组件没有提供类似的功能，则暂且只能通过关闭样式隔离解决。 -->
 
 
-#### 3、当基座和子应用都是vue-router4，点击浏览器返回按钮页面丢失
+#### 2、当基座和子应用都是vue-router4，点击浏览器返回按钮页面丢失
 
 **原因：**vue-router4没有对路由堆栈state做唯一性标记，导致基座和子应用相互影响，vue-router3及其它框架路由没有类似问题。
 
@@ -296,7 +296,7 @@ if (window.__MICRO_APP_ENVIRONMENT__) {
 }
 ```
 
-#### 4、vue-router在hash模式无法通过base设置基础路由
+#### 3、vue-router在hash模式无法通过base设置基础路由
 
 **解决方式：**创建一个空的路由页面，将其它路由作为它的children，具体设置如下：
 

@@ -1,8 +1,7 @@
 /* eslint-disable promise/param-names */
 import { commonStartEffect, releaseAllEffect, ports, setAppName } from '../common/initial'
 import { appInstanceMap } from '../../create_app'
-import { getCurrentAppName } from '../../libs/utils'
-import microApp, { unmountAllApps } from '../..'
+import microApp from '../..'
 
 describe('sandbox effect', () => {
   let appCon: Element
@@ -126,123 +125,6 @@ describe('sandbox effect', () => {
 
         resolve(true)
       }, false)
-    })
-  })
-
-  // 测试PC端temporarySolutionForDomScope
-  test('test temporarySolutionForDomScope of mouseEvent', async () => {
-    const microAppElement5 = document.createElement('micro-app')
-    microAppElement5.setAttribute('name', 'test-app5')
-    microAppElement5.setAttribute('url', `http://127.0.0.1:${ports.effect}/common/`)
-
-    appCon.appendChild(microAppElement5)
-
-    await new Promise((resolve) => {
-      microAppElement5.addEventListener('mounted', () => {
-        const topLevelElement = microAppElement5.querySelector('#top-level')
-
-        // mousedown 事件
-        const mousedownEvent = new CustomEvent('mousedown')
-        // 分支覆盖之target为空
-        window.dispatchEvent(mousedownEvent)
-        expect(getCurrentAppName()).toBe(null)
-
-        // 定义非micro-app元素的target
-        Object.defineProperty(mousedownEvent, 'target', {
-          get () {
-            return microAppElement5.parentNode
-          },
-          configurable: true,
-        })
-
-        window.dispatchEvent(mousedownEvent)
-        expect(getCurrentAppName()).toBe(null)
-
-        // 定义micro-app范围内的元素为target
-        Object.defineProperty(mousedownEvent, 'target', {
-          get () {
-            return topLevelElement
-          },
-          configurable: true,
-        })
-        window.dispatchEvent(mousedownEvent)
-        expect(getCurrentAppName()).toBe('test-app5')
-
-        // mouseup 事件
-        const mouseupEvent = new CustomEvent('mouseup')
-        window.dispatchEvent(mouseupEvent)
-
-        setTimeout(() => {
-          expect(getCurrentAppName()).toBe(null)
-          // coverage branch
-          window.dispatchEvent(mouseupEvent)
-          resolve(true)
-        }, 10)
-      })
-    })
-  })
-
-  // 测试移动端temporarySolutionForDomScope
-  test('test temporarySolutionForDomScope of touchEvent', async () => {
-    const microAppElement6 = document.createElement('micro-app')
-    microAppElement6.setAttribute('name', 'test-app6')
-    microAppElement6.setAttribute('url', `http://127.0.0.1:${ports.effect}/common/`)
-
-    Object.defineProperty(navigator, 'userAgent', {
-      value: 'Mozilla/5.0 (iPhone; CPU iPhone OS 10_3_1 like Mac OS X) AppleWebKit/603.1.30 (KHTML, like Gecko) Version/10.0 Mobile/14E304 Safari/602.1',
-      writable: true,
-      configurable: true,
-    })
-
-    // 卸载所有应用
-    await unmountAllApps({
-      clearAliveState: true,
-    })
-
-    appCon.appendChild(microAppElement6)
-
-    await new Promise((resolve) => {
-      microAppElement6.addEventListener('mounted', () => {
-        const topLevelElement = microAppElement6.querySelector('#top-level')
-
-        // touchstart 事件
-        const touchstartEvent = new CustomEvent('touchstart')
-        // 分支覆盖之target为空
-        window.dispatchEvent(touchstartEvent)
-        expect(getCurrentAppName()).toBe(null)
-
-        // 定义非micro-app元素的target
-        Object.defineProperty(touchstartEvent, 'target', {
-          get () {
-            return microAppElement6.parentNode
-          },
-          configurable: true,
-        })
-
-        window.dispatchEvent(touchstartEvent)
-        expect(getCurrentAppName()).toBe(null)
-
-        // 定义micro-app范围内的元素为target
-        Object.defineProperty(touchstartEvent, 'target', {
-          get () {
-            return topLevelElement
-          },
-          configurable: true,
-        })
-        window.dispatchEvent(touchstartEvent)
-        expect(getCurrentAppName()).toBe('test-app6')
-
-        // touchend 事件
-        const touchendEvent = new CustomEvent('touchend')
-        window.dispatchEvent(touchendEvent)
-
-        setTimeout(() => {
-          expect(getCurrentAppName()).toBe(null)
-          // coverage branch
-          window.dispatchEvent(touchendEvent)
-          resolve(true)
-        }, 10)
-      })
     })
   })
 })

@@ -21,7 +21,6 @@ import bindFunctionToRawWindow from './bind_function'
 import effect, {
   effectDocumentEvent,
   releaseEffectDocumentEvent,
-  temporarySolutionForDomScope,
 } from './effect'
 import {
   patchElementPrototypeMethods,
@@ -58,7 +57,6 @@ const globalPropertyList: Array<PropertyKey> = ['window', 'self', 'globalThis']
 
 export default class SandBox implements SandBoxInterface {
   static activeCount = 0 // number of active sandbox
-  static releaseSolutionForDomScope: CallableFunction | null = null
   private recordUmdEffect!: CallableFunction
   private rebuildUmdEffect!: CallableFunction
   private releaseEffect!: CallableFunction
@@ -97,7 +95,6 @@ export default class SandBox implements SandBoxInterface {
       if (++SandBox.activeCount === 1) {
         effectDocumentEvent()
         patchElementPrototypeMethods()
-        SandBox.releaseSolutionForDomScope = temporarySolutionForDomScope()
       }
     }
   }
@@ -122,8 +119,6 @@ export default class SandBox implements SandBoxInterface {
       if (--SandBox.activeCount === 0) {
         releaseEffectDocumentEvent()
         releasePatches()
-        SandBox.releaseSolutionForDomScope!()
-        SandBox.releaseSolutionForDomScope = null
       }
     }
   }

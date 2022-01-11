@@ -6,10 +6,8 @@ import {
   isFunction,
   isBoundFunction,
   rawDefineProperty,
-  isMobile,
 } from '../libs/utils'
 import { appInstanceMap } from '../create_app'
-import { getActiveApps } from '../micro_app'
 import globalEnv from '../libs/global_env'
 
 type MicroEventListener = EventListenerOrEventListenerObject & Record<string, any>
@@ -340,48 +338,5 @@ export default function effect (microAppWindow: microAppWindowType): Record<stri
     recordUmdEffect,
     rebuildUmdEffect,
     releaseEffect,
-  }
-}
-
-/**
- * scope dom if eventTarget is childNode of micro-app
- * this is temporary solution
- * attention:
- * 1、if another child app is react@16 or less and use umd mode, this method will not work
- * 2、the callback of the main app called from the sub app are scope dom trigger by mouse/touch event
- */
-export function temporarySolutionForDomScope (): () => void {
-  const openEventName = isMobile() ? 'touchstart' : 'mousedown'
-  const closeEventName = isMobile() ? 'touchend' : 'mouseup'
-
-  function handleMousedown (e: Event) {
-    const targetNode = e.target
-    if (targetNode instanceof Node) {
-      const activeApps = getActiveApps(true)
-      for (const appName of activeApps) {
-        const app = appInstanceMap.get(appName)!
-        if (app.container!.contains(targetNode)) {
-          return setCurrentAppName(appName)
-        }
-      }
-
-      setCurrentAppName(null)
-    }
-  }
-
-  function handleMouseup () {
-    if (getCurrentAppName()) {
-      setTimeout(() => {
-        setCurrentAppName(null)
-      })
-    }
-  }
-
-  window.addEventListener(openEventName, handleMousedown)
-  window.addEventListener(closeEventName, handleMouseup)
-
-  return () => {
-    window.removeEventListener(openEventName, handleMousedown)
-    window.removeEventListener(closeEventName, handleMouseup)
   }
 }
