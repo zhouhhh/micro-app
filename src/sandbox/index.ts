@@ -60,8 +60,11 @@ export default class SandBox implements SandBoxInterface {
   private recordUmdEffect!: CallableFunction
   private rebuildUmdEffect!: CallableFunction
   private releaseEffect!: CallableFunction
-  // Scoped global Properties(Properties that can only get and set in microAppWindow, will not escape to rawWindow)
-  private scopeProperties: PropertyKey[] = ['webpackJsonp']
+  /**
+   * Scoped global Properties(Properties that can only get and set in microAppWindow, will not escape to rawWindow)
+   * https://github.com/micro-zoe/micro-app/issues/234
+   */
+  private scopeProperties: PropertyKey[] = ['webpackJsonp', 'Vue']
   // Properties that can be escape to rawWindow
   private escapeProperties: PropertyKey[] = []
   // Properties newly added to microAppWindow
@@ -179,6 +182,7 @@ export default class SandBox implements SandBoxInterface {
     return new Proxy(this.microAppWindow, {
       get: (target: microAppWindowType, key: PropertyKey): unknown => {
         throttleDeferForSetAppName(appName)
+
         if (
           Reflect.has(target, key) ||
           (isString(key) && /^__MICRO_APP_/.test(key)) ||

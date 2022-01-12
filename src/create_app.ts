@@ -48,6 +48,7 @@ export default class CreateApp implements AppInterface {
   private libraryName: string | null = null
   umdMode = false
   isPrefetch = false
+  prefetchResolve: (() => void) | null = null
   name: string
   url: string
   ssrUrl: string
@@ -99,11 +100,13 @@ export default class CreateApp implements AppInterface {
     if (++this.loadSourceLevel === 2) {
       this.source.html = html
 
-      if (this.isPrefetch || appStates.UNMOUNT === this.state) return
-
-      this.state = appStates.LOAD_SOURCE_FINISHED
-
-      this.mount()
+      if (this.isPrefetch) {
+        this.prefetchResolve?.()
+        this.prefetchResolve = null
+      } else if (appStates.UNMOUNT !== this.state) {
+        this.state = appStates.LOAD_SOURCE_FINISHED
+        this.mount()
+      }
     }
   }
 
@@ -113,6 +116,11 @@ export default class CreateApp implements AppInterface {
    */
   onLoadError (e: Error): void {
     this.loadSourceLevel = -1
+    if (this.prefetchResolve) {
+      this.prefetchResolve()
+      this.prefetchResolve = null
+    }
+
     if (appStates.UNMOUNT !== this.state) {
       this.onerror(e)
       this.state = appStates.LOAD_SOURCE_ERROR

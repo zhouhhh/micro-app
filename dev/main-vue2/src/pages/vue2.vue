@@ -5,6 +5,7 @@
       name='vue2'
       url='http://localhost:4001/micro-app/vue2'
       :data='data'
+      inline
     >
     <!-- destroy inline scopecss  baseRoute='/vue2' -->
     </micro-app>

@@ -42,6 +42,7 @@ declare module '@micro-app/types' {
   // app instance
   interface AppInterface {
     isPrefetch: boolean // whether prefetch app, default is false
+    prefetchResolve: (() => void) | null // prefetch callback
     name: string // app name
     url: string // app url
     ssrUrl: string // html path in ssr mode

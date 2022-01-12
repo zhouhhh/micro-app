@@ -17,24 +17,6 @@ import { globalLinks } from './source/links'
 import { globalScripts } from './source/scripts'
 import microApp from './micro_app'
 
-function filterPreFetchTarget<T extends prefetchParam> (apps: T[]): T[] {
-  const validApps: T[] = []
-
-  if (isArray(apps)) {
-    apps.forEach((item) => {
-      if (isPlainObject(item)) {
-        item.name = formatAppName(item.name)
-        item.url = formatAppURL(item.url, item.name)
-        if (item.name && item.url && !appInstanceMap.has(item.name)) {
-          validApps.push(item)
-        }
-      }
-    })
-  }
-
-  return validApps
-}
-
 /**
  * preFetch([
  *  {
@@ -57,16 +39,36 @@ export default function preFetch (apps: prefetchParamList): void {
   requestIdleCallback(() => {
     isFunction(apps) && (apps = (apps as Function)())
 
-    filterPreFetchTarget(apps as prefetchParam[]).forEach((item) => {
-      const app = new CreateApp({
-        name: item.name,
-        url: item.url,
-        scopecss: !(item.disableScopecss ?? microApp.disableScopecss),
-        useSandbox: !(item.disableSandbox ?? microApp.disableSandbox),
-      })
+    if (isArray(apps)) {
+      apps.reduce((pre, next) => pre.then(() => preFetchInSerial(next)), Promise.resolve())
+    }
+  })
+}
 
-      app.isPrefetch = true
-      appInstanceMap.set(item.name, app)
+// sequential preload app
+function preFetchInSerial (prefetchApp: prefetchParam): Promise<void> {
+  return new Promise((resolve) => {
+    requestIdleCallback(() => {
+      if (isPlainObject(prefetchApp)) {
+        prefetchApp.name = formatAppName(prefetchApp.name)
+        prefetchApp.url = formatAppURL(prefetchApp.url, prefetchApp.name)
+        if (prefetchApp.name && prefetchApp.url && !appInstanceMap.has(prefetchApp.name)) {
+          const app = new CreateApp({
+            name: prefetchApp.name,
+            url: prefetchApp.url,
+            scopecss: !(prefetchApp.disableScopecss ?? microApp.disableScopecss),
+            useSandbox: !(prefetchApp.disableSandbox ?? microApp.disableSandbox),
+          })
+
+          app.isPrefetch = true
+          app.prefetchResolve = resolve
+          appInstanceMap.set(prefetchApp.name, app)
+        } else {
+          resolve()
+        }
+      } else {
+        resolve()
+      }
     })
   })
 }

@@ -123,7 +123,7 @@ export function fetchScriptsFromHtml (
       const globalScriptText = globalScripts.get(url)
       if (globalScriptText) {
         info.code = globalScriptText
-      } else if (!info.defer && !info.async) {
+      } else if ((!info.defer && !info.async) || app.isPrefetch) {
         fetchScriptPromise.push(fetchSource(url, app.name))
         fetchScriptPromiseInfo.push([url, info])
       }

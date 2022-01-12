@@ -275,7 +275,7 @@ export const requestIdleCallback = globalThis.requestIdleCallback ||
           return Math.max(0, 50 - (Date.now() - lastTime))
         },
       })
-    }, 1)
+    }, 50)
   }
 
 /**

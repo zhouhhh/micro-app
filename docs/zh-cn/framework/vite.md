@@ -82,7 +82,7 @@ createApp(App).mount('#my-vite-app')
 import { createRouter, createWebHashHistory } from 'vue-router'
 
 const router = createRouter({
-  history: createWebHashHistory(), // createWebHashHistory不传参
+  history: createWebHashHistory(),
   routes,
 })
 ```
