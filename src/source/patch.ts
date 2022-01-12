@@ -461,7 +461,7 @@ export function rejectMicroAppStyle (): void {
     hasRejectMicroAppStyle = true
     const style = pureCreateElement('style')
     globalEnv.rawSetAttribute.call(style, 'type', 'text/css')
-    style.textContent = `\n${microApp.tagName}, micro-app-body { display: block; } \nmicro-app-head { display: none; }`
+    style.textContent = `\n${microApp.tagName}, micro-app-body { display: block; position: relative; } \nmicro-app-head { display: none; }`
     globalEnv.rawDocument.head.appendChild(style)
   }
 }
