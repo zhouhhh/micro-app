@@ -49,7 +49,7 @@ export default function preFetch (apps: prefetchParamList): void {
 function preFetchInSerial (prefetchApp: prefetchParam): Promise<void> {
   return new Promise((resolve) => {
     requestIdleCallback(() => {
-      if (isPlainObject(prefetchApp)) {
+      if (isPlainObject(prefetchApp) && navigator.onLine) {
         prefetchApp.name = formatAppName(prefetchApp.name)
         prefetchApp.url = formatAppURL(prefetchApp.url, prefetchApp.name)
         if (prefetchApp.name && prefetchApp.url && !appInstanceMap.has(prefetchApp.name)) {
