@@ -259,6 +259,28 @@ export function patchElementPrototypeMethods (): void {
     this.__MICRO_APP_NAME__ && (clonedNode.__MICRO_APP_NAME__ = this.__MICRO_APP_NAME__)
     return clonedNode
   }
+
+  // patch getBoundingClientRect
+  Element.prototype.getBoundingClientRect = function getBoundingClientRect () {
+    const appName = getCurrentAppName()
+    const rawRect: DOMRect = globalEnv.rawGetBoundingClientRect.call(this)
+    if (!appName) {
+      return rawRect
+    }
+    const app = appInstanceMap.get(appName)
+    if (!app?.container) {
+      return rawRect
+    }
+    const appBody = app.container.querySelector('micro-app-body')
+    const appBodyRect: DOMRect = globalEnv.rawGetBoundingClientRect.call(appBody)
+    const computedRect: DOMRect = new DOMRect(
+      rawRect.x - appBodyRect.x,
+      rawRect.y - appBodyRect.y,
+      rawRect.width,
+      rawRect.height,
+    )
+    return computedRect
+  }
 }
 
 /**
