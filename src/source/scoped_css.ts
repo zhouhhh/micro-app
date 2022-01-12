@@ -107,7 +107,7 @@ class CSSParser {
   // match one styleDeclaration at a time
   private styleDeclaration (): boolean | void {
     // css property
-    if (!this.commonMatch(/^(\*?[-#\/\*\\\w]+(\[[0-9a-z_-]+\])?)\s*/)) return false
+    if (!this.commonMatch(/^(\*?[-#+\/\*\\\w]+(\[[0-9a-z_-]+\])?)\s*/)) return false
 
     // match :
     if (!this.commonMatch(/^:\s*/)) return parseError("property missing ':'", this.linkPath)

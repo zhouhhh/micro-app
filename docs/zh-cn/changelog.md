@@ -15,6 +15,7 @@
 - **Bug Fix**
 
   - 🐞 修复了element-plus部分组件逃离元素隔离的问题, issue [#223](https://github.com/micro-zoe/micro-app/issues/223)。
+  - 🐞 修复了在使用IE6、7 CSSHack时样式解析失败的问题, issue [#232](https://github.com/micro-zoe/micro-app/issues/223)。
 
 - **Update**
 

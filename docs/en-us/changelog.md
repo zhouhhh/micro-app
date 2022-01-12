@@ -14,7 +14,8 @@
 
 - **Bug Fix**
 
-  - 🐞 Fix bug of element-plus dom escape from micro-app element, issue [#157](https://github.com/micro-zoe/micro-app/issues/157)、[#121](https://github.com/micro-zoe/micro-app/issues/121).
+  - 🐞 Fix bug of element-plus dom escape from micro-app element, issue [#157](https://github.com/micro-zoe/micro-app/issues/157), [#121](https://github.com/micro-zoe/micro-app/issues/121).
+  - 🐞 Fix bug of parser style error when using IE6 and 7 csshack, issue [#232](https://github.com/micro-zoe/micro-app/issues/223).
 
 - **Update**
 
