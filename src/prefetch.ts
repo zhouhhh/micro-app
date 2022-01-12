@@ -78,43 +78,28 @@ export default function preFetch (apps: prefetchParamList): void {
 export function getGlobalAssets (assets: globalAssetsType): void {
   if (isPlainObject(assets)) {
     requestIdleCallback(() => {
-      if (isArray(assets.js)) {
-        const effectiveJs = assets.js!.filter((path) => isString(path) && path.includes('.js') && !globalScripts.has(path))
-
-        const fetchJSPromise: Array<Promise<string>> = []
-        effectiveJs.forEach((path) => {
-          fetchJSPromise.push(fetchSource(path))
-        })
-
-        // fetch js with stream
-        promiseStream<string>(fetchJSPromise, (res: {data: string, index: number}) => {
-          const path = effectiveJs[res.index]
-          if (!globalScripts.has(path)) {
-            globalScripts.set(path, res.data)
-          }
-        }, (err: {error: Error, index: number}) => {
-          logError(err)
-        })
-      }
-
-      if (isArray(assets.css)) {
-        const effectiveCss = assets.css!.filter((path) => isString(path) && path.includes('.css') && !globalLinks.has(path))
-
-        const fetchCssPromise: Array<Promise<string>> = []
-        effectiveCss.forEach((path) => {
-          fetchCssPromise.push(fetchSource(path))
-        })
-
-        // fetch css with stream
-        promiseStream<string>(fetchCssPromise, (res: {data: string, index: number}) => {
-          const path = effectiveCss[res.index]
-          if (!globalLinks.has(path)) {
-            globalLinks.set(path, res.data)
-          }
-        }, (err: {error: Error, index: number}) => {
-          logError(err)
-        })
-      }
+      fetchGlobalResources(assets.js, 'js', globalScripts)
+      fetchGlobalResources(assets.css, 'css', globalLinks)
     })
   }
+}
+
+function fetchGlobalResources (resources:string[] | undefined, suffix:string, cache:Map<string, string>) {
+  if (!isArray(resources)) {
+    return
+  }
+
+  const effectiveResource = resources!.filter((path) => isString(path) && path.includes(`.${suffix}`) && !cache.has(path))
+
+  const fetchResourcePromise = effectiveResource.map((path) => fetchSource(path))
+
+  // fetch resource with stream
+  promiseStream<string>(fetchResourcePromise, (res: {data: string, index: number}) => {
+    const path = effectiveResource[res.index]
+    if (!cache.has(path)) {
+      cache.set(path, res.data)
+    }
+  }, (err: {error: Error, index: number}) => {
+    logError(err)
+  })
 }
