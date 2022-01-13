@@ -152,7 +152,7 @@ For more commands, see [DEVELP](https://github.com/micro-zoe/micro-app/blob/mast
 </details>
 
 # Contributors
-<a href="https://github.com/micro-zoe/micro-app/graphs/contributors"><img src="https://micro-zoe.com/contributors.svg" /></a>
+<a href="https://github.com/micro-zoe/micro-app/graphs/contributors"><img src="https://micro-zoe.com/contributors.svg?t=1" /></a>
 <!-- opencollective is inaccurate  -->
 <!-- <a href="https://github.com/micro-zoe/micro-app/graphs/contributors"><img src="https://opencollective.com/micro-app/contributors.svg?width=890&button=false" /></a> -->
 
