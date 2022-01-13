@@ -87,21 +87,19 @@ export function getGlobalAssets (assets: globalAssetsType): void {
 }
 
 function fetchGlobalResources (resources:string[] | undefined, suffix:string, cache:Map<string, string>) {
-  if (!isArray(resources)) {
-    return
+  if (isArray(resources)) {
+    const effectiveResource = resources!.filter((path) => isString(path) && path.includes(`.${suffix}`) && !cache.has(path))
+
+    const fetchResourcePromise = effectiveResource.map((path) => fetchSource(path))
+
+    // fetch resource with stream
+    promiseStream<string>(fetchResourcePromise, (res: {data: string, index: number}) => {
+      const path = effectiveResource[res.index]
+      if (!cache.has(path)) {
+        cache.set(path, res.data)
+      }
+    }, (err: {error: Error, index: number}) => {
+      logError(err)
+    })
   }
-
-  const effectiveResource = resources!.filter((path) => isString(path) && path.includes(`.${suffix}`) && !cache.has(path))
-
-  const fetchResourcePromise = effectiveResource.map((path) => fetchSource(path))
-
-  // fetch resource with stream
-  promiseStream<string>(fetchResourcePromise, (res: {data: string, index: number}) => {
-    const path = effectiveResource[res.index]
-    if (!cache.has(path)) {
-      cache.set(path, res.data)
-    }
-  }, (err: {error: Error, index: number}) => {
-    logError(err)
-  })
 }

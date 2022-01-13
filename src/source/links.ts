@@ -85,11 +85,10 @@ export function fetchLinksFromHtml (
   microAppHead: Element,
 ): void {
   const linkEntries: Array<[string, sourceLinkInfo]> = Array.from(app.source.links.entries())
-  const fetchLinkPromise: Array<Promise<string>|string> = []
-  for (const [url] of linkEntries) {
-    const globalLinkCode = globalLinks.get(url)
-    globalLinkCode ? fetchLinkPromise.push(globalLinkCode) : fetchLinkPromise.push(fetchSource(url, app.name))
-  }
+
+  const fetchLinkPromise: Array<Promise<string>|string> = linkEntries.map(([url]) => {
+    return globalLinks.has(url) ? globalLinks.get(url)! : fetchSource(url, app.name)
+  })
 
   promiseStream<string>(fetchLinkPromise, (res: {data: string, index: number}) => {
     fetchLinkSuccess(
