@@ -261,26 +261,27 @@ export function patchElementPrototypeMethods (): void {
   }
 
   // patch getBoundingClientRect
-  Element.prototype.getBoundingClientRect = function getBoundingClientRect () {
-    const appName = getCurrentAppName()
-    const rawRect: DOMRect = globalEnv.rawGetBoundingClientRect.call(this)
-    if (!appName) {
-      return rawRect
-    }
-    const app = appInstanceMap.get(appName)
-    if (!app?.container) {
-      return rawRect
-    }
-    const appBody = app.container.querySelector('micro-app-body')
-    const appBodyRect: DOMRect = globalEnv.rawGetBoundingClientRect.call(appBody)
-    const computedRect: DOMRect = new DOMRect(
-      rawRect.x - appBodyRect.x,
-      rawRect.y - appBodyRect.y,
-      rawRect.width,
-      rawRect.height,
-    )
-    return computedRect
-  }
+  // TODO: scenes test
+  // Element.prototype.getBoundingClientRect = function getBoundingClientRect () {
+  //   const rawRect: DOMRect = globalEnv.rawGetBoundingClientRect.call(this)
+  //   if (this.__MICRO_APP_NAME__) {
+  //     const app = appInstanceMap.get(this.__MICRO_APP_NAME__)
+  //     if (!app?.container) {
+  //       return rawRect
+  //     }
+  //     const appBody = app.container.querySelector('micro-app-body')
+  //     const appBodyRect: DOMRect = globalEnv.rawGetBoundingClientRect.call(appBody)
+  //     const computedRect: DOMRect = new DOMRect(
+  //       rawRect.x - appBodyRect.x,
+  //       rawRect.y - appBodyRect.y,
+  //       rawRect.width,
+  //       rawRect.height,
+  //     )
+  //     return computedRect
+  //   }
+
+  //   return rawRect
+  // }
 }
 
 /**
@@ -474,6 +475,7 @@ export function releasePatches (): void {
   Element.prototype.append = globalEnv.rawAppend
   Element.prototype.prepend = globalEnv.rawPrepend
   Element.prototype.cloneNode = globalEnv.rawCloneNode
+  // Element.prototype.getBoundingClientRect = globalEnv.rawGetBoundingClientRect
 }
 
 // Set the style of micro-app-head and micro-app-body
