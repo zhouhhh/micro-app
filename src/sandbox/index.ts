@@ -15,6 +15,7 @@ import {
   rawDefineProperties,
   isFunction,
   rawHasOwnProperty,
+  pureCreateElement,
 } from '../libs/utils'
 import microApp from '../micro_app'
 import bindFunctionToRawWindow from './bind_function'
@@ -289,10 +290,12 @@ export default class SandBox implements SandBoxInterface {
     microAppWindow.__MICRO_APP_NAME__ = appName
     microAppWindow.__MICRO_APP_PUBLIC_PATH__ = getEffectivePath(url)
     microAppWindow.__MICRO_APP_WINDOW__ = microAppWindow
-    microAppWindow.microApp = new EventCenterForMicroApp(appName)
+    microAppWindow.microApp = Object.assign(new EventCenterForMicroApp(appName), {
+      removeDomScope,
+      pureCreateElement,
+    })
     microAppWindow.rawWindow = globalEnv.rawWindow
     microAppWindow.rawDocument = globalEnv.rawDocument
-    microAppWindow.removeDomScope = removeDomScope
     microAppWindow.hasOwnProperty = (key: PropertyKey) => rawHasOwnProperty.call(microAppWindow, key) || rawHasOwnProperty.call(globalEnv.rawWindow, key)
     this.setMappingPropertiesWithRawDescriptor(microAppWindow)
     this.setHijackProperties(microAppWindow, appName)

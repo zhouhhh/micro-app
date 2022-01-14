@@ -8,6 +8,24 @@
 
 ---
 
+### 0.8.2
+
+`2021-01-14`
+
+- **New**
+
+  - 🆕 Add`pureCreateElement`method to microApp, used to create unbound pure elements.
+  - 🆕 Add`removeDomScope`method to microApp, used to clear dom scope.
+
+- **Bug Fix**
+
+  - 🐞 Fixed the conflict of vue, when the base app load Vue through remote link, issue [#234](https://github.com/micro-zoe/micro-app/issues/234)。
+
+- **Update**
+
+  - 🚀 Optimized code and logic of prefetch, reduce the impact on the base app.
+
+
 ### 0.8.1
 
 `2021-01-12`

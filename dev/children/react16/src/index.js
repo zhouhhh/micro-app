@@ -241,3 +241,18 @@ window.escapeKey3 = 'escapeKey3'
 window.escapeKey4 = 'escapeKey4'
 window.escapeKey5 = 'escapeKey5' // should be undefined in rawWindow
 window.escapeKey6 = 'escapeKey6' // should be undefined in rawWindow
+
+
+// ----------------------分割线-- pureCreateElement & removeDomScope --------------------- //
+if (window.__MICRO_APP_ENVIRONMENT__) {
+  const unBoundDom1 = window.microApp.pureCreateElement('div')
+  unBoundDom1.innerHTML = 'unBoundDom1'
+  document.body.appendChild(unBoundDom1)
+
+  const createElement = document.createElement
+  const rawDocument = window.rawDocument
+  window.microApp.removeDomScope()
+  const unBoundDom2 = createElement.call(rawDocument, 'div')
+  unBoundDom2.innerHTML = 'unBoundDom2'
+  document.body.appendChild(unBoundDom2)
+}

@@ -25,7 +25,7 @@ function dataListener (data) {
  * 绑定监听函数，监听函数只有在数据变化时才会触发
  * dataListener: 绑定函数
  * autoTrigger: 在初次绑定监听函数时如果有缓存数据，是否需要主动触发一次，默认为false
- * 重要说明: 因为子应用是异步渲染的，而基座发送数据是同步的，
+ * !!!重要说明: 因为子应用是异步渲染的，而基座发送数据是同步的，
  * 如果在子应用渲染结束前基座应用发送数据，则在绑定监听函数前数据已经发送，在初始化后不会触发绑定函数，
  * 但这个数据会放入缓存中，此时可以设置autoTrigger为true主动触发一次监听函数来获取数据。
  */
@@ -109,6 +109,8 @@ microApp.setData('my-app', {type: '新的数据'})
 
 #### 方式1：直接获取数据
 ```js
+import microApp from '@micro-zoe/micro-app'
+
 const childData = microApp.getData(appName) // 返回子应用的data数据
 ```
 

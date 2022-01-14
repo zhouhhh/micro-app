@@ -13,12 +13,12 @@ microApp.start({
   plugins: {
     // 全局插件，作用于所有子应用的js文件
     global?: Array<{
-      // 强隔离的全局变量(默认情况下子应用无法找到的全局变量会兜底到基座应用中，scopeProperties可以禁止这种情况)
-      scopeProperties?: string[], // 可选
-      // 可以逃逸到外部的全局变量(escapeProperties中的变量会同时赋值到子应用和外部真实的window上)
-      escapeProperties?: string[], // 可选
-      // 传递给loader的配置项
-      options?: any, // 可选
+      // 可选，强隔离的全局变量(默认情况下子应用无法找到的全局变量会兜底到基座应用中，scopeProperties可以禁止这种情况)
+      scopeProperties?: string[],
+      // 可选，可以逃逸到外部的全局变量(escapeProperties中的变量会同时赋值到子应用和外部真实的window上)
+      escapeProperties?: string[],
+      // 可选，传递给loader的配置项
+      options?: any,
       // 必填，js处理函数，必须返回code值
       loader?: (code: string, url: string, options: any) => code 
     }>
@@ -27,10 +27,13 @@ microApp.start({
     modules?: {
       // appName为应用的名称，这些插件只会作用于指定的应用
       [appName: string]: Array<{
-        scopeProperties?: string[], // 可选
-        escapeProperties?: string[], // 可选
-        options?: any, // 可选
-        // 必填
+        // 可选，强隔离的全局变量(默认情况下子应用无法找到的全局变量会兜底到基座应用中，scopeProperties可以禁止这种情况)
+        scopeProperties?: string[],
+        // 可选，可以逃逸到外部的全局变量(escapeProperties中的变量会同时赋值到子应用和外部真实的window上)
+        escapeProperties?: string[],
+        // 可选，传递给loader的配置项
+        options?: any,
+        // 必填，js处理函数，必须返回code值
         loader?: (code: string, url: string, options: any) => code 
       }>
     }
