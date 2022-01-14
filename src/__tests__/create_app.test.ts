@@ -458,6 +458,26 @@ describe('create_app', () => {
     })
   })
 
+  // 分支覆盖之prefetchResolve为空
+  test('coverage: undefined prefetchResolve', async () => {
+    const microAppElement20 = document.createElement('micro-app')
+    microAppElement20.setAttribute('name', 'test-app20')
+    microAppElement20.setAttribute('url', `http://127.0.0.1:${ports.create_app}/common`)
+
+    appCon.appendChild(microAppElement20)
+    appInstanceMap.get('test-app20')!.isPrefetch = true
+
+    const mountedHandler = jest.fn()
+    microAppElement20.addEventListener('mounted', mountedHandler)
+
+    await new Promise((resolve) => {
+      setTimeout(() => {
+        expect(mountedHandler).not.toBeCalled()
+        resolve(true)
+      }, 100)
+    })
+  })
+
   // 测试getActiveApps方法
   test('test getActiveApps method', async () => {
     // 因为上面已经执行unmountAllApps卸载了所有应用，所以这里长度为0
