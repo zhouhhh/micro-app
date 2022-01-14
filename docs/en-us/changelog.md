@@ -14,8 +14,8 @@
 
 - **New**
 
-  - 🆕 Add`pureCreateElement`method to microApp, used to create unbound pure elements.
-  - 🆕 Add`removeDomScope`method to microApp, used to clear dom scope.
+  - 🆕 Add `pureCreateElement` method to microApp, used to create unbound pure elements.
+  - 🆕 Add `removeDomScope` method to microApp, used to clear dom scope.
 
 - **Bug Fix**
 
