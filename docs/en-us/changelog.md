@@ -8,6 +8,15 @@
 
 ---
 
+### 0.8.3
+
+`2021-01-20`
+
+- **Bug Fix**
+
+  - 🐞 Fixed the Error of parsing style when importing `SVG` through `background image` in CSS.
+
+
 ### 0.8.2
 
 `2021-01-14`

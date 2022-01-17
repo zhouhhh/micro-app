@@ -113,7 +113,8 @@ class CSSParser {
     if (!this.commonMatch(/^:\s*/)) return parseError("property missing ':'", this.linkPath)
 
     // match css value
-    const r = this.commonMatch(/^((?:'(?:\\'|.)*?'|"(?:\\"|.)*?"|\([^\)]*?\)|[^};])+)/, true)
+    // BUG Fix: background-image:url("data:image/svg+xml...
+    const r = this.commonMatch(/^((?:'(?:\\'|[^}])*?'|"(?:\\"|[^}])*?"|\([^\)]*?\)|[^};])+)/, true)
 
     let cssValue = r ? r[0] : ''
 
