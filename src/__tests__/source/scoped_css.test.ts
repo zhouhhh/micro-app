@@ -375,6 +375,12 @@ describe('source scoped_css', () => {
         document.head.appendChild(dynamicStyle5)
         expect(dynamicStyle5.textContent).toBe('micro-app[name=test-app11] div{/* scopecss-disable-next-line */background: url(/test.png);}micro-app[name=test-app11] span{}micro-app[name=test-app11] header{}')
 
+        // coverage branch of slash in declarations
+        const dynamicStyle6 = document.createElement('style')
+        dynamicStyle6.textContent = '.test1{color: re/d;}'
+        document.head.appendChild(dynamicStyle6)
+        expect(dynamicStyle6.textContent).toBe('micro-app[name=test-app11] .test1{color: re/d;}')
+
         resolve(true)
       }, false)
     })

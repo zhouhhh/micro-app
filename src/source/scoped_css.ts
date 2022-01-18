@@ -6,11 +6,10 @@ import microApp from '../micro_app'
 // common reg
 const rootSelectorREG = /(^|\s+)(html|:root)(?=[\s>~[.#:]+|$)/
 const bodySelectorREG = /(^|\s+)((html[\s>~]+body)|body)(?=[\s>~[.#:]+|$)/
-const cssUrlREG = /url\(["']?([^)"']+)["']?\)/gm
 
 type parseErrorType = Error & { reason: string, filename?: string }
 function parseError (msg: string, linkPath?: string): void {
-  msg = linkPath ? `${linkPath}:${msg}` : msg
+  msg = linkPath ? `${linkPath} ${msg}` : msg
   const err = new Error(msg) as parseErrorType
   err.reason = msg
   if (linkPath) {
@@ -93,59 +92,51 @@ class CSSParser {
   private styleDeclarations (): boolean | void {
     if (!this.matchOpenBrace()) return parseError("Declaration missing '{'", this.linkPath)
 
-    this.matchComments()
-
-    while (this.styleDeclaration()) {
-      this.matchComments()
-    }
+    this.matchAllDeclarations()
 
     if (!this.matchCloseBrace()) return parseError("Declaration missing '}'", this.linkPath)
 
     return true
   }
 
-  // match one styleDeclaration at a time
-  private styleDeclaration (): boolean | void {
-    // css property
-    if (!this.commonMatch(/^(\*?[-#+\/\*\\\w]+(\[[0-9a-z_-]+\])?)\s*/)) return false
+  private matchAllDeclarations (): void {
+    let cssValue = (this.commonMatch(/^(?:url\(["']?(?:[^)"'}]+)["']?\)|[^}/])*/, true) as RegExpExecArray)[0]
 
-    // match :
-    if (!this.commonMatch(/^:\s*/)) return parseError("property missing ':'", this.linkPath)
+    if (cssValue) {
+      if (
+        !this.scopecssDisableNextLine &&
+        (!this.scopecssDisable || this.scopecssDisableSelectors.length)
+      ) {
+        cssValue = cssValue.replace(/url\(["']?([^)"']+)["']?\)/gm, (all, $1) => {
+          if (/^((data|blob):|#)/.test($1) || /^(https?:)?\/\//.test($1)) {
+            return all
+          }
 
-    // match css value
-    // BUG Fix: background-image:url("data:image/svg+xml...
-    const r = this.commonMatch(/^((?:'(?:\\'|[^}])*?'|"(?:\\"|[^}])*?"|\([^\)]*?\)|[^};])+)/, true)
+          // ./a/b.png  ../a/b.png  a/b.png
+          if (/^((\.\.?\/)|[^/])/.test($1) && this.linkPath) {
+            this.baseURI = getLinkFileDir(this.linkPath)
+          }
 
-    let cssValue = r ? r[0] : ''
+          return `url("${CompletionPath($1, this.baseURI)}")`
+        })
+      }
 
-    if (
-      !this.scopecssDisableNextLine &&
-      (!this.scopecssDisable || this.scopecssDisableSelectors.length)
-    ) {
-      cssValue = cssValue.replace(cssUrlREG, (all, $1) => {
-        if (/^((data|blob):|#)/.test($1) || /^(https?:)?\/\//.test($1)) {
-          return all
-        }
-
-        // ./a/b.png  ../a/b.png  a/b.png
-        if (/^((\.\.?\/)|[^/])/.test($1) && this.linkPath) {
-          this.baseURI = getLinkFileDir(this.linkPath)
-        }
-
-        return `url("${CompletionPath($1, this.baseURI)}")`
-      })
+      this.result += cssValue
     }
 
     // reset scopecssDisableNextLine
     this.scopecssDisableNextLine = false
 
-    this.result += cssValue
+    if (!this.cssText || this.cssText.charAt(0) === '}') return
 
-    this.matchLeadingSpaces()
+    // extract comments in declarations
+    if (this.cssText.charAt(0) === '/' && this.cssText.charAt(1) === '*') {
+      this.matchComments()
+    } else {
+      this.commonMatch(/\/+/)
+    }
 
-    this.commonMatch(/^[;\s]*/)
-
-    return true
+    return this.matchAllDeclarations()
   }
 
   private formatSelector (): boolean | Array<string> {
@@ -312,11 +303,7 @@ class CSSParser {
   private commonHandlerForAtRuleWithSelfRule (name: string): boolean | void {
     if (!this.matchOpenBrace()) return parseError(`@${name} missing '{'`, this.linkPath)
 
-    this.matchComments()
-
-    while (this.styleDeclaration()) {
-      this.matchComments()
-    }
+    this.matchAllDeclarations()
 
     if (!this.matchCloseBrace()) return parseError(`@${name} missing '}'`, this.linkPath)
 
@@ -376,7 +363,7 @@ class CSSParser {
     return true
   }
 
-  private commonMatch (reg: RegExp, skip = false): RegExpExecArray | void {
+  private commonMatch (reg: RegExp, skip = false): RegExpExecArray | null | void {
     const matchArray = reg.exec(this.cssText)
     if (!matchArray) return
     const matchStr = matchArray[0]
@@ -422,7 +409,7 @@ function commonAction (
       parser.reset()
     } catch (e) {
       parser.reset()
-      logError('CSSParser: An error occurred while parsing CSS', appName, e)
+      logError('An error occurred while parsing CSS:\n', appName, e)
     }
 
     if (result) styleElement.textContent = result

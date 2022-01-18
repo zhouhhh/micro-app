@@ -16,6 +16,9 @@
 
   - 🐞 Fixed the Error of parsing style when importing `SVG` through `background image` in CSS.
 
+- **Update**
+
+  - 🚀 Optimized logic of scoped_css, improve compatibility and performance.
 
 ### 0.8.2
 
