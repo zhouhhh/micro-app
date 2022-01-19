@@ -47,10 +47,16 @@ describe('micro_app_element', () => {
   })
 
   // 当新的app与旧的app name相同而url不同时，且旧app为预加载，则删除旧app的缓存，使用新app覆盖
-  test('app3 has same name with prefetch app1 but the url is different', () => {
+  test('app3 has same name with prefetch app1 but the url is different', async () => {
     const microAppElement3 = document.createElement('micro-app')
     microAppElement3.setAttribute('name', 'test-app1')
     microAppElement3.setAttribute('url', `http://127.0.0.1:${ports.micro_app_element}/ssr-render/`)
+
+    await new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(true)
+      }, 200)
+    })
 
     appCon.appendChild(microAppElement3)
 
