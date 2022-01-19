@@ -21,7 +21,7 @@ export default defineConfig({
     default: 'zh-CN',
     antd: true,
     // default true, when it is true, will use `navigator.language` overwrite default
-    baseNavigator: true,
+    baseNavigator: false,
   },
   dynamicImport: {
     loading: '@/components/PageLoading/index',
