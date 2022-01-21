@@ -114,11 +114,18 @@ export default class App extends React.Component {
 
   // 主动卸载应用
   handleUnmountMySelf = () => {
-    unmountApp(this.state.name, {
-      // destroy: true,
-      // clearAliveState: true,
-    }).then(() => {
-      console.log('unmountApp方法 -- 卸载成功')
+    // unmountApp 会删除micro-app元素
+    // 当先通过unmountApp卸载应用后再通过setState控制元素展示，会导致react报错，因为micro-app元素已经不存在了
+    // 此处先通过setState控制应用卸载，再通过unmountApp删除缓存状态，避免报错
+    this.setState({
+      showMicroApp: false,
+    }, () => {
+      unmountApp(this.state.name, {
+        // destroy: true,
+        clearAliveState: true,
+      }).then(() => {
+        console.log('unmountApp方法 -- 卸载成功')
+      })
     })
   }
 
