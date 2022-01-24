@@ -30,4 +30,5 @@ module.exports = {
       ]
     }
   },
+  transpileDependencies: ['element-plus'], // 解决element-plus使用 ?. 操作符导致启动失败的问题
 }

@@ -5,7 +5,6 @@
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
 
 export default {
   name: 'App',
@@ -14,9 +13,6 @@ export default {
       msg: `Welcome to Vue@3.0.7`,
     }
   },
-  components: {
-    HelloWorld
-  }
 }
 </script>
 

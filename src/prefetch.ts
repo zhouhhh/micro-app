@@ -86,6 +86,7 @@ export function getGlobalAssets (assets: globalAssetsType): void {
   }
 }
 
+// TODO: requestIdleCallback for every file
 function fetchGlobalResources (resources:string[] | undefined, suffix:string, cache:Map<string, string>) {
   if (isArray(resources)) {
     const effectiveResource = resources!.filter((path) => isString(path) && path.includes(`.${suffix}`) && !cache.has(path))
