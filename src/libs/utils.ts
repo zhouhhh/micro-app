@@ -374,3 +374,7 @@ export function getRootContainer (target: HTMLElement | ShadowRoot): HTMLElement
 export function trim (str: string): string {
   return str ? str.replace(/^\s+|\s+$/g, '') : ''
 }
+
+export function isFireFox (): boolean {
+  return navigator.userAgent.indexOf('Firefox') > -1
+}

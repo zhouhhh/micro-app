@@ -89,12 +89,12 @@ describe('source scoped_css', () => {
         setAppName('test-app3')
         // 动态创建style
         const dynamicStyle = document.createElement('style')
-        dynamicStyle.textContent = '@font-face {font-family: test-font;} @media screen and (max-width: 300px) {body {background:lightblue;}} @supports (display: grid) {div {display: grid;}}'
+        dynamicStyle.textContent = '@font-face {font-family: test-font;} @media screen and (max-width: 300px) {body {background:lightblue;}} @supports (display: grid) {div {display: grid;}} @unknown {}'
 
         document.head.appendChild(dynamicStyle)
 
         defer(() => {
-          expect(dynamicStyle.textContent).toBe('@font-face {font-family: test-font;} @media screen and (max-width: 300px) {micro-app[name=test-app3] micro-app-body{background:lightblue;}} @supports (display: grid) {micro-app[name=test-app3] div{display: grid;}}')
+          expect(dynamicStyle.textContent).toBe('@font-face {font-family: test-font;} @media screen and (max-width: 300px) {micro-app[name=test-app3] micro-app-body{background:lightblue;}} @supports (display: grid) {micro-app[name=test-app3] div{display: grid;}} micro-app[name=test-app3] @unknown{}')
           resolve(true)
         })
       }, false)
@@ -381,8 +381,51 @@ describe('source scoped_css', () => {
         document.head.appendChild(dynamicStyle6)
         expect(dynamicStyle6.textContent).toBe('micro-app[name=test-app11] .test1{color: re/d;}')
 
+        // keep separator info
+        const dynamicStyle7 = document.createElement('style')
+        dynamicStyle7.textContent = '.test1,   .test2 {color: red}'
+        document.head.appendChild(dynamicStyle7)
+        expect(dynamicStyle7.textContent).toBe('micro-app[name=test-app11] .test1,   micro-app[name=test-app11] .test2{color: red}')
+
         resolve(true)
       }, false)
+    })
+  })
+
+  // 火狐浏览器中编码result
+  test('encode result in firefox', async () => {
+    const rawUserAgent = navigator.userAgent
+    Object.defineProperty(navigator, 'userAgent', {
+      value: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:96.0) Gecko/20100101 Firefox/96.0',
+      writable: true,
+      configurable: true,
+    })
+
+    const microAppElement12 = document.createElement('micro-app')
+    microAppElement12.setAttribute('name', 'test-app12')
+    microAppElement12.setAttribute('url', `http://127.0.0.1:${ports.scoped_css}/dynamic/`)
+
+    appCon.appendChild(microAppElement12)
+    await new Promise((resolve) => {
+      microAppElement12.addEventListener('mounted', () => {
+        setAppName('test-app12')
+        // 动态创建style
+        const dynamicStyle = document.createElement('style')
+        dynamicStyle.textContent = '#root {color: red;}'
+
+        document.head.appendChild(dynamicStyle)
+
+        defer(() => {
+          expect(dynamicStyle.textContent).toBe('micro-app[name=test-app12] #root{color: red;}')
+          resolve(true)
+        })
+      }, false)
+    })
+
+    Object.defineProperty(navigator, 'userAgent', {
+      value: rawUserAgent,
+      writable: true,
+      configurable: true,
     })
   })
 })

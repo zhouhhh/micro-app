@@ -1,6 +1,6 @@
 /* eslint-disable no-useless-escape, no-cond-assign */
 import type { AppInterface } from '@micro-app/types'
-import { CompletionPath, getLinkFileDir, logError, trim } from '../libs/utils'
+import { CompletionPath, getLinkFileDir, logError, trim, isFireFox } from '../libs/utils'
 import microApp from '../micro_app'
 
 // common reg
@@ -46,7 +46,7 @@ class CSSParser {
     this.baseURI = baseURI
     this.linkPath = linkPath || ''
     this.matchRules()
-    return this.result
+    return isFireFox() ? decodeURIComponent(this.result) : this.result
   }
 
   public reset (): void {
@@ -70,14 +70,14 @@ class CSSParser {
 
   // https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleRule
   private matchStyleRule (): boolean | void {
-    const selectorList = this.formatSelector()
+    const selectors = this.formatSelector(true)
 
     // reset scopecssDisableNextLine
     this.scopecssDisableNextLine = false
 
-    if (!selectorList) return parseError('selector missing', this.linkPath)
+    if (!selectors) return parseError('selector missing', this.linkPath)
 
-    this.result += (selectorList as Array<string>).join(', ')
+    this.recordResult(selectors)
 
     this.matchComments()
 
@@ -86,6 +86,33 @@ class CSSParser {
     this.matchLeadingSpaces()
 
     return true
+  }
+
+  private formatSelector (skip: boolean): false | string {
+    const m = this.commonMatch(/^([^{]+)/, skip)
+    if (!m) return false
+
+    return m[0].replace(/(^|,[\n\s]*)([^,]+)/g, (_, separator, selector) => {
+      selector = trim(selector)
+      if (!(
+        this.scopecssDisableNextLine ||
+        (
+          this.scopecssDisable && (
+            !this.scopecssDisableSelectors.length ||
+            this.scopecssDisableSelectors.includes(selector)
+          )
+        ) ||
+        rootSelectorREG.test(selector)
+      )) {
+        if (bodySelectorREG.test(selector)) {
+          selector = selector.replace(bodySelectorREG, this.prefix + ' micro-app-body')
+        } else {
+          selector = this.prefix + ' ' + selector
+        }
+      }
+
+      return separator + selector
+    })
   }
 
   // https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleDeclaration
@@ -121,7 +148,7 @@ class CSSParser {
         })
       }
 
-      this.result += cssValue
+      this.recordResult(cssValue)
     }
 
     // reset scopecssDisableNextLine
@@ -137,39 +164,6 @@ class CSSParser {
     }
 
     return this.matchAllDeclarations()
-  }
-
-  private formatSelector (): boolean | Array<string> {
-    const m = this.commonMatch(/^([^{]+)/, true)
-    if (!m) return false
-    return trim(m[0])
-      .replace(/\/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*\/+/g, '')
-      .replace(/"(?:\\"|[^"])*"|'(?:\\'|[^'])*'/g, (r) => {
-        return r.replace(/,/g, '\u200C')
-      })
-      .split(/\s*(?![^(]*\)),\s*/)
-      .map((s: string) => {
-        const selectorText = s.replace(/\u200C/g, ',')
-        if (this.scopecssDisableNextLine) {
-          return selectorText
-        } else if (this.scopecssDisable) {
-          if (
-            !this.scopecssDisableSelectors.length ||
-            this.scopecssDisableSelectors.includes(selectorText)
-          ) {
-            return selectorText
-          }
-        }
-
-        if (selectorText === '*') {
-          return this.prefix + ' *'
-        } else if (bodySelectorREG.test(selectorText)) {
-          return selectorText.replace(bodySelectorREG, this.prefix + ' micro-app-body')
-        } else if (rootSelectorREG.test(selectorText)) { // ignore root selector
-          return selectorText
-        }
-        return this.prefix + ' ' + selectorText
-      })
   }
 
   private matchAtRule (): boolean | void {
@@ -242,7 +236,7 @@ class CSSParser {
   private pageRule (): boolean | void {
     if (!this.commonMatch(/^@page */)) return false
 
-    this.formatSelector()
+    this.formatSelector(false)
 
     // reset scopecssDisableNextLine
     this.scopecssDisableNextLine = false
@@ -295,7 +289,7 @@ class CSSParser {
     return () => {
       if (!this.commonMatch(reg)) return false
       this.matchLeadingSpaces()
-      return false
+      return true
     }
   }
 
@@ -334,7 +328,7 @@ class CSSParser {
     // get comment content
     let commentText = this.cssText.slice(2, i - 2)
 
-    this.result += `/*${commentText}*/`
+    this.recordResult(`/*${commentText}*/`)
 
     commentText = trim(commentText.replace(/^\s*!/, ''))
 
@@ -368,7 +362,7 @@ class CSSParser {
     if (!matchArray) return
     const matchStr = matchArray[0]
     this.cssText = this.cssText.slice(matchStr.length)
-    if (!skip) this.result += matchStr
+    if (!skip) this.recordResult(matchStr)
     return matchArray
   }
 
@@ -383,6 +377,16 @@ class CSSParser {
   // match and slice the leading spaces
   private matchLeadingSpaces (): void {
     this.commonMatch(/^\s*/)
+  }
+
+  // splice string
+  private recordResult (strFragment: string): void {
+    // Firefox is slow when string contain special characters, see https://github.com/micro-zoe/micro-app/issues/256
+    if (isFireFox()) {
+      this.result += encodeURIComponent(strFragment)
+    } else {
+      this.result += strFragment
+    }
   }
 }
 

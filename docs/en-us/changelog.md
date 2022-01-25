@@ -7,6 +7,14 @@
 - 修订版本号：每周末会进行日常 bugfix 更新。（如果有紧急的 bugfix，则任何时候都可发布）
 
 ---
+### 0.8.4
+
+`2022-01-25`
+
+- **Bug Fix**
+
+  - 🐞 Fixed the problem that the execution speed of style isolation is too slow in Firefox browser 80 and above.
+  
 
 ### 0.8.3
 
