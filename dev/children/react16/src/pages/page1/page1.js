@@ -26,6 +26,29 @@ function getDataFromBase () {
   });
 }
 
+/**
+ * 跨域无法直接通过a标签download下载
+ * 降级为通过blob下载文件
+ */
+function download (e) {
+  if (window.__MICRO_APP_ENVIRONMENT__) {
+    e.preventDefault()
+    fetch(e.target.href).then((res) => {
+      res.blob().then((blob) => {
+        const blobUrl = window.URL.createObjectURL(blob);
+        // 这里的文件名根据实际情况从响应头或者url里获取
+        const filename = 'filename.svg';
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = filename;;
+        a.click();
+        window.URL.revokeObjectURL(blobUrl);
+      });
+    });
+  }
+}
+
+
 function Page1() {
   return (
     <div className="App">
@@ -68,6 +91,7 @@ function Page1() {
         <p>styled-component👇</p>
         <StyledButton>按钮</StyledButton>
       </div>
+      <a href={`${process.env.NODE_ENV === 'production' ? window.location.origin : 'http://localhost:3001'}/micro-app/react16/static/media/logo.6ce24c58.svg`} download="w3logo" onClick={download}>下载</a>
     </div>
   );
 }

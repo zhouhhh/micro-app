@@ -186,4 +186,40 @@ microApp.start({
   参考[应用之间如何跳转](/zh-cn/route?id=应用之间如何跳转)一章
 
 ## 17、jsonp请求如何处理？
- 参考[ignore](/zh-cn/configure?id=ignore忽略元素)
+  参考[ignore](/zh-cn/configure?id=ignore忽略元素)
+
+
+## 18、子应用通过a标签下载文件失败
+  **原因：**当跨域时(基座和文件在不同域名下)，无法通过a标签的download属性实现下载。
+
+  **解决方式：**
+  
+  **方式1：**转换为blob形式下载
+  ```html
+  <a href='xxx.png' download="filename.png" @click='downloadFile'>下载</a>
+  ```
+  ```js
+  // 通过blob下载文件
+  function downloadFile (e) {
+    // 微前端环境下转换为blob下载，子应用单独运行时依然使用a标签下载
+    if (window.__MICRO_APP_ENVIRONMENT__) {
+      e.preventDefault()
+      // 注意href必须是绝对地址
+      fetch(e.target.href).then((res) => {
+        res.blob().then((blob) => {
+          const blobUrl = window.URL.createObjectURL(blob)
+          // 转化为blobURL后再通过a标签下载
+          const a = document.createElement('a')
+          a.href = blobUrl
+          a.download = 'filename.png'
+          a.click()
+          window.URL.revokeObjectURL(blobUrl)
+        })
+      })
+    }
+  }
+  ```
+
+  **方式2：**将文件放到基座域名下，判断微前端环境下a标签href属性设置为基座的文件地址
+
+  **注意：**a标签href地址需要是绝对地址
