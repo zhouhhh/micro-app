@@ -10,18 +10,18 @@
 
 例如：
 ```js
-window.history.pushState(null, '', 'page2')
+window.history.pushState(history.state, '', 'page2')
 
 // 主动触发一次popstate事件
-window.dispatchEvent(new PopStateEvent('popstate', { state: null }))
+window.dispatchEvent(new PopStateEvent('popstate', { state: history.state }))
 ```
 
 对于hash路由也同样适用
 ```js
-window.history.pushState(null, '', '#/page2')
+window.history.pushState(history.state, '', '#/page2')
 
 // 主动触发一次popstate事件
-window.dispatchEvent(new PopStateEvent('popstate', { state: null }))
+window.dispatchEvent(new PopStateEvent('popstate', { state: history.state }))
 ```
 
 > [!NOTE] 
