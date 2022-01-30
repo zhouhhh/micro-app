@@ -167,6 +167,7 @@ export default class App extends React.Component {
             <Button type="primary" onClick={this.changeNameUrl}>切换应用</Button>
             <Button type="primary" onClick={this.handleModal}>modal内嵌应用</Button>
             <Button type="primary" onClick={this.handleUnmountMySelf}>主动卸载应用</Button>
+            <Button type="primary" onClick={this.changeTestNum}>{this.state.testNum}</Button>
           </Col>
           <Col span={18} className='app-con-react16'>
             { this.state.showLoading && <Spin indicator={antIcon} /> }
