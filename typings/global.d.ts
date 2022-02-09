@@ -136,7 +136,7 @@ declare module '@micro-app/types' {
       // options for plugin as the third parameter of loader
       options?: unknown
       // handle function
-      loader?: (code: string, url: string, options: unknown) => string
+      loader?: (code: string, url: string, options: unknown, info: sourceScriptInfo) => string
     }>
 
     // plugin for special app
@@ -149,7 +149,7 @@ declare module '@micro-app/types' {
         // options for plugin as the third parameter of loader
         options?: unknown
         // handle function
-        loader?: (code: string, url: string, options: unknown) => string
+        loader?: (code: string, url: string, options: unknown, info: sourceScriptInfo) => string
       }>
     }
   }
