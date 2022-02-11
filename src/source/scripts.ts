@@ -238,7 +238,7 @@ export function runScript (
   callback?: moduleCallBack,
 ): any {
   try {
-    const code = bindScope(url, app, info.code, info.module)
+    const code = bindScope(url, app, info.code, info)
     if (app.inline || info.module) {
       const scriptElement = pureCreateElement('script')
       runCode2InlineScript(url, code, info.module, scriptElement, callback)
@@ -296,7 +296,7 @@ export function runDynamicRemoteScript (
     app.source.scripts.set(url, info)
     info.isGlobal && globalScripts.set(url, code)
     try {
-      code = bindScope(url, app, code, info.module)
+      code = bindScope(url, app, code, info)
       if (app.inline || info.module) {
         runCode2InlineScript(url, code, info.module, replaceElement as HTMLScriptElement, dispatchScriptOnLoadEvent)
       } else {
@@ -360,19 +360,19 @@ function runCode2Function (code: string, info: sourceScriptInfo) {
  * @param url script address
  * @param app app
  * @param code code
- * @param module type='module' of script
+ * @param info source script info
  */
 function bindScope (
   url: string,
   app: AppInterface,
   code: string,
-  module: boolean,
+  info: sourceScriptInfo,
 ): string {
   if (isPlainObject(microApp.plugins)) {
-    code = usePlugins(url, code, app.name, microApp.plugins!)
+    code = usePlugins(url, code, app.name, microApp.plugins!, info)
   }
 
-  if (app.sandBox && !module) {
+  if (app.sandBox && !info.module) {
     globalEnv.rawWindow.__MICRO_APP_PROXY_WINDOW__ = app.sandBox.proxyWindow
     return `;(function(proxyWindow){with(proxyWindow.__MICRO_APP_WINDOW__){(function(${globalKeyToBeCached}){;${code}\n}).call(proxyWindow,${globalKeyToBeCached})}})(window.__MICRO_APP_PROXY_WINDOW__);`
   }
@@ -386,21 +386,22 @@ function bindScope (
  * @param code code
  * @param appName app name
  * @param plugins plugin list
+ * @param info source script info
  */
-function usePlugins (url: string, code: string, appName: string, plugins: plugins): string {
-  const newCode = processCode(plugins.global, code, url)
+function usePlugins (url: string, code: string, appName: string, plugins: plugins, info: sourceScriptInfo): string {
+  const newCode = processCode(plugins.global, code, url, info)
 
-  return processCode(plugins.modules?.[appName], newCode, url)
+  return processCode(plugins.modules?.[appName], newCode, url, info)
 }
 
-function processCode (configs: plugins['global'], code: string, url: string) {
+function processCode (configs: plugins['global'], code: string, url: string, info: sourceScriptInfo) {
   if (!isArray(configs)) {
     return code
   }
 
   return configs.reduce((preCode, config) => {
     if (isPlainObject(config) && isFunction(config.loader)) {
-      return config.loader!(preCode, url, config.options)
+      return config.loader!(preCode, url, config.options, info)
     }
 
     return preCode
