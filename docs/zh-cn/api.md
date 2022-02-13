@@ -47,7 +47,7 @@ start (options?: {
       // 可选，传递给loader的配置项
       options?: unknown,
       // 必填，js处理函数，必须返回code值
-      loader?: (code: string, url: string, options: unknown) => string
+      loader?: (code: string, url: string, options: unknown, info: sourceScriptInfo) => string
     }>
 
     // 子应用插件
@@ -61,7 +61,7 @@ start (options?: {
         // 可选，传递给loader的配置项
         options?: unknown,
         // 必填，js处理函数，必须返回code值
-        loader?: (code: string, url: string, options: unknown) => string
+        loader?: (code: string, url: string, options: unknown, info: sourceScriptInfo) => string
       }>
     }
   },

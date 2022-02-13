@@ -20,7 +20,7 @@ microApp.start({
       // 可选，传递给loader的配置项
       options?: any,
       // 必填，js处理函数，必须返回code值
-      loader?: (code: string, url: string, options: any) => code 
+      loader?: (code: string, url: string, options: any, info: sourceScriptInfo) => code 
     }>
   
     // 子应用插件
@@ -34,7 +34,7 @@ microApp.start({
         // 可选，传递给loader的配置项
         options?: any,
         // 必填，js处理函数，必须返回code值
-        loader?: (code: string, url: string, options: any) => code 
+        loader?: (code: string, url: string, options: any, info: sourceScriptInfo) => code 
       }>
     }
   }
@@ -52,7 +52,7 @@ microApp.start({
         scopeProperties: ['key', 'key', ...], // 可选
         escapeProperties: ['key', 'key', ...], // 可选
         options: 配置项, // 可选
-        loader(code, url, options) { // 必填
+        loader(code, url, options, info) { // 必填
           console.log('全局插件')
           return code
         }
@@ -60,7 +60,7 @@ microApp.start({
     ],
     modules: {
       'appName1': [{
-        loader(code, url, options) {
+        loader(code, url, options, info) {
           if (url === 'xxx.js') {
             code = code.replace('var abc =', 'window.abc =')
           }
@@ -71,7 +71,7 @@ microApp.start({
         scopeProperties: ['key', 'key', ...], // 可选
         escapeProperties: ['key', 'key', ...], // 可选
         options: 配置项, // 可选
-        loader(code, url, options) { // 必填
+        loader(code, url, options, info) { // 必填
           console.log('只适用于appName2的插件')
           return code
         }
