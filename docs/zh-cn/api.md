@@ -37,7 +37,7 @@ start (options?: {
     shadowDOM?: boolean
   }>),
   // 插件系统，用于处理子应用的js文件
-  plugins?: { 
+  plugins?: {
     // 全局插件，作用于所有子应用的js文件
     global?: Array<{
       // 可选，强隔离的全局变量(默认情况下子应用无法找到的全局变量会兜底到基座应用中，scopeProperties可以禁止这种情况)
@@ -45,9 +45,9 @@ start (options?: {
       // 可选，可以逃逸到外部的全局变量(escapeProperties中的变量会同时赋值到子应用和外部真实的window上)
       escapeProperties?: string[],
       // 可选，传递给loader的配置项
-      options?: unknown,
+      options?: any,
       // 必填，js处理函数，必须返回code值
-      loader?: (code: string, url: string, options: unknown, info: sourceScriptInfo) => string
+      loader?: (code: string, url: string, options: any, info: sourceScriptInfo) => string
     }>
 
     // 子应用插件
@@ -59,16 +59,16 @@ start (options?: {
         // 可选，可以逃逸到外部的全局变量(escapeProperties中的变量会同时赋值到子应用和外部真实的window上)
         escapeProperties?: string[],
         // 可选，传递给loader的配置项
-        options?: unknown,
+        options?: any,
         // 必填，js处理函数，必须返回code值
-        loader?: (code: string, url: string, options: unknown, info: sourceScriptInfo) => string
+        loader?: (code: string, url: string, options: any, info: sourceScriptInfo) => string
       }>
     }
   },
   // 重定义fetch方法，可以用于拦截资源请求操作
-  fetch?: (url: string, options: Record<string, unknown>, appName: string | null) => Promise<string>
+  fetch?: (url: string, options: Record<string, any>, appName: string | null) => Promise<string>
   // 设置全局静态资源
-  globalAssets?: { 
+  globalAssets?: {
     js?: string[], // js地址
     css?: string[], // css地址
   },
