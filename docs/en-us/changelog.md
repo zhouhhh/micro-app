@@ -7,6 +7,15 @@
 - 修订版本号：每周末会进行日常 bugfix 更新。（如果有紧急的 bugfix，则任何时候都可发布）
 
 ---
+
+### 0.8.5
+
+`2022-02-14`
+
+- **New**
+
+  - 🆕 provide source script info for js loader.
+  
 ### 0.8.4
 
 `2022-01-25`
