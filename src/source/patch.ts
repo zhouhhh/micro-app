@@ -290,7 +290,7 @@ export function patchElementPrototypeMethods (): void {
  */
 function markElement <T extends { __MICRO_APP_NAME__: string }> (element: T): T {
   const appName = getCurrentAppName()
-  appName && (element.__MICRO_APP_NAME__ = appName)
+  if (appName) element.__MICRO_APP_NAME__ = appName
   return element
 }
 
