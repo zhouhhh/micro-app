@@ -27,7 +27,7 @@ removeDomScope()
 #### ** 子应用 **
 ```js
 // 重置作用域
-window.removeDomScope()
+window.microApp.removeDomScope()
 ```
 <!-- tabs:end -->
 
