@@ -97,7 +97,7 @@ yarn bootstrap
 yarn start
 ```
 
-For more commands, see [DEVELP](https://github.com/micro-zoe/micro-app/blob/master/DEVELOP.md)
+For more commands, see [DEVELOP](https://github.com/micro-zoe/micro-app/blob/master/DEVELOP.md)
 
 # FAQ
 <details>
