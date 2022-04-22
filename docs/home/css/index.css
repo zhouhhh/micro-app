@@ -185,7 +185,7 @@ dl, dd, dt {
   left: 40%;
   height: 600px;
   width: 900px;
-  z-index: 6;
+  z-index: 4;
   perspective: 1000px;
 }
 
