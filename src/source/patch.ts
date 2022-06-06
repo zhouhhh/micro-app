@@ -108,45 +108,56 @@ function invokePrototypeMethod (
   targetChild: Node,
   passiveChild?: Node | null,
 ): any {
+  const container = getContainer(parent, app)
   /**
    * If passiveChild is not the child node, insertBefore replaceChild will have a problem, at this time, it will be degraded to appendChild
    * E.g: document.head.insertBefore(targetChild, document.head.childNodes[0])
    */
-  if (parent === document.head) {
-    const microAppHead = app.container!.querySelector('micro-app-head')!
+  if (container) {
     /**
      * 1. If passiveChild exists, it must be insertBefore or replaceChild
      * 2. When removeChild, targetChild may not be in microAppHead or head
      */
-    if (passiveChild && !microAppHead.contains(passiveChild)) {
-      return globalEnv.rawAppendChild.call(microAppHead, targetChild)
-    } else if (rawMethod === globalEnv.rawRemoveChild && !microAppHead.contains(targetChild)) {
+    if (passiveChild && !container.contains(passiveChild)) {
+      return globalEnv.rawAppendChild.call(container, targetChild)
+    } else if (rawMethod === globalEnv.rawRemoveChild && !container.contains(targetChild)) {
       if (parent.contains(targetChild)) {
         return rawMethod.call(parent, targetChild)
       }
       return targetChild
-    } else if (rawMethod === globalEnv.rawAppend || rawMethod === globalEnv.rawPrepend) {
-      return rawMethod.call(microAppHead, targetChild)
     }
-    return rawMethod.call(microAppHead, targetChild, passiveChild)
-  } else if (parent === document.body) {
-    const microAppBody = app.container!.querySelector('micro-app-body')!
-    if (passiveChild && !microAppBody.contains(passiveChild)) {
-      return globalEnv.rawAppendChild.call(microAppBody, targetChild)
-    } else if (rawMethod === globalEnv.rawRemoveChild && !microAppBody.contains(targetChild)) {
-      if (parent.contains(targetChild)) {
-        return rawMethod.call(parent, targetChild)
-      }
-      return targetChild
-    } else if (rawMethod === globalEnv.rawAppend || rawMethod === globalEnv.rawPrepend) {
-      return rawMethod.call(microAppBody, targetChild)
-    }
-    return rawMethod.call(microAppBody, targetChild, passiveChild)
-  } else if (rawMethod === globalEnv.rawAppend || rawMethod === globalEnv.rawPrepend) {
+
+    return invokeRawMethod(rawMethod, container, targetChild, passiveChild)
+  }
+
+  return invokeRawMethod(rawMethod, parent, targetChild, passiveChild)
+}
+
+function invokeRawMethod (
+  rawMethod: Func,
+  parent: Node,
+  targetChild: Node,
+  passiveChild?: Node | null
+) {
+  if (isPendMethod(rawMethod)) {
     return rawMethod.call(parent, targetChild)
   }
 
   return rawMethod.call(parent, targetChild, passiveChild)
+}
+
+function isPendMethod (method: CallableFunction) {
+  return method === globalEnv.rawAppend || method === globalEnv.rawPrepend
+}
+
+function getContainer (node: Node, app: AppInterface) {
+  if (node === document.head) {
+    return app?.container?.querySelector('micro-app-head')
+  }
+  if (node === document.body) {
+    return app?.container?.querySelector('micro-app-body')
+  }
+  return null
 }
 
 // Get the map element
