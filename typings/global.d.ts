@@ -137,7 +137,7 @@ declare module '@micro-app/types' {
       escapeProperties?: Array<PropertyKey>
       // Exclude JS or CSS
       excludeChecker?: AssetsChecker
-      // ignore JS or CSS
+      // Ignore JS or CSS
       ignoreChecker?: AssetsChecker
       // options for plugin as the third parameter of loader
       options?: unknown
@@ -154,7 +154,7 @@ declare module '@micro-app/types' {
         escapeProperties?: Array<PropertyKey>
         // Exclude JS or CSS
         excludeChecker?: AssetsChecker
-        // ignore JS or CSS
+        // Ignore JS or CSS
         ignoreChecker?: AssetsChecker
         // options for plugin as the third parameter of loader
         options?: unknown
