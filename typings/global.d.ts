@@ -136,9 +136,9 @@ declare module '@micro-app/types' {
       // Properties that can be escape to rawWindow
       escapeProperties?: Array<PropertyKey>
       // Exclude JS or CSS
-      excludeAssetsChecker?: AssetsChecker
+      excludeChecker?: AssetsChecker
       // ignore JS or CSS
-      ignoreAssetsChecker?: AssetsChecker
+      ignoreChecker?: AssetsChecker
       // options for plugin as the third parameter of loader
       options?: unknown
       // handle function
@@ -153,9 +153,9 @@ declare module '@micro-app/types' {
         // Properties that can be escape to rawWindow
         escapeProperties?: Array<PropertyKey>
         // Exclude JS or CSS
-        excludeAssetsChecker?: AssetsChecker
+        excludeChecker?: AssetsChecker
         // ignore JS or CSS
-        ignoreAssetsChecker?: AssetsChecker
+        ignoreChecker?: AssetsChecker
         // options for plugin as the third parameter of loader
         options?: unknown
         // handle function

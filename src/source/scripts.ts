@@ -128,8 +128,8 @@ export function checkExcludeUrl (url: string | null, appName: string): boolean {
   if (!url) return false
   const plugins = getAssetsPlugins(appName) || []
   return plugins.some(plugin => {
-    if (!plugin.excludeAssetsChecker) return false
-    return plugin.excludeAssetsChecker(url)
+    if (!plugin.excludeChecker) return false
+    return plugin.excludeChecker(url)
   })
 }
 
@@ -142,8 +142,8 @@ export function checkIgnoreUrl (url: string | null, appName: string): boolean {
   if (!url) return false
   const plugins = getAssetsPlugins(appName) || []
   return plugins.some(plugin => {
-    if (!plugin.ignoreAssetsChecker) return false
-    return plugin.ignoreAssetsChecker(url)
+    if (!plugin.ignoreChecker) return false
+    return plugin.ignoreChecker(url)
   })
 }
 
