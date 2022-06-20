@@ -18,6 +18,10 @@
   <link rel="stylesheet" href="/common/link2.css">
   <!-- common app中有设置全局link2.css、global.js，所以会先尝试从缓存中获取 -->
   <link rel="stylesheet" href="./link2.css">
+  <!-- microApp.start global plugins excludeChecker => true -->
+  <link rel="stylesheet" href="./link3.css" id='app4-global-plugin-link-exclude'>
+  <!-- microApp.start module plugins excludeChecker => true -->
+  <link rel="stylesheet" href="./link4.css" id='app4-module-plugin-link-exclude'>
   <script src="/common/global.js"></script>
   <title>element-config</title>
 </head>
@@ -27,5 +31,10 @@
   <script src="./script2.js" global></script>
   <!-- 重复的 script2.js 会从缓存中读取 -->
   <script src="./script2.js" global></script>
+
+  <!-- microApp.start global plugins excludeChecker => true -->
+  <script src="./script3.js" id='app4-global-plugin-script-exclude'></script>
+  <!-- microApp.start module plugins excludeChecker => true -->
+  <script src="./script4.js" id='app4-module-plugin-script-exclude'></script>
 </body>
 </html>

@@ -46,11 +46,14 @@ export function extractScriptElement (
 ): any {
   let replaceComment: Comment | null = null
   let src: string | null = script.getAttribute('src')
-  if (script.hasAttribute('exclude')) {
+  if (src) {
+    src = CompletionPath(src, app.url)
+  }
+  if (script.hasAttribute('exclude') || checkExcludeUrl(src, app.name)) {
     replaceComment = document.createComment('script element with exclude attribute removed by micro-app')
   } else if (
     (script.type && !['text/javascript', 'text/ecmascript', 'application/javascript', 'application/ecmascript', 'module'].includes(script.type)) ||
-    script.hasAttribute('ignore')
+    script.hasAttribute('ignore') || checkIgnoreUrl(src, app.name)
   ) {
     return null
   } else if (
@@ -59,7 +62,6 @@ export function extractScriptElement (
   ) {
     replaceComment = document.createComment(`${script.noModule ? 'noModule' : 'module'} script ignored by micro-app`)
   } else if (src) { // remote script
-    src = CompletionPath(src, app.url)
     const info = {
       code: '',
       isExternal: true,
@@ -104,6 +106,45 @@ export function extractScriptElement (
   } else {
     return parent.replaceChild(replaceComment!, script)
   }
+}
+
+/**
+ * get assets plugins
+ * @param appName app name
+ */
+export function getAssetsPlugins (appName: string): plugins['global'] {
+  const globalPlugins = microApp.plugins?.global || []
+  const modulePlugins = microApp.plugins?.modules?.[appName] || []
+
+  return [...globalPlugins, ...modulePlugins]
+}
+
+/**
+ * whether the url needs to be excluded
+ * @param url css or js link
+ * @param plugins microApp plugins
+ */
+export function checkExcludeUrl (url: string | null, appName: string): boolean {
+  if (!url) return false
+  const plugins = getAssetsPlugins(appName) || []
+  return plugins.some(plugin => {
+    if (!plugin.excludeChecker) return false
+    return plugin.excludeChecker(url)
+  })
+}
+
+/**
+ * whether the url needs to be ignore
+ * @param url css or js link
+ * @param plugins microApp plugins
+ */
+export function checkIgnoreUrl (url: string | null, appName: string): boolean {
+  if (!url) return false
+  const plugins = getAssetsPlugins(appName) || []
+  return plugins.some(plugin => {
+    if (!plugin.ignoreChecker) return false
+    return plugin.ignoreChecker(url)
+  })
 }
 
 /**

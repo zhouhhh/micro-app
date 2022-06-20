@@ -2,7 +2,7 @@ import type { AppInterface } from '@micro-app/types'
 import { fetchSource } from './fetch'
 import { logError, CompletionPath, pureCreateElement } from '../libs/utils'
 import { extractLinkFromHtml, fetchLinksFromHtml } from './links'
-import { extractScriptElement, fetchScriptsFromHtml } from './scripts'
+import { extractScriptElement, fetchScriptsFromHtml, checkExcludeUrl, checkIgnoreUrl } from './scripts'
 import scopedCSS from './scoped_css'
 
 /**
@@ -36,9 +36,9 @@ function flatChildren (
 
   for (const dom of children) {
     if (dom instanceof HTMLLinkElement) {
-      if (dom.hasAttribute('exclude')) {
+      if (dom.hasAttribute('exclude') || checkExcludeUrl(dom.getAttribute('href'), app.name)) {
         parent.replaceChild(document.createComment('link element with exclude attribute ignored by micro-app'), dom)
-      } else if (!dom.hasAttribute('ignore')) {
+      } else if (!(dom.hasAttribute('ignore') || checkIgnoreUrl(dom.getAttribute('href'), app.name))) {
         extractLinkFromHtml(dom, parent, app)
       } else if (dom.hasAttribute('href')) {
         dom.setAttribute('href', CompletionPath(dom.getAttribute('href')!, app.url))

@@ -19,6 +19,20 @@ describe('source index', () => {
       globalAssets: {
         js: 'xx' as any,
         css: 'xx' as any,
+      },
+      plugins: {
+        global: [
+          {
+            excludeChecker: (url) => ['link3.css', 'script3.js'].some(item => url.endsWith(item))
+          }
+        ],
+        modules: {
+          'test-app2': [
+            {
+              excludeChecker: (url) => ['link4.css', 'script4.js'].some(item => url.endsWith(item))
+            }
+          ]
+        }
       }
     })
     appCon = document.querySelector('#app-container')!
@@ -41,6 +55,10 @@ describe('source index', () => {
         expect(document.getElementById('app4-link-exclude')).toBeNull()
         expect(document.getElementById('app4-script-exclude')).toBeNull()
         expect(document.getElementById('app4-link-include')).toBeNull()
+        expect(document.getElementById('app4-global-plugin-link-exclude')).toBeNull()
+        expect(document.getElementById('app4-module-plugin-link-exclude')).toBeNull()
+        expect(document.getElementById('app4-global-plugin-script-exclude')).toBeNull()
+        expect(document.getElementById('app4-module-plugin-script-exclude')).toBeNull()
 
         const app = appInstanceMap.get('test-app2')!
         expect(app.source.links.size).toBe(3)

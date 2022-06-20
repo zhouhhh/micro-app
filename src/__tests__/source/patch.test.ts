@@ -7,7 +7,22 @@ describe('source patch', () => {
   let appCon: Element
   beforeAll(() => {
     commonStartEffect(ports.source_patch)
-    microApp.start()
+    microApp.start({
+      plugins: {
+        global: [
+          {
+            excludeChecker: (url) => ['link7.css', 'script9.js'].some(item => url.endsWith(item))
+          }
+        ],
+        modules: {
+          'test-app1': [
+            {
+              excludeChecker: (url) => ['link8.css', 'script10.js'].some(item => url.endsWith(item))
+            }
+          ]
+        }
+      }
+    })
     appCon = document.querySelector('#app-container')!
   })
 
@@ -285,6 +300,26 @@ describe('source patch', () => {
         handleNewNodeDom6.setAttribute('ignore', 'true')
         document.head.appendChild(handleNewNodeDom6)
         expect(microAppHead.contains(handleNewNodeDom6)).toBeTruthy()
+
+        // microApp.start global plugin excludeChecker link 链接返回 true，则忽略
+        const handleNewNodeDom7 = document.createElement('link')
+        handleNewNodeDom7.setAttribute('href', '/demo7.css')
+        expect(microAppHead.contains(handleNewNodeDom7)).toBeFalsy()
+
+        // microApp.start module plugin excludeChecker link 链接返回 true，则忽略
+        const handleNewNodeDom8 = document.createElement('link')
+        handleNewNodeDom8.setAttribute('href', '/demo8.css')
+        expect(microAppHead.contains(handleNewNodeDom8)).toBeFalsy()
+
+        // microApp.start global plugin excludeChecker script 链接返回 true，则忽略
+        const handleNewNodeDom9 = document.createElement('script')
+        handleNewNodeDom9.setAttribute('css', '/demo9.js')
+        expect(microAppHead.contains(handleNewNodeDom9)).toBeFalsy()
+
+        // microApp.start module plugin excludeChecker link 链接返回 true，则忽略
+        const handleNewNodeDom10 = document.createElement('script')
+        handleNewNodeDom10.setAttribute('src', '/demo10.js')
+        expect(microAppHead.contains(handleNewNodeDom10)).toBeFalsy()
 
         resolve(true)
       }, false)

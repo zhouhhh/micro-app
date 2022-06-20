@@ -13,7 +13,7 @@ import {
 } from '../libs/utils'
 import scopedCSS from './scoped_css'
 import { extractLinkFromHtml, formatDynamicLink } from './links'
-import { extractScriptElement, runScript, runDynamicRemoteScript } from './scripts'
+import { extractScriptElement, runScript, runDynamicRemoteScript, checkExcludeUrl, checkIgnoreUrl } from './scripts'
 import microApp from '../micro_app'
 import globalEnv from '../libs/global_env'
 
@@ -37,11 +37,11 @@ function handleNewNode (parent: Node, child: Node, app: AppInterface): Node {
     }
     return child
   } else if (child instanceof HTMLLinkElement) {
-    if (child.hasAttribute('exclude')) {
+    if (child.hasAttribute('exclude') || checkExcludeUrl(child.getAttribute('href'), app.name)) {
       const linkReplaceComment = document.createComment('link element with exclude attribute ignored by micro-app')
       dynamicElementInMicroAppMap.set(child, linkReplaceComment)
       return linkReplaceComment
-    } else if (child.hasAttribute('ignore')) {
+    } else if (child.hasAttribute('ignore') || checkIgnoreUrl(child.getAttribute('href'), app.name)) {
       return child
     }
 

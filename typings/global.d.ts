@@ -126,6 +126,8 @@ declare module '@micro-app/types' {
     error?(e?: CustomEvent): void
   }
 
+  type AssetsChecker = (url: string) => boolean;
+
   type plugins = {
     // global plugin
     global?: Array<{
@@ -133,6 +135,10 @@ declare module '@micro-app/types' {
       scopeProperties?: Array<PropertyKey>
       // Properties that can be escape to rawWindow
       escapeProperties?: Array<PropertyKey>
+      // Exclude JS or CSS
+      excludeChecker?: AssetsChecker
+      // Ignore JS or CSS
+      ignoreChecker?: AssetsChecker
       // options for plugin as the third parameter of loader
       options?: unknown
       // handle function
@@ -146,6 +152,10 @@ declare module '@micro-app/types' {
         scopeProperties?: Array<PropertyKey>
         // Properties that can be escape to rawWindow
         escapeProperties?: Array<PropertyKey>
+        // Exclude JS or CSS
+        excludeChecker?: AssetsChecker
+        // Ignore JS or CSS
+        ignoreChecker?: AssetsChecker
         // options for plugin as the third parameter of loader
         options?: unknown
         // handle function
