@@ -1,15 +1,15 @@
-import { appInstanceMap } from '../create_app'
+import { AppManager } from '../app_manager'
 import { getRootContainer } from '../libs/utils'
 
 function unmountNestedApp (): void {
   releaseUnmountOfNestedApp()
 
-  appInstanceMap.forEach(app => {
+  AppManager.getInstance().getAll().forEach(app => {
     // @ts-ignore
     app.container && getRootContainer(app.container).disconnectedCallback()
   })
 
-  !window.__MICRO_APP_UMD_MODE__ && appInstanceMap.clear()
+  !window.__MICRO_APP_UMD_MODE__ && AppManager.getInstance().clear()
 }
 
 // if micro-app run in micro application, delete all next generation application when unmount event received
