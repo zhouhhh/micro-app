@@ -26,7 +26,7 @@ microApp.start({
       // 必填，js处理函数，必须返回code值
       loader?: (code: string, url: string, options: any, info: sourceScriptInfo) => code,
       // 可选，html 处理函数，必须返回 code 值
-      processHtml?: (code: string, url: string, options: unknown, app: AppInterface) => code
+      processHtml?: (code: string, url: string, options: unknown) => code
     }>
 
     // 子应用插件
@@ -46,7 +46,7 @@ microApp.start({
         // 可选，js处理函数，必须返回code值
         loader?: (code: string, url: string, options: any, info: sourceScriptInfo) => code,
         // 可选，html 处理函数，必须返回 code 值
-        processHtml?: (code: string, url: string, options: unknown, app: AppInterface) => code
+        processHtml?: (code: string, url: string, options: unknown) => code
       }>
     }
   }

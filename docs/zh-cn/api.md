@@ -53,7 +53,7 @@ start (options?: {
       // 可选，js处理函数，必须返回 code 值
       loader?: (code: string, url: string, options: any, info: sourceScriptInfo) => string,
       // 可选，html 处理函数，必须返回 code 值
-      processHtml?: (code: string, url: string, options: unknown, app: AppInterface) => string
+      processHtml?: (code: string, url: string, options: unknown) => string
     }>
 
     // 子应用插件
@@ -73,7 +73,7 @@ start (options?: {
         // 必填，js处理函数，必须返回code值
         loader?: (code: string, url: string, options: any, info: sourceScriptInfo) => string,
         // 可选，html 处理函数，必须返回 code 值
-        processHtml?: (code: string, url: string, options: unknown, app: AppInterface) => string
+        processHtml?: (code: string, url: string, options: unknown) => string
       }>
     }
   },
