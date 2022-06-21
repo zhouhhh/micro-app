@@ -50,8 +50,10 @@ start (options?: {
       ignoreChecker?: (url: string) => boolean
       // 可选，传递给loader的配置项
       options?: any,
-      // 必填，js处理函数，必须返回code值
-      loader?: (code: string, url: string, options: any, info: sourceScriptInfo) => string
+      // 可选，js处理函数，必须返回 code 值
+      loader?: (code: string, url: string, options: any, info: sourceScriptInfo) => string,
+      // 可选，html 处理函数，必须返回 code 值
+      processHtml?: (code: string, url: string, options: unknown) => string
     }>
 
     // 子应用插件
@@ -69,7 +71,9 @@ start (options?: {
         // 可选，传递给loader的配置项
         options?: any,
         // 必填，js处理函数，必须返回code值
-        loader?: (code: string, url: string, options: any, info: sourceScriptInfo) => string
+        loader?: (code: string, url: string, options: any, info: sourceScriptInfo) => string,
+        // 可选，html 处理函数，必须返回 code 值
+        processHtml?: (code: string, url: string, options: unknown) => string
       }>
     }
   },

@@ -1,9 +1,16 @@
-import type { AppInterface } from '@micro-app/types'
+import type { AppInterface, plugins } from '@micro-app/types'
 import { fetchSource } from './fetch'
-import { logError, CompletionPath, pureCreateElement } from '../libs/utils'
+import {
+  logError,
+  CompletionPath,
+  pureCreateElement,
+  isFunction,
+  isPlainObject,
+} from '../libs/utils'
 import { extractLinkFromHtml, fetchLinksFromHtml } from './links'
 import { extractScriptElement, fetchScriptsFromHtml, checkExcludeUrl, checkIgnoreUrl } from './scripts'
 import scopedCSS from './scoped_css'
+import microApp from '../micro_app'
 
 /**
  * transform html string to dom
@@ -95,13 +102,16 @@ function extractSourceDom (htmlStr: string, app: AppInterface) {
  * @param app app
  */
 export default function extractHtml (app: AppInterface): void {
-  fetchSource(app.ssrUrl || app.url, app.name, { cache: 'no-cache' }).then((htmlStr: string) => {
+  const appName = app.name
+  const htmlUrl = app.ssrUrl || app.url
+  fetchSource(htmlUrl, appName, { cache: 'no-cache' }).then((htmlStr: string) => {
     if (!htmlStr) {
       const msg = 'html is empty, please check in detail'
       app.onerror(new Error(msg))
-      return logError(msg, app.name)
+      return logError(msg, appName)
     }
-    htmlStr = htmlStr
+
+    htmlStr = processHtml(htmlUrl, htmlStr, appName, microApp.plugins)
       .replace(/<head[^>]*>[\s\S]*?<\/head>/i, (match) => {
         return match
           .replace(/<head/i, '<micro-app-head')
@@ -115,7 +125,25 @@ export default function extractHtml (app: AppInterface): void {
 
     extractSourceDom(htmlStr, app)
   }).catch((e) => {
-    logError(`Failed to fetch data from ${app.url}, micro-app stop rendering`, app.name, e)
+    logError(`Failed to fetch data from ${app.url}, micro-app stop rendering`, appName, e)
     app.onLoadError(e)
   })
+}
+
+function processHtml (url: string, code: string, appName: string, plugins: plugins | undefined): string {
+  if (!plugins) return code
+
+  const mergedPlugins: NonNullable<plugins['global']> = []
+  plugins.global && mergedPlugins.push(...plugins.global)
+  plugins.modules?.[appName] && mergedPlugins.push(...plugins.modules[appName])
+
+  if (mergedPlugins.length > 0) {
+    return mergedPlugins.reduce((preCode, plugin) => {
+      if (isPlainObject(plugin) && isFunction(plugin.processHtml)) {
+        return plugin.processHtml!(preCode, url, plugin.options)
+      }
+      return preCode
+    }, code)
+  }
+  return code
 }
