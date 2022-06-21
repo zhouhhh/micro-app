@@ -144,7 +144,7 @@ declare module '@micro-app/types' {
       // handle function
       loader?: (code: string, url: string, options: unknown, info: sourceScriptInfo) => string
       // html processor
-      processHtml?: (code: string, url: string, options: unknown, app: AppInterface) => string
+      processHtml?: (code: string, url: string, options: unknown) => string
     }>
 
     // plugin for special app
@@ -163,7 +163,7 @@ declare module '@micro-app/types' {
         // handle function
         loader?: (code: string, url: string, options: unknown, info: sourceScriptInfo) => string
         // html processor
-        processHtml?: (code: string, url: string, options: unknown, app: AppInterface) => string
+        processHtml?: (code: string, url: string, options: unknown) => string
       }>
     }
   }

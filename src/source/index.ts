@@ -111,7 +111,7 @@ export default function extractHtml (app: AppInterface): void {
       return logError(msg, appName)
     }
 
-    htmlStr = processHtml(htmlUrl, htmlStr, appName, microApp.plugins, app)
+    htmlStr = processHtml(htmlUrl, htmlStr, appName, microApp.plugins)
       .replace(/<head[^>]*>[\s\S]*?<\/head>/i, (match) => {
         return match
           .replace(/<head/i, '<micro-app-head')
@@ -130,7 +130,7 @@ export default function extractHtml (app: AppInterface): void {
   })
 }
 
-function processHtml (url: string, code: string, appName: string, plugins: plugins | undefined, app: AppInterface): string {
+function processHtml (url: string, code: string, appName: string, plugins: plugins | undefined): string {
   if (!plugins) return code
 
   const mergedPlugins: NonNullable<plugins['global']> = []
@@ -140,7 +140,7 @@ function processHtml (url: string, code: string, appName: string, plugins: plugi
   if (mergedPlugins.length > 0) {
     return mergedPlugins.reduce((preCode, plugin) => {
       if (isPlainObject(plugin) && isFunction(plugin.processHtml)) {
-        return plugin.processHtml!(preCode, url, plugin.options, app)
+        return plugin.processHtml!(preCode, url, plugin.options)
       }
       return preCode
     }, code)
