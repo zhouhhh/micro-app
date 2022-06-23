@@ -6,7 +6,8 @@ import type {
   sourceScriptInfo,
   Func,
 } from '@micro-app/types'
-import extractHtml from './source'
+import { HTMLLoader } from './source/loader/html'
+import { extractSourceDom } from './source/index'
 import { execScripts } from './source/scripts'
 import { appStates, lifeCycles, keepAliveStates } from './constants'
 import SandBox from './sandbox'
@@ -90,7 +91,7 @@ export default class CreateApp implements AppInterface {
   // Load resources
   loadSourceCode (): void {
     this.state = appStates.LOADING_SOURCE_CODE
-    extractHtml(this)
+    HTMLLoader.getInstance().run(this, extractSourceDom)
   }
 
   /**
