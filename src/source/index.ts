@@ -1,16 +1,12 @@
-import type { AppInterface, plugins } from '@micro-app/types'
-import { fetchSource } from './fetch'
+import type { AppInterface } from '@micro-app/types'
 import {
   logError,
   CompletionPath,
   pureCreateElement,
-  isFunction,
-  isPlainObject,
 } from '../libs/utils'
 import { extractLinkFromHtml, fetchLinksFromHtml } from './links'
 import { extractScriptElement, fetchScriptsFromHtml, checkExcludeUrl, checkIgnoreUrl } from './scripts'
 import scopedCSS from './scoped_css'
-import microApp from '../micro_app'
 
 /**
  * transform html string to dom
@@ -71,7 +67,7 @@ function flatChildren (
  * @param htmlStr html string
  * @param app app
  */
-function extractSourceDom (htmlStr: string, app: AppInterface) {
+export function extractSourceDom (htmlStr: string, app: AppInterface) {
   const wrapElement = getWrapElement(htmlStr)
   const microAppHead = wrapElement.querySelector('micro-app-head')
   const microAppBody = wrapElement.querySelector('micro-app-body')
@@ -95,55 +91,4 @@ function extractSourceDom (htmlStr: string, app: AppInterface) {
   } else {
     app.onLoad(wrapElement)
   }
-}
-
-/**
- * Get and format html
- * @param app app
- */
-export default function extractHtml (app: AppInterface): void {
-  const appName = app.name
-  const htmlUrl = app.ssrUrl || app.url
-  fetchSource(htmlUrl, appName, { cache: 'no-cache' }).then((htmlStr: string) => {
-    if (!htmlStr) {
-      const msg = 'html is empty, please check in detail'
-      app.onerror(new Error(msg))
-      return logError(msg, appName)
-    }
-
-    htmlStr = processHtml(htmlUrl, htmlStr, appName, microApp.plugins)
-      .replace(/<head[^>]*>[\s\S]*?<\/head>/i, (match) => {
-        return match
-          .replace(/<head/i, '<micro-app-head')
-          .replace(/<\/head>/i, '</micro-app-head>')
-      })
-      .replace(/<body[^>]*>[\s\S]*?<\/body>/i, (match) => {
-        return match
-          .replace(/<body/i, '<micro-app-body')
-          .replace(/<\/body>/i, '</micro-app-body>')
-      })
-
-    extractSourceDom(htmlStr, app)
-  }).catch((e) => {
-    logError(`Failed to fetch data from ${app.url}, micro-app stop rendering`, appName, e)
-    app.onLoadError(e)
-  })
-}
-
-function processHtml (url: string, code: string, appName: string, plugins: plugins | undefined): string {
-  if (!plugins) return code
-
-  const mergedPlugins: NonNullable<plugins['global']> = []
-  plugins.global && mergedPlugins.push(...plugins.global)
-  plugins.modules?.[appName] && mergedPlugins.push(...plugins.modules[appName])
-
-  if (mergedPlugins.length > 0) {
-    return mergedPlugins.reduce((preCode, plugin) => {
-      if (isPlainObject(plugin) && isFunction(plugin.processHtml)) {
-        return plugin.processHtml!(preCode, url, plugin.options)
-      }
-      return preCode
-    }, code)
-  }
-  return code
 }
