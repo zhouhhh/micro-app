@@ -52,7 +52,7 @@ export function extractScriptElement (
   if (script.hasAttribute('exclude') || checkExcludeUrl(src, app.name)) {
     replaceComment = document.createComment('script element with exclude attribute removed by micro-app')
   } else if (
-    (script.type && !['text/javascript', 'text/ecmascript', 'application/javascript', 'application/ecmascript', 'module'].includes(script.type)) ||
+    (script.type && !['text/javascript', 'text/ecmascript', 'application/javascript', 'application/ecmascript', 'module', 'systemjs-module', 'systemjs-importmap'].includes(script.type)) ||
     script.hasAttribute('ignore') || checkIgnoreUrl(src, app.name)
   ) {
     return null
