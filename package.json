@@ -1,6 +1,6 @@
 {
   "name": "@micro-zoe/micro-app",
-  "version": "0.8.7",
+  "version": "0.8.8",
   "description": "A lightweight, efficient and powerful micro front-end framework",
   "private": false,
   "main": "lib/index.min.js",
