@@ -55,6 +55,7 @@ import microApp from '@micro-zoe/micro-app'
 microApp.setData('子应用name', { path: '/new-path/' })
 ```
 
+
 ## 方式三、传递路由实例方法
 
 *适用场景: 子应用控制基座跳转*
@@ -66,12 +67,13 @@ microApp.setData('子应用name', { path: '/new-path/' })
 ```js
 import { useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
-import microApp from '@micro-zoe/micro-app'
+import microApp, { removeDomScope } from '@micro-zoe/micro-app'
 
 export default () => {
   const history = useHistory()
 
   function pushState (path) {
+    removeDomScope()
     history.push(path)
   }
 
@@ -100,11 +102,14 @@ export default () => {
 </template>
 
 <script>
+import { removeDomScope } from '@micro-zoe/micro-app'
+
 export default {
   data () {
     return {
       microAppData: {
         pushState: (path) => {
+          removeDomScope()
           this.$router.push(path)
         }
       }
