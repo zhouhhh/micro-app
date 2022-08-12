@@ -45,16 +45,16 @@ microApp.start({
 #### 3、在某一个文件中禁用
 可以在你的css文件中使用以下格式的注释来禁用样式隔离：
 ```css
-/* ! scopecss-disable */
+/*! scopecss-disable */
 .test1 {
   color: red;
 }
-/* ! scopecss-enable */
+/*! scopecss-enable */
 ```
 
 你也可以对指定的选择器禁用样式隔离:
 ```css
-/* ! scopecss-disable .test1, .test2 */
+/*! scopecss-disable .test1, .test2 */
 .test1 {
   color: red;
 }
@@ -64,31 +64,31 @@ microApp.start({
 .test3 {
   color: green;
 }
-/* ! scopecss-enable */
+/*! scopecss-enable */
 ```
 
-如果想在整个文件范围内禁用样式隔离，将 `/* ! scopecss-disable */` 注释放在文件顶部：
+如果想在整个文件范围内禁用样式隔离，将 `/*! scopecss-disable */` 注释放在文件顶部：
 ```css
-/* ! scopecss-disable */
+/*! scopecss-disable */
 ...
 ```
 
 #### 4、在某一行中禁用
 在文件中使用以下格式的注释在某一特定的行上禁用样式隔离：
 ```css
-/* ! scopecss-disable-next-line */
+/*! scopecss-disable-next-line */
 .test1 {
   color: red;
 }
 
 .test2 {
-  /* ! scopecss-disable-next-line */
+  /*! scopecss-disable-next-line */
   background: url(/test.png);
 }
 ```
 
 > [!NOTE]
-> 上述注释规则中都以叹号开头(/* ! */)，这是因为在build时大部分项目会将css中的注释删除以压缩体积，叹号开头是[cssnano](https://cssnano.co/)的一种规则，可以防止在build后注释被删除[discardcomments](https://cssnano.co/docs/optimisations/discardcomments/)。
+> 上述注释规则中都以叹号开头(/*! */)，这是因为在build时大部分项目会将css中的注释删除以压缩体积，叹号开头是[cssnano](https://cssnano.co/)的一种规则，可以防止在build后注释被删除[discardcomments](https://cssnano.co/docs/optimisations/discardcomments/)。
 >
 > 我们以cssnano为例，是因为它是PostCSS中使用最广泛的压缩插件，如果你使用了另外的压缩工具，请根据实际情况调整，防止build后的注释被删除。
 
