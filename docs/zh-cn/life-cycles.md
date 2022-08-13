@@ -63,19 +63,19 @@ vue中监听方式和普通事件一致。
 export default {
   methods: {
     created () {
-      console.log('micro-app元素被创建'),
+      console.log('micro-app元素被创建')
     },
     beforemount () {
-      console.log('即将被渲染'),
+      console.log('即将被渲染')
     },
     mounted () {
-      console.log('已经渲染完成'),
+      console.log('已经渲染完成')
     },
     unmount () {
-      console.log('已经卸载'),
+      console.log('已经卸载')
     },
     error () {
-      console.log('渲染出错'),
+      console.log('渲染出错')
     }
   }
 }
