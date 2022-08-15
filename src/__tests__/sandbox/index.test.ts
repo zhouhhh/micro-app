@@ -185,7 +185,7 @@ describe('sandbox', () => {
     expect(sandbox.escapeKeys.size).toBe(3)
     // @ts-ignore
     expect(sandbox.active).toBeTruthy()
-    sandbox.stop()
+    sandbox.stop(false)
     // @ts-ignore
     expect(sandbox.escapeKeys.size).toBe(0)
     // @ts-ignore
@@ -322,8 +322,8 @@ describe('sandbox', () => {
     proxyWindow.notExecute = 'notExecute-value'
     expect(proxyWindow.notExecute).toBe('notExecute-value')
 
-    sandbox.stop()
-    sandbox.stop() // 多次执行start无效
+    sandbox.stop(false)
+    sandbox.stop(false) // 多次执行start无效
   })
 
   // proxyWindow没有此变量而rawWindow有，则优先使用rawWindow的descriptor
@@ -389,6 +389,16 @@ describe('sandbox', () => {
 
     proxyWindow.Image = 'new-image'
     expect(proxyWindow.Image).toBe('new-image')
+  })
+
+  test('don\'t clean global vars in umd mode', () => {
+    const sandbox = new Sandbox('test-set-eval&Image', `http://127.0.0.1:${ports.sandbox}/common/`)
+    sandbox.start('')
+    const proxyWindow: any = sandbox.proxyWindow
+
+    proxyWindow.normalProperty1 = 1
+    sandbox.stop(true)
+    expect(proxyWindow.normalProperty1).toBe(1)
   })
 
   // 分支覆盖 proxyWindow getter方法

@@ -296,7 +296,7 @@ export default class CreateApp implements AppInterface {
     }
 
     // this.container maybe contains micro-app element, stop sandbox should exec after cloneContainer
-    this.sandBox?.stop()
+    this.sandBox?.stop(this.umdMode)
     if (!getActiveApps().length) {
       releasePatchSetAttribute()
     }
