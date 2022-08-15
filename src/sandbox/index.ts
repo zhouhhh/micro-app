@@ -103,22 +103,24 @@ export default class SandBox implements SandBoxInterface {
     }
   }
 
-  stop (): void {
+  stop (umdMode: boolean): void {
     if (this.active) {
       this.active = false
       this.releaseEffect()
       this.microAppWindow.microApp.clearDataListener()
       this.microAppWindow.microApp.clearGlobalDataListener()
 
-      this.injectedKeys.forEach((key: PropertyKey) => {
-        Reflect.deleteProperty(this.microAppWindow, key)
-      })
-      this.injectedKeys.clear()
+      if (!umdMode) {
+        this.injectedKeys.forEach((key: PropertyKey) => {
+          Reflect.deleteProperty(this.microAppWindow, key)
+        })
+        this.injectedKeys.clear()
 
-      this.escapeKeys.forEach((key: PropertyKey) => {
-        Reflect.deleteProperty(globalEnv.rawWindow, key)
-      })
-      this.escapeKeys.clear()
+        this.escapeKeys.forEach((key: PropertyKey) => {
+          Reflect.deleteProperty(globalEnv.rawWindow, key)
+        })
+        this.escapeKeys.clear()
+      }
 
       if (--SandBox.activeCount === 0) {
         releaseEffectDocumentEvent()

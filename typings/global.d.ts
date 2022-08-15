@@ -9,7 +9,7 @@ declare module '@micro-app/types' {
     proxyWindow: WindowProxy
     microAppWindow: Window // Proxy target
     start (baseRoute: string): void
-    stop (): void
+    stop (umdMode: boolean): void
     // record umd snapshot before the first execution of umdHookMount
     recordUmdSnapshot (): void
     // rebuild umd snapshot before remount umd app
