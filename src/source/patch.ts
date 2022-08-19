@@ -10,6 +10,7 @@ import {
   isString,
   isInvalidQuerySelectorKey,
   isUniqueElement,
+  isFunction,
 } from '../libs/utils'
 import scopedCSS from './scoped_css'
 import { extractLinkFromHtml, formatDynamicLink } from './links'
@@ -41,7 +42,15 @@ function handleNewNode (parent: Node, child: Node, app: AppInterface): Node {
       const linkReplaceComment = document.createComment('link element with exclude attribute ignored by micro-app')
       dynamicElementInMicroAppMap.set(child, linkReplaceComment)
       return linkReplaceComment
-    } else if (child.hasAttribute('ignore') || checkIgnoreUrl(child.getAttribute('href'), app.name)) {
+    } else if (
+      child.hasAttribute('ignore') ||
+      checkIgnoreUrl(child.getAttribute('href'), app.name) ||
+      (
+        child.href &&
+        isFunction(microApp.excludeAssetFilter) &&
+        microApp.excludeAssetFilter!(child.href)
+      )
+    ) {
       return child
     }
 
@@ -65,6 +74,14 @@ function handleNewNode (parent: Node, child: Node, app: AppInterface): Node {
 
     return child
   } else if (child instanceof HTMLScriptElement) {
+    if (
+      child.src &&
+      isFunction(microApp.excludeAssetFilter) &&
+      microApp.excludeAssetFilter!(child.src)
+    ) {
+      return child
+    }
+
     const { replaceComment, url, info } = extractScriptElement(
       child,
       parent,

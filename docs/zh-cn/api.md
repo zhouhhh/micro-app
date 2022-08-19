@@ -84,6 +84,8 @@ start (options?: {
     js?: string[], // js地址
     css?: string[], // css地址
   },
+  // 指定部分特殊的动态加载的微应用资源（css/js) 不被 micro-app 劫持处理
+  excludeAssetFilter?: (assetUrl: string) => boolean
 })
 ```
 

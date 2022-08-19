@@ -188,6 +188,7 @@ declare module '@micro-app/types' {
     plugins?: plugins
     fetch?: fetchType
     globalAssets?: globalAssetsType,
+    excludeAssetFilter?: (assetUrl: string) => boolean
   }
 
   // MicroApp config
@@ -203,6 +204,7 @@ declare module '@micro-app/types' {
     plugins?: plugins
     fetch?: fetchType
     preFetch(apps: prefetchParamList): void
+    excludeAssetFilter?: (assetUrl: string) => boolean
     start(options?: OptionsType): void
   }
 

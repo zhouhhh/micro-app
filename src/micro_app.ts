@@ -126,6 +126,7 @@ export class MicroApp extends EventCenterForBaseApp implements MicroAppConfigTyp
   plugins?: plugins
   fetch?: fetchType
   preFetch = preFetch
+  excludeAssetFilter?: (assetUrl: string) => boolean
   start (options?: OptionsType): void {
     if (!isBrowser || !window.customElements) {
       return logError('micro-app is not supported in this environment')
@@ -167,6 +168,8 @@ export class MicroApp extends EventCenterForBaseApp implements MicroAppConfigTyp
 
       // load global assets when browser is idle
       options.globalAssets && getGlobalAssets(options.globalAssets)
+
+      isFunction(options.excludeAssetFilter) && (this.excludeAssetFilter = options.excludeAssetFilter)
 
       if (isPlainObject(options.plugins)) {
         const modules = options.plugins!.modules

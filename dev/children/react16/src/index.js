@@ -256,3 +256,13 @@ if (window.__MICRO_APP_ENVIRONMENT__) {
   unBoundDom2.innerHTML = 'unBoundDom2'
   document.body.appendChild(unBoundDom2)
 }
+
+// test excludeAssetFilter
+const dynamicScript2 = document.createElement('script')
+dynamicScript2.setAttribute('src', 'http://127.0.0.1:8080/js/defer.js')
+dynamicScript2.setAttribute('defer', 'true')
+document.body.appendChild(dynamicScript2)
+
+const link1 = document.createElement('link')
+link1.setAttribute('href', 'http://127.0.0.1:8080/facefont.css')
+document.head.appendChild(link1)

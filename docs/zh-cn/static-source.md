@@ -79,7 +79,25 @@ microApp.start({
 ```
 
 ## 资源过滤
-当子应用不需要加载某个js或css，可以通过在link、script、style设置exclude属性过滤这些资源，当micro-app遇到带有exclude属性的元素会进行删除。
+#### 方式一：excludeAssetFilter 
+在start中注册excludeAssetFilter过滤函数，可以指定部分特殊的动态加载的微应用资源（css/js) 不被 micro-app 劫持处理。
+
+```js
+// index.js
+import microApp from '@micro-zoe/micro-app'
+
+microApp.start({
+  excludeAssetFilter (assetUrl) {
+    if (assetUrl === 'xxx') {
+      return true // 返回true则micro-app不会劫持处理当前文件
+    }
+    return false
+  }
+})
+```
+
+#### 方式二：配置 exclude 属性
+在link、script、style等元素上设置exclude属性过滤这些资源，当micro-app遇到带有exclude属性的元素会进行删除。
 
 **使用方式**
 ```html

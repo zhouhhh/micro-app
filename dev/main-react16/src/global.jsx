@@ -126,6 +126,14 @@ microApp.start({
       return res.text()
     })
   },
+  excludeAssetFilter (assetUrl) {
+    if (assetUrl === 'http://127.0.0.1:8080/js/defer.js') {
+      return true
+    } else if (assetUrl === 'http://127.0.0.1:8080/facefont.css') {
+      return true
+    }
+    return false
+  }
 })
 
 // ----------------------分割线--测试全局方法--------------------- //
