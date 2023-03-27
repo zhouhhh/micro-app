@@ -321,5 +321,3 @@ server {
 
 #### 线上效果如下：
 - main-vue2：[http://www.micro-zoe.com/main-vue2/](http://www.micro-zoe.com/main-vue2/)
-- main-nextjs11：[http://nextjs11.micro-zoe.com/](http://nextjs11.micro-zoe.com/)
-- main-nuxtjs2：[http://nuxtjs2.micro-zoe.com/](http://nuxtjs2.micro-zoe.com/)
